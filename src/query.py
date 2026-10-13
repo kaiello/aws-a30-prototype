@@ -20,7 +20,7 @@ from src.config import (
     DEFAULT_ENGINE
 )
 from src.indexer import get_rag_instance
-from src.citation_checker import extract_citations
+from src.citation_checker import extract_citations, extract_grounded_claims
 
 TABLE_COMPANION_FIGURES = {
     "Table A1": ["Figure A1", "Figure A4"],
@@ -116,6 +116,7 @@ async def async_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_E
             "query": query_str,
             "answer": "[ERROR: GEMINI_API_KEY not configured. Set GEMINI_API_KEY in .env.]",
             "citations": {},
+            "grounded_claims": [],
             "resolved_figures": [],
             "resolved_tables": [],
             "see_also": []
@@ -125,6 +126,7 @@ async def async_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_E
             "query": query_str,
             "answer": "[ERROR: DEEPSEEK_API_KEY not configured. Set DEEPSEEK_API_KEY in .env.]",
             "citations": {},
+            "grounded_claims": [],
             "resolved_figures": [],
             "resolved_tables": [],
             "see_also": []
@@ -142,6 +144,7 @@ async def async_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_E
     
     response = await rag.aquery(query_str, param=param)
     citations = extract_citations(response)
+    grounded_claims = extract_grounded_claims(response)
     figures, tables = resolve_multimodal_assets(f"{query_str}\n{response}")
     see_also = extract_see_also_terms(response)
     
@@ -149,6 +152,7 @@ async def async_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_E
         "query": query_str,
         "answer": response,
         "citations": citations,
+        "grounded_claims": grounded_claims,
         "resolved_figures": figures,
         "resolved_tables": tables,
         "see_also": see_also

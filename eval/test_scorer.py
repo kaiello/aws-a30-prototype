@@ -1,17 +1,24 @@
 """
 test_scorer.py: Automated benchmark evaluation harness for AWS A3.0 prototype.
-Runs the 12-question gold benchmark, verifies citations, keyword coverage, and abstentions.
+Runs the 30-question gold benchmark, verifies citations, keyword coverage, qualifiers, and abstentions.
 """
 
 import sys
 import json
 import argparse
+import datetime
 from pathlib import Path
-from src.config import BENCHMARK_FILE, BASE_DIR
+from src.config import BENCHMARK_FILE, BASE_DIR, DEFAULT_ENGINE, DEEPSEEK_MODEL, GEMINI_MODEL, EMBEDDING_MODEL
 from src.query import run_query
 from src.citation_checker import verify_response
 
-def run_evaluation(benchmark_path: Path = BENCHMARK_FILE, mode: str = "mix"):
+def run_evaluation(
+    benchmark_path: Path = BENCHMARK_FILE,
+    mode: str = "mix",
+    engine: str = DEFAULT_ENGINE,
+    report_filename: str = "card04_benchmark_report.md",
+    receipt_filename: str = "run_receipt_card04.json"
+):
     if not benchmark_path.exists():
         print(f"Benchmark file not found at {benchmark_path}")
         sys.exit(1)
@@ -19,7 +26,10 @@ def run_evaluation(benchmark_path: Path = BENCHMARK_FILE, mode: str = "mix"):
     with open(benchmark_path, "r", encoding="utf-8") as f:
         benchmark = json.load(f)
 
-    print(f"\nRunning AWS A3.0 Evaluation on {len(benchmark)} benchmark queries (mode={mode})...\n")
+    print(f"\n========================================================")
+    print(f"AWS A3.0 Grounded Evaluation: {len(benchmark)} Queries")
+    print(f"Engine: {engine.upper()} | Mode: {mode}")
+    print(f"========================================================\n")
     
     results = []
     modality_counts = {}
@@ -33,7 +43,7 @@ def run_evaluation(benchmark_path: Path = BENCHMARK_FILE, mode: str = "mix"):
         modality_counts[modality] = modality_counts.get(modality, 0) + 1
         
         print(f"[{q_id}] ({modality.upper()}) {query}")
-        query_res = run_query(query, mode=mode)
+        query_res = run_query(query, mode=mode, engine=engine)
         ans = query_res["answer"]
         
         verification = verify_response(item, ans)
@@ -57,8 +67,13 @@ def run_evaluation(benchmark_path: Path = BENCHMARK_FILE, mode: str = "mix"):
     passed = sum(1 for r in results if r["verification"]["pass"])
     pass_rate = (passed / total) * 100 if total > 0 else 0
     
+    active_model = GEMINI_MODEL if engine.lower() == "gemini" else DEEPSEEK_MODEL
+
     report_lines = [
-        "# AWS A3.0 Multimodal Prototype Benchmark Report\n",
+        f"# AWS A3.0 Multimodal Prototype Benchmark Report (Card 04)\n",
+        f"**Date:** {datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}",
+        f"**Inference Engine:** {engine.upper()} (`{active_model}`)",
+        f"**Retrieval Mode:** {mode}",
         f"**Total Queries Evaluated:** {total}",
         f"**Total Passed:** {passed} / {total} ({pass_rate:.1f}%)\n",
         "## Performance by Modality\n",
@@ -83,7 +98,7 @@ def run_evaluation(benchmark_path: Path = BENCHMARK_FILE, mode: str = "mix"):
         report_lines.append(f"| {it['id']} | {it['modality']} | {status} | {cits} | {v['reason']} |")
 
     report_md = "\n".join(report_lines)
-    report_file = BASE_DIR / "eval" / "benchmark_report.md"
+    report_file = BASE_DIR / "eval" / report_filename
     with open(report_file, "w", encoding="utf-8") as f:
         f.write(report_md)
         
@@ -109,13 +124,12 @@ def run_evaluation(benchmark_path: Path = BENCHMARK_FILE, mode: str = "mix"):
         except Exception:
             pass
 
-    import datetime
-    from src.config import DEEPSEEK_MODEL, EMBEDDING_MODEL
     receipt = {
         "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "document": "AWS A3.0M/A3.0:2020 Standard Welding Terms and Definitions",
         "commit_hash": commit_hash,
-        "llm_model": DEEPSEEK_MODEL,
+        "llm_engine": engine,
+        "llm_model": active_model,
         "embedding_model": EMBEDDING_MODEL,
         "graph_nodes": node_count,
         "graph_edges": edge_count,
@@ -130,14 +144,23 @@ def run_evaluation(benchmark_path: Path = BENCHMARK_FILE, mode: str = "mix"):
             }
         }
     }
-    receipt_file = BASE_DIR / "eval" / "run_receipt_baseline.json"
+    receipt_file = BASE_DIR / "eval" / receipt_filename
     with open(receipt_file, "w", encoding="utf-8") as f:
         json.dump(receipt, f, indent=2)
-    print(f"Run receipt written to {receipt_file}")
+    print(f"Run receipt written to {receipt_file}\n")
+    return pass_rate
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate AWS A3.0 Prototype")
     parser.add_argument("--mode", type=str, default="mix", help="LightRAG query mode")
+    parser.add_argument("--engine", type=str, default=DEFAULT_ENGINE, choices=["deepseek", "gemini"], help="LLM inference engine")
+    parser.add_argument("--report", type=str, default="card04_benchmark_report.md", help="Report filename")
+    parser.add_argument("--receipt", type=str, default="run_receipt_card04.json", help="Receipt filename")
     args = parser.parse_args()
     
-    run_evaluation(mode=args.mode)
+    run_evaluation(
+        mode=args.mode,
+        engine=args.engine,
+        report_filename=args.report,
+        receipt_filename=args.receipt
+    )

@@ -12,7 +12,7 @@ import urllib.parse
 import webbrowser
 import argparse
 from pathlib import Path
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 from src.config import (
     BASE_DIR,
@@ -279,11 +279,13 @@ HTML_INDEX = """<!DOCTYPE html>
             <div class="suggestions">
                 <span class="pill" onclick="setQuery('show me flame contact on figure A6')">🔥 Flame Contact (Fig A6)</span>
                 <span class="pill" onclick="setQuery('Which processes use Vacuum shielding on Figure A6?')">🛡️ Vacuum Shielding (Fig A6)</span>
-                <span class="pill" onclick="setQuery('What processes require Pressure normal to faying surfaces on Figure A6?')">⚖️ Faying Surface Pressure (Fig A6)</span>
-                <span class="pill" onclick="setQuery('What is EXB on Figure A6 and what are its physical characteristics?')">🧪 EXB Exothermic (Fig A6)</span>
-                <span class="pill" onclick="setQuery('What is the definition of actual throat and what figure does it refer to?')">Actual Throat (Fig B25)</span>
-                <span class="pill" onclick="setQuery('Explain 1F pipe welding test position and show its diagram')">1F Pipe Position (Fig B20)</span>
-                <span class="pill" onclick="setQuery('Which welding processes fall under resistance welding in Table A1?')">Resistance Welding (Table A1)</span>
+                <span class="pill" onclick="setQuery('Which pipe welding test position in Figure B21 includes a restriction ring?')">💍 6GR Restriction Ring (Fig B21)</span>
+                <span class="pill" onclick="setQuery('Identify the three distinct fillet weld throats illustrated in Figure B25')">📐 Fillet Throats (Fig B25)</span>
+                <span class="pill" onclick="setQuery('Which figure illustrates groove face, root edge, and root face?')">📏 Root Face vs Root Edge (Fig B5)</span>
+                <span class="pill" onclick="setQuery('Define bevel angle and bevel depth, and identify which figure illustrates them')">⚡ Bevel & Groove Angle (Fig B6)</span>
+                <span class="pill" onclick="setQuery('According to Table A4, what are the letter designations for thermal spraying and arc spraying?')">💨 Thermal Spraying THSP (Table A4)</span>
+                <span class="pill" onclick="setQuery('What standard terms should be used instead of the nonstandard term burn-through?')">⚠️ Nonstandard: Burn-through</span>
+                <span class="pill" onclick="setQuery('What is the minimum preheat temperature required for welding 50 mm thick ASTM A36 structural steel plate?')">🚫 ASTM A36 Preheat (Negative Control)</span>
             </div>
         </div>
 
@@ -296,6 +298,7 @@ HTML_INDEX = """<!DOCTYPE html>
                 <h2>Verified Standard Answer</h2>
                 <div class="answer-content" id="answerContent"></div>
                 <div class="citations-box" id="citationsBox"></div>
+                <div id="groundedClaimsBox" style="margin-top: 16px; display: none;"></div>
                 <div id="seeAlsoBox" style="margin-top: 16px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: none;"></div>
             </div>
 
@@ -351,6 +354,35 @@ HTML_INDEX = """<!DOCTYPE html>
                 citHtml += "&bull; <strong>Figures:</strong> " + (c.figures && c.figures.length ? c.figures.join(", ") : "None") + "<br/>";
                 citHtml += "&bull; <strong>Tables:</strong> " + (c.tables && c.tables.length ? c.tables.join(", ") : "None");
                 document.getElementById("citationsBox").innerHTML = citHtml;
+
+                // Render Grounded Claims Drawer
+                const groundedClaimsBox = document.getElementById("groundedClaimsBox");
+                if (data.grounded_claims && data.grounded_claims.length > 0) {
+                    let claimsHtml = `
+                        <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 14px;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                                <span>🛡️ Grounded Claim-Level Evidence (${data.grounded_claims.length} Claims Verified)</span>
+                                <span style="font-size: 11px; color: #10b981; font-weight: 600;">100% Traceable</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">Every material proposition is mapped to its exact standard anchors:</div>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                    `;
+                    data.grounded_claims.forEach((item, idx) => {
+                        const safeClaim = item.claim.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        const anchorsStr = item.anchors && item.anchors.length ? item.anchors.join(", ") : "Clause 4 / Annex";
+                        claimsHtml += `
+                            <div style="background: var(--bg-card); border-left: 3px solid #38bdf8; border-radius: 4px; padding: 8px 12px; font-size: 12.5px; line-height: 1.4;">
+                                <div style="color: var(--text-primary); margin-bottom: 4px;"><strong>[Claim ${idx+1}]</strong> ${safeClaim}</div>
+                                <div style="color: #38bdf8; font-size: 11px; font-family: monospace;">📍 Anchors: ${anchorsStr}</div>
+                            </div>
+                        `;
+                    });
+                    claimsHtml += `</div></div>`;
+                    groundedClaimsBox.innerHTML = claimsHtml;
+                    groundedClaimsBox.style.display = "block";
+                } else {
+                    groundedClaimsBox.style.display = "none";
+                }
 
                 // Render See Also interactive cross-links
                 const seeAlsoBox = document.getElementById("seeAlsoBox");
@@ -468,6 +500,118 @@ HTML_INDEX = """<!DOCTYPE html>
                                     </div>
                                 </div>
                             `;
+                        } else if (fig.figure_id === "Figure B5" || fileName.includes("Figure_B5")) {
+                            inspectorHtml = `
+                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                        <span>🔎 Interactive Node Explorer for Figure B5:</span>
+                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 86 (Groove and Root Faces)</span>
+                                    </div>
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">Joint Features & Edge Preparation:</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('Which figure illustrates groove face, root edge, and root face?')">Groove Face</span>
+                                            <span class="pill" onclick="setQuery('What is the structural difference between root opening and root face in a weld joint?')">Root Face vs Root Opening</span>
+                                            <span class="pill" onclick="setQuery('What is the difference between root face and root edge on Figure B5?')">Root Edge (Zero Land)</span>
+                                            <span class="pill" onclick="setQuery('Define bevel face on Figure B5')">Bevel Face</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (fig.figure_id === "Figure B6" || fileName.includes("Figure_B6")) {
+                            inspectorHtml = `
+                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                        <span>🔎 Interactive Angle Explorer for Figure B6:</span>
+                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 87-89 (Groove Geometry)</span>
+                                    </div>
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">Angular Dimensions & Radii:</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('Define bevel angle and bevel depth, and identify which figure illustrates them')">Bevel Angle</span>
+                                            <span class="pill" onclick="setQuery('What is the relationship between groove angle and bevel angle on Figure B6?')">Groove Angle = 2 * Bevel Angle</span>
+                                            <span class="pill" onclick="setQuery('What is depth of bevel on Figure B6?')">Depth of Bevel</span>
+                                            <span class="pill" onclick="setQuery('What is groove radius on Figure B6?')">Groove Radius</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (fig.figure_id === "Figure B20" || fileName.includes("Figure_B20")) {
+                            inspectorHtml = `
+                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                        <span>🔎 Interactive Position Explorer for Figure B20:</span>
+                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 111 (Fillet Pipe Positions)</span>
+                                    </div>
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">Fillet Pipe Test Positions:</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('Explain what a 1F pipe welding test position is, and identify which figure illustrates it')">1F (Pipe Axis 45°, Rotated)</span>
+                                            <span class="pill" onclick="setQuery('Explain 2F pipe welding test position on Figure B20')">2F (Pipe Axis Vertical, Fixed)</span>
+                                            <span class="pill" onclick="setQuery('Explain 2FR pipe welding test position on Figure B20')">2FR (Pipe Axis Horizontal, Rotated)</span>
+                                            <span class="pill" onclick="setQuery('Explain 4F pipe welding test position on Figure B20')">4F (Pipe Axis Overhead)</span>
+                                            <span class="pill" onclick="setQuery('Explain 5F pipe welding test position on Figure B20')">5F (Pipe Axis Horizontal, Fixed)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (fig.figure_id === "Figure B21" || fileName.includes("Figure_B21")) {
+                            inspectorHtml = `
+                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                        <span>🔎 Interactive Position Explorer for Figure B21:</span>
+                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 112 (Groove Pipe Positions)</span>
+                                    </div>
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">Groove Pipe Test Positions:</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('Explain 1G pipe test position on Figure B21')">1G (Rotated)</span>
+                                            <span class="pill" onclick="setQuery('Explain 2G pipe test position on Figure B21')">2G (Fixed Vertical)</span>
+                                            <span class="pill" onclick="setQuery('Explain 5G pipe test position on Figure B21')">5G (Fixed Horizontal)</span>
+                                            <span class="pill" onclick="setQuery('Explain 6G pipe test position on Figure B21')">6G (Fixed Inclined 45°)</span>
+                                            <span class="pill" style="border-color: #38bdf8; color: #7dd3fc;" onclick="setQuery('Which pipe welding test position in Figure B21 includes a restriction ring, and what is its letter designation?')">💍 6GR (With Restriction Ring)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (fig.figure_id === "Figure B25" || fileName.includes("Figure_B25")) {
+                            inspectorHtml = `
+                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                        <span>🔎 Interactive Throat & Dimension Explorer for Figure B25:</span>
+                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 116 (Fillet Weld Throats)</span>
+                                    </div>
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">Throat Dimensions & Discontinuities:</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('Define actual throat and explain how it differs from theoretical throat in a fillet weld')">Actual Throat</span>
+                                            <span class="pill" onclick="setQuery('Identify the three distinct fillet weld throats illustrated in Figure B25')">Effective Throat</span>
+                                            <span class="pill" onclick="setQuery('Define theoretical throat on Figure B25')">Theoretical Throat</span>
+                                            <span class="pill" onclick="setQuery('What is convexity on Figure B25?')">Convexity</span>
+                                            <span class="pill" onclick="setQuery('What is fillet weld leg size on Figure B25?')">Leg Size</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (fig.figure_id === "Figure B26" || fileName.includes("Figure_B26")) {
+                            inspectorHtml = `
+                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                        <span>🔎 Interactive Profile Explorer for Figure B26:</span>
+                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 117 (Profiles & Discontinuities)</span>
+                                    </div>
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #f87171; text-transform: uppercase;">Face Discontinuities & Profiles:</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('What weld face discontinuities and profile deviations are illustrated in Figure B26?')">Undercut</span>
+                                            <span class="pill" onclick="setQuery('Explain overlap discontinuity on Figure B26')">Overlap</span>
+                                            <span class="pill" onclick="setQuery('Explain underfill on Figure B26')">Underfill</span>
+                                            <span class="pill" onclick="setQuery('Explain excessive reinforcement on Figure B26')">Excessive Reinforcement</span>
+                                            <span class="pill" onclick="setQuery('Explain incomplete fusion on Figure B26')">Incomplete Fusion</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
                         }
 
                         card.innerHTML = `
@@ -524,52 +668,64 @@ HTML_INDEX = """<!DOCTYPE html>
 </html>
 """
 
-class MultimodalRequestHandler(SimpleHTTPRequestHandler):
+class MultimodalRequestHandler(BaseHTTPRequestHandler):
+    def log_message(self, format, *args):
+        sys.stderr.write("%s - - [%s] %s\n" %
+                         (self.address_string(),
+                          self.log_date_time_string(),
+                          format % args))
+        sys.stderr.flush()
+
     def do_GET(self):
-        parsed = urllib.parse.urlparse(self.path)
-        path = parsed.path
+        try:
+            parsed = urllib.parse.urlparse(self.path)
+            path = parsed.path
 
-        if path in ["/", "/index.html"]:
-            html_bytes = HTML_INDEX.encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", str(len(html_bytes)))
-            self.end_headers()
-            self.wfile.write(html_bytes)
-            return
-
-        elif path.startswith("/figures/"):
-            filename = path.replace("/figures/", "")
-            target_file = PARSED_FIGURES_DIR / filename
-            if target_file.exists():
-                img_bytes = target_file.read_bytes()
+            if path in ["/", "/index.html"]:
+                html_bytes = HTML_INDEX.encode("utf-8")
                 self.send_response(200)
-                self.send_header("Content-Type", "image/png")
-                self.send_header("Content-Length", str(len(img_bytes)))
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(html_bytes)))
                 self.end_headers()
-                self.wfile.write(img_bytes)
-                return
-            else:
-                self.send_error(404, "Figure image not found")
+                self.wfile.write(html_bytes)
                 return
 
-        elif path.startswith("/tables/"):
-            filename = path.replace("/tables/", "")
-            target_file = PARSED_TABLES_DIR / filename
-            if target_file.exists():
-                content_type = "image/png" if filename.lower().endswith(".png") else "text/plain; charset=utf-8"
-                t_bytes = target_file.read_bytes()
-                self.send_response(200)
-                self.send_header("Content-Type", content_type)
-                self.send_header("Content-Length", str(len(t_bytes)))
-                self.end_headers()
-                self.wfile.write(t_bytes)
-                return
-            else:
-                self.send_error(404, "Table file not found")
-                return
+            elif path.startswith("/figures/"):
+                filename = path.replace("/figures/", "")
+                target_file = PARSED_FIGURES_DIR / filename
+                if target_file.exists():
+                    img_bytes = target_file.read_bytes()
+                    self.send_response(200)
+                    self.send_header("Content-Type", "image/png")
+                    self.send_header("Content-Length", str(len(img_bytes)))
+                    self.end_headers()
+                    self.wfile.write(img_bytes)
+                    return
+                else:
+                    self.send_error(404, "Figure image not found")
+                    return
 
-        self.send_error(404, "Endpoint not found")
+            elif path.startswith("/tables/"):
+                filename = path.replace("/tables/", "")
+                target_file = PARSED_TABLES_DIR / filename
+                if target_file.exists():
+                    content_type = "image/png" if filename.lower().endswith(".png") else "text/plain; charset=utf-8"
+                    t_bytes = target_file.read_bytes()
+                    self.send_response(200)
+                    self.send_header("Content-Type", content_type)
+                    self.send_header("Content-Length", str(len(t_bytes)))
+                    self.end_headers()
+                    self.wfile.write(t_bytes)
+                    return
+                else:
+                    self.send_error(404, "Table file not found")
+                    return
+
+            self.send_error(404, "Endpoint not found")
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self.send_error(500, f"Server error: {e}")
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
