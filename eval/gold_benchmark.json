@@ -1,0 +1,148 @@
+[
+  {
+    "id": "Q01",
+    "modality": "text",
+    "query": "Define complete joint penetration (CJP) according to AWS A3.0.",
+    "expected_answer_keywords": ["joint penetration", "weld metal fills", "groove", "completely"],
+    "gold_citation": {
+      "clause": "Clause 4",
+      "printed_page": 22,
+      "element_type": "text",
+      "element_id": "complete joint penetration"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q02",
+    "modality": "text",
+    "query": "What is the nonstandard term for root pass in welding terms?",
+    "expected_answer_keywords": ["stringer bead", "root bead", "nonstandard"],
+    "gold_citation": {
+      "clause": "Clause 4",
+      "printed_page": 55,
+      "element_type": "text",
+      "element_id": "root pass"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q03",
+    "modality": "table",
+    "query": "What is the letter designation for gas metal arc welding - pulsed arc in Table A1?",
+    "expected_answer_keywords": ["GMAW-P"],
+    "gold_citation": {
+      "clause": "Annex A",
+      "printed_page": 69,
+      "element_type": "table",
+      "element_id": "Table A1"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q04",
+    "modality": "table",
+    "query": "Which process letter designation corresponds to shielded metal arc welding in Table A1?",
+    "expected_answer_keywords": ["SMAW"],
+    "gold_citation": {
+      "clause": "Annex A",
+      "printed_page": 69,
+      "element_type": "table",
+      "element_id": "Table A1"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q05",
+    "modality": "figure",
+    "query": "Which figure illustrates the groove face, root edge, and root face, and what are their features?",
+    "expected_answer_keywords": ["Figure B5", "groove face", "root edge", "root face"],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 86,
+      "element_type": "figure",
+      "element_id": "Figure B5"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q06",
+    "modality": "figure",
+    "query": "Which figure in Annex B illustrates the joint root for butt, corner, and T-joints?",
+    "expected_answer_keywords": ["Figure B4", "joint root", "butt joint"],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 85,
+      "element_type": "figure",
+      "element_id": "Figure B4"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q07",
+    "modality": "cross-modal",
+    "query": "Explain what a 1F pipe welding test position is, and identify which figure illustrates it.",
+    "expected_answer_keywords": ["1F", "pipe", "45", "flat", "rotating", "Figure B20"],
+    "gold_citation": {
+      "clause": "Clause 4 & Annex B",
+      "printed_page": 5,
+      "element_type": "cross_modal",
+      "element_id": "Figure B20"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q08",
+    "modality": "cross-modal",
+    "query": "Define bevel angle and bevel depth, and identify which figure illustrates them.",
+    "expected_answer_keywords": ["bevel angle", "groove angle", "Figure B6"],
+    "gold_citation": {
+      "clause": "Clause 4 & Annex B",
+      "printed_page": 11,
+      "element_type": "cross_modal",
+      "element_id": "Figure B6"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q09",
+    "modality": "qualifier",
+    "query": "What is the structural difference between root opening and root face in a weld joint?",
+    "expected_answer_keywords": ["root opening", "separation", "root face", "portion of the groove face"],
+    "gold_citation": {
+      "clause": "Clause 4",
+      "printed_page": 55,
+      "element_type": "text",
+      "element_id": "root opening"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q10",
+    "modality": "qualifier",
+    "query": "What is the qualifying difference in sequence between a back weld and a backing weld?",
+    "expected_answer_keywords": ["back weld", "after", "backing weld", "before"],
+    "gold_citation": {
+      "clause": "Clause 4",
+      "printed_page": 10,
+      "element_type": "text",
+      "element_id": "back weld"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q11",
+    "modality": "abstention",
+    "query": "What are the ultrasonic testing acceptance criteria for porosity in structural steel welds according to AWS A3.0?",
+    "expected_answer_keywords": ["not specified", "out of scope", "abstain", "definitions only", "D1.1"],
+    "gold_citation": null,
+    "must_abstain": true
+  },
+  {
+    "id": "Q12",
+    "modality": "abstention",
+    "query": "What is the minimum yield strength and elongation requirement for E7018 electrodes?",
+    "expected_answer_keywords": ["not specified", "out of scope", "abstain", "A5.1"],
+    "gold_citation": null,
+    "must_abstain": true
+  }
+]

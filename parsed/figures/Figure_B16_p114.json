@@ -1,0 +1,10 @@
+{
+  "chunk_id": "annex_b_figure_b16_p114",
+  "clause": "Annex B",
+  "figure_id": "Figure B16",
+  "title": "Figure B16: A—Welding Position Diagram for Groove Welds and Surfacing Welds in Plate",
+  "pdf_page": 114,
+  "printed_page": 102,
+  "image_path": "C:\\Users\\kenai\\aws-a30-prototype\\parsed\\figures\\Figure_B16_p114.png",
+  "content": "[AWS A3.0:2020 Annex B, Figure B16, p. 102]\nTitle: A—Welding Position Diagram for Groove Welds and Surfacing Welds in Plate\nCaptions and text:\n102\n102\nAnnex B\nAWS A3.0M/A3.0:2020\nNotes:\n1. The horizontal reference plane is always taken to lie below the weld under consideration.\n2. The inclination of the weld axis is measured from the horizontal reference plane toward the vertical reference plane.\n3. The angle of rotation of the weld face is determined by a line perpendicular to the weld face which passes through the weld axis. The\nreference position (0°) of rotation of the weld face invariably points in the direction opposite to that in which the axis angle increases.\nWhen looking at point P, the angle of rotation of the weld face is measured in a clockwise direction from the reference position (0°).\n4. Groove welds are shown for illustrative purposes.\nFigure B16A—Welding Position Diagram for Groove Welds and Surfacing Welds in Plate\nTabulation of Positions of Groove Welds and Surfacing Welds\nPosition\nDiagram Reference\nInclination of Axis\nRotation of Face\nFlat\nA\n0° to 15°\n150° to 210°\nHorizontal\nB\n0° to 15°\n80° to 150°\n210° to 280°\nOverhead\nC\n0° to 80°\n0° to 80°\n280° to 360°\nVertical\nD\n15° to 80°\n80° to 280°\nE\n80° to 90°\n0° to 360°"
+}
