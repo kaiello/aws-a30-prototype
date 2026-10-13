@@ -1,63 +1,79 @@
 """
 indexer.py: LightRAG indexing engine for AWS A3.0M/A3.0:2020.
-Uses Google Gemini for entity-relation extraction and text embeddings.
-Builds local graph and vector stores in ./storage.
+Uses DeepSeek API for entity-relation extraction and local MiniLM for embeddings.
+Builds local graph (NetworkX) and vector (NanoVectorDB) stores in ./storage.
 """
 
 import os
 import sys
 import json
+import asyncio
 import argparse
 from pathlib import Path
+from openai import AsyncOpenAI
+from sentence_transformers import SentenceTransformer
+
 from lightrag import LightRAG
 from lightrag.utils import EmbeddingFunc
-from lightrag.llm.gemini import gemini_model_complete, gemini_embed
 
 from src.config import (
     STORAGE_DIR,
     PARSED_TEXT_FILE,
     PARSED_TABLES_DIR,
     PARSED_FIGURES_DIR,
-    GEMINI_API_KEY,
-    GEMINI_MODEL,
-    GEMINI_EMBED_MODEL
+    DEEPSEEK_API_KEY,
+    DEEPSEEK_BASE_URL,
+    DEEPSEEK_MODEL,
+    EMBEDDING_MODEL,
+    EMBEDDING_DIM
 )
+
+_embed_model = None
+
+def get_embed_model():
+    global _embed_model
+    if _embed_model is None:
+        _embed_model = SentenceTransformer(EMBEDDING_MODEL)
+    return _embed_model
 
 def get_rag_instance(working_dir: Path = STORAGE_DIR) -> LightRAG:
     working_dir.mkdir(parents=True, exist_ok=True)
     
-    if not GEMINI_API_KEY:
-        print("[WARNING] GEMINI_API_KEY is not set in environment or .env!")
-        print("Please configure GEMINI_API_KEY to perform indexing.")
-    
-    # Configure Gemini embedding function (dim=768 for text-embedding-004)
-    async def embed_func(texts):
-        return await gemini_embed(
-            texts,
-            model=GEMINI_EMBED_MODEL,
-            api_key=GEMINI_API_KEY
-        )
+    if not DEEPSEEK_API_KEY:
+        print("[ERROR] DEEPSEEK_API_KEY is not set in environment or .env!")
+        sys.exit(1)
 
-    # Configure Gemini LLM function
+    client = AsyncOpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_BASE_URL)
+
     async def llm_func(prompt, system_prompt=None, history_messages=None, **kwargs):
-        return await gemini_model_complete(
-            prompt,
-            system_prompt=system_prompt,
-            history_messages=history_messages,
-            model=GEMINI_MODEL,
-            api_key=GEMINI_API_KEY,
-            **kwargs
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        if history_messages:
+            messages.extend(history_messages)
+        messages.append({"role": "user", "content": prompt})
+        
+        resp = await client.chat.completions.create(
+            model=DEEPSEEK_MODEL,
+            messages=messages,
+            temperature=0.0
         )
+        return resp.choices[0].message.content
+
+    model = get_embed_model()
+
+    async def embed_func(texts):
+        return model.encode(texts)
 
     rag = LightRAG(
         working_dir=str(working_dir),
         llm_model_func=llm_func,
         embedding_func=EmbeddingFunc(
-            embedding_dim=768,
+            embedding_dim=EMBEDDING_DIM,
             func=embed_func,
-            model_name=GEMINI_EMBED_MODEL
+            model_name=EMBEDDING_MODEL
         ),
-        llm_model_name=GEMINI_MODEL
+        llm_model_name=DEEPSEEK_MODEL
     )
     return rag
 
@@ -107,30 +123,34 @@ def load_all_chunks(max_figures: int = 40):
 
     return chunks
 
-def run_index(dry_run: bool = False, max_figures: int = 40):
+async def async_index(dry_run: bool = False, max_figures: int = 40, limit: int = 0):
     chunks = load_all_chunks(max_figures=max_figures)
+    if limit > 0:
+        chunks = chunks[:limit]
     print(f"Total chunks ready for LightRAG ingestion: {len(chunks)}")
     
     if dry_run:
         print("[DRY RUN] Ingestion verified. Zero calls made to external APIs.")
         return
 
-    if not GEMINI_API_KEY:
-        print("[ERROR] Cannot run live indexing without GEMINI_API_KEY.")
-        sys.exit(1)
-
     rag = get_rag_instance()
+    await rag.initialize_storages()
+    
     texts = [c["content"] for c in chunks]
     ids = [c["id"] for c in chunks]
     
-    print(f"Starting LightRAG ingestion of {len(texts)} chunks...")
-    rag.insert(texts, ids=ids)
+    print(f"Starting LightRAG ingestion of {len(texts)} chunks using DeepSeek...")
+    await rag.ainsert(texts, ids=ids)
     print("Ingestion complete! Local graph and vector stores saved to ./storage")
+
+def run_index(dry_run: bool = False, max_figures: int = 40, limit: int = 0):
+    asyncio.run(async_index(dry_run=dry_run, max_figures=max_figures, limit=limit))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Index AWS A3.0 multimodal chunks into LightRAG")
     parser.add_argument("--dry-run", action="store_true", help="Validate chunk loading without calling model APIs")
     parser.add_argument("--max-figures", type=int, default=40, help="Maximum figure chunks to index")
+    parser.add_argument("--limit", type=int, default=0, help="Limit total chunks for testing")
     args = parser.parse_args()
 
-    run_index(dry_run=args.dry_run, max_figures=args.max_figures)
+    run_index(dry_run=args.dry_run, max_figures=args.max_figures, limit=args.limit)

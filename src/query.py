@@ -6,6 +6,7 @@ Combines LightRAG dual-level graph retrieval with local image/table resolution.
 import os
 import sys
 import re
+import asyncio
 import argparse
 from pathlib import Path
 from lightrag import QueryParam
@@ -14,7 +15,7 @@ from src.config import (
     STORAGE_DIR,
     PARSED_FIGURES_DIR,
     PARSED_TABLES_DIR,
-    GEMINI_API_KEY
+    DEEPSEEK_API_KEY
 )
 from src.indexer import get_rag_instance
 from src.citation_checker import extract_citations
@@ -25,7 +26,6 @@ def resolve_multimodal_assets(text: str):
     fig_matches = re.findall(r'Figure\s+(B\d+)', text, re.IGNORECASE)
     for fig_num in set(fig_matches):
         clean_num = fig_num.upper()
-        # Search for corresponding PNG in parsed/figures
         matching_pngs = list(PARSED_FIGURES_DIR.glob(f"Figure_{clean_num}_*.png"))
         if matching_pngs:
             resolved_figures.append({
@@ -46,20 +46,27 @@ def resolve_multimodal_assets(text: str):
             
     return resolved_figures, resolved_tables
 
-def run_query(query_str: str, mode: str = "mix") -> dict:
-    if not GEMINI_API_KEY:
+async def async_query(query_str: str, mode: str = "mix") -> dict:
+    if not DEEPSEEK_API_KEY:
         return {
             "query": query_str,
-            "answer": "[SIMULATED / OFFLINE MODE: GEMINI_API_KEY not configured. Set GEMINI_API_KEY in .env to run live query.]",
+            "answer": "[ERROR: DEEPSEEK_API_KEY not configured. Set DEEPSEEK_API_KEY in .env.]",
             "citations": {},
             "resolved_figures": [],
             "resolved_tables": []
         }
 
     rag = get_rag_instance(working_dir=STORAGE_DIR)
-    param = QueryParam(mode=mode, top_k=40, chunk_top_k=20)
+    await rag.initialize_storages()
     
-    response = rag.query(query_str, param=param)
+    param = QueryParam(
+        mode=mode,
+        top_k=40,
+        chunk_top_k=20,
+        enable_rerank=False
+    )
+    
+    response = await rag.aquery(query_str, param=param)
     citations = extract_citations(response)
     figures, tables = resolve_multimodal_assets(response)
     
@@ -70,6 +77,9 @@ def run_query(query_str: str, mode: str = "mix") -> dict:
         "resolved_figures": figures,
         "resolved_tables": tables
     }
+
+def run_query(query_str: str, mode: str = "mix") -> dict:
+    return asyncio.run(async_query(query_str, mode=mode))
 
 def main():
     parser = argparse.ArgumentParser(description="Query AWS A3.0 Multimodal Knowledge Base")
