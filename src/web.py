@@ -12,7 +12,7 @@ import urllib.parse
 import webbrowser
 import argparse
 from pathlib import Path
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 from src.config import (
     BASE_DIR,
@@ -294,6 +294,7 @@ HTML_INDEX = """<!DOCTYPE html>
                 <h2>Verified Standard Answer</h2>
                 <div class="answer-content" id="answerContent"></div>
                 <div class="citations-box" id="citationsBox"></div>
+                <div id="seeAlsoBox" style="margin-top: 16px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: none;"></div>
             </div>
 
             <div class="panel">
@@ -348,6 +349,21 @@ HTML_INDEX = """<!DOCTYPE html>
                 citHtml += "&bull; <strong>Figures:</strong> " + (c.figures && c.figures.length ? c.figures.join(", ") : "None") + "<br/>";
                 citHtml += "&bull; <strong>Tables:</strong> " + (c.tables && c.tables.length ? c.tables.join(", ") : "None");
                 document.getElementById("citationsBox").innerHTML = citHtml;
+
+                // Render See Also interactive cross-links
+                const seeAlsoBox = document.getElementById("seeAlsoBox");
+                if (data.see_also && data.see_also.length > 0) {
+                    seeAlsoBox.style.display = "block";
+                    let chipsHtml = "<div style='font-size: 13px; font-weight: 600; color: var(--accent-cyan); margin-bottom: 8px;'>🔗 Cross-References & Related Terms (Click to inspect):</div><div class='suggestions'>";
+                    data.see_also.forEach(term => {
+                        const safeTerm = term.replace(/'/g, "\\'");
+                        chipsHtml += `<span class='pill' onclick="setQuery('What is ${safeTerm}?')">${term}</span>`;
+                    });
+                    chipsHtml += "</div>";
+                    seeAlsoBox.innerHTML = chipsHtml;
+                } else {
+                    seeAlsoBox.style.display = "none";
+                }
 
                 // Render visual evidence
                 const visualBox = document.getElementById("visualContent");
@@ -497,7 +513,7 @@ class MultimodalRequestHandler(SimpleHTTPRequestHandler):
 
 def run_server(port: int = 8000, open_browser: bool = False):
     server_address = ("127.0.0.1", port)
-    httpd = HTTPServer(server_address, MultimodalRequestHandler)
+    httpd = ThreadingHTTPServer(server_address, MultimodalRequestHandler)
     url = f"http://localhost:{port}"
     print("\n" + "="*70)
     print(f"AWS A3.0 Multimodal Visual Explorer running at: {url}")
