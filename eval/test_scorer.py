@@ -90,6 +90,51 @@ def run_evaluation(benchmark_path: Path = BENCHMARK_FILE, mode: str = "mix"):
     print(f"\nEvaluation complete! Report written to {report_file}")
     print(f"Overall Pass Rate: {passed}/{total} ({pass_rate:.1f}%)")
 
+    # Generate run receipt
+    try:
+        import subprocess
+        commit_hash = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    except Exception:
+        commit_hash = "unknown"
+
+    graph_file = BASE_DIR / "storage" / "graph_chunk_entity_relation.graphml"
+    node_count = 0
+    edge_count = 0
+    if graph_file.exists():
+        try:
+            import networkx as nx
+            G = nx.read_graphml(graph_file)
+            node_count = G.number_of_nodes()
+            edge_count = G.number_of_edges()
+        except Exception:
+            pass
+
+    import datetime
+    from src.config import DEEPSEEK_MODEL, EMBEDDING_MODEL
+    receipt = {
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "document": "AWS A3.0M/A3.0:2020 Standard Welding Terms and Definitions",
+        "commit_hash": commit_hash,
+        "llm_model": DEEPSEEK_MODEL,
+        "embedding_model": EMBEDDING_MODEL,
+        "graph_nodes": node_count,
+        "graph_edges": edge_count,
+        "benchmark_summary": {
+            "total_queries": total,
+            "passed": passed,
+            "failed": total - passed,
+            "pass_rate_pct": round(pass_rate, 2),
+            "modality_breakdown": {
+                mod: f"{modality_passes.get(mod, 0)}/{modality_counts.get(mod, 0)}"
+                for mod in modality_counts
+            }
+        }
+    }
+    receipt_file = BASE_DIR / "eval" / "run_receipt_baseline.json"
+    with open(receipt_file, "w", encoding="utf-8") as f:
+        json.dump(receipt, f, indent=2)
+    print(f"Run receipt written to {receipt_file}")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate AWS A3.0 Prototype")
     parser.add_argument("--mode", type=str, default="mix", help="LightRAG query mode")

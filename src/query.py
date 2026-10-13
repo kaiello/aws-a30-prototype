@@ -15,7 +15,9 @@ from src.config import (
     STORAGE_DIR,
     PARSED_FIGURES_DIR,
     PARSED_TABLES_DIR,
-    DEEPSEEK_API_KEY
+    DEEPSEEK_API_KEY,
+    GEMINI_API_KEY,
+    DEFAULT_ENGINE
 )
 from src.indexer import get_rag_instance
 from src.citation_checker import extract_citations
@@ -46,8 +48,16 @@ def resolve_multimodal_assets(text: str):
             
     return resolved_figures, resolved_tables
 
-async def async_query(query_str: str, mode: str = "mix") -> dict:
-    if not DEEPSEEK_API_KEY:
+async def async_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_ENGINE) -> dict:
+    if engine.lower() == "gemini" and not GEMINI_API_KEY:
+        return {
+            "query": query_str,
+            "answer": "[ERROR: GEMINI_API_KEY not configured. Set GEMINI_API_KEY in .env.]",
+            "citations": {},
+            "resolved_figures": [],
+            "resolved_tables": []
+        }
+    elif engine.lower() != "gemini" and not DEEPSEEK_API_KEY:
         return {
             "query": query_str,
             "answer": "[ERROR: DEEPSEEK_API_KEY not configured. Set DEEPSEEK_API_KEY in .env.]",
@@ -56,7 +66,7 @@ async def async_query(query_str: str, mode: str = "mix") -> dict:
             "resolved_tables": []
         }
 
-    rag = get_rag_instance(working_dir=STORAGE_DIR)
+    rag = get_rag_instance(working_dir=STORAGE_DIR, engine=engine)
     await rag.initialize_storages()
     
     param = QueryParam(
@@ -78,16 +88,17 @@ async def async_query(query_str: str, mode: str = "mix") -> dict:
         "resolved_tables": tables
     }
 
-def run_query(query_str: str, mode: str = "mix") -> dict:
-    return asyncio.run(async_query(query_str, mode=mode))
+def run_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_ENGINE) -> dict:
+    return asyncio.run(async_query(query_str, mode=mode, engine=engine))
 
 def main():
     parser = argparse.ArgumentParser(description="Query AWS A3.0 Multimodal Knowledge Base")
     parser.add_argument("query", type=str, help="Natural language query")
     parser.add_argument("--mode", type=str, default="mix", choices=["mix", "local", "global", "naive"], help="Retrieval mode")
+    parser.add_argument("--engine", type=str, default=DEFAULT_ENGINE, choices=["deepseek", "gemini"], help="LLM inference engine")
     args = parser.parse_args()
 
-    result = run_query(args.query, mode=args.mode)
+    result = run_query(args.query, mode=args.mode, engine=args.engine)
     
     print("\n" + "="*70)
     print(f"QUERY: {result['query']}")

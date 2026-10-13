@@ -11,6 +11,8 @@ PARSED_TEXT_FILE = PARSED_DIR / "text_chunks.jsonl"
 PARSED_TABLES_DIR = PARSED_DIR / "tables"
 PARSED_FIGURES_DIR = PARSED_DIR / "figures"
 
+PARSED_ANATOMY_DIR = PARSED_DIR / "figures_anatomy"
+
 STORAGE_DIR = BASE_DIR / "storage"
 EVAL_DIR = BASE_DIR / "eval"
 BENCHMARK_FILE = EVAL_DIR / "gold_benchmark.json"
@@ -34,9 +36,11 @@ DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
 EMBEDDING_DIM = 384
 
-# Google Gemini (Optional alternative)
+# Google Gemini (Dual-engine alternative)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY", "")
+GEMINI_BASE_URL = os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+DEFAULT_ENGINE = os.getenv("DEFAULT_ENGINE", "deepseek")
 
 # Local Ollama (Optional alternative)
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
