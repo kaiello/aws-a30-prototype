@@ -164,7 +164,7 @@ FIGURE_ANATOMY_CHUNKS = [
         )
     },
     {
-        "chunk_id": "clause_4_waveform_and_nonstandard_terms",
+        "chunk_id": "clause_4_nonstandard_burnthrough_and_rootgap_v2",
         "content": (
             "[AWS A3.0:2020 Clause 4 - Waveform-Controlled Welding and Critical Nonstandard Terms]\n"
             "Document: AWS A3.0M/A3.0:2020 Standard Welding Terms and Definitions\n"
@@ -178,6 +178,8 @@ FIGURE_ANATOMY_CHUNKS = [
             "  * 'total instantaneous energy (TIE), waveform-controlled welding' (Clause 4, p. 60): The sum of products of amperages, voltages, and time intervals determined at sampling frequencies sufficient to quantify waveform changes during a welding interval.\n"
             "\n"
             "2. NONSTANDARD TERMS & OBSOLETE PROCESSES:\n"
+            "- 'burn-through' (Clause 4, p. 14): When used as a nonstandard term, it is used for 'melt-through'. 'burn-through weld' is a nonstandard term for 'arc seam weld' or 'arc spot weld'. As a standard term, burn-through is a hole or depression in the root bead of a single-groove weld due to excess penetration (Figure B32(O)).\n"
+            "- 'root gap' (Clause 4, p. 50): A nonstandard term for 'root opening'.\n"
             "- 'hydromatic welding' (Clause 4, p. 32): A nonstandard term for 'pressure-controlled resistance welding'.\n"
             "- 'short arc' (Clause 4, p. 58): A nonstandard term when used for 'short circuiting transfer'.\n"
             "- 'dip transfer' (Clause 4, p. 20): A nonstandard term when used for dip feed or 'short circuiting transfer'.\n"

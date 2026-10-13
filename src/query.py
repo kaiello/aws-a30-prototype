@@ -61,6 +61,9 @@ def resolve_multimodal_assets(text: str):
     for fig_num in sorted(all_target_figures):
         clean_num = fig_num.upper()
         matching_pngs = list(PARSED_FIGURES_DIR.glob(f"Figure_{clean_num}_*.png"))
+        if not matching_pngs:
+            base_num = re.sub(r'[A-Z]$', '', clean_num)
+            matching_pngs = list(PARSED_FIGURES_DIR.glob(f"Figure_{base_num}_*.png"))
         if matching_pngs:
             resolved_figures.append({
                 "figure_id": f"Figure {clean_num}",

@@ -278,14 +278,18 @@ HTML_INDEX = """<!DOCTYPE html>
 
             <div class="suggestions">
                 <span class="pill" onclick="setQuery('show me flame contact on figure A6')">🔥 Flame Contact (Fig A6)</span>
-                <span class="pill" onclick="setQuery('Which processes use Vacuum shielding on Figure A6?')">🛡️ Vacuum Shielding (Fig A6)</span>
+                <span class="pill" onclick="setQuery('In Figure B16A, what are the inclination of axis and rotation of face coordinate limits for Flat position groove welds in plate?')">🧭 3D Welding Coordinates (Fig B16A)</span>
+                <span class="pill" onclick="setQuery('In Figure B23(J), what is the distinction between a toe temper bead and surface temper weld reinforcing beads?')">🔨 Temper Beads (Fig B23J)</span>
+                <span class="pill" onclick="setQuery('What are the callout components and features identified on Figure B46 for the Friction Stir Welding (FSW) process?')">🌀 FSW Schematic (Fig B46)</span>
+                <span class="pill" onclick="setQuery('What are the three distinct oxyacetylene flame types illustrated in Figure B40?')">🔥 Flame Types (Fig B40)</span>
                 <span class="pill" onclick="setQuery('Which pipe welding test position in Figure B21 includes a restriction ring?')">💍 6GR Restriction Ring (Fig B21)</span>
                 <span class="pill" onclick="setQuery('Identify the three distinct fillet weld throats illustrated in Figure B25')">📐 Fillet Throats (Fig B25)</span>
                 <span class="pill" onclick="setQuery('Which figure illustrates groove face, root edge, and root face?')">📏 Root Face vs Root Edge (Fig B5)</span>
-                <span class="pill" onclick="setQuery('Define bevel angle and bevel depth, and identify which figure illustrates them')">⚡ Bevel & Groove Angle (Fig B6)</span>
-                <span class="pill" onclick="setQuery('According to Table A4, what are the letter designations for thermal spraying and arc spraying?')">💨 Thermal Spraying THSP (Table A4)</span>
-                <span class="pill" onclick="setQuery('What standard terms should be used instead of the nonstandard term burn-through?')">⚠️ Nonstandard: Burn-through</span>
-                <span class="pill" onclick="setQuery('What is the minimum preheat temperature required for welding 50 mm thick ASTM A36 structural steel plate?')">🚫 ASTM A36 Preheat (Negative Control)</span>
+                <span class="pill" onclick="setQuery('According to Annex C1.5.3, why does the Definitions Subcommittee reject TIG and MIG in favor of GTAW and GMAW?')">⚖️ GTAW vs TIG Rationale (Annex C)</span>
+                <span class="pill" onclick="setQuery('Why was the term parallel joint introduced in the 2020 edition to replace edge joint according to Annex C1.5.7?')">📐 Parallel Joint Rationale (Annex C)</span>
+                <span class="pill" onclick="setQuery('According to Table D1, what new electrical terms were introduced in the 2020 edition for waveform-controlled welding?')">⚡ Waveform AIP & TIE (Table D1)</span>
+                <span class="pill" onclick="setQuery('According to Table D6, name physical science and chemistry terms that were deleted in the 2020 edition')">🗑️ Deleted Terms (Table D6)</span>
+                <span class="pill" onclick="setQuery('Show me the friction stir welding parameter schedule on Figure B75')">🚫 FSW B75 Schedule (Negative Control)</span>
             </div>
         </div>
 

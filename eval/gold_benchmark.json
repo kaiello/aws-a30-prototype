@@ -3,8 +3,15 @@
     "id": "Q01",
     "modality": "text",
     "query": "Define complete joint penetration (CJP) according to AWS A3.0.",
-    "expected_answer_keywords": ["joint penetration", "weld metal fills", "groove", "completely"],
-    "required_qualifiers": ["complete joint penetration"],
+    "expected_answer_keywords": [
+      "joint penetration",
+      "weld metal fills",
+      "groove",
+      "completely"
+    ],
+    "required_qualifiers": [
+      "complete joint penetration"
+    ],
     "gold_citation": {
       "clause": "Clause 4",
       "printed_page": 22,
@@ -16,14 +23,20 @@
   {
     "id": "Q02",
     "modality": "nonstandard",
-    "query": "What is the nonstandard term for root pass in welding terms?",
-    "expected_answer_keywords": ["stringer bead", "root bead", "nonstandard"],
-    "required_qualifiers": ["root bead"],
+    "query": "What is the nonstandard term for root opening in welding terms?",
+    "expected_answer_keywords": [
+      "root gap",
+      "root opening",
+      "nonstandard"
+    ],
+    "required_qualifiers": [
+      "root gap"
+    ],
     "gold_citation": {
       "clause": "Clause 4",
-      "printed_page": 55,
+      "printed_page": 50,
       "element_type": "text",
-      "element_id": "root pass"
+      "element_id": "root gap"
     },
     "must_abstain": false
   },
@@ -31,8 +44,12 @@
     "id": "Q03",
     "modality": "table",
     "query": "What is the letter designation for gas metal arc welding - pulsed arc in Table A1?",
-    "expected_answer_keywords": ["GMAW-P"],
-    "required_qualifiers": ["GMAW-P"],
+    "expected_answer_keywords": [
+      "GMAW-P"
+    ],
+    "required_qualifiers": [
+      "GMAW-P"
+    ],
     "gold_citation": {
       "clause": "Annex A",
       "printed_page": 69,
@@ -45,8 +62,12 @@
     "id": "Q04",
     "modality": "table",
     "query": "Which process letter designation corresponds to shielded metal arc welding in Table A1?",
-    "expected_answer_keywords": ["SMAW"],
-    "required_qualifiers": ["SMAW"],
+    "expected_answer_keywords": [
+      "SMAW"
+    ],
+    "required_qualifiers": [
+      "SMAW"
+    ],
     "gold_citation": {
       "clause": "Annex A",
       "printed_page": 69,
@@ -59,8 +80,15 @@
     "id": "Q05",
     "modality": "figure",
     "query": "Which figure illustrates the groove face, root edge, and root face, and what are their features?",
-    "expected_answer_keywords": ["Figure B5", "groove face", "root edge", "root face"],
-    "required_qualifiers": ["Figure B5"],
+    "expected_answer_keywords": [
+      "Figure B5",
+      "groove face",
+      "root edge",
+      "root face"
+    ],
+    "required_qualifiers": [
+      "Figure B5"
+    ],
     "gold_citation": {
       "clause": "Annex B",
       "printed_page": 86,
@@ -73,8 +101,14 @@
     "id": "Q06",
     "modality": "figure",
     "query": "Which figure in Annex B illustrates the joint root for butt, corner, and T-joints?",
-    "expected_answer_keywords": ["Figure B4", "joint root", "butt joint"],
-    "required_qualifiers": ["Figure B4"],
+    "expected_answer_keywords": [
+      "Figure B4",
+      "joint root",
+      "butt joint"
+    ],
+    "required_qualifiers": [
+      "Figure B4"
+    ],
     "gold_citation": {
       "clause": "Annex B",
       "printed_page": 85,
@@ -87,8 +121,17 @@
     "id": "Q07",
     "modality": "cross-modal",
     "query": "Explain what a 1F pipe welding test position is, and identify which figure illustrates it.",
-    "expected_answer_keywords": ["1F", "pipe", "45", "flat", "rotating", "Figure B20"],
-    "required_qualifiers": ["Figure B20"],
+    "expected_answer_keywords": [
+      "1F",
+      "pipe",
+      "45",
+      "flat",
+      "rotating",
+      "Figure B20"
+    ],
+    "required_qualifiers": [
+      "Figure B20"
+    ],
     "gold_citation": {
       "clause": "Clause 4 & Annex B",
       "printed_page": 5,
@@ -101,8 +144,14 @@
     "id": "Q08",
     "modality": "cross-modal",
     "query": "Define bevel angle and bevel depth, and identify which figure illustrates them.",
-    "expected_answer_keywords": ["bevel angle", "groove angle", "Figure B6"],
-    "required_qualifiers": ["Figure B6"],
+    "expected_answer_keywords": [
+      "bevel angle",
+      "groove angle",
+      "Figure B6"
+    ],
+    "required_qualifiers": [
+      "Figure B6"
+    ],
     "gold_citation": {
       "clause": "Clause 4 & Annex B",
       "printed_page": 11,
@@ -115,8 +164,16 @@
     "id": "Q09",
     "modality": "qualifier",
     "query": "What is the structural difference between root opening and root face in a weld joint?",
-    "expected_answer_keywords": ["root opening", "separation", "root face", "portion of the groove face"],
-    "required_qualifiers": ["root opening", "root face"],
+    "expected_answer_keywords": [
+      "root opening",
+      "separation",
+      "root face",
+      "portion of the groove face"
+    ],
+    "required_qualifiers": [
+      "root opening",
+      "root face"
+    ],
     "gold_citation": {
       "clause": "Clause 4",
       "printed_page": 55,
@@ -129,8 +186,16 @@
     "id": "Q10",
     "modality": "qualifier",
     "query": "What is the qualifying difference in sequence between a back weld and a backing weld?",
-    "expected_answer_keywords": ["back weld", "after", "backing weld", "before"],
-    "required_qualifiers": ["back weld", "backing weld"],
+    "expected_answer_keywords": [
+      "back weld",
+      "after",
+      "backing weld",
+      "before"
+    ],
+    "required_qualifiers": [
+      "back weld",
+      "backing weld"
+    ],
     "gold_citation": {
       "clause": "Clause 4",
       "printed_page": 10,
@@ -143,7 +208,13 @@
     "id": "Q11",
     "modality": "abstention",
     "query": "What are the ultrasonic testing acceptance criteria for porosity in structural steel welds according to AWS A3.0?",
-    "expected_answer_keywords": ["not specified", "out of scope", "abstain", "definitions only", "D1.1"],
+    "expected_answer_keywords": [
+      "not specified",
+      "out of scope",
+      "abstain",
+      "definitions only",
+      "D1.1"
+    ],
     "required_qualifiers": [],
     "gold_citation": null,
     "must_abstain": true
@@ -152,7 +223,12 @@
     "id": "Q12",
     "modality": "abstention",
     "query": "What is the minimum yield strength and elongation requirement for E7018 electrodes?",
-    "expected_answer_keywords": ["not specified", "out of scope", "abstain", "A5.1"],
+    "expected_answer_keywords": [
+      "not specified",
+      "out of scope",
+      "abstain",
+      "A5.1"
+    ],
     "required_qualifiers": [],
     "gold_citation": null,
     "must_abstain": true
@@ -161,8 +237,15 @@
     "id": "Q13",
     "modality": "text",
     "query": "Define adaptive control in the context of welding automation according to AWS A3.0.",
-    "expected_answer_keywords": ["adaptive control", "control", "sensing", "condition"],
-    "required_qualifiers": ["sensing"],
+    "expected_answer_keywords": [
+      "adaptive control",
+      "control",
+      "sense",
+      "condition"
+    ],
+    "required_qualifiers": [
+      "sense"
+    ],
     "gold_citation": {
       "clause": "Clause 4",
       "printed_page": 6,
@@ -175,8 +258,16 @@
     "id": "Q14",
     "modality": "text",
     "query": "Define actual throat and explain how it differs from theoretical throat in a fillet weld.",
-    "expected_answer_keywords": ["actual throat", "theoretical throat", "shortest distance", "root of a fillet weld"],
-    "required_qualifiers": ["actual throat", "theoretical throat"],
+    "expected_answer_keywords": [
+      "actual throat",
+      "theoretical throat",
+      "shortest distance",
+      "root of a fillet weld"
+    ],
+    "required_qualifiers": [
+      "actual throat",
+      "theoretical throat"
+    ],
     "gold_citation": {
       "clause": "Clause 4",
       "printed_page": 5,
@@ -189,8 +280,16 @@
     "id": "Q15",
     "modality": "text",
     "query": "What is waveform-controlled welding according to AWS A3.0 Clause 4?",
-    "expected_answer_keywords": ["waveform-controlled welding", "software", "manipulate", "waveform", "arc welding"],
-    "required_qualifiers": ["waveform"],
+    "expected_answer_keywords": [
+      "waveform-controlled welding",
+      "software",
+      "manipulate",
+      "waveform",
+      "arc welding"
+    ],
+    "required_qualifiers": [
+      "waveform"
+    ],
     "gold_citation": {
       "clause": "Clause 4",
       "printed_page": 62,
@@ -203,8 +302,15 @@
     "id": "Q16",
     "modality": "text",
     "query": "Define thermal gouging and state which clause covers it.",
-    "expected_answer_keywords": ["thermal gouging", "thermal cutting", "bevel", "groove"],
-    "required_qualifiers": ["thermal cutting"],
+    "expected_answer_keywords": [
+      "thermal gouging",
+      "thermal cutting",
+      "bevel",
+      "groove"
+    ],
+    "required_qualifiers": [
+      "thermal cutting"
+    ],
     "gold_citation": {
       "clause": "Clause 4",
       "printed_page": 63,
@@ -217,8 +323,14 @@
     "id": "Q17",
     "modality": "nonstandard",
     "query": "What standard terms should be used instead of the nonstandard term 'burn-through' according to AWS A3.0?",
-    "expected_answer_keywords": ["burn-through", "melt-through", "excessive melt-through"],
-    "required_qualifiers": ["melt-through"],
+    "expected_answer_keywords": [
+      "burn-through",
+      "melt-through",
+      "excessive melt-through"
+    ],
+    "required_qualifiers": [
+      "melt-through"
+    ],
     "gold_citation": {
       "clause": "Clause 4",
       "printed_page": 12,
@@ -231,8 +343,14 @@
     "id": "Q18",
     "modality": "nonstandard",
     "query": "What is the standard AWS term for the nonstandard term 'short arc'?",
-    "expected_answer_keywords": ["short circuiting transfer", "short circuiting gas metal arc welding", "GMAW-S"],
-    "required_qualifiers": ["short circuiting"],
+    "expected_answer_keywords": [
+      "short circuiting transfer",
+      "short circuiting gas metal arc welding",
+      "GMAW-S"
+    ],
+    "required_qualifiers": [
+      "short circuiting"
+    ],
     "gold_citation": {
       "clause": "Clause 4",
       "printed_page": 58,
@@ -245,8 +363,13 @@
     "id": "Q19",
     "modality": "nonstandard",
     "query": "What standard term should be used instead of 'hydromatic welding'?",
-    "expected_answer_keywords": ["hydromatic welding", "pressure-controlled resistance welding"],
-    "required_qualifiers": ["pressure-controlled resistance welding"],
+    "expected_answer_keywords": [
+      "hydromatic welding",
+      "pressure-controlled resistance welding"
+    ],
+    "required_qualifiers": [
+      "pressure-controlled resistance welding"
+    ],
     "gold_citation": {
       "clause": "Clause 4",
       "printed_page": 32,
@@ -259,8 +382,15 @@
     "id": "Q20",
     "modality": "nonstandard",
     "query": "According to Clause 4 and Table A5, what are 'flow welding' and 'flow brazing'?",
-    "expected_answer_keywords": ["flow welding", "flow brazing", "obsolete", "Table A5"],
-    "required_qualifiers": ["Table A5"],
+    "expected_answer_keywords": [
+      "flow welding",
+      "flow brazing",
+      "obsolete",
+      "Table A5"
+    ],
+    "required_qualifiers": [
+      "Table A5"
+    ],
     "gold_citation": {
       "clause": "Clause 4 & Annex A",
       "printed_page": 26,
@@ -273,8 +403,15 @@
     "id": "Q21",
     "modality": "figure",
     "query": "On Figure A6 (Brazing and Soldering Classification Chart), what nonstandard terms are identified in relation to torch brazing and flame contact, and what note applies to brazing with pressure?",
-    "expected_answer_keywords": ["Figure A6", "flame contact", "brazing", "pressure"],
-    "required_qualifiers": ["Figure A6"],
+    "expected_answer_keywords": [
+      "Figure A6",
+      "flame contact",
+      "brazing",
+      "pressure"
+    ],
+    "required_qualifiers": [
+      "Figure A6"
+    ],
     "gold_citation": {
       "clause": "Annex A",
       "printed_page": 74,
@@ -286,14 +423,20 @@
   {
     "id": "Q22",
     "modality": "figure",
-    "query": "Which pipe welding test position in Figure B21 includes a restriction ring, and what is its letter designation?",
-    "expected_answer_keywords": ["Figure B21", "6GR", "restriction ring", "pipe"],
-    "required_qualifiers": ["6GR", "restriction ring"],
+    "query": "Which pipe welding test position in Figure B19 includes a restriction ring, and what is its letter designation?",
+    "expected_answer_keywords": [
+      "6GR",
+      "restriction ring",
+      "Figure B19"
+    ],
+    "required_qualifiers": [
+      "6GR"
+    ],
     "gold_citation": {
       "clause": "Annex B",
-      "printed_page": 112,
+      "printed_page": 108,
       "element_type": "figure",
-      "element_id": "Figure B21"
+      "element_id": "Figure B19"
     },
     "must_abstain": false
   },
@@ -301,8 +444,17 @@
     "id": "Q23",
     "modality": "figure",
     "query": "Identify the three distinct fillet weld throats illustrated in Figure B25.",
-    "expected_answer_keywords": ["Figure B25", "actual throat", "effective throat", "theoretical throat"],
-    "required_qualifiers": ["actual throat", "effective throat", "theoretical throat"],
+    "expected_answer_keywords": [
+      "Figure B25",
+      "actual throat",
+      "effective throat",
+      "theoretical throat"
+    ],
+    "required_qualifiers": [
+      "actual throat",
+      "effective throat",
+      "theoretical throat"
+    ],
     "gold_citation": {
       "clause": "Annex B",
       "printed_page": 116,
@@ -315,8 +467,16 @@
     "id": "Q24",
     "modality": "figure",
     "query": "What weld face discontinuities and profile deviations are illustrated in Figure B26?",
-    "expected_answer_keywords": ["Figure B26", "undercut", "overlap", "underfill", "reinforcement"],
-    "required_qualifiers": ["Figure B26"],
+    "expected_answer_keywords": [
+      "Figure B26",
+      "undercut",
+      "overlap",
+      "underfill",
+      "reinforcement"
+    ],
+    "required_qualifiers": [
+      "Figure B26"
+    ],
     "gold_citation": {
       "clause": "Annex B",
       "printed_page": 117,
@@ -329,8 +489,17 @@
     "id": "Q25",
     "modality": "table",
     "query": "According to Table A4 (Master Chart of Allied Processes), what are the letter designations for thermal spraying and arc spraying?",
-    "expected_answer_keywords": ["Table A4", "THSP", "ASP", "thermal spraying", "arc spraying"],
-    "required_qualifiers": ["THSP", "ASP"],
+    "expected_answer_keywords": [
+      "Table A4",
+      "THSP",
+      "ASP",
+      "thermal spraying",
+      "arc spraying"
+    ],
+    "required_qualifiers": [
+      "THSP",
+      "ASP"
+    ],
     "gold_citation": {
       "clause": "Annex A",
       "printed_page": 72,
@@ -343,8 +512,17 @@
     "id": "Q26",
     "modality": "table",
     "query": "What are the letter designations for oxyacetylene welding and oxyhydrogen welding in Table A1 and Table A2?",
-    "expected_answer_keywords": ["Table A1", "OAW", "OHW", "oxyacetylene welding", "oxyhydrogen welding"],
-    "required_qualifiers": ["OAW", "OHW"],
+    "expected_answer_keywords": [
+      "Table A1",
+      "OAW",
+      "OHW",
+      "oxyacetylene welding",
+      "oxyhydrogen welding"
+    ],
+    "required_qualifiers": [
+      "OAW",
+      "OHW"
+    ],
     "gold_citation": {
       "clause": "Annex A",
       "printed_page": 70,
@@ -357,7 +535,13 @@
     "id": "Q27",
     "modality": "abstention",
     "query": "What is the minimum preheat temperature required for welding 50 mm thick ASTM A36 structural steel plate?",
-    "expected_answer_keywords": ["not specified", "out of scope", "abstain", "D1.1", "does not contain"],
+    "expected_answer_keywords": [
+      "not specified",
+      "out of scope",
+      "abstain",
+      "D1.1",
+      "does not contain"
+    ],
     "required_qualifiers": [],
     "gold_citation": null,
     "must_abstain": true
@@ -366,7 +550,14 @@
     "id": "Q28",
     "modality": "abstention",
     "query": "What is the maximum allowable dimension of isolated porosity in radiographic inspection of boiler welds?",
-    "expected_answer_keywords": ["not specified", "out of scope", "abstain", "ASME", "acceptance criteria", "does not contain"],
+    "expected_answer_keywords": [
+      "not specified",
+      "out of scope",
+      "abstain",
+      "ASME",
+      "acceptance criteria",
+      "does not contain"
+    ],
     "required_qualifiers": [],
     "gold_citation": null,
     "must_abstain": true
@@ -375,7 +566,13 @@
     "id": "Q29",
     "modality": "abstention",
     "query": "What does Figure B120 illustrate in Annex B of AWS A3.0?",
-    "expected_answer_keywords": ["not specified", "does not exist", "out of scope", "B97", "does not contain"],
+    "expected_answer_keywords": [
+      "not specified",
+      "does not exist",
+      "out of scope",
+      "B97",
+      "does not contain"
+    ],
     "required_qualifiers": [],
     "gold_citation": null,
     "must_abstain": true
@@ -384,7 +581,442 @@
     "id": "Q30",
     "modality": "abstention",
     "query": "What is the process letter designation for laser beam cladding listed in Table A10?",
-    "expected_answer_keywords": ["not specified", "does not exist", "out of scope", "Table A5", "does not contain"],
+    "expected_answer_keywords": [
+      "not specified",
+      "does not exist",
+      "out of scope",
+      "Table A5",
+      "does not contain"
+    ],
+    "required_qualifiers": [],
+    "gold_citation": null,
+    "must_abstain": true
+  },
+  {
+    "id": "Q31",
+    "modality": "figure",
+    "query": "In Figure B16A, what are the inclination of axis and rotation of face coordinate limits for Flat position groove welds in plate?",
+    "expected_answer_keywords": [
+      "0\u00b0 to 15\u00b0",
+      "150\u00b0 to 210\u00b0",
+      "Flat",
+      "Figure B16A"
+    ],
+    "required_qualifiers": [
+      "Figure B16A"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 102,
+      "element_type": "figure",
+      "element_id": "Figure B16A"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q32",
+    "modality": "figure",
+    "query": "In Figure B23(J), what is the distinction between a toe temper bead and surface temper weld reinforcing beads?",
+    "expected_answer_keywords": [
+      "toe temper bead",
+      "surface temper",
+      "reinforcing",
+      "base metal",
+      "Figure B23"
+    ],
+    "required_qualifiers": [
+      "Figure B23"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 116,
+      "element_type": "figure",
+      "element_id": "Figure B23"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q33",
+    "modality": "figure",
+    "query": "What are the callout components and features identified on Figure B46 for the Friction Stir Welding (FSW) process?",
+    "expected_answer_keywords": [
+      "tool shoulder",
+      "probe",
+      "advancing side",
+      "retreating side",
+      "exit hole",
+      "Figure B46"
+    ],
+    "required_qualifiers": [
+      "Figure B46"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 150,
+      "element_type": "figure",
+      "element_id": "Figure B46"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q34",
+    "modality": "figure",
+    "query": "What is the operational sequence discriminator between a starting weld tab and a runoff weld tab in Figure B12?",
+    "expected_answer_keywords": [
+      "starting weld tab",
+      "runoff weld tab",
+      "start",
+      "end",
+      "Figure B12"
+    ],
+    "required_qualifiers": [
+      "Figure B12"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 98,
+      "element_type": "figure",
+      "element_id": "Figure B12"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q35",
+    "modality": "figure",
+    "query": "What are the three distinct oxyacetylene flame types illustrated in Figure B40?",
+    "expected_answer_keywords": [
+      "neutral flame",
+      "oxidizing flame",
+      "carburizing flame",
+      "reducing flame",
+      "Figure B40"
+    ],
+    "required_qualifiers": [
+      "Figure B40"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 145,
+      "element_type": "figure",
+      "element_id": "Figure B40"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q36",
+    "modality": "figure",
+    "query": "What are the metal transfer modes illustrated in Figure B39 for gas metal arc welding?",
+    "expected_answer_keywords": [
+      "spray transfer",
+      "globular transfer",
+      "pulsed spray",
+      "short circuiting",
+      "Figure B39"
+    ],
+    "required_qualifiers": [
+      "Figure B39"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 144,
+      "element_type": "figure",
+      "element_id": "Figure B39"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q37",
+    "modality": "figure",
+    "query": "In Figures B28 and B29, what is the fundamental difference between complete fusion and incomplete fusion?",
+    "expected_answer_keywords": [
+      "complete fusion",
+      "incomplete fusion",
+      "joint root",
+      "groove face",
+      "Figure B28"
+    ],
+    "required_qualifiers": [
+      "Figure B28"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 131,
+      "element_type": "figure",
+      "element_id": "Figure B28"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q38",
+    "modality": "figure",
+    "query": "Identify six distinct crack types classified by location in Figure B33.",
+    "expected_answer_keywords": [
+      "longitudinal crack",
+      "transverse crack",
+      "crater crack",
+      "toe crack",
+      "underbead crack",
+      "HAZ crack",
+      "Figure B33"
+    ],
+    "required_qualifiers": [
+      "Figure B33"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 139,
+      "element_type": "figure",
+      "element_id": "Figure B33"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q39",
+    "modality": "figure",
+    "query": "What are the primary component callouts of a plasma arc torch shown in Figure B35?",
+    "expected_answer_keywords": [
+      "constricting nozzle",
+      "orifice gas",
+      "electrode",
+      "shielding gas",
+      "Figure B35"
+    ],
+    "required_qualifiers": [
+      "Figure B35"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 141,
+      "element_type": "figure",
+      "element_id": "Figure B35"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q40",
+    "modality": "figure",
+    "query": "In Figure B41, what is drag in oxygen cutting, and how is it illustrated?",
+    "expected_answer_keywords": [
+      "drag",
+      "offset",
+      "entry",
+      "exit",
+      "cutting jet",
+      "Figure B41"
+    ],
+    "required_qualifiers": [
+      "Figure B41"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 146,
+      "element_type": "figure",
+      "element_id": "Figure B41"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q41",
+    "modality": "figure",
+    "query": "According to Figure B34, what is the electrical distinction between DCEP and DCEN polarity?",
+    "expected_answer_keywords": [
+      "DCEP",
+      "DCEN",
+      "positive",
+      "negative",
+      "electrode",
+      "workpiece",
+      "Figure B34"
+    ],
+    "required_qualifiers": [
+      "Figure B34"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 140,
+      "element_type": "figure",
+      "element_id": "Figure B34"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q42",
+    "modality": "figure",
+    "query": "In Figure B51, what are the primary stages and parameters shown for a typical flash welding cycle?",
+    "expected_answer_keywords": [
+      "preheat",
+      "flashing",
+      "upset",
+      "platen spacing",
+      "Figure B51"
+    ],
+    "required_qualifiers": [
+      "Figure B51"
+    ],
+    "gold_citation": {
+      "clause": "Annex B",
+      "printed_page": 154,
+      "element_type": "figure",
+      "element_id": "Figure B51"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q43",
+    "modality": "text",
+    "query": "According to Annex C1.5.3, why does the Definitions Subcommittee reject 'TIG' and 'MIG' in favor of GTAW and GMAW?",
+    "expected_answer_keywords": [
+      "inert",
+      "active gas",
+      "argon",
+      "designation system",
+      "Annex C"
+    ],
+    "required_qualifiers": [
+      "Annex C"
+    ],
+    "gold_citation": {
+      "clause": "Annex C",
+      "printed_page": 161,
+      "element_type": "text",
+      "element_id": "Clause C1.5.3"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q44",
+    "modality": "text",
+    "query": "Why was the term 'parallel joint' introduced in the 2020 edition to replace 'edge joint' according to Annex C1.5.7?",
+    "expected_answer_keywords": [
+      "parallel joint",
+      "edge joint",
+      "orientation",
+      "five basic joint types",
+      "Annex C"
+    ],
+    "required_qualifiers": [
+      "Annex C"
+    ],
+    "gold_citation": {
+      "clause": "Annex C",
+      "printed_page": 162,
+      "element_type": "text",
+      "element_id": "Clause C1.5.7"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q45",
+    "modality": "table",
+    "query": "According to Table D1, what new electrical terms were introduced in the 2020 edition for waveform-controlled welding?",
+    "expected_answer_keywords": [
+      "average instantaneous power",
+      "AIP",
+      "total instantaneous energy",
+      "TIE",
+      "Table D1"
+    ],
+    "required_qualifiers": [
+      "Table D1"
+    ],
+    "gold_citation": {
+      "clause": "Annex D",
+      "printed_page": 165,
+      "element_type": "table",
+      "element_id": "Table D1"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q46",
+    "modality": "table",
+    "query": "According to Table D4, which terms were revised from standard to nonstandard in the 2020 edition?",
+    "expected_answer_keywords": [
+      "cored solder",
+      "penetration-enhancing flux",
+      "multiple impulse welding",
+      "Table D4"
+    ],
+    "required_qualifiers": [
+      "Table D4"
+    ],
+    "gold_citation": {
+      "clause": "Annex D",
+      "printed_page": 170,
+      "element_type": "table",
+      "element_id": "Table D4"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q47",
+    "modality": "table",
+    "query": "According to Table D6, name physical science and chemistry terms that were deleted in the 2020 edition.",
+    "expected_answer_keywords": [
+      "covalent bond",
+      "ionic bond",
+      "metal",
+      "differential thermal expansion",
+      "Table D6"
+    ],
+    "required_qualifiers": [
+      "Table D6"
+    ],
+    "gold_citation": {
+      "clause": "Annex D",
+      "printed_page": 170,
+      "element_type": "table",
+      "element_id": "Table D6"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q48",
+    "modality": "text",
+    "query": "What are the required format and submission procedures for requesting an official interpretation on an AWS standard in Annex F?",
+    "expected_answer_keywords": [
+      "standards@aws.org",
+      "yes or no",
+      "single provision",
+      "proposed answer",
+      "Annex F"
+    ],
+    "required_qualifiers": [
+      "Annex F"
+    ],
+    "gold_citation": {
+      "clause": "Annex F",
+      "printed_page": 173,
+      "element_type": "text",
+      "element_id": "Clause F3"
+    },
+    "must_abstain": false
+  },
+  {
+    "id": "Q49",
+    "modality": "abstention",
+    "query": "What is the recommended titanium laser welding shielding gas flow rate in Annex B?",
+    "expected_answer_keywords": [
+      "not specified",
+      "out of scope",
+      "abstain",
+      "does not contain"
+    ],
+    "required_qualifiers": [],
+    "gold_citation": null,
+    "must_abstain": true
+  },
+  {
+    "id": "Q50",
+    "modality": "abstention",
+    "query": "Show me the friction stir welding parameter schedule on Figure B75.",
+    "expected_answer_keywords": [
+      "not specified",
+      "does not exist",
+      "out of scope",
+      "B54",
+      "does not contain"
+    ],
     "required_qualifiers": [],
     "gold_citation": null,
     "must_abstain": true

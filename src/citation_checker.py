@@ -7,8 +7,8 @@ import re
 from typing import Dict, Any, List
 
 # Known ground truth elements in AWS A3.0
-VALID_CLAUSES = ["Clause 1", "Clause 2", "Clause 3", "Clause 4", "Annex A", "Annex B", "Annex C"]
-VALID_TABLES = ["Table A1", "Table A2", "Table A3", "Table A4", "Table A5"]
+VALID_CLAUSES = ["Clause 1", "Clause 2", "Clause 3", "Clause 4", "Annex A", "Annex B", "Annex C", "Annex D", "Annex E", "Annex F"]
+VALID_TABLES = ["Table A1", "Table A2", "Table A3", "Table A4", "Table A5", "Table D1", "Table D2", "Table D3", "Table D4", "Table D5", "Table D6"]
 VALID_FIGURES = [f"Figure A{i}" for i in range(1, 7)] + [f"Figure B{i}" for i in range(1, 98)]
 
 STRONG_ABSTENTION_PREFIXES = [
@@ -55,8 +55,8 @@ def extract_citations(response_text: str) -> Dict[str, Any]:
     cited_clauses = [c for c in VALID_CLAUSES if c.lower() in response_text.lower()]
     cited_tables = [t for t in VALID_TABLES if t.lower() in response_text.lower()]
     
-    # Extract figures (e.g., Figure A6, Figure B4, Figure B20)
-    fig_matches = re.findall(r'Figure\s+[AB]\d+', response_text, re.IGNORECASE)
+    # Extract figures (e.g., Figure A6, Figure B4, Figure B16A, Figure B20)
+    fig_matches = re.findall(r'Figure\s+[AB]\d+[A-Z]?', response_text, re.IGNORECASE)
     cited_figures = list(set([re.sub(r'\s+', ' ', f.title()) for f in fig_matches]))
     
     # Extract page references

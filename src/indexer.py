@@ -5,6 +5,8 @@ Builds local graph (NetworkX) and vector (NanoVectorDB) stores in ./storage.
 """
 
 import os
+os.environ["HF_HUB_OFFLINE"] = "1"
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
 import sys
 import json
 import asyncio

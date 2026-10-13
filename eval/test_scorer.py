@@ -8,6 +8,12 @@ import json
 import argparse
 import datetime
 from pathlib import Path
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
 from src.config import BENCHMARK_FILE, BASE_DIR, DEFAULT_ENGINE, DEEPSEEK_MODEL, GEMINI_MODEL, EMBEDDING_MODEL
 from src.query import run_query
 from src.citation_checker import verify_response
@@ -16,8 +22,8 @@ def run_evaluation(
     benchmark_path: Path = BENCHMARK_FILE,
     mode: str = "mix",
     engine: str = DEFAULT_ENGINE,
-    report_filename: str = "card04_benchmark_report.md",
-    receipt_filename: str = "run_receipt_card04.json"
+    report_filename: str = "card05_benchmark_report.md",
+    receipt_filename: str = "run_receipt_card05.json"
 ):
     if not benchmark_path.exists():
         print(f"Benchmark file not found at {benchmark_path}")
@@ -70,7 +76,7 @@ def run_evaluation(
     active_model = GEMINI_MODEL if engine.lower() == "gemini" else DEEPSEEK_MODEL
 
     report_lines = [
-        f"# AWS A3.0 Multimodal Prototype Benchmark Report (Card 04)\n",
+        f"# AWS A3.0 Multimodal Prototype Benchmark Report (Card 05 - Whole Document Exhaustive)\n",
         f"**Date:** {datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}",
         f"**Inference Engine:** {engine.upper()} (`{active_model}`)",
         f"**Retrieval Mode:** {mode}",
@@ -154,8 +160,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate AWS A3.0 Prototype")
     parser.add_argument("--mode", type=str, default="mix", help="LightRAG query mode")
     parser.add_argument("--engine", type=str, default=DEFAULT_ENGINE, choices=["deepseek", "gemini"], help="LLM inference engine")
-    parser.add_argument("--report", type=str, default="card04_benchmark_report.md", help="Report filename")
-    parser.add_argument("--receipt", type=str, default="run_receipt_card04.json", help="Receipt filename")
+    parser.add_argument("--report", type=str, default="card05_benchmark_report.md", help="Report filename")
+    parser.add_argument("--receipt", type=str, default="run_receipt_card05.json", help="Receipt filename")
     args = parser.parse_args()
     
     run_evaluation(
