@@ -24,7 +24,14 @@ from src.config import (
     DEEPSEEK_API_KEY,
     GEMINI_API_KEY
 )
-from src.query import run_query
+from src.query import run_query, resolve_multimodal_assets
+from src.figure_inspectors import (
+    FIGURE_INSPECTORS,
+    FIGURE_CATEGORIES,
+    get_all_figures_catalog,
+    get_inspector_html,
+    get_figure_data
+)
 
 HTML_INDEX = """<!DOCTYPE html>
 <html lang="en">
@@ -163,6 +170,93 @@ HTML_INDEX = """<!DOCTYPE html>
             color: var(--accent-cyan);
             border-color: var(--accent-cyan);
         }
+        .figures-explorer-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+        }
+        .explorer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        .explorer-header:hover .header-title {
+            color: var(--accent-cyan);
+        }
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .category-tab {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+        }
+        .category-tab.active, .category-tab:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(56, 189, 248, 0.1);
+        }
+        .figures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 10px;
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+        .fig-tile {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .fig-tile:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15);
+        }
+        .fig-tile-id {
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-size: 13px;
+        }
+        .fig-tile-title {
+            font-size: 12px;
+            color: var(--text-primary);
+            margin: 4px 0 6px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .fig-tile-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .fig-tile-badge {
+            font-size: 10px;
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.12);
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
         .result-panel {
             display: none;
             grid-template-columns: 1.2fr 1fr;
@@ -293,6 +387,20 @@ HTML_INDEX = """<!DOCTYPE html>
             </div>
         </div>
 
+        <div class="figures-explorer-card">
+            <div class="explorer-header" onclick="toggleFigureDrawer()">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="header-title" style="font-size: 15px; font-weight: 700; color: var(--accent-cyan);">📚 Interactive Figure & Diagram Directory (All 60 Figures: Annex A & Annex B)</span>
+                    <span style="font-size: 11px; background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); padding: 2px 8px; border-radius: 12px; font-weight: 600;">267+ Interactive Chips</span>
+                </div>
+                <span id="drawerToggleIcon" style="font-size: 12px; color: var(--text-secondary); cursor: pointer;">▼ Click to Browse All Figures</span>
+            </div>
+            <div id="figureDrawerContent" style="display: none; margin-top: 14px;">
+                <div class="category-tabs" id="categoryTabs"></div>
+                <div class="figures-grid" id="figuresGrid"></div>
+            </div>
+        </div>
+
         <div class="spinner" id="loadingSpinner">
             Retrieving knowledge graph entities and multimodal evidence...
         </div>
@@ -416,206 +524,10 @@ HTML_INDEX = """<!DOCTYPE html>
                         card.className = "figure-card";
                         
                         let inspectorHtml = "";
-                        if (fig.figure_id === "Figure A6" || fileName.includes("Figure_A6")) {
-                            inspectorHtml = `
-                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
-                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-                                        <span>🔎 Interactive Word & Node Explorer for Figure A6 (Click ANY word to inspect):</span>
-                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex A, p. 79 (PDF p. 92)</span>
-                                    </div>
-                                    
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #fbbf24; text-transform: uppercase;">⚡ Energy Sources:</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('Explain the Chemical energy branch on Figure A6')">Chemical</span>
-                                            <span class="pill" onclick="setQuery('Explain the Electrical energy branch on Figure A6')">Electrical</span>
-                                        </div>
-                                    </div>
-
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #f87171; text-transform: uppercase;">🔥 Thermal Sources:</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" style="border-color: #f87171; color: #fca5a5;" onclick="setQuery('show me flame contact on figure A6')">Flame Contact</span>
-                                            <span class="pill" onclick="setQuery('Explain Arc thermal source on Figure A6')">Arc</span>
-                                            <span class="pill" onclick="setQuery('Explain Resistance thermal source on Figure A6')">Resistance</span>
-                                            <span class="pill" onclick="setQuery('Explain Conduction thermal source on Figure A6')">Conduction</span>
-                                            <span class="pill" onclick="setQuery('Explain Induction thermal source on Figure A6')">Induction</span>
-                                            <span class="pill" onclick="setQuery('Explain Radiation thermal source on Figure A6')">Radiation</span>
-                                        </div>
-                                    </div>
-
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">🛡️ Shielding Mediums:</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('Which processes use Flux shielding on Figure A6?')">Flux</span>
-                                            <span class="pill" onclick="setQuery('Which processes use Gas shielding on Figure A6?')">Gas</span>
-                                            <span class="pill" onclick="setQuery('Which processes use Vacuum shielding on Figure A6?')">Vacuum</span>
-                                        </div>
-                                    </div>
-
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #c084fc; text-transform: uppercase;">⚖️ Mechanical Loading & Footnote:</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('What processes require Pressure on Figure A6?')">Pressure</span>
-                                            <span class="pill" onclick="setQuery('What does *Pressure normal to faying surfaces mean on Figure A6?')">*Pressure normal to faying surfaces</span>
-                                        </div>
-                                    </div>
-
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #4ade80; text-transform: uppercase;">🟠 Brazing Processes (B):</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('What is TB on Figure A6?')">TB (torch brazing)</span>
-                                            <span class="pill" onclick="setQuery('What is FB on Figure A6?')">FB (furnace brazing)</span>
-                                            <span class="pill" onclick="setQuery('What is B-CA on Figure A6?')">B-CA (controlled-atmosphere)</span>
-                                            <span class="pill" onclick="setQuery('What is EXB on Figure A6 and what are its physical characteristics?')">EXB (exothermic)</span>
-                                            <span class="pill" onclick="setQuery('What is DB on Figure A6?')">DB (dip brazing)</span>
-                                            <span class="pill" onclick="setQuery('What is AB on Figure A6?')">AB (arc brazing)</span>
-                                            <span class="pill" onclick="setQuery('What is RB on Figure A6?')">RB (resistance brazing)</span>
-                                            <span class="pill" onclick="setQuery('What is IB on Figure A6?')">IB (induction brazing)</span>
-                                            <span class="pill" onclick="setQuery('What is DFB on Figure A6?')">DFB (diffusion brazing)</span>
-                                            <span class="pill" onclick="setQuery('What is IRB on Figure A6?')">IRB (infrared brazing)</span>
-                                            <span class="pill" onclick="setQuery('What is EBB on Figure A6?')">EBB (electron beam)</span>
-                                            <span class="pill" onclick="setQuery('What is LBB on Figure A6?')">LBB (laser beam)</span>
-                                        </div>
-                                    </div>
-
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #60a5fa; text-transform: uppercase;">🔵 Soldering Processes (S):</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('What is TS on Figure A6?')">TS (torch soldering)</span>
-                                            <span class="pill" onclick="setQuery('What is FS on Figure A6?')">FS (furnace soldering)</span>
-                                            <span class="pill" onclick="setQuery('What is DS on Figure A6?')">DS (dip soldering)</span>
-                                            <span class="pill" onclick="setQuery('What is INS on Figure A6?')">INS (iron soldering)</span>
-                                            <span class="pill" onclick="setQuery('What is WS on Figure A6?')">WS (wave soldering)</span>
-                                            <span class="pill" onclick="setQuery('What is RS on Figure A6?')">RS (resistance soldering)</span>
-                                            <span class="pill" onclick="setQuery('What is USS on Figure A6?')">USS (ultrasonic soldering)</span>
-                                            <span class="pill" onclick="setQuery('What is IS on Figure A6?')">IS (induction soldering)</span>
-                                            <span class="pill" onclick="setQuery('What is IRS on Figure A6?')">IRS (infrared soldering)</span>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <span style="font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">🧭 Headings & References:</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('What is the meaning of See Figure A3 on Figure A6?')">See Figure A3</span>
-                                            <span class="pill" onclick="setQuery('What are Physical Characteristics on Figure A6?')">Physical Characteristics</span>
-                                            <span class="pill" onclick="setQuery('Show me the complete process designation legend for Figure A6')">Full Designation Legend</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        } else if (fig.figure_id === "Figure B5" || fileName.includes("Figure_B5")) {
-                            inspectorHtml = `
-                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
-                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-                                        <span>🔎 Interactive Node Explorer for Figure B5:</span>
-                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 86 (Groove and Root Faces)</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">Joint Features & Edge Preparation:</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('Which figure illustrates groove face, root edge, and root face?')">Groove Face</span>
-                                            <span class="pill" onclick="setQuery('What is the structural difference between root opening and root face in a weld joint?')">Root Face vs Root Opening</span>
-                                            <span class="pill" onclick="setQuery('What is the difference between root face and root edge on Figure B5?')">Root Edge (Zero Land)</span>
-                                            <span class="pill" onclick="setQuery('Define bevel face on Figure B5')">Bevel Face</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        } else if (fig.figure_id === "Figure B6" || fileName.includes("Figure_B6")) {
-                            inspectorHtml = `
-                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
-                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-                                        <span>🔎 Interactive Angle Explorer for Figure B6:</span>
-                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 87-89 (Groove Geometry)</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">Angular Dimensions & Radii:</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('Define bevel angle and bevel depth, and identify which figure illustrates them')">Bevel Angle</span>
-                                            <span class="pill" onclick="setQuery('What is the relationship between groove angle and bevel angle on Figure B6?')">Groove Angle = 2 * Bevel Angle</span>
-                                            <span class="pill" onclick="setQuery('What is depth of bevel on Figure B6?')">Depth of Bevel</span>
-                                            <span class="pill" onclick="setQuery('What is groove radius on Figure B6?')">Groove Radius</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        } else if (fig.figure_id === "Figure B20" || fileName.includes("Figure_B20")) {
-                            inspectorHtml = `
-                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
-                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-                                        <span>🔎 Interactive Position Explorer for Figure B20:</span>
-                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 111 (Fillet Pipe Positions)</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">Fillet Pipe Test Positions:</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('Explain what a 1F pipe welding test position is, and identify which figure illustrates it')">1F (Pipe Axis 45°, Rotated)</span>
-                                            <span class="pill" onclick="setQuery('Explain 2F pipe welding test position on Figure B20')">2F (Pipe Axis Vertical, Fixed)</span>
-                                            <span class="pill" onclick="setQuery('Explain 2FR pipe welding test position on Figure B20')">2FR (Pipe Axis Horizontal, Rotated)</span>
-                                            <span class="pill" onclick="setQuery('Explain 4F pipe welding test position on Figure B20')">4F (Pipe Axis Overhead)</span>
-                                            <span class="pill" onclick="setQuery('Explain 5F pipe welding test position on Figure B20')">5F (Pipe Axis Horizontal, Fixed)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        } else if (fig.figure_id === "Figure B21" || fileName.includes("Figure_B21")) {
-                            inspectorHtml = `
-                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
-                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-                                        <span>🔎 Interactive Position Explorer for Figure B21:</span>
-                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 112 (Groove Pipe Positions)</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">Groove Pipe Test Positions:</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('Explain 1G pipe test position on Figure B21')">1G (Rotated)</span>
-                                            <span class="pill" onclick="setQuery('Explain 2G pipe test position on Figure B21')">2G (Fixed Vertical)</span>
-                                            <span class="pill" onclick="setQuery('Explain 5G pipe test position on Figure B21')">5G (Fixed Horizontal)</span>
-                                            <span class="pill" onclick="setQuery('Explain 6G pipe test position on Figure B21')">6G (Fixed Inclined 45°)</span>
-                                            <span class="pill" style="border-color: #38bdf8; color: #7dd3fc;" onclick="setQuery('Which pipe welding test position in Figure B21 includes a restriction ring, and what is its letter designation?')">💍 6GR (With Restriction Ring)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        } else if (fig.figure_id === "Figure B25" || fileName.includes("Figure_B25")) {
-                            inspectorHtml = `
-                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
-                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-                                        <span>🔎 Interactive Throat & Dimension Explorer for Figure B25:</span>
-                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 116 (Fillet Weld Throats)</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">Throat Dimensions & Discontinuities:</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('Define actual throat and explain how it differs from theoretical throat in a fillet weld')">Actual Throat</span>
-                                            <span class="pill" onclick="setQuery('Identify the three distinct fillet weld throats illustrated in Figure B25')">Effective Throat</span>
-                                            <span class="pill" onclick="setQuery('Define theoretical throat on Figure B25')">Theoretical Throat</span>
-                                            <span class="pill" onclick="setQuery('What is convexity on Figure B25?')">Convexity</span>
-                                            <span class="pill" onclick="setQuery('What is fillet weld leg size on Figure B25?')">Leg Size</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        } else if (fig.figure_id === "Figure B26" || fileName.includes("Figure_B26")) {
-                            inspectorHtml = `
-                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
-                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-                                        <span>🔎 Interactive Profile Explorer for Figure B26:</span>
-                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex B, p. 117 (Profiles & Discontinuities)</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 600; color: #f87171; text-transform: uppercase;">Face Discontinuities & Profiles:</span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                                            <span class="pill" onclick="setQuery('What weld face discontinuities and profile deviations are illustrated in Figure B26?')">Undercut</span>
-                                            <span class="pill" onclick="setQuery('Explain overlap discontinuity on Figure B26')">Overlap</span>
-                                            <span class="pill" onclick="setQuery('Explain underfill on Figure B26')">Underfill</span>
-                                            <span class="pill" onclick="setQuery('Explain excessive reinforcement on Figure B26')">Excessive Reinforcement</span>
-                                            <span class="pill" onclick="setQuery('Explain incomplete fusion on Figure B26')">Incomplete Fusion</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
+                        const figKey = fig.figure_id;
+                        const figData = figureMap[figKey] || figureMap[figKey.replace("Figure ", "")] || figureMap["Figure " + figKey];
+                        if (figData) {
+                            inspectorHtml = renderInspectorHtml(figKey, figData);
                         }
 
                         card.innerHTML = `
@@ -667,7 +579,161 @@ HTML_INDEX = """<!DOCTYPE html>
                 alert("Error executing query: " + err);
             }
         }
+
+        let allFigures = [];
+        let figureMap = {};
+        let currentCategory = "all";
+
+        async function loadFigureCatalog() {
+            try {
+                const res = await fetch("/api/figures");
+                if (!res.ok) return;
+                const data = await res.json();
+                allFigures = data.figures || [];
+                figureMap = {};
+                allFigures.forEach(f => {
+                    figureMap[f.id] = f;
+                    const clean = f.id.replace("Figure ", "");
+                    figureMap[clean] = f;
+                });
+
+                renderCategoryTabs(data.categories || []);
+                filterCategory("all");
+            } catch (e) {
+                console.error("Failed to load figure catalog", e);
+            }
+        }
+
+        function toggleFigureDrawer() {
+            const drawer = document.getElementById("figureDrawerContent");
+            const icon = document.getElementById("drawerToggleIcon");
+            if (drawer.style.display === "none" || !drawer.style.display) {
+                drawer.style.display = "block";
+                icon.innerText = "▲ Hide Figure Directory";
+            } else {
+                drawer.style.display = "none";
+                icon.innerText = "▼ Click to Browse All Figures (60 Figures)";
+            }
+        }
+
+        function renderCategoryTabs(categories) {
+            const container = document.getElementById("categoryTabs");
+            container.innerHTML = "";
+            categories.forEach(cat => {
+                const btn = document.createElement("button");
+                btn.className = "category-tab" + (cat.id === currentCategory ? " active" : "");
+                btn.innerText = cat.label;
+                btn.onclick = () => filterCategory(cat.id);
+                container.appendChild(btn);
+            });
+        }
+
+        function filterCategory(catId) {
+            currentCategory = catId;
+            document.querySelectorAll(".category-tab").forEach(tab => {
+                tab.classList.toggle("active", tab.innerText.includes(catId) || (catId === "all" && tab.innerText.includes("All")));
+            });
+
+            const filtered = catId === "all" ? allFigures : allFigures.filter(f => f.category === catId);
+            renderFigureGrid(filtered);
+        }
+
+        function renderFigureGrid(figures) {
+            const grid = document.getElementById("figuresGrid");
+            grid.innerHTML = "";
+            figures.forEach(fig => {
+                const tile = document.createElement("div");
+                tile.className = "fig-tile";
+                tile.onclick = () => inspectFigureDirectly(fig.id);
+                tile.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="fig-tile-id">${fig.id}</span>
+                        <span class="fig-tile-badge">${fig.chip_count} Chips</span>
+                    </div>
+                    <div class="fig-tile-title" title="${fig.title}">${fig.title}</div>
+                    <div class="fig-tile-footer">
+                        <span>${fig.page}</span>
+                        <span style="color: var(--accent-cyan);">Inspect →</span>
+                    </div>
+                `;
+                grid.appendChild(tile);
+            });
+        }
+
+        function renderInspectorHtml(figKey, figData) {
+            if (!figData || !figData.groups) return "";
+            let html = `
+                <div class="interactive-inspector" style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
+                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>🔎 Interactive Node & Callout Explorer for ${figData.id}:</span>
+                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">${figData.page || ''}</span>
+                    </div>
+                    <div style="font-size: 12px; color: #94a3b8; margin-bottom: 10px; font-style: italic;">${figData.title || ''}</div>
+            `;
+
+            figData.groups.forEach(g => {
+                const color = g.color || "var(--accent-cyan)";
+                html += `
+                    <div style="margin-bottom: 8px;">
+                        <span style="font-size: 11px; font-weight: 600; color: ${color}; text-transform: uppercase;">${g.group_title}:</span>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                `;
+                (g.chips || []).forEach(c => {
+                    const safeQuery = (c.query || "").replace(/'/g, "\\'");
+                    html += `<span class="pill" onclick="event.stopPropagation(); setQuery('${safeQuery}')">${c.label}</span>`;
+                });
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            return html;
+        }
+
+        function inspectFigureDirectly(figId) {
+            const figData = figureMap[figId] || figureMap[figId.replace("Figure ", "")];
+            if (!figData) return;
+
+            document.getElementById("resultPanel").style.display = "grid";
+            const visualBox = document.getElementById("visualContent");
+            visualBox.innerHTML = "";
+
+            const card = document.createElement("div");
+            card.className = "figure-card";
+            const imgFile = figData.image_file;
+            const inspectorHtml = renderInspectorHtml(figId, figData);
+
+            card.innerHTML = `
+                <div class="figure-caption">Visual Diagram: ${figData.id} - ${figData.title}</div>
+                <img src="/figures/${imgFile}" alt="${figData.id}" />
+                ${inspectorHtml}
+            `;
+            visualBox.appendChild(card);
+
+            const answerBox = document.getElementById("answerContent");
+            answerBox.innerHTML = `
+                <p><strong>Inspecting ${figData.id}: ${figData.title}</strong></p>
+                <p style="color: var(--text-secondary); margin-top: 8px;">Location: <code>${figData.page}</code></p>
+                <p style="margin-top: 10px;">This standard diagram contains <strong>${figData.chip_count} interactive callout chips</strong> across ${figData.groups.length} technical category groups. Click any chip in the right panel to execute a grounded natural language query with verified definitions and citations.</p>
+            `;
+
+            const citationsBox = document.getElementById("citationsBox");
+            citationsBox.innerHTML = `<div><strong>Verified Figure Citation:</strong> AWS A3.0M/A3.0:2020, ${figData.page}</div>`;
+
+            document.getElementById("groundedClaimsBox").style.display = "none";
+            document.getElementById("seeAlsoBox").style.display = "none";
+
+            document.getElementById("resultPanel").scrollIntoView({ behavior: "smooth" });
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            updateEngineBadge();
+            loadFigureCatalog();
+        });
     </script>
+
 </body>
 </html>
 """
@@ -692,6 +758,31 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                 self.send_header("Content-Length", str(len(html_bytes)))
                 self.end_headers()
                 self.wfile.write(html_bytes)
+                return
+
+            elif path == "/api/figures":
+                catalog_data = {
+                    "categories": FIGURE_CATEGORIES,
+                    "figures": get_all_figures_catalog()
+                }
+                resp_bytes = json.dumps(catalog_data).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(resp_bytes)))
+                self.end_headers()
+                self.wfile.write(resp_bytes)
+                return
+
+            elif path.startswith("/api/figure_inspector"):
+                query_params = urllib.parse.parse_qs(parsed.query)
+                fig_id = query_params.get("id", [""])[0]
+                inspector_html = get_inspector_html(fig_id)
+                resp_bytes = json.dumps({"id": fig_id, "html": inspector_html}).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(resp_bytes)))
+                self.end_headers()
+                self.wfile.write(resp_bytes)
                 return
 
             elif path.startswith("/figures/"):
