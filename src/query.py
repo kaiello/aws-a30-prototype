@@ -22,11 +22,33 @@ from src.config import (
 from src.indexer import get_rag_instance
 from src.citation_checker import extract_citations
 
+TABLE_COMPANION_FIGURES = {
+    "Table A1": ["Figure A1", "Figure A4"],
+    "Table A2": ["Figure A1", "Figure A2"],
+    "Table A3": ["Figure A1"],
+    "Table A4": ["Figure A1"],
+    "Table A5": ["Figure A2", "Figure A5", "Figure A6"],
+}
+
 def resolve_multimodal_assets(text: str):
     """Finds referenced figures or tables and resolves them to local disk paths."""
     resolved_figures = []
-    fig_matches = re.findall(r'Figure\s+(B\d+)', text, re.IGNORECASE)
-    for fig_num in set(fig_matches):
+    
+    # 1. Match both Annex A figures (Figure A1-A6) and Annex B figures (Figure B1-B97)
+    fig_matches = re.findall(r'Figure\s+([AB]\d+[A-Z]?)', text, re.IGNORECASE)
+    
+    # 2. Match Table mentions
+    table_matches = re.findall(r'Table\s+(A\d+)', text, re.IGNORECASE)
+    
+    # Automatically include companion Annex A classification charts for any cited table
+    all_target_figures = set(fig_matches)
+    for t_num in set(table_matches):
+        t_key = f"Table {t_num.upper()}"
+        if t_key in TABLE_COMPANION_FIGURES:
+            for companion in TABLE_COMPANION_FIGURES[t_key]:
+                all_target_figures.add(companion.replace("Figure ", ""))
+
+    for fig_num in sorted(all_target_figures):
         clean_num = fig_num.upper()
         matching_pngs = list(PARSED_FIGURES_DIR.glob(f"Figure_{clean_num}_*.png"))
         if matching_pngs:
@@ -36,14 +58,15 @@ def resolve_multimodal_assets(text: str):
             })
             
     resolved_tables = []
-    table_matches = re.findall(r'Table\s+(A\d+)', text, re.IGNORECASE)
     for t_num in set(table_matches):
         clean_t = t_num.lower()
         t_file = PARSED_TABLES_DIR / f"table_{clean_t}.md"
+        t_images = list(PARSED_TABLES_DIR.glob(f"Table_{clean_t.upper()}_*.png"))
         if t_file.exists():
             resolved_tables.append({
                 "table_id": f"Table {t_num.upper()}",
-                "table_path": str(t_file)
+                "table_path": str(t_file),
+                "image_paths": [str(img) for img in t_images]
             })
             
     return resolved_figures, resolved_tables

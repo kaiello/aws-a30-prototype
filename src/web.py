@@ -382,6 +382,20 @@ HTML_INDEX = """<!DOCTYPE html>
                         fetch(`/tables/${fileName}`)
                             .then(r => r.text())
                             .then(txt => { document.getElementById(`tbl_${fileName}`).innerText = txt; });
+
+                        if (tbl.image_paths && tbl.image_paths.length > 0) {
+                            tbl.image_paths.forEach(img => {
+                                const imgFile = img.split(/\\\\|\\//).pop();
+                                const imgCard = document.createElement("div");
+                                imgCard.className = "figure-card";
+                                imgCard.style.marginTop = "12px";
+                                imgCard.innerHTML = `
+                                    <div class="figure-caption">Table Reference Scan: ${tbl.table_id}</div>
+                                    <img src="/tables/${imgFile}" alt="${tbl.table_id}" />
+                                `;
+                                visualBox.appendChild(imgCard);
+                            });
+                        }
                     });
                 }
 
@@ -405,21 +419,24 @@ class MultimodalRequestHandler(SimpleHTTPRequestHandler):
         path = parsed.path
 
         if path in ["/", "/index.html"]:
+            html_bytes = HTML_INDEX.encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(html_bytes)))
             self.end_headers()
-            self.wfile.write(HTML_INDEX.encode("utf-8"))
+            self.wfile.write(html_bytes)
             return
 
         elif path.startswith("/figures/"):
             filename = path.replace("/figures/", "")
             target_file = PARSED_FIGURES_DIR / filename
             if target_file.exists():
+                img_bytes = target_file.read_bytes()
                 self.send_response(200)
                 self.send_header("Content-Type", "image/png")
+                self.send_header("Content-Length", str(len(img_bytes)))
                 self.end_headers()
-                with open(target_file, "rb") as f:
-                    self.wfile.write(f.read())
+                self.wfile.write(img_bytes)
                 return
             else:
                 self.send_error(404, "Figure image not found")
@@ -429,11 +446,13 @@ class MultimodalRequestHandler(SimpleHTTPRequestHandler):
             filename = path.replace("/tables/", "")
             target_file = PARSED_TABLES_DIR / filename
             if target_file.exists():
+                content_type = "image/png" if filename.lower().endswith(".png") else "text/plain; charset=utf-8"
+                t_bytes = target_file.read_bytes()
                 self.send_response(200)
-                self.send_header("Content-Type", "text/plain; charset=utf-8")
+                self.send_header("Content-Type", content_type)
+                self.send_header("Content-Length", str(len(t_bytes)))
                 self.end_headers()
-                with open(target_file, "rb") as f:
-                    self.wfile.write(f.read())
+                self.wfile.write(t_bytes)
                 return
             else:
                 self.send_error(404, "Table file not found")
@@ -444,22 +463,35 @@ class MultimodalRequestHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path == "/api/query":
-            content_length = int(self.headers.get("Content-Length", 0))
-            body = self.rfile.read(content_length).decode("utf-8")
-            data = json.loads(body)
+            try:
+                content_length = int(self.headers.get("Content-Length", 0))
+                body = self.rfile.read(content_length).decode("utf-8")
+                data = json.loads(body)
 
-            query = data.get("query", "")
-            engine = data.get("engine", DEFAULT_ENGINE)
-            mode = data.get("mode", "mix")
+                query = data.get("query", "")
+                engine = data.get("engine", DEFAULT_ENGINE)
+                mode = data.get("mode", "mix")
 
-            print(f"[API QUERY] Engine={engine}, Mode={mode}, Query='{query}'")
-            res = run_query(query, mode=mode, engine=engine)
+                print(f"[API QUERY] Engine={engine}, Mode={mode}, Query='{query}'")
+                res = run_query(query, mode=mode, engine=engine)
 
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.end_headers()
-            self.wfile.write(json.dumps(res).encode("utf-8"))
-            return
+                resp_bytes = json.dumps(res).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(resp_bytes)))
+                self.end_headers()
+                self.wfile.write(resp_bytes)
+                return
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                err_bytes = json.dumps({"error": str(e)}).encode("utf-8")
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(err_bytes)))
+                self.end_headers()
+                self.wfile.write(err_bytes)
+                return
 
         self.send_error(404, "Unknown API endpoint")
 
