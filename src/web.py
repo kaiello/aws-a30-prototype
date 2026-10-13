@@ -277,11 +277,13 @@ HTML_INDEX = """<!DOCTYPE html>
             </div>
 
             <div class="suggestions">
-                <span class="pill" onclick="setQuery('What is the definition of actual throat and what figure does it refer to?')">Actual Throat & Figure B25</span>
-                <span class="pill" onclick="setQuery('Explain 1F pipe welding test position and show its diagram')">1F Pipe Position & Figure B20</span>
-                <span class="pill" onclick="setQuery('What is a bevel angle and how is it illustrated in Figure B6?')">Bevel Angle (Figure B6)</span>
+                <span class="pill" onclick="setQuery('show me flame contact on figure A6')">🔥 Flame Contact (Fig A6)</span>
+                <span class="pill" onclick="setQuery('Which processes use Vacuum shielding on Figure A6?')">🛡️ Vacuum Shielding (Fig A6)</span>
+                <span class="pill" onclick="setQuery('What processes require Pressure normal to faying surfaces on Figure A6?')">⚖️ Faying Surface Pressure (Fig A6)</span>
+                <span class="pill" onclick="setQuery('What is EXB on Figure A6 and what are its physical characteristics?')">🧪 EXB Exothermic (Fig A6)</span>
+                <span class="pill" onclick="setQuery('What is the definition of actual throat and what figure does it refer to?')">Actual Throat (Fig B25)</span>
+                <span class="pill" onclick="setQuery('Explain 1F pipe welding test position and show its diagram')">1F Pipe Position (Fig B20)</span>
                 <span class="pill" onclick="setQuery('Which welding processes fall under resistance welding in Table A1?')">Resistance Welding (Table A1)</span>
-                <span class="pill" onclick="setQuery('What is the distinction between root face and root opening?')">Root Face vs Root Opening</span>
             </div>
         </div>
 
@@ -376,9 +378,102 @@ HTML_INDEX = """<!DOCTYPE html>
                         const fileName = fig.image_path.split(/\\\\|\\//).pop();
                         const card = document.createElement("div");
                         card.className = "figure-card";
+                        
+                        let inspectorHtml = "";
+                        if (fig.figure_id === "Figure A6" || fileName.includes("Figure_A6")) {
+                            inspectorHtml = `
+                                <div style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                        <span>🔎 Interactive Word & Node Explorer for Figure A6 (Click ANY word to inspect):</span>
+                                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">Annex A, p. 79 (PDF p. 92)</span>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #fbbf24; text-transform: uppercase;">⚡ Energy Sources:</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('Explain the Chemical energy branch on Figure A6')">Chemical</span>
+                                            <span class="pill" onclick="setQuery('Explain the Electrical energy branch on Figure A6')">Electrical</span>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #f87171; text-transform: uppercase;">🔥 Thermal Sources:</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" style="border-color: #f87171; color: #fca5a5;" onclick="setQuery('show me flame contact on figure A6')">Flame Contact</span>
+                                            <span class="pill" onclick="setQuery('Explain Arc thermal source on Figure A6')">Arc</span>
+                                            <span class="pill" onclick="setQuery('Explain Resistance thermal source on Figure A6')">Resistance</span>
+                                            <span class="pill" onclick="setQuery('Explain Conduction thermal source on Figure A6')">Conduction</span>
+                                            <span class="pill" onclick="setQuery('Explain Induction thermal source on Figure A6')">Induction</span>
+                                            <span class="pill" onclick="setQuery('Explain Radiation thermal source on Figure A6')">Radiation</span>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #38bdf8; text-transform: uppercase;">🛡️ Shielding Mediums:</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('Which processes use Flux shielding on Figure A6?')">Flux</span>
+                                            <span class="pill" onclick="setQuery('Which processes use Gas shielding on Figure A6?')">Gas</span>
+                                            <span class="pill" onclick="setQuery('Which processes use Vacuum shielding on Figure A6?')">Vacuum</span>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #c084fc; text-transform: uppercase;">⚖️ Mechanical Loading & Footnote:</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('What processes require Pressure on Figure A6?')">Pressure</span>
+                                            <span class="pill" onclick="setQuery('What does *Pressure normal to faying surfaces mean on Figure A6?')">*Pressure normal to faying surfaces</span>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #4ade80; text-transform: uppercase;">🟠 Brazing Processes (B):</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('What is TB on Figure A6?')">TB (torch brazing)</span>
+                                            <span class="pill" onclick="setQuery('What is FB on Figure A6?')">FB (furnace brazing)</span>
+                                            <span class="pill" onclick="setQuery('What is B-CA on Figure A6?')">B-CA (controlled-atmosphere)</span>
+                                            <span class="pill" onclick="setQuery('What is EXB on Figure A6 and what are its physical characteristics?')">EXB (exothermic)</span>
+                                            <span class="pill" onclick="setQuery('What is DB on Figure A6?')">DB (dip brazing)</span>
+                                            <span class="pill" onclick="setQuery('What is AB on Figure A6?')">AB (arc brazing)</span>
+                                            <span class="pill" onclick="setQuery('What is RB on Figure A6?')">RB (resistance brazing)</span>
+                                            <span class="pill" onclick="setQuery('What is IB on Figure A6?')">IB (induction brazing)</span>
+                                            <span class="pill" onclick="setQuery('What is DFB on Figure A6?')">DFB (diffusion brazing)</span>
+                                            <span class="pill" onclick="setQuery('What is IRB on Figure A6?')">IRB (infrared brazing)</span>
+                                            <span class="pill" onclick="setQuery('What is EBB on Figure A6?')">EBB (electron beam)</span>
+                                            <span class="pill" onclick="setQuery('What is LBB on Figure A6?')">LBB (laser beam)</span>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 600; color: #60a5fa; text-transform: uppercase;">🔵 Soldering Processes (S):</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('What is TS on Figure A6?')">TS (torch soldering)</span>
+                                            <span class="pill" onclick="setQuery('What is FS on Figure A6?')">FS (furnace soldering)</span>
+                                            <span class="pill" onclick="setQuery('What is DS on Figure A6?')">DS (dip soldering)</span>
+                                            <span class="pill" onclick="setQuery('What is INS on Figure A6?')">INS (iron soldering)</span>
+                                            <span class="pill" onclick="setQuery('What is WS on Figure A6?')">WS (wave soldering)</span>
+                                            <span class="pill" onclick="setQuery('What is RS on Figure A6?')">RS (resistance soldering)</span>
+                                            <span class="pill" onclick="setQuery('What is USS on Figure A6?')">USS (ultrasonic soldering)</span>
+                                            <span class="pill" onclick="setQuery('What is IS on Figure A6?')">IS (induction soldering)</span>
+                                            <span class="pill" onclick="setQuery('What is IRS on Figure A6?')">IRS (infrared soldering)</span>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <span style="font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">🧭 Headings & References:</span>
+                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                                            <span class="pill" onclick="setQuery('What is the meaning of See Figure A3 on Figure A6?')">See Figure A3</span>
+                                            <span class="pill" onclick="setQuery('What are Physical Characteristics on Figure A6?')">Physical Characteristics</span>
+                                            <span class="pill" onclick="setQuery('Show me the complete process designation legend for Figure A6')">Full Designation Legend</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
                         card.innerHTML = `
                             <div class="figure-caption">Visual Diagram: ${fig.figure_id}</div>
                             <img src="/figures/${fileName}" alt="${fig.figure_id}" />
+                            ${inspectorHtml}
                         `;
                         visualBox.appendChild(card);
                     });

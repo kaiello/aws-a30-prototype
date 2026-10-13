@@ -142,7 +142,7 @@ async def async_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_E
     
     response = await rag.aquery(query_str, param=param)
     citations = extract_citations(response)
-    figures, tables = resolve_multimodal_assets(response)
+    figures, tables = resolve_multimodal_assets(f"{query_str}\n{response}")
     see_also = extract_see_also_terms(response)
     
     return {
