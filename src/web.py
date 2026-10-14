@@ -316,6 +316,113 @@ HTML_INDEX = """<!DOCTYPE html>
         .figure-card img:hover {
             transform: scale(1.02);
         }
+        .figure-img-container {
+            position: relative;
+            display: inline-block;
+            cursor: zoom-in;
+            border-radius: 6px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .zoom-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(10, 15, 29, 0.85);
+            border: 1px solid var(--border-color);
+            color: var(--accent-cyan);
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            pointer-events: none;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 15, 29, 0.94);
+            backdrop-filter: blur(8px);
+            flex-direction: column;
+        }
+        .modal-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .modal-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+        .modal-btn {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal-btn:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+        .modal-btn.close-btn {
+            background: rgba(248, 113, 113, 0.15);
+            border-color: #f87171;
+            color: #f87171;
+            font-size: 18px;
+            padding: 3px 12px;
+        }
+        .modal-btn.close-btn:hover {
+            background: #f87171;
+            color: #fff;
+        }
+        .modal-viewport {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            user-select: none;
+        }
+        .modal-viewport:active {
+            cursor: grabbing;
+        }
+        #modalImg {
+            max-width: 90%;
+            max-height: 85vh;
+            object-fit: contain;
+            transition: transform 0.08s ease-out;
+            transform-origin: center center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            border-radius: 6px;
+            background: #ffffff;
+        }
+        .modal-hint {
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-color);
+        }
         .figure-caption {
             font-size: 13px;
             color: var(--text-secondary);
@@ -642,7 +749,10 @@ HTML_INDEX = """<!DOCTYPE html>
 
                         card.innerHTML = `
                             <div class="figure-caption">Visual Diagram: ${fig.figure_id}</div>
-                            <img src="/figures/${fileName}" alt="${fig.figure_id}" />
+                            <div class="figure-img-container" onclick="openImageModal('/figures/${fileName}', 'Visual Diagram: ${fig.figure_id}')" title="Click magnifying glass to zoom & pan in high resolution">
+                                <img src="/figures/${fileName}" alt="${fig.figure_id}" />
+                                <span class="zoom-badge">🔍 Zoom / Pan</span>
+                            </div>
                             ${inspectorHtml}
                         `;
                         visualBox.appendChild(card);
@@ -672,7 +782,10 @@ HTML_INDEX = """<!DOCTYPE html>
                                 imgCard.style.marginTop = "12px";
                                 imgCard.innerHTML = `
                                     <div class="figure-caption">Table Reference Scan: ${tbl.table_id}</div>
-                                    <img src="/tables/${imgFile}" alt="${tbl.table_id}" />
+                                    <div class="figure-img-container" onclick="openImageModal('/tables/${imgFile}', 'Table Reference Scan: ${tbl.table_id}')" title="Click magnifying glass to zoom & pan in high resolution">
+                                        <img src="/tables/${imgFile}" alt="${tbl.table_id}" />
+                                        <span class="zoom-badge">🔍 Zoom / Pan</span>
+                                    </div>
                                 `;
                                 visualBox.appendChild(imgCard);
                             });
@@ -818,7 +931,10 @@ HTML_INDEX = """<!DOCTYPE html>
 
             card.innerHTML = `
                 <div class="figure-caption">Visual Diagram: ${figData.id} - ${figData.title}</div>
-                <img src="/figures/${imgFile}" alt="${figData.id}" />
+                <div class="figure-img-container" onclick="openImageModal('/figures/${imgFile}', 'Visual Diagram: ${figData.id} - ${figData.title}')" title="Click magnifying glass to zoom & pan in high resolution">
+                    <img src="/figures/${imgFile}" alt="${figData.id}" />
+                    <span class="zoom-badge">🔍 Zoom / Pan</span>
+                </div>
                 ${inspectorHtml}
             `;
             visualBox.appendChild(card);
@@ -840,11 +956,129 @@ HTML_INDEX = """<!DOCTYPE html>
             document.getElementById("resultPanel").scrollIntoView({ behavior: "smooth" });
         }
 
+        // Interactive Zoom & Pan Modal Lightbox
+        let currentScale = 1;
+        let isPanning = false;
+        let startX = 0, startY = 0;
+        let translateX = 0, translateY = 0;
+
+        function openImageModal(imgSrc, caption) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("modalImg");
+            const modalCaption = document.getElementById("modalCaption");
+
+            modalImg.src = imgSrc;
+            modalCaption.innerText = caption || "Figure Inspector";
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateModalTransform();
+
+            modal.style.display = "flex";
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("imageModal");
+            modal.style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+
+        function zoomImage(delta) {
+            currentScale = Math.min(Math.max(0.5, currentScale + delta), 4.0);
+            updateModalTransform();
+        }
+
+        function resetZoom() {
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateModalTransform();
+        }
+
+        function updateModalTransform() {
+            const modalImg = document.getElementById("modalImg");
+            const zoomLevel = document.getElementById("zoomLevel");
+            if (modalImg) {
+                modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+            }
+            if (zoomLevel) {
+                zoomLevel.innerText = `${Math.round(currentScale * 100)}%`;
+            }
+        }
+
+        function initModalEvents() {
+            const viewport = document.getElementById("modalViewport");
+            if (!viewport) return;
+
+            viewport.addEventListener("wheel", (e) => {
+                e.preventDefault();
+                const delta = e.deltaY < 0 ? 0.2 : -0.2;
+                zoomImage(delta);
+            }, { passive: false });
+
+            viewport.addEventListener("mousedown", (e) => {
+                if (e.button !== 0) return;
+                isPanning = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+            });
+
+            window.addEventListener("mousemove", (e) => {
+                if (!isPanning) return;
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                updateModalTransform();
+            });
+
+            window.addEventListener("mouseup", () => {
+                isPanning = false;
+            });
+
+            viewport.addEventListener("dblclick", () => {
+                if (currentScale <= 1.2) {
+                    currentScale = 2.2;
+                } else {
+                    currentScale = 1;
+                    translateX = 0;
+                    translateY = 0;
+                }
+                updateModalTransform();
+            });
+
+            window.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") {
+                    closeModal();
+                }
+            });
+        }
+
         window.addEventListener("DOMContentLoaded", () => {
             updateEngineBadge();
             loadFigureCatalog();
+            initModalEvents();
         });
     </script>
+
+    <!-- Interactive Zoom & Pan Modal Lightbox -->
+    <div id="imageModal" class="image-modal" onclick="if(event.target===this) closeModal()">
+        <div class="modal-controls">
+            <span class="modal-title" id="modalCaption">Figure Inspector</span>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="modal-btn" onclick="zoomImage(0.25)" title="Zoom In (+)">🔍 +</button>
+                <span id="zoomLevel" style="font-size: 13px; color: var(--accent-cyan); min-width: 48px; text-align: center; font-weight: 700;">100%</span>
+                <button class="modal-btn" onclick="zoomImage(-0.25)" title="Zoom Out (-)">🔍 -</button>
+                <button class="modal-btn" onclick="resetZoom()" title="Reset Zoom">Reset</button>
+                <button class="modal-btn close-btn" onclick="closeModal()" title="Close (Esc)">&times;</button>
+            </div>
+        </div>
+        <div class="modal-viewport" id="modalViewport">
+            <img id="modalImg" src="" alt="Zoomed Diagram" draggable="false" />
+        </div>
+        <div class="modal-hint">
+            💡 <strong>Interactive Pan & Zoom:</strong> Drag to pan &bull; Scroll wheel to zoom &bull; Double-click to toggle 2x/1x &bull; Esc to close
+        </div>
+    </div>
 
 </body>
 </html>
