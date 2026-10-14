@@ -59,8 +59,8 @@ def resolve_multimodal_assets(text: str):
     for fig in isolated:
         all_target_figures.add(fig.upper())
     
-    # 2. Match Table mentions
-    table_matches = re.findall(r'Table\s+(A\d+)', text, re.IGNORECASE)
+    # 2. Match Table mentions (e.g. Table A1–A5, Table D1–D6)
+    table_matches = re.findall(r'Table\s+([AD]\d+)', text, re.IGNORECASE)
     
     # Automatically include companion Annex A classification charts for any cited table
     for t_num in set(table_matches):
