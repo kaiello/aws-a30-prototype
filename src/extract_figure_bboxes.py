@@ -67,9 +67,9 @@ LAYOUT_PRESETS: Dict[str, Dict[str, List[float]]] = {
     "Figure B1": {
         "Panel (A) Butt Joint": [0.06, 0.10, 0.22, 0.90],
         "Panel (B) Corner Joint": [0.22, 0.10, 0.38, 0.90],
-        "Panel (C) Lap Joint": [0.38, 0.10, 0.54, 0.90],
-        "Panel (D) Parallel Joint": [0.54, 0.10, 0.70, 0.90],
-        "Panel (E) T-Joint": [0.70, 0.10, 0.88, 0.90],
+        "Panel (C) T-Joint": [0.38, 0.10, 0.54, 0.90],
+        "Panel (D) Lap Joint": [0.54, 0.10, 0.70, 0.90],
+        "Panel (E) Parallel Joint": [0.70, 0.10, 0.88, 0.90],
     },
     # Figure B2: Flanged Joints (Vertical 5-stack)
     "Figure B2": {

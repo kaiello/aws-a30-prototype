@@ -175,9 +175,9 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
                 "chips": [
                     {"label": "Panel (A) Butt Joint", "query": "What is a butt joint illustrated in Figure B1(A)?"},
                     {"label": "Panel (B) Corner Joint", "query": "What is a corner joint illustrated in Figure B1(B)?"},
-                    {"label": "Panel (C) Lap Joint", "query": "What is a lap joint illustrated in Figure B1(C)?"},
-                    {"label": "Panel (D) Parallel Joint", "query": "What is a parallel joint illustrated in Figure B1(D) and what term did it replace?"},
-                    {"label": "Panel (E) T-Joint", "query": "What is a T-joint illustrated in Figure B1(E)?"}
+                    {"label": "Panel (C) T-Joint", "query": "What is a T-joint illustrated in Figure B1(C)?"},
+                    {"label": "Panel (D) Lap Joint", "query": "What is a lap joint illustrated in Figure B1(D)?"},
+                    {"label": "Panel (E) Parallel Joint", "query": "What is a parallel joint illustrated in Figure B1(E) and what term did it replace?"}
                 ]
             }
         ]

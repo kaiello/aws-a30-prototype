@@ -773,8 +773,8 @@
             ]
           },
           {
-            "label": "Panel (C) Lap Joint",
-            "query": "What is a lap joint illustrated in Figure B1(C)?",
+            "label": "Panel (C) T-Joint",
+            "query": "What is a T-joint illustrated in Figure B1(C)?",
             "panel": "C",
             "bbox": [
               0.38,
@@ -788,8 +788,8 @@
             ]
           },
           {
-            "label": "Panel (D) Parallel Joint",
-            "query": "What is a parallel joint illustrated in Figure B1(D) and what term did it replace?",
+            "label": "Panel (D) Lap Joint",
+            "query": "What is a lap joint illustrated in Figure B1(D)?",
             "panel": "D",
             "bbox": [
               0.54,
@@ -803,8 +803,8 @@
             ]
           },
           {
-            "label": "Panel (E) T-Joint",
-            "query": "What is a T-joint illustrated in Figure B1(E)?",
+            "label": "Panel (E) Parallel Joint",
+            "query": "What is a parallel joint illustrated in Figure B1(E) and what term did it replace?",
             "panel": "E",
             "bbox": [
               0.7,
