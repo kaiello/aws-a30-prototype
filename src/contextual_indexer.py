@@ -14,11 +14,17 @@ Generates:
 import os
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
+import sys
 import json
 import sqlite3
 import argparse
 from pathlib import Path
 from typing import Dict, Any, List, Tuple
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
