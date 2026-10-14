@@ -125,7 +125,10 @@ Outputs a detailed report to `eval/benchmark_report.md`.
 ---
 
 ## Project Documentation
-Detailed background analysis and architecture rationale are available in the `docs/` folder:
+Detailed system specifications, operational rules, and architecture rationale are available in the `docs/` folder:
+- [Project Goals & Evaluation Criteria](docs/goal.md)
+- [System Architecture & Epistemic Graph Design](docs/architecture.md)
+- [Multi-Agent System (MAS) Operating Guidelines](docs/agents.md)
 - [Multimodal Lessons Learned](docs/navy_weld_multimodal_lessons_learned.md)
 - [Framework Roadmap](docs/navy_weld_framework_roadmap.md)
 - [Value and Outcomes Assessment](docs/navy_weld_value_and_outcomes_assessment.md)

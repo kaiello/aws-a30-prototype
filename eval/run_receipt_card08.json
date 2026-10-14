@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-10-14T13:19:40.805406+00:00",
+  "document": "AWS A3.0M/A3.0:2020 Standard Welding Terms and Definitions",
+  "commit_hash": "611fc988276faad0cf2559caf155f16808b7aa41",
+  "llm_engine": "deepseek",
+  "llm_model": "deepseek-chat",
+  "embedding_model": "BAAI/bge-large-en-v1.5 (1024-dim, Contextualized)",
+  "graph_nodes": 2993,
+  "graph_edges": 9579,
+  "context_bench_metrics": {
+    "document_at_1_pct": 82.0,
+    "answer_at_1_pct": 100.0,
+    "evidence_recall_pct": 99.0,
+    "all_evidence_pct": 98.0,
+    "epistemic_provenance_score": 0.996
+  },
+  "benchmark_summary": {
+    "total_queries": 50,
+    "passed": 50,
+    "failed": 0,
+    "pass_rate_pct": 100.0,
+    "modality_breakdown": {
+      "text": "8/8",
+      "nonstandard": "5/5",
+      "table": "7/7",
+      "figure": "18/18",
+      "cross-modal": "2/2",
+      "qualifier": "2/2",
+      "abstention": "8/8"
+    }
+  }
+}

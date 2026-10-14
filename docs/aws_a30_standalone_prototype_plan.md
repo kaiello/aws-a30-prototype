@@ -218,3 +218,30 @@ Curated challenge set covering all modalities and failure modes:
   python src/query.py "Explain a 1F pipe position and show its diagram"
   ```
 - Inspect that output contains the text definition, cites Clause 4 & Figure B20, and prints a local image link `parsed/figures/Figure_B20.png` that opens to the correct diagram.
+
+---
+
+## Component 6: Next-Gen Contextual Embedding & Storage Research (Turbopuffer v3 & Perplexity Context-Bench)
+
+### 1. Architectural Insights from Turbopuffer v3 ("RIP, Vector Database")
+* **Core Takeaway**: Primary keying on ANN vector addresses creates catastrophic write amplification and storage bloat for multi-vector or structured documents.
+* **Prototype Alignment**: The prototype’s **Card 07 Dual-Layer Epistemic Graph** already adopted this principle: primary indexing is governed by the **Domain Ontology & Normative Evidence Graph** and an embedded **SQLite Registry with FTS5** (`storage/dual_layer_registry.db`). Vectors remain strictly a secondary, auxiliary lookup index.
+* **Future Enhancement**: Maintain zero-cost, localized SQLite and GraphML storage without introducing heavy standalone vector database server dependencies.
+
+### 2. Methodological Insights from Perplexity ("Contextual Embedding: Beyond the Gold Passage")
+* **Core Takeaway**: Real-world technical queries cannot be satisfied by a single isolated "gold chunk". An answer chunk without its supporting context (scope, applicability, revision status, table headers, exceptions) is ambiguous and unverifiable.
+* **The "Answer Route" Paradigm**: Each query requires an **Answer Route = (Answer Chunk + Supporting Evidence Group)**.
+* **Evaluation Framework (Context-Bench)**: Evaluates multi-stage retrieval metrics:
+  - `Document@1`: Disambiguates between near-identical sibling documents or revisions.
+  - `Answer@K`: Retrieves the primary answer-bearing chunk.
+  - `Evidence Recall@K`: Retrieves all supporting chunks (definitions, table headers, figures, committee rationale) necessary to substantiate the answer.
+  - `All-Evidence@K`: Full recovery of the complete evidence bundle.
+
+---
+
+## Card 08 Delivery Plan: Contextual Embeddings & Answer Route Bundles
+
+- [ ] **1. Answer Route Resolver (`src/answer_routes.py`)**: Programmatically bundle primary definition chunks with their associated evidence group (figures, callouts, parent clause conditions, committee rationale) using the existing 5,854 epistemic bridges.
+- [ ] **2. Late Chunking Ingestion Pipeline (`src/contextual_indexer.py`)**: Implement late chunking across whole clauses to allow chunk representations to attend across full document boundaries before pooling.
+- [ ] **3. Multi-Stage Benchmark Metrics (`eval/test_scorer.py`)**: Expand the 50-item benchmark to evaluate `Document@1`, `Answer@K`, `Evidence Recall@K`, and `All-Evidence@10`.
+- [ ] **4. Web Visual Explorer Answer Route UI (`src/web.py`)**: Render the full verified Answer Route bundle directly in the result inspector.

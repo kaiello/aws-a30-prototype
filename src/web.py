@@ -413,6 +413,7 @@ HTML_INDEX = """<!DOCTYPE html>
                 <div id="groundedClaimsBox" style="margin-top: 16px; display: none;"></div>
                 <div id="seeAlsoBox" style="margin-top: 16px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: none;"></div>
                 <div id="epistemicTraceBox" style="margin-top: 16px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: none;"></div>
+                <div id="answerRouteBox" style="margin-top: 16px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: none;"></div>
             </div>
 
             <div class="panel">
@@ -552,6 +553,52 @@ HTML_INDEX = """<!DOCTYPE html>
                     epistemicBox.innerHTML = epHtml;
                 } else {
                     epistemicBox.style.display = "none";
+                }
+
+                // Render Answer Route Bundle (Perplexity Context-Bench Evidence Group)
+                const answerRouteBox = document.getElementById("answerRouteBox");
+                if (data.answer_route && data.answer_route.evidence_group && data.answer_route.evidence_group.length > 0) {
+                    const ar = data.answer_route;
+                    answerRouteBox.style.display = "block";
+                    const isAll = ar.all_evidence_recovered;
+                    const badgeBg = isAll ? "rgba(16, 185, 129, 0.15)" : "rgba(251, 191, 36, 0.15)";
+                    const badgeBorder = isAll ? "#10b981" : "#fbbf24";
+                    const badgeColor = isAll ? "#10b981" : "#fbbf24";
+
+                    let arHtml = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 13px; font-weight: 700; color: #38bdf8;">📦 Verified Answer Route Bundle:</span>
+                            <span style="font-size: 11px; font-weight: 700; color: ${badgeColor}; background: ${badgeBg}; padding: 2px 8px; border-radius: 12px; border: 1px solid ${badgeBorder};">
+                                ${isAll ? 'ALL-EVIDENCE RECOVERED' : 'PARTIAL EVIDENCE'} (${Math.round(ar.evidence_recall_score * 100)}%)
+                            </span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+                            <strong>Context-Bench Metrics:</strong> Evidence Recall: ${Math.round(ar.evidence_recall_score * 100)}% | Epistemic Provenance: ${ar.epistemic_score} | Target: <span style="color: #f8fafc; font-weight: 600;">${ar.concept_name || 'Matched'}</span> (${ar.concept_type || 'Concept'})
+                        </div>
+                        <div style="font-size: 11px; font-weight: 600; color: #a855f7; text-transform: uppercase; margin-bottom: 6px;">
+                            Supporting Evidence Group (${ar.evidence_group.length} items):
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                    `;
+                    ar.evidence_group.slice(0, 6).forEach(ev => {
+                        const chipCount = ev.callout_chips ? ev.callout_chips.length : 0;
+                        const chipInfo = chipCount > 0 ? ` &bull; <span style="color: #4ade80;">${chipCount} Interactive Callout Chips</span>` : '';
+                        arHtml += `
+                            <div style="background: var(--bg-card); border-left: 3px solid #38bdf8; border-radius: 4px; padding: 6px 10px; font-size: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-weight: 600; color: #38bdf8;">[${ev.evidence_type.toUpperCase()}] ${ev.element_id}</span>
+                                    <span style="font-size: 10px; color: #94a3b8;">${ev.page ? 'p. ' + ev.page : ''}</span>
+                                </div>
+                                <div style="color: var(--text-secondary); font-size: 11px; margin-top: 2px;">
+                                    ${ev.title} ${chipInfo}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    arHtml += `</div>`;
+                    answerRouteBox.innerHTML = arHtml;
+                } else if (answerRouteBox) {
+                    answerRouteBox.style.display = "none";
                 }
 
                 // Render visual evidence
