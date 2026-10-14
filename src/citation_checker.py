@@ -45,22 +45,33 @@ STRONG_ABSTENTION_SUBSTRINGS = [
 
 def check_abstention(response_text: str) -> bool:
     """Returns True if the response properly abstained."""
-    lowered = response_text.strip().lower()
+    if not response_text:
+        return False
+    lowered = str(response_text).strip().lower()
     if any(lowered.startswith(p) for p in STRONG_ABSTENTION_PREFIXES):
         return True
     return any(p in lowered for p in STRONG_ABSTENTION_SUBSTRINGS)
 
 def extract_citations(response_text: str) -> Dict[str, Any]:
     """Extracts cited clauses, tables, figures, and pages from response."""
-    cited_clauses = [c for c in VALID_CLAUSES if c.lower() in response_text.lower()]
-    cited_tables = [t for t in VALID_TABLES if t.lower() in response_text.lower()]
+    if not response_text:
+        return {
+            "has_citation": False,
+            "clauses": [],
+            "tables": [],
+            "figures": [],
+            "pages": []
+        }
+    text = str(response_text)
+    cited_clauses = [c for c in VALID_CLAUSES if c.lower() in text.lower()]
+    cited_tables = [t for t in VALID_TABLES if t.lower() in text.lower()]
     
     # Extract figures (e.g., Figure A6, Figure B4, Figure B16A, Figure B20)
-    fig_matches = re.findall(r'Figure\s+[AB]\d+[A-Z]?', response_text, re.IGNORECASE)
+    fig_matches = re.findall(r'Figure\s+[AB]\d+[A-Z]?', text, re.IGNORECASE)
     cited_figures = list(set([re.sub(r'\s+', ' ', f.title()) for f in fig_matches]))
     
     # Extract page references
-    page_matches = re.findall(r'(?:page|p\.)\s*(\d+)', response_text, re.IGNORECASE)
+    page_matches = re.findall(r'(?:page|p\.)\s*(\d+)', text, re.IGNORECASE)
     cited_pages = [int(p) for p in page_matches]
     
     return {
@@ -73,8 +84,10 @@ def extract_citations(response_text: str) -> Dict[str, Any]:
 
 def extract_grounded_claims(response_text: str) -> List[Dict[str, Any]]:
     """Extracts material claims and links each to its cited source anchors."""
+    if not response_text:
+        return []
     claims = []
-    lines = [l.strip() for l in response_text.splitlines() if l.strip()]
+    lines = [l.strip() for l in str(response_text).splitlines() if l.strip()]
     for line in lines:
         if (line.startswith(('*', '-', '•')) or re.match(r'^\d+\.', line) or '**' in line) and not line.startswith('#'):
             clean_text = re.sub(r'^[\*\-•\d\.\s]+', '', line).strip()
@@ -89,20 +102,21 @@ def extract_grounded_claims(response_text: str) -> List[Dict[str, Any]]:
 
 def verify_response(query_item: Dict[str, Any], response_text: str) -> Dict[str, Any]:
     """Verifies a generated response against a benchmark query item with adversarial safeguards."""
+    resp_str = str(response_text or "")
     must_abstain = query_item.get("must_abstain", False)
-    did_abstain = check_abstention(response_text)
+    did_abstain = check_abstention(resp_str)
     
-    citations = extract_citations(response_text)
-    grounded_claims = extract_grounded_claims(response_text)
+    citations = extract_citations(resp_str)
+    grounded_claims = extract_grounded_claims(resp_str)
     
     # Keyword check
     expected_keywords = query_item.get("expected_answer_keywords", [])
-    found_keywords = [kw for kw in expected_keywords if kw.lower() in response_text.lower()]
+    found_keywords = [kw for kw in expected_keywords if kw.lower() in resp_str.lower()]
     keyword_pass = len(found_keywords) >= max(1, len(expected_keywords) // 2)
 
     # Qualifier check
     required_qualifiers = query_item.get("required_qualifiers", [])
-    missing_qualifiers = [q for q in required_qualifiers if q.lower() not in response_text.lower()]
+    missing_qualifiers = [q for q in required_qualifiers if q.lower() not in resp_str.lower()]
     qualifier_pass = (len(missing_qualifiers) == 0)
 
     if must_abstain:

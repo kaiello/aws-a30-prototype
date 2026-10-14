@@ -45,6 +45,11 @@ GEMINI_BASE_URL = os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googl
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 DEFAULT_ENGINE = os.getenv("DEFAULT_ENGINE", "deepseek")
 
+# Custom / OpenAI / Groq / OpenRouter / Ollama alternative
+CUSTOM_API_KEY = os.getenv("CUSTOM_API_KEY", "") or os.getenv("OPENAI_API_KEY", "")
+CUSTOM_BASE_URL = os.getenv("CUSTOM_BASE_URL", "https://api.openai.com/v1")
+CUSTOM_MODEL = os.getenv("CUSTOM_MODEL", "gpt-4o-mini")
+
 # Local Ollama (Optional alternative)
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 VLM_MODEL = os.getenv("VLM_MODEL", "qwen3-vl:8b-instruct")

@@ -26,8 +26,11 @@ from src.config import (
     DEFAULT_ENGINE,
     DEEPSEEK_MODEL,
     GEMINI_MODEL,
+    CUSTOM_MODEL,
+    CUSTOM_BASE_URL,
     DEEPSEEK_API_KEY,
-    GEMINI_API_KEY
+    GEMINI_API_KEY,
+    CUSTOM_API_KEY
 )
 from src.query import run_query, resolve_multimodal_assets
 from src.figure_inspectors import (
@@ -454,13 +457,82 @@ HTML_INDEX = """<!DOCTYPE html>
             <h1>AWS A3.0 Multimodal Visual Explorer</h1>
             <p>Standard Welding Terms & Definitions (2020) &bull; LightRAG 1.5.7 Dual-Engine NLQ</p>
         </div>
-        <div style="display: flex; gap: 10px; align-items: center;">
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button id="settingsBtn" onclick="toggleSettingsDrawer()" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: var(--accent-cyan); padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;" title="Configure dynamic API keys and custom model endpoints">⚙️ Model & API Keys</button>
             <a href="/api/benchmark" target="_blank" style="color: #38bdf8; text-decoration: none; font-size: 12px; font-weight: 600; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 10px; border-radius: 12px; transition: all 0.2s;" title="View all 50 gold standard test queries and expected citations">📊 50-Item Benchmark JSON</a>
             <div class="engine-badge" id="activeBadge">Engine: DeepSeek</div>
         </div>
     </div>
 
     <div class="container">
+        <!-- Dynamic API Key & Custom Model Configuration Drawer -->
+        <div id="settingsDrawer" class="search-card" style="display: none; border: 1px solid var(--accent-cyan); background: #0c1527;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px; font-weight: 700; color: var(--accent-cyan);">⚙️ Dynamic Model & API Key Configuration</span>
+                    <span style="font-size: 11px; background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); padding: 2px 8px; border-radius: 12px; font-weight: 600;">Browser Storage (localStorage)</span>
+                </div>
+                <button onclick="toggleSettingsDrawer()" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 20px; line-height: 1;" title="Close">&times;</button>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 16px;">
+                Optionally supply custom API keys or configure an OpenAI-compatible endpoint (OpenAI, Ollama, Groq, OpenRouter, vLLM). Keys are stored locally in your browser and sent only with query requests, never written to disk or git.
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 14px;">
+                <!-- DeepSeek Config -->
+                <div style="background: var(--bg-card); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong style="color: #38bdf8; font-size: 13.5px;">DeepSeek Backend</strong>
+                        <span id="deepseekEnvStatus" style="font-size: 11px; color: #94a3b8;">Checking...</span>
+                    </div>
+                    <label style="font-size: 11.5px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Custom API Key (sk-...):</label>
+                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                        <input type="password" id="cfgDeepseekKey" placeholder="Leave blank to use server .env" style="flex: 1; padding: 6px 10px; font-size: 12.5px;" />
+                        <button onclick="toggleKeyVisibility('cfgDeepseekKey')" style="padding: 6px 10px; font-size: 12px; background: var(--bg-elevated); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: 6px; cursor: pointer;" title="Show/Hide">👁️</button>
+                    </div>
+                    <label style="font-size: 11.5px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Model Name override:</label>
+                    <input type="text" id="cfgDeepseekModel" placeholder="deepseek-chat" style="width: 100%; padding: 6px 10px; font-size: 12.5px;" />
+                </div>
+
+                <!-- Gemini Config -->
+                <div style="background: var(--bg-card); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong style="color: #38bdf8; font-size: 13.5px;">Google Gemini Backend</strong>
+                        <span id="geminiEnvStatus" style="font-size: 11px; color: #94a3b8;">Checking...</span>
+                    </div>
+                    <label style="font-size: 11.5px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Custom API Key (AIzaSy...):</label>
+                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                        <input type="password" id="cfgGeminiKey" placeholder="Leave blank to use server .env" style="flex: 1; padding: 6px 10px; font-size: 12.5px;" />
+                        <button onclick="toggleKeyVisibility('cfgGeminiKey')" style="padding: 6px 10px; font-size: 12px; background: var(--bg-elevated); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: 6px; cursor: pointer;" title="Show/Hide">👁️</button>
+                    </div>
+                    <label style="font-size: 11.5px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Model Name override:</label>
+                    <input type="text" id="cfgGeminiModel" placeholder="gemini-2.0-flash" style="width: 100%; padding: 6px 10px; font-size: 12.5px;" />
+                </div>
+
+                <!-- Custom / OpenAI Config -->
+                <div style="background: var(--bg-card); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong style="color: #38bdf8; font-size: 13.5px;">Custom / OpenAI Compatible</strong>
+                        <span id="customEnvStatus" style="font-size: 11px; color: #94a3b8;">Checking...</span>
+                    </div>
+                    <label style="font-size: 11.5px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Base URL:</label>
+                    <input type="text" id="cfgCustomBaseUrl" placeholder="https://api.openai.com/v1 or http://localhost:11434/v1" style="width: 100%; padding: 6px 10px; font-size: 12.5px; margin-bottom: 8px;" />
+                    <label style="font-size: 11.5px; color: var(--text-secondary); display: block; margin-bottom: 4px;">API Key (sk-... / ollama):</label>
+                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                        <input type="password" id="cfgCustomKey" placeholder="sk-... (optional for local Ollama)" style="flex: 1; padding: 6px 10px; font-size: 12.5px;" />
+                        <button onclick="toggleKeyVisibility('cfgCustomKey')" style="padding: 6px 10px; font-size: 12px; background: var(--bg-elevated); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: 6px; cursor: pointer;" title="Show/Hide">👁️</button>
+                    </div>
+                    <label style="font-size: 11.5px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Model Name:</label>
+                    <input type="text" id="cfgCustomModel" placeholder="gpt-4o-mini or llama3" style="width: 100%; padding: 6px 10px; font-size: 12.5px;" />
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px;">
+                <button onclick="clearCustomSettings()" style="background: var(--bg-elevated); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 7px 14px; border-radius: 6px; font-size: 12.5px; cursor: pointer;">Reset to Defaults</button>
+                <button onclick="saveCustomSettings()" style="background: var(--accent-blue); border: none; color: white; padding: 7px 16px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer;">Save Settings</button>
+            </div>
+        </div>
+
         <div class="search-card">
             <div class="controls">
                 <div class="control-group">
@@ -468,6 +540,7 @@ HTML_INDEX = """<!DOCTYPE html>
                     <select id="engineSelect" onchange="updateEngineBadge()">
                         <option value="deepseek">DeepSeek (deepseek-chat)</option>
                         <option value="gemini">Google Gemini (gemini-2.0-flash)</option>
+                        <option value="custom">Custom (OpenAI / Ollama / Groq)</option>
                     </select>
                 </div>
                 <div class="control-group">
@@ -543,7 +616,113 @@ HTML_INDEX = """<!DOCTYPE html>
     <script>
         function updateEngineBadge() {
             const engine = document.getElementById("engineSelect").value;
-            document.getElementById("activeBadge").innerText = "Engine: " + (engine === "gemini" ? "Gemini Flash" : "DeepSeek");
+            let label = "DeepSeek";
+            if (engine === "gemini") label = "Gemini Flash";
+            else if (engine === "custom" || engine === "openai") label = "Custom / OpenAI";
+            document.getElementById("activeBadge").innerText = "Engine: " + label;
+        }
+
+        function toggleSettingsDrawer() {
+            const drawer = document.getElementById("settingsDrawer");
+            if (drawer.style.display === "none" || !drawer.style.display) {
+                drawer.style.display = "block";
+                drawer.scrollIntoView({ behavior: "smooth" });
+            } else {
+                drawer.style.display = "none";
+            }
+        }
+
+        function toggleKeyVisibility(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.type = el.type === "password" ? "text" : "password";
+            }
+        }
+
+        function loadSavedSettings() {
+            try {
+                const saved = JSON.parse(localStorage.getItem("aws_a30_model_settings") || "{}");
+                if (saved.deepseekKey) document.getElementById("cfgDeepseekKey").value = saved.deepseekKey;
+                if (saved.deepseekModel) document.getElementById("cfgDeepseekModel").value = saved.deepseekModel;
+                if (saved.geminiKey) document.getElementById("cfgGeminiKey").value = saved.geminiKey;
+                if (saved.geminiModel) document.getElementById("cfgGeminiModel").value = saved.geminiModel;
+                if (saved.customBaseUrl) document.getElementById("cfgCustomBaseUrl").value = saved.customBaseUrl;
+                if (saved.customKey) document.getElementById("cfgCustomKey").value = saved.customKey;
+                if (saved.customModel) document.getElementById("cfgCustomModel").value = saved.customModel;
+                if (saved.selectedEngine) {
+                    document.getElementById("engineSelect").value = saved.selectedEngine;
+                    updateEngineBadge();
+                }
+            } catch (e) {
+                console.error("Failed to load saved settings", e);
+            }
+        }
+
+        function saveCustomSettings() {
+            const selectedEngine = document.getElementById("engineSelect").value;
+            const settings = {
+                deepseekKey: document.getElementById("cfgDeepseekKey").value.trim(),
+                deepseekModel: document.getElementById("cfgDeepseekModel").value.trim(),
+                geminiKey: document.getElementById("cfgGeminiKey").value.trim(),
+                geminiModel: document.getElementById("cfgGeminiModel").value.trim(),
+                customBaseUrl: document.getElementById("cfgCustomBaseUrl").value.trim(),
+                customKey: document.getElementById("cfgCustomKey").value.trim(),
+                customModel: document.getElementById("cfgCustomModel").value.trim(),
+                selectedEngine: selectedEngine
+            };
+            localStorage.setItem("aws_a30_model_settings", JSON.stringify(settings));
+            alert("API & Model settings saved to browser storage.");
+            toggleSettingsDrawer();
+        }
+
+        function clearCustomSettings() {
+            if (confirm("Reset custom model & API settings to server defaults?")) {
+                localStorage.removeItem("aws_a30_model_settings");
+                document.getElementById("cfgDeepseekKey").value = "";
+                document.getElementById("cfgDeepseekModel").value = "";
+                document.getElementById("cfgGeminiKey").value = "";
+                document.getElementById("cfgGeminiModel").value = "";
+                document.getElementById("cfgCustomBaseUrl").value = "";
+                document.getElementById("cfgCustomKey").value = "";
+                document.getElementById("cfgCustomModel").value = "";
+                alert("Settings reset to defaults.");
+            }
+        }
+
+        async function checkConfigStatus() {
+            try {
+                const res = await fetch("/api/config_status");
+                if (!res.ok) return;
+                const data = await res.json();
+                
+                const dsStatus = document.getElementById("deepseekEnvStatus");
+                if (dsStatus) {
+                    dsStatus.innerHTML = data.deepseek_configured ? '<span style="color:#10b981; font-weight:600;">● Server Active</span>' : '<span style="color:#f87171; font-weight:600;">○ Server Unset</span>';
+                }
+                const gmStatus = document.getElementById("geminiEnvStatus");
+                if (gmStatus) {
+                    gmStatus.innerHTML = data.gemini_configured ? '<span style="color:#10b981; font-weight:600;">● Server Active</span>' : '<span style="color:#f87171; font-weight:600;">○ Server Unset</span>';
+                }
+                const csStatus = document.getElementById("customEnvStatus");
+                if (csStatus) {
+                    csStatus.innerHTML = data.custom_configured ? '<span style="color:#10b981; font-weight:600;">● Server Active</span>' : '<span style="color:#94a3b8;">○ Unconfigured</span>';
+                }
+                
+                if (!document.getElementById("cfgDeepseekModel").value && data.deepseek_model) {
+                    document.getElementById("cfgDeepseekModel").placeholder = data.deepseek_model;
+                }
+                if (!document.getElementById("cfgGeminiModel").value && data.gemini_model) {
+                    document.getElementById("cfgGeminiModel").placeholder = data.gemini_model;
+                }
+                if (!document.getElementById("cfgCustomModel").value && data.custom_model) {
+                    document.getElementById("cfgCustomModel").placeholder = data.custom_model;
+                }
+                if (!document.getElementById("cfgCustomBaseUrl").value && data.custom_base_url) {
+                    document.getElementById("cfgCustomBaseUrl").placeholder = data.custom_base_url;
+                }
+            } catch (e) {
+                console.error("Failed to check config status", e);
+            }
         }
 
         function setQuery(text) {
@@ -558,14 +737,39 @@ HTML_INDEX = """<!DOCTYPE html>
             const engine = document.getElementById("engineSelect").value;
             const mode = document.getElementById("modeSelect").value;
 
+            // Collect any custom API key / model overrides from settings / localStorage
+            let apiKey = null;
+            let modelName = null;
+            let baseUrl = null;
+
+            try {
+                const saved = JSON.parse(localStorage.getItem("aws_a30_model_settings") || "{}");
+                if (engine === "deepseek") {
+                    if (saved.deepseekKey) apiKey = saved.deepseekKey;
+                    if (saved.deepseekModel) modelName = saved.deepseekModel;
+                } else if (engine === "gemini") {
+                    if (saved.geminiKey) apiKey = saved.geminiKey;
+                    if (saved.geminiModel) modelName = saved.geminiModel;
+                } else if (engine === "custom" || engine === "openai") {
+                    if (saved.customKey) apiKey = saved.customKey;
+                    if (saved.customModel) modelName = saved.customModel;
+                    if (saved.customBaseUrl) baseUrl = saved.customBaseUrl;
+                }
+            } catch (e) {}
+
             document.getElementById("loadingSpinner").style.display = "block";
             document.getElementById("resultPanel").style.display = "none";
 
             try {
+                const payload = { query, engine, mode };
+                if (apiKey) payload.api_key = apiKey;
+                if (modelName) payload.model_name = modelName;
+                if (baseUrl) payload.base_url = baseUrl;
+
                 const response = await fetch("/api/query", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ query, engine, mode })
+                    body: JSON.stringify(payload)
                 });
                 const data = await response.json();
 
@@ -1054,7 +1258,9 @@ HTML_INDEX = """<!DOCTYPE html>
         }
 
         window.addEventListener("DOMContentLoaded", () => {
+            loadSavedSettings();
             updateEngineBadge();
+            checkConfigStatus();
             loadFigureCatalog();
             initModalEvents();
         });
@@ -1112,6 +1318,25 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                     "figures": get_all_figures_catalog()
                 }
                 resp_bytes = json.dumps(catalog_data).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(resp_bytes)))
+                self.end_headers()
+                self.wfile.write(resp_bytes)
+                return
+
+            elif path == "/api/config_status":
+                status = {
+                    "default_engine": DEFAULT_ENGINE,
+                    "deepseek_configured": bool(DEEPSEEK_API_KEY),
+                    "deepseek_model": DEEPSEEK_MODEL,
+                    "gemini_configured": bool(GEMINI_API_KEY),
+                    "gemini_model": GEMINI_MODEL,
+                    "custom_configured": bool(CUSTOM_API_KEY),
+                    "custom_model": CUSTOM_MODEL,
+                    "custom_base_url": CUSTOM_BASE_URL,
+                }
+                resp_bytes = json.dumps(status).encode("utf-8")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Content-Length", str(len(resp_bytes)))
@@ -1194,9 +1419,12 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                 query = data.get("query", "")
                 engine = data.get("engine", DEFAULT_ENGINE)
                 mode = data.get("mode", "mix")
+                api_key = data.get("api_key") or None
+                model_name = data.get("model_name") or None
+                base_url = data.get("base_url") or None
 
-                print(f"[API QUERY] Engine={engine}, Mode={mode}, Query='{query}'")
-                res = run_query(query, mode=mode, engine=engine)
+                print(f"[API QUERY] Engine={engine}, Mode={mode}, Model={model_name}, CustomKey={'***' if api_key else 'None'}, BaseUrl={base_url}, Query='{query}'")
+                res = run_query(query, mode=mode, engine=engine, api_key=api_key, model_name=model_name, base_url=base_url)
 
                 resp_bytes = json.dumps(res).encode("utf-8")
                 self.send_response(200)

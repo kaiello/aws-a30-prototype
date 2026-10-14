@@ -8,6 +8,7 @@ import sys
 import re
 import asyncio
 import argparse
+from typing import Optional
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -22,6 +23,9 @@ from src.config import (
     PARSED_TABLES_DIR,
     DEEPSEEK_API_KEY,
     GEMINI_API_KEY,
+    CUSTOM_API_KEY,
+    CUSTOM_BASE_URL,
+    CUSTOM_MODEL,
     DEFAULT_ENGINE
 )
 from src.indexer import get_rag_instance
@@ -120,21 +124,78 @@ def extract_see_also_terms(text: str):
             result.append(item)
     return result
 
-async def async_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_ENGINE) -> dict:
-    if engine.lower() == "gemini" and not GEMINI_API_KEY:
+async def async_query(
+    query_str: str,
+    mode: str = "mix",
+    engine: str = DEFAULT_ENGINE,
+    api_key: Optional[str] = None,
+    model_name: Optional[str] = None,
+    base_url: Optional[str] = None
+) -> dict:
+    engine_lower = (engine or DEFAULT_ENGINE).lower()
+    
+    if engine_lower == "gemini":
+        key = api_key or GEMINI_API_KEY
+        if not key:
+            return {
+                "query": query_str,
+                "answer": "[ERROR: GEMINI_API_KEY not configured. Set GEMINI_API_KEY in .env, supply via --api-key, or enter in Web UI settings.]",
+                "citations": {},
+                "grounded_claims": [],
+                "resolved_figures": [],
+                "resolved_tables": [],
+                "see_also": []
+            }
+    elif engine_lower in ["custom", "openai"]:
+        key = api_key or CUSTOM_API_KEY
+        if not key:
+            return {
+                "query": query_str,
+                "answer": "[ERROR: Custom API Key not configured. Supply via --api-key, CUSTOM_API_KEY in .env, or enter in Web UI settings.]",
+                "citations": {},
+                "grounded_claims": [],
+                "resolved_figures": [],
+                "resolved_tables": [],
+                "see_also": []
+            }
+    else:
+        key = api_key or DEEPSEEK_API_KEY
+        if not key:
+            return {
+                "query": query_str,
+                "answer": "[ERROR: DEEPSEEK_API_KEY not configured. Set DEEPSEEK_API_KEY in .env, supply via --api-key, or enter in Web UI settings.]",
+                "citations": {},
+                "grounded_claims": [],
+                "resolved_figures": [],
+                "resolved_tables": [],
+                "see_also": []
+            }
+
+    try:
+        rag = get_rag_instance(
+            working_dir=STORAGE_DIR,
+            engine=engine,
+            api_key=key,
+            model_name=model_name,
+            base_url=base_url
+        )
+        await rag.initialize_storages()
+        
+        param = QueryParam(
+            mode=mode,
+            top_k=40,
+            chunk_top_k=20,
+            enable_rerank=False
+        )
+        
+        response = await rag.aquery(query_str, param=param)
+        if response is None:
+            raise RuntimeError("LLM returned no response. Please verify your API key, model name, and network connection.")
+    except Exception as e:
         return {
             "query": query_str,
-            "answer": "[ERROR: GEMINI_API_KEY not configured. Set GEMINI_API_KEY in .env.]",
-            "citations": {},
-            "grounded_claims": [],
-            "resolved_figures": [],
-            "resolved_tables": [],
-            "see_also": []
-        }
-    elif engine.lower() != "gemini" and not DEEPSEEK_API_KEY:
-        return {
-            "query": query_str,
-            "answer": "[ERROR: DEEPSEEK_API_KEY not configured. Set DEEPSEEK_API_KEY in .env.]",
+            "answer": f"[ERROR: Query execution failed: {str(e)}]",
+            "error": str(e),
             "citations": {},
             "grounded_claims": [],
             "resolved_figures": [],
@@ -142,17 +203,6 @@ async def async_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_E
             "see_also": []
         }
 
-    rag = get_rag_instance(working_dir=STORAGE_DIR, engine=engine)
-    await rag.initialize_storages()
-    
-    param = QueryParam(
-        mode=mode,
-        top_k=40,
-        chunk_top_k=20,
-        enable_rerank=False
-    )
-    
-    response = await rag.aquery(query_str, param=param)
     citations = extract_citations(response)
     grounded_claims = extract_grounded_claims(response)
     figures, tables = resolve_multimodal_assets(f"{query_str}\n{response}")
@@ -188,20 +238,47 @@ def get_query_event_loop() -> asyncio.AbstractEventLoop:
         _QUERY_THREAD.start()
     return _QUERY_LOOP
 
-def run_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_ENGINE) -> dict:
+def run_query(
+    query_str: str,
+    mode: str = "mix",
+    engine: str = DEFAULT_ENGINE,
+    api_key: Optional[str] = None,
+    model_name: Optional[str] = None,
+    base_url: Optional[str] = None
+) -> dict:
     """Thread-safe synchronous query executor using a persistent dedicated event loop."""
     loop = get_query_event_loop()
-    future = asyncio.run_coroutine_threadsafe(async_query(query_str, mode=mode, engine=engine), loop)
+    future = asyncio.run_coroutine_threadsafe(
+        async_query(
+            query_str,
+            mode=mode,
+            engine=engine,
+            api_key=api_key,
+            model_name=model_name,
+            base_url=base_url
+        ),
+        loop
+    )
     return future.result()
 
 def main():
     parser = argparse.ArgumentParser(description="Query AWS A3.0 Multimodal Knowledge Base")
     parser.add_argument("query", type=str, help="Natural language query")
     parser.add_argument("--mode", type=str, default="mix", choices=["mix", "local", "global", "naive"], help="Retrieval mode")
-    parser.add_argument("--engine", type=str, default=DEFAULT_ENGINE, choices=["deepseek", "gemini"], help="LLM inference engine")
+    parser.add_argument("--engine", type=str, default=DEFAULT_ENGINE, choices=["deepseek", "gemini", "custom", "openai"], help="LLM inference engine")
+    parser.add_argument("--api-key", type=str, default=None, help="Custom API key (overrides .env)")
+    parser.add_argument("--model", type=str, default=None, help="Custom model name (e.g. gpt-4o, gemini-2.0-flash, deepseek-chat)")
+    parser.add_argument("--base-url", type=str, default=None, help="Custom base URL (for OpenAI, Ollama, Groq, etc.)")
     args = parser.parse_args()
 
-    result = run_query(args.query, mode=args.mode, engine=args.engine)
+    result = run_query(
+        args.query,
+        mode=args.mode,
+        engine=args.engine,
+        api_key=args.api_key,
+        model_name=args.model,
+        base_url=args.base_url
+    )
     
     print("\n" + "="*70)
     print(f"QUERY: {result['query']}")

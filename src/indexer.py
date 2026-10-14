@@ -18,6 +18,8 @@ from sentence_transformers import SentenceTransformer
 from lightrag import LightRAG
 from lightrag.utils import EmbeddingFunc
 
+from typing import Optional, Dict, Tuple
+
 from src.config import (
     STORAGE_DIR,
     PARSED_TEXT_FILE,
@@ -29,12 +31,16 @@ from src.config import (
     GEMINI_API_KEY,
     GEMINI_BASE_URL,
     GEMINI_MODEL,
+    CUSTOM_API_KEY,
+    CUSTOM_BASE_URL,
+    CUSTOM_MODEL,
     DEFAULT_ENGINE,
     EMBEDDING_MODEL,
     EMBEDDING_DIM
 )
 
 _embed_model = None
+_RAG_INSTANCES: Dict[Tuple, LightRAG] = {}
 
 def get_embed_model():
     global _embed_model
@@ -42,21 +48,42 @@ def get_embed_model():
         _embed_model = SentenceTransformer(EMBEDDING_MODEL)
     return _embed_model
 
-def get_rag_instance(working_dir: Path = STORAGE_DIR, engine: str = DEFAULT_ENGINE) -> LightRAG:
+def get_rag_instance(
+    working_dir: Path = STORAGE_DIR,
+    engine: str = DEFAULT_ENGINE,
+    api_key: Optional[str] = None,
+    model_name: Optional[str] = None,
+    base_url: Optional[str] = None
+) -> LightRAG:
+    global _RAG_INSTANCES
     working_dir.mkdir(parents=True, exist_ok=True)
     
-    if engine.lower() == "gemini":
-        if not GEMINI_API_KEY:
-            print("[ERROR] GEMINI_API_KEY is not set in environment or .env!")
-            sys.exit(1)
-        client = AsyncOpenAI(api_key=GEMINI_API_KEY, base_url=GEMINI_BASE_URL)
-        model_name = GEMINI_MODEL
+    engine_lower = (engine or DEFAULT_ENGINE).lower()
+    
+    if engine_lower == "gemini":
+        effective_key = api_key or GEMINI_API_KEY
+        if not effective_key:
+            raise ValueError("GEMINI_API_KEY is not set! Supply via --api-key, Web UI settings, or .env")
+        effective_base_url = base_url or GEMINI_BASE_URL
+        effective_model = model_name or GEMINI_MODEL
+    elif engine_lower in ["custom", "openai"]:
+        effective_key = api_key or CUSTOM_API_KEY
+        if not effective_key:
+            raise ValueError("Custom API key is not set! Supply via --api-key, Web UI settings, or CUSTOM_API_KEY in .env")
+        effective_base_url = base_url or CUSTOM_BASE_URL
+        effective_model = model_name or CUSTOM_MODEL
     else:
-        if not DEEPSEEK_API_KEY:
-            print("[ERROR] DEEPSEEK_API_KEY is not set in environment or .env!")
-            sys.exit(1)
-        client = AsyncOpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_BASE_URL)
-        model_name = DEEPSEEK_MODEL
+        effective_key = api_key or DEEPSEEK_API_KEY
+        if not effective_key:
+            raise ValueError("DEEPSEEK_API_KEY is not set! Supply via --api-key, Web UI settings, or .env")
+        effective_base_url = base_url or DEEPSEEK_BASE_URL
+        effective_model = model_name or DEEPSEEK_MODEL
+
+    cache_key = (str(working_dir), engine_lower, effective_key, effective_model, effective_base_url)
+    if cache_key in _RAG_INSTANCES:
+        return _RAG_INSTANCES[cache_key]
+
+    client = AsyncOpenAI(api_key=effective_key, base_url=effective_base_url)
 
     async def llm_func(prompt, system_prompt=None, history_messages=None, **kwargs):
         messages = []
@@ -67,7 +94,7 @@ def get_rag_instance(working_dir: Path = STORAGE_DIR, engine: str = DEFAULT_ENGI
         messages.append({"role": "user", "content": prompt})
         
         resp = await client.chat.completions.create(
-            model=model_name,
+            model=effective_model,
             messages=messages,
             temperature=0.0
         )
@@ -86,8 +113,9 @@ def get_rag_instance(working_dir: Path = STORAGE_DIR, engine: str = DEFAULT_ENGI
             func=embed_func,
             model_name=EMBEDDING_MODEL
         ),
-        llm_model_name=model_name
+        llm_model_name=effective_model
     )
+    _RAG_INSTANCES[cache_key] = rag
     return rag
 
 def load_all_chunks(max_figures: int = 40):
