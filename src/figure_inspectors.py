@@ -10,7 +10,7 @@ Provides 400+ interactive chips with pre-formulated natural language queries cov
 - Root, throat, and discontinuity cross-sections
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 FIGURE_CATEGORIES = [
     {"id": "all", "label": "📊 All Figures", "desc": "All 60 Annex A & B Figures"},
@@ -1143,9 +1143,55 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
     }
 }
 
+import json
 import re
 import urllib.parse
-from src.config import PARSED_FIGURES_DIR
+from src.config import PARSED_FIGURES_DIR, BASE_DIR
+
+_BBOX_FILE = BASE_DIR / "parsed" / "figures" / "figure_bboxes.json"
+_BBOX_MANIFEST: Dict[str, Any] = {}
+if _BBOX_FILE.exists():
+    try:
+        with open(_BBOX_FILE, "r", encoding="utf-8") as _f:
+            _BBOX_MANIFEST = json.load(_f)
+    except Exception:
+        pass
+
+def get_figure_bboxes(fig_key: str) -> Optional[Dict[str, Any]]:
+    """Returns spatial bounding box metadata for a figure from the pre-computed manifest."""
+    clean_key = fig_key.strip()
+    if not clean_key.startswith("Figure "):
+        clean_key = f"Figure {clean_key}"
+    return _BBOX_MANIFEST.get(clean_key)
+
+def _enrich_chips_with_bboxes(fig_key: str, groups: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Merges spatial coordinates (bbox and center) from manifest into chips."""
+    bbox_meta = get_figure_bboxes(fig_key)
+    if not bbox_meta or "groups" not in bbox_meta:
+        return groups
+    
+    # Map label -> bbox entry
+    label_map = {}
+    for g in bbox_meta.get("groups", []):
+        for c in g.get("chips", []):
+            label_map[c.get("label", "")] = c
+            
+    enriched = []
+    for g in groups:
+        g_copy = dict(g)
+        chips_copy = []
+        for c in g.get("chips", []):
+            c_copy = dict(c)
+            lbl = c.get("label", "")
+            if lbl in label_map:
+                match = label_map[lbl]
+                c_copy["bbox"] = match.get("bbox")
+                c_copy["center"] = match.get("center")
+                c_copy["panel"] = match.get("panel", "")
+            chips_copy.append(c_copy)
+        g_copy["chips"] = chips_copy
+        enriched.append(g_copy)
+    return enriched
 
 def resolve_figure_image_filename(fig_key: str) -> str:
     """Finds matching PNG filename on disk for a figure key."""
@@ -1162,8 +1208,11 @@ def get_figure_data(fig_key: str) -> Dict[str, Any]:
     if not clean_key.startswith("Figure "):
         clean_key = f"Figure {clean_key}"
     data = FIGURE_INSPECTORS.get(clean_key, {})
-    if data and "image_file" not in data:
-        data["image_file"] = resolve_figure_image_filename(clean_key)
+    if data:
+        data = dict(data)
+        if "image_file" not in data:
+            data["image_file"] = resolve_figure_image_filename(clean_key)
+        data["groups"] = _enrich_chips_with_bboxes(clean_key, data.get("groups", []))
     return data
 
 def get_inspector_html(fig_key: str) -> str:
@@ -1175,6 +1224,7 @@ def get_inspector_html(fig_key: str) -> str:
     title = info.get("title", fig_key)
     page = info.get("page", "")
     groups = info.get("groups", [])
+    img_file = info.get("image_file", "")
 
     html = f"""
     <div class="interactive-inspector" style="margin-top: 16px; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
@@ -1196,8 +1246,14 @@ def get_inspector_html(fig_key: str) -> str:
         """
         for c in chips:
             label = c.get("label", "")
+            safe_label = label.replace("'", "\\'")
             encoded_query = urllib.parse.quote(c.get("query", ""))
-            html += f"""<span class="pill" data-query="{encoded_query}" onclick="event.stopPropagation(); setQuery(decodeURIComponent(this.getAttribute('data-query')))">{label}</span>"""
+            bbox = c.get("bbox")
+            bbox_json = json.dumps(bbox) if bbox else "null"
+            focus_btn = ""
+            if bbox:
+                focus_btn = f''' <span class="chip-focus-btn" title="Focus diagram on {label}" onclick="event.stopPropagation(); focusFeature('{fig_key}', '{safe_label}', {bbox_json})">🎯</span>'''
+            html += f"""<span class="pill" data-query="{encoded_query}" onclick="event.stopPropagation(); setQuery(decodeURIComponent(this.getAttribute('data-query')))">{label}{focus_btn}</span>"""
         html += """
             </div>
         </div>
@@ -1209,7 +1265,8 @@ def get_inspector_html(fig_key: str) -> str:
 def get_all_figures_catalog() -> List[Dict[str, Any]]:
     """Returns a summarized list of all 60 figures for the interactive browser."""
     catalog = []
-    for fig_id, data in FIGURE_INSPECTORS.items():
+    for fig_id in FIGURE_INSPECTORS:
+        data = get_figure_data(fig_id)
         total_chips = sum(len(g.get("chips", [])) for g in data.get("groups", []))
         catalog.append({
             "id": fig_id,
@@ -1217,7 +1274,7 @@ def get_all_figures_catalog() -> List[Dict[str, Any]]:
             "page": data.get("page", ""),
             "category": data.get("category", ""),
             "chip_count": total_chips,
-            "image_file": resolve_figure_image_filename(fig_id),
+            "image_file": data.get("image_file", ""),
             "groups": data.get("groups", [])
         })
     return catalog

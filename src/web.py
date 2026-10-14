@@ -408,15 +408,88 @@ HTML_INDEX = """<!DOCTYPE html>
         .modal-viewport:active {
             cursor: grabbing;
         }
-        #modalImg {
-            max-width: 90%;
-            max-height: 85vh;
-            object-fit: contain;
-            transition: transform 0.08s ease-out;
+        #modalStage {
+            position: relative;
+            display: inline-block;
             transform-origin: center center;
+            transition: transform 0.08s ease-out;
+            will-change: transform;
+            cursor: grab;
+        }
+        #modalStage:active {
+            cursor: grabbing;
+        }
+        #modalImg {
+            max-width: 84vw;
+            max-height: 82vh;
+            object-fit: contain;
+            display: block;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             border-radius: 6px;
             background: #ffffff;
+        }
+        #modalSvgOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .highlight-rect {
+            fill: rgba(56, 189, 248, 0.12);
+            stroke: #38bdf8;
+            stroke-width: 4;
+            stroke-dasharray: 10, 5;
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.8));
+            animation: pulseHighlight 2s infinite ease-in-out;
+        }
+        @keyframes pulseHighlight {
+            0% {
+                stroke: #38bdf8;
+                stroke-width: 4;
+                fill: rgba(56, 189, 248, 0.10);
+            }
+            50% {
+                stroke: #4ade80;
+                stroke-width: 6;
+                fill: rgba(74, 222, 128, 0.22);
+                filter: drop-shadow(0 0 18px rgba(74, 222, 128, 0.95));
+            }
+            100% {
+                stroke: #38bdf8;
+                stroke-width: 4;
+                fill: rgba(56, 189, 248, 0.10);
+            }
+        }
+        .highlight-badge-pill {
+            background: rgba(14, 165, 233, 0.95);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            pointer-events: auto;
+        }
+        .chip-focus-btn {
+            margin-left: 5px;
+            font-size: 11px;
+            opacity: 0.8;
+            padding: 1px 4px;
+            border-radius: 4px;
+            transition: all 0.15s;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .chip-focus-btn:hover {
+            opacity: 1;
+            transform: scale(1.3);
+            background: rgba(56, 189, 248, 0.25);
         }
         .modal-hint {
             padding: 10px;
@@ -1108,7 +1181,13 @@ HTML_INDEX = """<!DOCTYPE html>
                 `;
                 (g.chips || []).forEach(c => {
                     const encodedQuery = encodeURIComponent(c.query || "");
-                    html += `<span class="pill" data-query="${encodedQuery}" onclick="event.stopPropagation(); setQuery(decodeURIComponent(this.getAttribute('data-query')))">${c.label}</span>`;
+                    const safeLabel = (c.label || "").replace(/'/g, "\\'");
+                    const bboxJson = c.bbox ? JSON.stringify(c.bbox) : "null";
+                    let focusBtn = "";
+                    if (c.bbox) {
+                        focusBtn = ` <span class="chip-focus-btn" title="Focus diagram on ${safeLabel}" onclick="event.stopPropagation(); focusFeature('${figData.id || figKey}', '${safeLabel}', ${bboxJson})">🎯</span>`;
+                    }
+                    html += `<span class="pill" data-query="${encodedQuery}" onclick="event.stopPropagation(); setQuery(decodeURIComponent(this.getAttribute('data-query')))">${c.label}${focusBtn}</span>`;
                 });
                 html += `
                         </div>
@@ -1118,6 +1197,15 @@ HTML_INDEX = """<!DOCTYPE html>
 
             html += `</div>`;
             return html;
+        }
+
+        function focusFeature(figId, label, bbox) {
+            const cleanId = (figId || "").trim();
+            const figData = figureMap[cleanId] || figureMap[cleanId.replace("Figure ", "")] || figureMap["Figure " + cleanId];
+            if (!figData) return;
+            const imgFile = figData.image_file;
+            const caption = `<strong>${figData.id}</strong>: ${figData.title} &bull; <span style="color: #4ade80;">🎯 ${label}</span>`;
+            openImageModal(`/figures/${imgFile}`, caption, bbox, label);
         }
 
         function inspectFigureDirectly(figId) {
@@ -1160,26 +1248,124 @@ HTML_INDEX = """<!DOCTYPE html>
             document.getElementById("resultPanel").scrollIntoView({ behavior: "smooth" });
         }
 
-        // Interactive Zoom & Pan Modal Lightbox
+        // Interactive Zoom & Pan Modal Lightbox with SVG Overlay & Smart Auto-Zoom
         let currentScale = 1;
         let isPanning = false;
         let startX = 0, startY = 0;
         let translateX = 0, translateY = 0;
+        let activeBbox = null;
+        let activeLabel = null;
+        let scrimEnabled = true;
 
-        function openImageModal(imgSrc, caption) {
+        function openImageModal(imgSrc, caption, bbox, label) {
             const modal = document.getElementById("imageModal");
             const modalImg = document.getElementById("modalImg");
             const modalCaption = document.getElementById("modalCaption");
 
             modalImg.src = imgSrc;
-            modalCaption.innerText = caption || "Figure Inspector";
-            currentScale = 1;
-            translateX = 0;
-            translateY = 0;
-            updateModalTransform();
+            modalCaption.innerHTML = caption || "Figure Inspector";
+            activeBbox = bbox || null;
+            activeLabel = label || null;
 
             modal.style.display = "flex";
             document.body.style.overflow = "hidden";
+
+            function setupView() {
+                const highlightGroup = document.getElementById("svgHighlightGroup");
+                const highlightRect = document.getElementById("svgHighlightRect");
+                const badge = document.getElementById("svgHighlightBadge");
+                const badgeText = document.getElementById("svgBadgeText");
+                const svgScrim = document.getElementById("svgScrim");
+                const clearBtn = document.getElementById("clearFocusBtn");
+
+                if (activeBbox && Array.isArray(activeBbox) && activeBbox.length === 4) {
+                    const [ymin, xmin, ymax, xmax] = activeBbox;
+                    const cy = (ymin + ymax) / 2.0;
+                    const cx = (xmin + xmax) / 2.0;
+                    const boxH = Math.max(0.04, ymax - ymin);
+                    const boxW = Math.max(0.04, xmax - xmin);
+
+                    const rx = xmin * 1000;
+                    const ry = ymin * 1000;
+                    const rw = boxW * 1000;
+                    const rh = boxH * 1000;
+
+                    highlightRect.setAttribute("x", rx);
+                    highlightRect.setAttribute("y", ry);
+                    highlightRect.setAttribute("width", rw);
+                    highlightRect.setAttribute("height", rh);
+
+                    if (badge && badgeText) {
+                        badge.setAttribute("x", Math.max(10, Math.min(660, rx)));
+                        badge.setAttribute("y", Math.max(10, ry - 44));
+                        badgeText.innerText = activeLabel || "Target Feature";
+                    }
+                    highlightGroup.style.display = "block";
+
+                    if (scrimEnabled && svgScrim) {
+                        svgScrim.setAttribute("d", `M0,0 H1000 V1000 H0 Z M${rx},${ry} V${ry + rh} H${rx + rw} V${ry} Z`);
+                        svgScrim.style.display = "block";
+                    } else if (svgScrim) {
+                        svgScrim.style.display = "none";
+                    }
+
+                    if (clearBtn) clearBtn.style.display = "inline-block";
+
+                    // Target scale based on bounding box size
+                    const fitScale = Math.min(3.2, Math.max(1.8, 0.70 / Math.max(boxW, boxH)));
+                    currentScale = fitScale;
+
+                    // Centering translation: offset from image center (0.5, 0.5)
+                    const imgW = modalImg.clientWidth || modalImg.offsetWidth || 1000;
+                    const imgH = modalImg.clientHeight || modalImg.offsetHeight || 1200;
+
+                    translateX = (0.5 - cx) * imgW * currentScale;
+                    translateY = (0.5 - cy) * imgH * currentScale;
+
+                } else {
+                    highlightGroup.style.display = "none";
+                    if (svgScrim) svgScrim.style.display = "none";
+                    if (clearBtn) clearBtn.style.display = "none";
+                    currentScale = 1;
+                    translateX = 0;
+                    translateY = 0;
+                }
+                updateModalTransform();
+            }
+
+            if (modalImg.complete && modalImg.naturalWidth > 0) {
+                setupView();
+            } else {
+                modalImg.onload = setupView;
+            }
+        }
+
+        function toggleScrim() {
+            scrimEnabled = !scrimEnabled;
+            const btn = document.getElementById("scrimToggleBtn");
+            const svgScrim = document.getElementById("svgScrim");
+            if (btn) {
+                btn.innerText = scrimEnabled ? "🌓 Scrim: ON" : "🌓 Scrim: OFF";
+                btn.style.borderColor = scrimEnabled ? "var(--accent-cyan)" : "var(--border-color)";
+            }
+            if (svgScrim) {
+                if (scrimEnabled && activeBbox) {
+                    svgScrim.style.display = "block";
+                } else {
+                    svgScrim.style.display = "none";
+                }
+            }
+        }
+
+        function clearHighlight() {
+            activeBbox = null;
+            activeLabel = null;
+            document.getElementById("svgHighlightGroup").style.display = "none";
+            const svgScrim = document.getElementById("svgScrim");
+            if (svgScrim) svgScrim.style.display = "none";
+            const clearBtn = document.getElementById("clearFocusBtn");
+            if (clearBtn) clearBtn.style.display = "none";
+            resetZoom();
         }
 
         function closeModal() {
@@ -1189,7 +1375,7 @@ HTML_INDEX = """<!DOCTYPE html>
         }
 
         function zoomImage(delta) {
-            currentScale = Math.min(Math.max(0.5, currentScale + delta), 4.0);
+            currentScale = Math.min(Math.max(0.5, currentScale + delta), 4.5);
             updateModalTransform();
         }
 
@@ -1201,10 +1387,10 @@ HTML_INDEX = """<!DOCTYPE html>
         }
 
         function updateModalTransform() {
-            const modalImg = document.getElementById("modalImg");
+            const stage = document.getElementById("modalStage");
             const zoomLevel = document.getElementById("zoomLevel");
-            if (modalImg) {
-                modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+            if (stage) {
+                stage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
             }
             if (zoomLevel) {
                 zoomLevel.innerText = `${Math.round(currentScale * 100)}%`;
@@ -1266,11 +1452,13 @@ HTML_INDEX = """<!DOCTYPE html>
         });
     </script>
 
-    <!-- Interactive Zoom & Pan Modal Lightbox -->
+    <!-- Interactive Zoom & Pan Modal Lightbox with SVG Overlay & Scrim -->
     <div id="imageModal" class="image-modal" onclick="if(event.target===this) closeModal()">
         <div class="modal-controls">
             <span class="modal-title" id="modalCaption">Figure Inspector</span>
             <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="modal-btn" id="scrimToggleBtn" onclick="toggleScrim()" title="Toggle Dimming Scrim">🌓 Scrim: ON</button>
+                <button class="modal-btn" id="clearFocusBtn" onclick="clearHighlight()" style="display: none;" title="Show Full Diagram">🔍 Show Full</button>
                 <button class="modal-btn" onclick="zoomImage(0.25)" title="Zoom In (+)">🔍 +</button>
                 <span id="zoomLevel" style="font-size: 13px; color: var(--accent-cyan); min-width: 48px; text-align: center; font-weight: 700;">100%</span>
                 <button class="modal-btn" onclick="zoomImage(-0.25)" title="Zoom Out (-)">🔍 -</button>
@@ -1279,10 +1467,24 @@ HTML_INDEX = """<!DOCTYPE html>
             </div>
         </div>
         <div class="modal-viewport" id="modalViewport">
-            <img id="modalImg" src="" alt="Zoomed Diagram" draggable="false" />
+            <div id="modalStage">
+                <img id="modalImg" src="" alt="Zoomed Diagram" draggable="false" />
+                <svg id="modalSvgOverlay" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+                    <path id="svgScrim" fill="rgba(15, 23, 42, 0.60)" fill-rule="evenodd" d="M0,0 H1000 V1000 H0 Z" style="display: none;"></path>
+                    <g id="svgHighlightGroup" style="display: none;">
+                        <rect id="svgHighlightRect" class="highlight-rect" x="0" y="0" width="0" height="0" rx="8"></rect>
+                        <foreignObject id="svgHighlightBadge" x="0" y="0" width="340" height="42">
+                            <div xmlns="http://www.w3.org/1999/xhtml" class="highlight-badge-pill">
+                                <span style="font-size: 13px;">🎯</span>
+                                <span id="svgBadgeText" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px;">Target Feature</span>
+                            </div>
+                        </foreignObject>
+                    </g>
+                </svg>
+            </div>
         </div>
         <div class="modal-hint">
-            💡 <strong>Interactive Pan & Zoom:</strong> Drag to pan &bull; Scroll wheel to zoom &bull; Double-click to toggle 2x/1x &bull; Esc to close
+            💡 <strong>Interactive Pan & Zoom:</strong> Drag to pan &bull; Scroll wheel to zoom &bull; Double-click to toggle zoom &bull; 🎯 Focus buttons auto-center sub-panels &bull; Esc to close
         </div>
     </div>
 
