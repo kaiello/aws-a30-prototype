@@ -12,6 +12,11 @@ import urllib.parse
 import webbrowser
 import argparse
 from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 from src.config import (
@@ -342,7 +347,10 @@ HTML_INDEX = """<!DOCTYPE html>
             <h1>AWS A3.0 Multimodal Visual Explorer</h1>
             <p>Standard Welding Terms & Definitions (2020) &bull; LightRAG 1.5.7 Dual-Engine NLQ</p>
         </div>
-        <div class="engine-badge" id="activeBadge">Engine: DeepSeek</div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="/api/benchmark" target="_blank" style="color: #38bdf8; text-decoration: none; font-size: 12px; font-weight: 600; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 10px; border-radius: 12px; transition: all 0.2s;" title="View all 50 gold standard test queries and expected citations">📊 50-Item Benchmark JSON</a>
+            <div class="engine-badge" id="activeBadge">Engine: DeepSeek</div>
+        </div>
     </div>
 
     <div class="container">
@@ -457,8 +465,20 @@ HTML_INDEX = """<!DOCTYPE html>
                 document.getElementById("loadingSpinner").style.display = "none";
                 document.getElementById("resultPanel").style.display = "grid";
 
+                if (!response.ok || data.error) {
+                    document.getElementById("answerContent").innerHTML = `
+                        <div style="color: #f87171; background: rgba(248,113,113,0.1); padding: 12px; border-radius: 6px; border: 1px solid rgba(248,113,113,0.3);">
+                            <strong>Query Error:</strong> ${data.error || 'Server error ' + response.status}
+                        </div>
+                    `;
+                    document.getElementById("citationsBox").innerHTML = "";
+                    document.getElementById("resultPanel").scrollIntoView({ behavior: "smooth" });
+                    return;
+                }
+
                 // Render answer
-                document.getElementById("answerContent").innerText = data.answer;
+                document.getElementById("answerContent").innerText = data.answer || "No text answer returned.";
+                document.getElementById("resultPanel").scrollIntoView({ behavior: "smooth" });
 
                 // Render citations
                 const c = data.citations || {};
@@ -713,6 +733,7 @@ HTML_INDEX = """<!DOCTYPE html>
                 const btn = document.createElement("button");
                 btn.className = "category-tab" + (cat.id === currentCategory ? " active" : "");
                 btn.innerText = cat.label;
+                btn.setAttribute("data-category", cat.id);
                 btn.onclick = () => filterCategory(cat.id);
                 container.appendChild(btn);
             });
@@ -721,7 +742,7 @@ HTML_INDEX = """<!DOCTYPE html>
         function filterCategory(catId) {
             currentCategory = catId;
             document.querySelectorAll(".category-tab").forEach(tab => {
-                tab.classList.toggle("active", tab.innerText.includes(catId) || (catId === "all" && tab.innerText.includes("All")));
+                tab.classList.toggle("active", tab.getAttribute("data-category") === catId);
             });
 
             const filtered = catId === "all" ? allFigures : allFigures.filter(f => f.category === catId);
@@ -769,8 +790,8 @@ HTML_INDEX = """<!DOCTYPE html>
                         <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
                 `;
                 (g.chips || []).forEach(c => {
-                    const safeQuery = (c.query || "").replace(/'/g, "\\'");
-                    html += `<span class="pill" onclick="event.stopPropagation(); setQuery('${safeQuery}')">${c.label}</span>`;
+                    const encodedQuery = encodeURIComponent(c.query || "");
+                    html += `<span class="pill" data-query="${encodedQuery}" onclick="event.stopPropagation(); setQuery(decodeURIComponent(this.getAttribute('data-query')))">${c.label}</span>`;
                 });
                 html += `
                         </div>
@@ -863,6 +884,21 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(resp_bytes)
                 return
+
+            elif path == "/api/benchmark":
+                benchmark_path = BASE_DIR / "eval" / "gold_benchmark.json"
+                if benchmark_path.exists():
+                    data = json.loads(benchmark_path.read_text(encoding="utf-8"))
+                    resp_bytes = json.dumps(data, indent=2).encode("utf-8")
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Content-Length", str(len(resp_bytes)))
+                    self.end_headers()
+                    self.wfile.write(resp_bytes)
+                    return
+                else:
+                    self.send_error(404, "Benchmark file not found")
+                    return
 
             elif path.startswith("/api/figure_inspector"):
                 query_params = urllib.parse.parse_qs(parsed.query)

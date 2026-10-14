@@ -1144,6 +1144,7 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
 }
 
 import re
+import urllib.parse
 from src.config import PARSED_FIGURES_DIR
 
 def resolve_figure_image_filename(fig_key: str) -> str:
@@ -1195,8 +1196,8 @@ def get_inspector_html(fig_key: str) -> str:
         """
         for c in chips:
             label = c.get("label", "")
-            query = c.get("query", "").replace("'", "\\'")
-            html += f"""<span class="pill" onclick="setQuery('{query}')">{label}</span>"""
+            encoded_query = urllib.parse.quote(c.get("query", ""))
+            html += f"""<span class="pill" data-query="{encoded_query}" onclick="event.stopPropagation(); setQuery(decodeURIComponent(this.getAttribute('data-query')))">{label}</span>"""
         html += """
             </div>
         </div>

@@ -172,8 +172,27 @@ async def async_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_E
         "answer_route": answer_route.to_dict()
     }
 
+import threading
+
+_QUERY_LOOP = None
+_QUERY_THREAD = None
+
+def get_query_event_loop() -> asyncio.AbstractEventLoop:
+    global _QUERY_LOOP, _QUERY_THREAD
+    if _QUERY_LOOP is None or _QUERY_LOOP.is_closed():
+        _QUERY_LOOP = asyncio.new_event_loop()
+        def _runner(loop):
+            asyncio.set_event_loop(loop)
+            loop.run_forever()
+        _QUERY_THREAD = threading.Thread(target=_runner, args=(_QUERY_LOOP,), daemon=True, name="LightRAGEventLoop")
+        _QUERY_THREAD.start()
+    return _QUERY_LOOP
+
 def run_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_ENGINE) -> dict:
-    return asyncio.run(async_query(query_str, mode=mode, engine=engine))
+    """Thread-safe synchronous query executor using a persistent dedicated event loop."""
+    loop = get_query_event_loop()
+    future = asyncio.run_coroutine_threadsafe(async_query(query_str, mode=mode, engine=engine), loop)
+    return future.result()
 
 def main():
     parser = argparse.ArgumentParser(description="Query AWS A3.0 Multimodal Knowledge Base")
