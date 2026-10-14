@@ -177,11 +177,19 @@ classDiagram
 2. **SQLite Registry & FTS5** ([`storage/dual_layer_registry.db`](file:///C:/Users/kenai/aws-a30-prototype/storage/dual_layer_registry.db)):
    - Implements native SQLite `FTS5` full-text search index (`ontology_fts`) for sub-millisecond keyword lookup.
    - Foreign-key relational schema enforcing layer integrity and bridge consistency.
-3. **NanoVectorDB & Gemini Embeddings**:
-   - `storage/vdb_chunks.json`, `storage/vdb_entities.json`, `storage/vdb_relationships.json`.
-   - Embeddings generated via Google Gemini `models/text-embedding-004` (768 dimensions).
+3. **Vector Indices & Contextual Embeddings**:
+   - `storage/vdb_chunks.json`, `storage/vdb_entities.json`, `storage/vdb_relationships.json` (768-dim Gemini embeddings).
+   - `storage/vdb_chunks_contextual.json`: 1024-dimensional contextual chunk embeddings generated offline via `BAAI/bge-large-en-v1.5` under Card 08.
 4. **Local Response & Extraction Cache**:
    - `storage/kv_store_llm_response_cache.json` caches model inference, allowing repeat runs with zero cloud costs.
+
+### 3.1 Architectural Alignment with Turbopuffer v3 ("RIP, Vector Database")
+
+The storage architecture deliberately adopts the core tenets of Turbopuffer's *"RIP, Vector Database"* research:
+1. **Vectors as Secondary Auxiliary Indices**: Vector spaces are not treated as primary keys or entity records. Canonical document identity, clause hierarchies, and ontology entities are anchored in the **Dual-Layer Epistemic Graph** and **SQLite FTS5 Registry** (`storage/dual_layer_registry.db`). Vector files (`storage/vdb_*.json`) are purely secondary, auxiliary lookup projections keyed by immutable canonical IDs.
+2. **Mitigating Write & Storage Amplification**: Because multi-vector representations (such as our 1024-dim contextualized chunks) point to stable primary keys in the relational store, modifying graph edges, cross-references, or metadata never triggers vector index rebuilds or storage bloat.
+3. **Decoupled Compute with Zero Server Daemons**: Rejects heavy standalone vector database daemons (e.g., Pinecone, Milvus, Qdrant) in favor of localized, zero-cost SQLite and appendable vector caches, guaranteeing fully offline, reproducible execution.
+4. **Hybrid Retrieval with Reciprocal Rank Fusion (RRF)**: Deterministic full-text keyword indexing (SQLite FTS5) provides exact terminology enforcement (e.g., distinguishing "root opening" from "root face"), while contextual vectors provide semantic fallback, fused via RRF.
 
 ---
 
