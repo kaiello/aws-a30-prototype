@@ -21,6 +21,7 @@ from src.config import (
 )
 from src.indexer import get_rag_instance
 from src.citation_checker import extract_citations, extract_grounded_claims
+from src.epistemic_verifier import verify_epistemic_provenance
 
 TABLE_COMPANION_FIGURES = {
     "Table A1": ["Figure A1", "Figure A4"],
@@ -150,6 +151,7 @@ async def async_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_E
     grounded_claims = extract_grounded_claims(response)
     figures, tables = resolve_multimodal_assets(f"{query_str}\n{response}")
     see_also = extract_see_also_terms(response)
+    epistemic_trace = verify_epistemic_provenance(query_str, response)
     
     return {
         "query": query_str,
@@ -158,7 +160,8 @@ async def async_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_E
         "grounded_claims": grounded_claims,
         "resolved_figures": figures,
         "resolved_tables": tables,
-        "see_also": see_also
+        "see_also": see_also,
+        "epistemic_trace": epistemic_trace
     }
 
 def run_query(query_str: str, mode: str = "mix", engine: str = DEFAULT_ENGINE) -> dict:
@@ -193,6 +196,15 @@ def main():
         print("\nRESOLVED TABLE ASSETS:")
         for tbl in result["resolved_tables"]:
             print(f"  {tbl['table_id']} -> {tbl['table_path']}")
+
+    if result.get("epistemic_trace"):
+        et = result["epistemic_trace"]
+        print(f"\nEPISTEMIC PROVENANCE TRACE: Score={et['provenance_score']} ({et['epistemic_status']})")
+        print(f"  {et['manifest_summary']}")
+        if et.get("concepts_verified"):
+            print("  Grounded Ontology Concepts:")
+            for cv in et["concepts_verified"][:5]:
+                print(f"    - {cv['concept']} ({cv['node_type']}, {cv['standard_status']}): {cv['evidence_count']} evidence bridges")
     print("="*70 + "\n")
 
 if __name__ == "__main__":

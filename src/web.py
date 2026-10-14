@@ -412,6 +412,7 @@ HTML_INDEX = """<!DOCTYPE html>
                 <div class="citations-box" id="citationsBox"></div>
                 <div id="groundedClaimsBox" style="margin-top: 16px; display: none;"></div>
                 <div id="seeAlsoBox" style="margin-top: 16px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: none;"></div>
+                <div id="epistemicTraceBox" style="margin-top: 16px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: none;"></div>
             </div>
 
             <div class="panel">
@@ -509,6 +510,48 @@ HTML_INDEX = """<!DOCTYPE html>
                     seeAlsoBox.innerHTML = chipsHtml;
                 } else {
                     seeAlsoBox.style.display = "none";
+                }
+
+                // Render Dual-Layer Epistemic Provenance Trail
+                const epistemicBox = document.getElementById("epistemicTraceBox");
+                if (data.epistemic_trace) {
+                    const et = data.epistemic_trace;
+                    epistemicBox.style.display = "block";
+                    const statusColor = et.epistemic_status === "VERIFIED_GROUNDED" ? "#10b981" : (et.epistemic_status === "TRUTHFUL_ABSTENTION" ? "#fbbf24" : "#f87171");
+                    let epHtml = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 13px; font-weight: 700; color: var(--accent-cyan);">🔬 Dual-Layer Epistemic Provenance Trail:</span>
+                            <span style="font-size: 11px; font-weight: 700; color: ${statusColor}; background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 12px; border: 1px solid ${statusColor};">
+                                ${et.epistemic_status} (${Math.round(et.provenance_score * 100)}%)
+                            </span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">${et.manifest_summary}</div>
+                    `;
+
+                    if (et.concepts_verified && et.concepts_verified.length > 0) {
+                        epHtml += `<div style="font-size: 11px; font-weight: 600; color: #a855f7; text-transform: uppercase; margin-bottom: 6px;">Ontology Concepts & Provenance Bridges:</div><div style="display: flex; flex-direction: column; gap: 6px;">`;
+                        et.concepts_verified.slice(0, 5).forEach(cv => {
+                            const badgeColor = cv.node_type === "Process" ? "#38bdf8" : (cv.node_type === "JointGeometry" ? "#fbbf24" : (cv.node_type === "Discontinuity" ? "#f87171" : "#4ade80"));
+                            let bridgeText = "";
+                            if (cv.primary_evidence && cv.primary_evidence.length > 0) {
+                                const pe = cv.primary_evidence[0];
+                                bridgeText = `[:${pe.relation}] &rarr; ${pe.evidence_type}: ${pe.name} ${pe.page ? '(' + pe.page + ')' : ''}`;
+                            }
+                            epHtml += `
+                                <div style="background: var(--bg-card); border-left: 3px solid ${badgeColor}; border-radius: 4px; padding: 6px 10px; font-size: 12px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="font-weight: 600; color: var(--text-primary);">${cv.concept}</span>
+                                        <span style="font-size: 10px; color: ${badgeColor}; font-weight: 600;">:${cv.node_type} (${cv.standard_status})</span>
+                                    </div>
+                                    <div style="color: #94a3b8; font-size: 11px; margin-top: 2px; font-family: monospace;">${bridgeText}</div>
+                                </div>
+                            `;
+                        });
+                        epHtml += `</div>`;
+                    }
+                    epistemicBox.innerHTML = epHtml;
+                } else {
+                    epistemicBox.style.display = "none";
                 }
 
                 // Render visual evidence
@@ -724,6 +767,7 @@ HTML_INDEX = """<!DOCTYPE html>
 
             document.getElementById("groundedClaimsBox").style.display = "none";
             document.getElementById("seeAlsoBox").style.display = "none";
+            document.getElementById("epistemicTraceBox").style.display = "none";
 
             document.getElementById("resultPanel").scrollIntoView({ behavior: "smooth" });
         }
