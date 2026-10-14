@@ -63,21 +63,26 @@ LAYOUT_PRESETS: Dict[str, Dict[str, List[float]]] = {
         "Ultrasonic Welding (USW)": [0.50, 0.70, 0.88, 0.92],
         "Cold Welding (CW)": [0.20, 0.35, 0.60, 0.65],
     },
-    # Figure B1: Joint Types (Vertical 5-stack)
+    # Figure B1: Joint Types (Left Column: Joint Illustration & Label; Right Column: Applicable Welds)
     "Figure B1": {
-        "Panel (A) Butt Joint": [0.06, 0.10, 0.22, 0.90],
-        "Panel (B) Corner Joint": [0.22, 0.10, 0.38, 0.90],
-        "Panel (C) T-Joint": [0.38, 0.10, 0.54, 0.90],
-        "Panel (D) Lap Joint": [0.54, 0.10, 0.70, 0.90],
-        "Panel (E) Parallel Joint": [0.70, 0.10, 0.88, 0.90],
+        "Panel (A) Butt Joint": [0.050, 0.100, 0.205, 0.580],
+        "Panel (B) Corner Joint": [0.210, 0.100, 0.385, 0.580],
+        "Panel (C) T-Joint": [0.385, 0.100, 0.535, 0.580],
+        "Panel (D) Lap Joint": [0.535, 0.100, 0.690, 0.580],
+        "Panel (E) Parallel Joint": [0.690, 0.100, 0.865, 0.580],
+        "Butt Joint Applicable Welds": [0.080, 0.600, 0.185, 0.900],
+        "Corner Joint Applicable Welds": [0.230, 0.600, 0.360, 0.900],
+        "T-Joint Applicable Welds": [0.400, 0.600, 0.520, 0.900],
+        "Lap Joint Applicable Welds": [0.560, 0.600, 0.670, 0.900],
+        "Parallel Joint Applicable Welds": [0.710, 0.600, 0.840, 0.900],
     },
-    # Figure B2: Flanged Joints (Vertical 5-stack)
+    # Figure B2: Flanged Joints (Individual Joint Variations)
     "Figure B2": {
-        "Flanged Butt Joint (A)": [0.06, 0.10, 0.22, 0.90],
-        "Flanged Corner Joint (B)": [0.22, 0.10, 0.38, 0.90],
-        "Flanged T-Joint (C)": [0.38, 0.10, 0.54, 0.90],
-        "Flanged Lap Joint (D)": [0.54, 0.10, 0.70, 0.90],
-        "Flanged Parallel Joint (E)": [0.70, 0.10, 0.88, 0.90],
+        "Flanged Butt Joint (A)": [0.080, 0.280, 0.250, 0.720],
+        "Flanged Corner Joint (B)": [0.240, 0.100, 0.450, 0.500],
+        "Flanged T-Joint (C)": [0.240, 0.500, 0.450, 0.900],
+        "Flanged Lap Joint (D)": [0.440, 0.280, 0.620, 0.720],
+        "Flanged Parallel Joint (E)": [0.610, 0.250, 0.760, 0.750],
     },
     # Figure B5: Groove Face, Root Edge, and Root Face
     "Figure B5": {

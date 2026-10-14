@@ -170,7 +170,7 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         "category": "joint_geometry",
         "groups": [
             {
-                "group_title": "Five Basic Joint Types",
+                "group_title": "Five Basic Joint Types (Left Column)",
                 "color": "#38bdf8",
                 "chips": [
                     {"label": "Panel (A) Butt Joint", "query": "What is a butt joint illustrated in Figure B1(A)?"},
@@ -178,6 +178,17 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
                     {"label": "Panel (C) T-Joint", "query": "What is a T-joint illustrated in Figure B1(C)?"},
                     {"label": "Panel (D) Lap Joint", "query": "What is a lap joint illustrated in Figure B1(D)?"},
                     {"label": "Panel (E) Parallel Joint", "query": "What is a parallel joint illustrated in Figure B1(E) and what term did it replace?"}
+                ]
+            },
+            {
+                "group_title": "Applicable Weld Types (Right Column)",
+                "color": "#fbbf24",
+                "chips": [
+                    {"label": "Butt Joint Applicable Welds", "query": "What weld types are applicable to a butt joint in Figure B1?"},
+                    {"label": "Corner Joint Applicable Welds", "query": "What weld types are applicable to a corner joint in Figure B1?"},
+                    {"label": "T-Joint Applicable Welds", "query": "What weld types are applicable to a T-joint in Figure B1?"},
+                    {"label": "Lap Joint Applicable Welds", "query": "What weld types are applicable to a lap joint in Figure B1?"},
+                    {"label": "Parallel Joint Applicable Welds", "query": "What weld types are applicable to a parallel joint in Figure B1?"}
                 ]
             }
         ]
@@ -191,11 +202,11 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
                 "group_title": "Flanged Joint Variations",
                 "color": "#fbbf24",
                 "chips": [
-                    {"label": "Flanged Butt Joint", "query": "What is a flanged butt joint in Figure B2?"},
-                    {"label": "Flanged Corner Joint", "query": "What is a flanged corner joint in Figure B2?"},
-                    {"label": "Flanged Lap Joint", "query": "What is a flanged lap joint in Figure B2?"},
-                    {"label": "Flanged Parallel Joint", "query": "What is a flanged parallel joint in Figure B2?"},
-                    {"label": "Flanged T-Joint", "query": "What is a flanged T-joint in Figure B2?"}
+                    {"label": "Flanged Butt Joint (A)", "query": "What is a flanged butt joint in Figure B2(A)?"},
+                    {"label": "Flanged Corner Joint (B)", "query": "What is a flanged corner joint in Figure B2(B)?"},
+                    {"label": "Flanged T-Joint (C)", "query": "What is a flanged T-joint in Figure B2(C)?"},
+                    {"label": "Flanged Lap Joint (D)", "query": "What is a flanged lap joint in Figure B2(D)?"},
+                    {"label": "Flanged Parallel Joint (E)", "query": "What is a flanged parallel joint in Figure B2(E)?"}
                 ]
             }
         ]
