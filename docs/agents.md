@@ -1,5 +1,13 @@
 # Multi-Agent System (MAS) Operating Guidelines: AWS A3.0 Prototype
 
+### Reviewed live terminology boundary (2026-10-15)
+
+The three-headword adapter now reads `storage/terminology_registry.json` without modifying corpus/index/graph files. Keep licensed registry/qrels/prompts/raw answers local and ignored. Preserve complete target groups, conditional senses, explicit anchors and the original-entry/parser-projection distinction. Unrelated inputs must avoid registry I/O and retain exact ranking/score behavior. Invalid relevant evidence returns `TERMINOLOGY_REGISTRY_INVALID`/HTTP 503 before model initialization. Run the guarded suite for synthetic checks; source-backed captures and approved local inference require their own explicit scope. [Runtime results and limits](terminology_live_results.md) document the authorized restart and evaluation; they do not authorize future provider calls, rebuilds or restarts.
+
+### Helper hardening boundaries (2026-10-15)
+
+Keep UI geometry in normalized `[ymin,xmin,ymax,xmax]` lists and centers `[cy,cx]`; reject malformed metadata rather than repairing stored coordinates. Reuse the canonical citation parser and preserve singular retrieval compatibility. Terminology helpers require supplied bounded/reviewed entries and verified sense/process-compatible existing node IDs; their explicit projection seam operates on the supplied in-memory graph only. Do not infer authority to call the full builder, write stores, activate expansion or reload a server. [Implementation evidence](helper_hardening_implementation.md) records checks and remaining boundaries.
+
 ### Chunk reader and evaluation protocol (2026-10-15)
 
 Keep the instance-local vector compatibility reader version/source guard; a dependency upgrade requires a reviewed adapter change. Do not convert stores or re-embed to work around reader-format drift without explicit owner authority. Run `tests/test_vector_reader_compat.py` against the installed native package separately from the stubbed manifest runner. [The evaluation protocol](vector_reader_compatibility.md) preserves the frozen gold, all 28 strict targets including coverage misses, and separate retrieval, heuristic and factually ungraded answer evidence. Under the current owner scope, use installed local models only; the historical external gold, commit and push steps below are not authorized by a bug-fix request.

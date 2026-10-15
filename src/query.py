@@ -8,6 +8,7 @@ import sys
 import re
 import asyncio
 import argparse
+import json
 from typing import Optional
 from pathlib import Path
 
@@ -34,6 +35,7 @@ from src.epistemic_verifier import verify_epistemic_provenance
 from src.answer_routes import resolve_answer_route
 from src.pre_retrieval import check_early_abstention, expand_query
 from src.hybrid_retriever import ContextualIndexMissingError, hybrid_retrieve
+from src.terminology_retrieval import TerminologyRegistryError
 
 from src.standard_manifest import get_manifest, extract_references
 
@@ -187,6 +189,22 @@ async def async_query(
             "retrieved_evidence": []
         }
 
+    except TerminologyRegistryError:
+        return {
+            "query": query_str,
+            "answer": "",
+            "error": ("Reviewed local terminology evidence is unavailable or stale. "
+                      "Ask the maintainer to restore the reviewed registry and matching sources before retrying. "
+                      "No answer was generated."),
+            "error_code": "TERMINOLOGY_REGISTRY_INVALID",
+            "citations": {},
+            "grounded_claims": [],
+            "resolved_figures": [],
+            "resolved_tables": [],
+            "see_also": [],
+            "retrieved_evidence": []
+        }
+
     try:
         rag = get_rag_instance(
             working_dir=STORAGE_DIR,
@@ -207,7 +225,14 @@ async def async_query(
         evidence_blocks = []
         for c in hybrid_evidence:
             c_id = c.get("full_doc_id") or c.get("id", "")
-            evidence_blocks.append(f"[{c_id}]\n{c.get('content', '')}")
+            if c.get("evidence_type") == "terminology_mapping":
+                c_id = c["id"]
+                provenance = {"terminology_resolution": c.get("terminology_resolution"),
+                              "supporting_evidence": c.get("supporting_evidence", []),
+                              "source_anchors": c.get("source_anchors", [])}
+                evidence_blocks.append(f"[{c_id}]\n{c.get('content', '')}\n" + json.dumps(provenance, ensure_ascii=False))
+            else:
+                evidence_blocks.append(f"[{c_id}]\n{c.get('content', '')}")
         evidence_text = "\n\n".join(evidence_blocks)
 
         augmented_prompt = (
@@ -218,6 +243,13 @@ async def async_query(
             f"Always cite the exact Clause number, Annex, Table, or Figure."
         )
 
+        if any(c.get("evidence_type") == "terminology_mapping" for c in hybrid_evidence):
+            augmented_prompt += (
+                "\nFor reviewed terminology evidence, retain every preferred target and process/sense qualifier. "
+                "'When used for' is conditional: do not label every use of that spelling nonstandard. "
+                "For ambiguous_senses explain the supplied standard and conditional senses or request clarification. "
+                "Cite the supplied source anchors; parser projection spans are local text spans, not PDF geometry."
+            )
         response = await rag.aquery(augmented_prompt, param=param)
         if response is None:
             raise RuntimeError("LLM returned no response. Please verify your API key, model name, and network connection.")
@@ -254,7 +286,7 @@ async def async_query(
     epistemic_trace = verify_epistemic_provenance(query_str, response)
     answer_route = resolve_answer_route(query_str, response)
     
-    return {
+    result = {
         "query": query_str,
         "answer": response,
         "citations": citations,
@@ -266,6 +298,11 @@ async def async_query(
         "answer_route": answer_route.to_dict(),
         "retrieved_evidence": hybrid_evidence
     }
+    resolution = next((item["terminology_resolution"] for item in hybrid_evidence
+                       if item.get("evidence_type") == "terminology_mapping"), None)
+    if resolution is not None:
+        result["terminology_resolution"] = resolution
+    return result
 
 import threading
 

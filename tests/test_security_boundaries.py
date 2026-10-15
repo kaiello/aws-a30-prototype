@@ -117,6 +117,15 @@ def test_missing_retrieval_index_returns_service_unavailable(web_fixture, monkey
     assert json.loads(body) == result
 
 
+def test_invalid_terminology_registry_returns_service_unavailable(web_fixture, monkeypatch):
+    result = {"answer": "", "error": "Restore the reviewed local terminology registry.",
+              "error_code": "TERMINOLOGY_REGISTRY_INVALID", "citations": {}, "retrieved_evidence": []}
+    monkeypatch.setattr(web_fixture[0], "run_query", lambda *args, **kwargs: result)
+    status, _, body = request(web_fixture, "/api/query", "POST", {"query": "Define a weld"})
+    assert status == 503
+    assert json.loads(body) == result
+
+
 @pytest.mark.parametrize("path", [
     "/tables/../secret.txt", "/tables/../../secret.txt", "/figures/../secret.txt",
     "/tables/%2e%2e%2fsecret.txt", "/tables/%252e%252e%255csecret.txt",

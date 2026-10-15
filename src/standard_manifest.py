@@ -354,41 +354,146 @@ def get_manifest():
     return _cached_manifest(stamp(MANIFEST_PATH), stamp(SOURCE_PATH), stamp(MANIFEST_PATH.with_suffix(".receipt.json")))
 
 
-_REFERENCE = re.compile(r"(?<!\w)(Figures?|Fig\.?|Tables?|Clauses?|Annex(?:es)?)\s+([A-Za-z0-9][\w./-]*)", re.IGNORECASE)
-_FOLLOWING = re.compile(r"\s*(?:,\s*(?:and\s+)?|and\s+)([A-Za-z]?\.?\d[\w./-]*)", re.IGNORECASE)
+_REFERENCE = re.compile(r"(?<!\w)(Figures?|Fig\.?|Tables?|Clauses?|Annex(?:es)?)\s+([A-Za-z0-9])", re.IGNORECASE)
+_SINGULAR_REFERENCE = re.compile(r"(?<!\w)(Figure|Fig\.?|Table)\s*([A-Za-z0-9])", re.IGNORECASE)
+_REFERENCE_ATOM = re.compile(r"(?:[A-Za-z0-9]|\.(?=\d))[\w./–—-]*")
+_RANGE_TAIL = re.compile(r"\s*(?:[-–—/]|(to|through)\b)\s*", re.IGNORECASE)
+_FOLLOWING = re.compile(r"\s*(?:[,;]\s*(?:and\s+)?|and\s+)", re.IGNORECASE)
+_NUMERIC_RANGE = re.compile(r"([A-Za-z]?)\.?(\d+)\s*[-–—]\s*([A-Za-z]?)\.?(\d+)", re.IGNORECASE)
+_RANGE_MARKER = re.compile(r"[-–—/]|\b(?:to|through)\b", re.IGNORECASE)
+
+
+def _reference_id_start(kind, text):
+    shape = r"[A-Za-z](?=$|[\d.\s/–—-])" if kind == "Annex" else r"(?:[A-Za-z]\.?)?\d|\.\d"
+    return re.match(shape, text)
+
+
+def _reference_expression(text, start, kind):
+    """Read whole ID expressions; prose after 'to'/'through' is not a range."""
+    atom = _REFERENCE_ATOM.match(text, start)
+    if not atom:
+        return "", start
+    end = atom.end()
+    while tail := _RANGE_TAIL.match(text, end):
+        endpoint = _REFERENCE_ATOM.match(text, tail.end())
+        candidate_end = endpoint.end() if endpoint else tail.end()
+        endpoint_kind = kind
+        target = endpoint[0] if endpoint else ""
+        # Repeated kinds belong to a range only when followed by an ID. Keep
+        # them in unsupported expressions so their endpoint cannot leak out as
+        # an independent citation.
+        word = target.rstrip(".").casefold()
+        if word in {"figure", "figures", "fig", "table", "tables", "clause", "clauses", "annex", "annexes"}:
+            endpoint_kind = "Figure" if word.startswith("fig") else "Table" if word.startswith("table") else "Annex" if word.startswith("annex") else "Clause"
+            following = re.match(r"\s+", text[candidate_end:])
+            second = _REFERENCE_ATOM.match(text, candidate_end + following.end()) if following else None
+            target = second[0] if second else ""
+            if second:
+                candidate_end = second.end()
+        elif shorthand := _SINGULAR_REFERENCE.match(target):
+            # Existing enrichment accepts FigureB3 / Fig.B3. Consume those
+            # endpoints here too, before deciding that a word tail is prose.
+            endpoint_kind = "Figure" if shorthand[1].lower().startswith("fig") else "Table"
+            target = target[shorthand.start(2):]
+        if tail[1] and not _reference_id_start(endpoint_kind, target):
+            break  # e.g. "Figure B1 to explain...", not an ID range.
+        end = candidate_end
+    return text[start:end].strip(), end
+
+
+def _reference_groups(text, *, lists=True, singular=False):
+    """Shared lexical boundary for citations and legacy singular enrichment.
+
+    Return kind plus raw expressions. Resolution belongs to extract_references;
+    this helper never loads metadata or expands a range.
+    """
+    text = str(text)
+    covered = 0
+    for match in (_SINGULAR_REFERENCE if singular else _REFERENCE).finditer(text):
+        if match.start() < covered:
+            continue
+        word = match[1].lower()
+        kind = "Figure" if word.startswith("fig") else "Table" if word.startswith("table") else "Annex" if word.startswith("annex") else "Clause"
+        raw, end = _reference_expression(text, match.start(2), kind)
+        if not _reference_id_start(kind, raw):
+            continue  # Descriptive prose such as "the figure shows" is not an ID.
+        expressions = [raw]
+        if lists and kind in {"Figure", "Table"} and word.endswith("s"):
+            while not raw.endswith(".") and (separator := _FOLLOWING.match(text, end)):
+                raw, following_end = _reference_expression(text, separator.end(), kind)
+                if not _reference_id_start(kind, raw):
+                    break
+                expressions.append(raw)
+                end = following_end
+        covered = end
+        yield kind, expressions
 
 
 def extract_references(text, *, lists=True):
-    """Resolve complete tokens; never validate a prefix of an unknown identifier."""
+    """Resolve exact IDs and bounded numeric ranges without partial acceptance."""
     manifest = get_manifest()
     result = {"figures": [], "tables": [], "clauses": [], "unresolved_elements": []}
+
+    def unresolved(kind, code, found=None):
+        found = found or {"status": "unknown", "labels": []}
+        entry = {"text": kind + " " + code, "status": found["status"], "candidates": found["labels"]}
+        if entry not in result["unresolved_elements"]:
+            result["unresolved_elements"].append(entry)
+
     def add(kind, code):
-        code = code.rstrip(".")
-        label = kind + " " + code
-        found = manifest.resolve(label)
-        if found["status"] == "exact":
-            bucket = "figures" if kind == "Figure" else "tables" if kind == "Table" else "clauses"
-            canonical = found["labels"][0]
-            if canonical not in result[bucket]:
-                result[bucket].append(canonical)
-        else:
-            entry = {"text": label, "status": found["status"], "candidates": found["labels"]}
-            if entry not in result["unresolved_elements"]:
-                result["unresolved_elements"].append(entry)
-    for match in _REFERENCE.finditer(str(text)):
-        word, code = match.groups()
-        kind = "Figure" if word.lower().startswith("fig") else "Table" if word.lower().startswith("table") else "Annex" if word.lower().startswith("annex") else "Clause"
-        shape = r"[A-Za-z](?:\d[\w./-]*)?" if kind == "Annex" else r"(?:[A-Za-z]\.?)?\d[\w./-]*"
-        if not re.fullmatch(shape, code.rstrip(".")):
-            continue  # Descriptive prose such as "the figure shows" is not an ID.
-        add(kind, code)
-        if lists and kind in {"Figure", "Table"} and word.lower().endswith("s"):
-            end = match.end()
-            prefix = code[:1] if code[:1].upper() in {"A", "B", "D"} else ""
-            while following := _FOLLOWING.match(str(text), end):
-                next_code = following[1]
-                if next_code[0] in ".0123456789":
-                    next_code = prefix + next_code
-                add(kind, next_code)
-                end = following.end()
+        found = manifest.resolve(kind + " " + code)
+        if found["status"] != "exact":
+            unresolved(kind, code, found)
+            return
+        bucket = "figures" if kind == "Figure" else "tables" if kind == "Table" else "clauses"
+        canonical = found["labels"][0]
+        if canonical not in result[bucket]:
+            result[bucket].append(canonical)
+
+    for kind, expressions in _reference_groups(text, lists=lists):
+        prefix = ""
+        for raw in expressions:
+            code = raw.rstrip(".")
+            explicit = re.match(r"([A-Za-z])(?=\.?\d)", code)
+            if explicit:
+                prefix = explicit[1]
+            elif kind in {"Figure", "Table"} and prefix and re.match(r"\.?\d", code):
+                code = prefix + code
+            if not _RANGE_MARKER.search(code):
+                add(kind, code)
+                continue
+
+            matched = _NUMERIC_RANGE.fullmatch(code)
+            if not lists or kind not in {"Figure", "Table"} or not matched:
+                unresolved(kind, code)
+                continue
+            first_prefix, first_digits, last_prefix, last_digits = matched.groups()
+            last_prefix = last_prefix or first_prefix
+            first = first_prefix + first_digits
+            last = last_prefix + last_digits
+            # Resolve original endpoints before numeric conversion: unknown and
+            # enormous IDs cannot become real IDs by truncation/normalization.
+            endpoints = [manifest.resolve(kind + " " + item) for item in (first, last)]
+            if not first_prefix or first_prefix.casefold() != last_prefix.casefold() or any(item["status"] != "exact" for item in endpoints):
+                unresolved(kind, code)
+                continue
+            inventory = manifest.labels("figures" if kind == "Figure" else "tables")
+            width = max((len(m[0]) for label in inventory if (m := re.search(r"\d+", label))), default=0)
+            if max(len(first_digits), len(last_digits)) > width:
+                unresolved(kind, code)
+                continue
+            first_number, last_number = int(first_digits), int(last_digits)
+            if first_number > last_number or last_number - first_number + 1 > len(inventory):
+                unresolved(kind, code)
+                continue
+            members = [first_prefix + str(number) for number in range(first_number, last_number + 1)]
+            resolutions = [manifest.resolve(kind + " " + member) for member in members]
+            if any(item["status"] != "exact" for item in resolutions):
+                # A range crossing B16 is not the B16 group itself. Retain its
+                # candidates diagnostically without triggering group assets.
+                candidates = list(dict.fromkeys(label for item in resolutions if item["status"] != "exact" for label in item["labels"]))
+                unresolved(kind, code, {"status": "unknown", "labels": candidates})
+                continue
+            for member in members:
+                add(kind, member)
     return result

@@ -1,5 +1,13 @@
 # Project Goal: AWS A3.0 Multimodal NLQ & Epistemic Knowledge System
 
+## Bounded live terminology milestone (2026-10-15)
+
+Three manually reviewed headwords are wired into actual hybrid retrieval and generation through an additive ignored local registry. A frozen 33-case before/after run demonstrates complete reviewed evidence for 12/12 terminology questions at rank one, exact parity for 10 unrelated controls, and eight retained scope gates. These evidence results are distinct from source-backed answer accuracy; fresh local generation still produces term and citation errors. The restarted loopback app and detailed outcomes are recorded in [the live terminology receipt](terminology_live_results.md). Full multimodal NLQ remains undemonstrated; broader terminology, diagram/table understanding, claim support and multi-hop evaluation remain separate milestones.
+
+## Bounded helper milestone (2026-10-15)
+
+Geometry validation, canonical element ranges and pure multi-target terminology records are implemented as bounded helper changes. Their focused/guarded regressions are described in the [implementation receipt](helper_hardening_implementation.md). This does not certify diagram regions, corpus-wide terminology, table fidelity, claim entailment or full multimodal NLQ; that helper-only milestone added no persistence or live retrieval integration. The later bounded integration is described above.
+
 ## Vector-selection milestone evidence (2026-10-15)
 
 The numeric-list compatibility failure is repaired and covered by 44 actual-native-reader regression checks, alongside 176 selected existing Python checks and 4 JavaScript checks. A frozen fixed-pool comparison recorded 42/42 original fallbacks versus 42/42 successful cosine selections after the fix. Target Hit@10 improved from 1/28 to 11/28; only 12 targets have mapped candidates in that pool. The separate hybrid lane retrieved 23/28. Eight negative gates passed; 20 final-run fresh local answers remain factually ungraded. [Protocol and limits](vector_reader_compatibility.md) qualify the historical success claims below; full multimodal NLQ remains undemonstrated.

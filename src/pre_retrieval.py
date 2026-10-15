@@ -19,7 +19,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from src.config import STORAGE_DIR
-from src.standard_manifest import extract_references
+from src.standard_manifest import extract_references, _reference_groups
 
 DUAL_SQLITE_PATH = STORAGE_DIR / "dual_layer_registry.db"
 
@@ -161,11 +161,10 @@ def check_early_abstention(query: str) -> Optional[Dict[str, Any]]:
 def extract_referenced_elements(query: str) -> Dict[str, List[str]]:
     """Preserve supported enrichment forms while resolving complete canonical IDs."""
     result = {"figures": [], "tables": []}
-    # Preserve the pre-existing singular enrichment grammar; asset/citation lookup
-    # also supports plural lists, without changing valid retrieval query strings.
-    for match in re.finditer(r"(?<!\w)(Figure|Fig\.?|Table)\s*([A-Za-z0-9][\w./-]*)", query, re.IGNORECASE):
-        kind = "Figure" if match[1].lower().startswith("fig") else "Table"
-        found = extract_references(kind + " " + match[2], lists=False)
+    # Preserve singular-only enrichment, using the shared whole-expression
+    # boundary so a Unicode/spaced range cannot enrich only its first endpoint.
+    for kind, expressions in _reference_groups(query, lists=False, singular=True):
+        found = extract_references(kind + " " + expressions[0], lists=False)
         for key in result:
             for label in found[key]:
                 if label not in result[key]:

@@ -82,3 +82,24 @@ def test_table_continuation_paths_and_companion_kind(resolve_assets):
 def test_no_asset_is_invented_for_a_source_only_table(resolve_assets):
     assert get_manifest().source_anchors("Table D2")
     assert resolve_assets("Table D2")[1] == []
+
+
+
+def test_range_asset_resolution_retains_existing_ids_and_continuation_order(resolve_assets):
+    figures, tables = resolve_assets("Figures B6–B7; Tables D1–D3")
+    assert [f["figure_id"] for f in figures] == ["Figure B6", "Figure B7"]
+    assert [Path(p).name for p in figures[0]["image_paths"]] == [
+        "Figure_B6_p99.png", "Figure_B6_p100.png", "Figure_B6_p101.png"]
+    assert [a["element_id"] for a in figures[0]["source_anchors"]] == ["figure:figure_b6"] * 3
+    assert tables == [{
+        "table_id": "Table D1",
+        "table_path": str(ROOT / "parsed/tables/table_d1.md"),
+        "image_paths": [],
+        "source_anchors": get_manifest().source_anchors("Table D1"),
+        "text_asset_verification": "candidate",
+    }]  # D1 keeps its existing candidate export; source-only D2/D3 add none.
+
+
+@pytest.mark.parametrize("expression", ["Figures B54–B55", "Figures B15–B17", "Figures B16A–B16C"])
+def test_invalid_ranges_do_not_resolve_partial_or_group_assets(resolve_assets, expression):
+    assert resolve_assets(expression) == ([], [])

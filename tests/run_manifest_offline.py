@@ -64,6 +64,8 @@ def main():
         "tests/test_hybrid_retrieval.py::test_reciprocal_rank_fusion",
         "tests/test_standard_manifest.py", "tests/test_manifest_citations.py", "tests/test_manifest_assets.py",
         "tests/test_manifest_metadata.py", "tests/test_manifest_retrieval_contract.py",
+        "tests/test_terminology_mappings.py",
+        "tests/test_terminology_retrieval.py", "tests/test_terminology_evaluation.py",
     ]))
 
 

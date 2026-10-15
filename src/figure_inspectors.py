@@ -1049,6 +1049,7 @@ for _key, _info in FIGURE_INSPECTORS.items():
     _info.update(_source_metadata(_key))
 
 import json
+import math
 import re
 import urllib.parse
 from pathlib import Path
@@ -1063,12 +1064,69 @@ if _BBOX_FILE.exists():
     except Exception:
         pass
 
+def _finite_numeric_list(value: Any, length: int) -> bool:
+    """Keep JSON numeric lists without coercion, including rejection of bools."""
+    return (
+        isinstance(value, list) and len(value) == length
+        and all(type(v) is int or (type(v) is float and math.isfinite(v)) for v in value)
+    )
+
+
+def _valid_normalized_bbox(bbox: Any) -> bool:
+    """UI image coordinates are [ymin, xmin, ymax, xmax] in [0, 1]."""
+    return (
+        _finite_numeric_list(bbox, 4)
+        and 0 <= bbox[0] < bbox[2] <= 1
+        and 0 <= bbox[1] < bbox[3] <= 1
+    )
+
+
 def get_figure_bboxes(fig_key: str) -> Optional[Dict[str, Any]]:
-    """Returns spatial bounding box metadata for a figure from the pre-computed manifest."""
+    """Return a validated view without changing the cached spatial registry."""
     clean_key = fig_key.strip()
     if not clean_key.startswith("Figure "):
         clean_key = f"Figure {clean_key}"
-    return _BBOX_MANIFEST.get(clean_key)
+    raw = _BBOX_MANIFEST.get(clean_key)
+    if raw is None:
+        return None
+    view = dict(raw)
+    if "groups" not in raw:
+        return view
+
+    groups = []
+    label_counts = {}
+    for group in raw["groups"]:
+        group_view = dict(group)
+        chips = []
+        for chip in group.get("chips", []):
+            chip_view = dict(chip)
+            label = chip.get("label", "")
+            label_counts[label] = label_counts.get(label, 0) + 1
+            bbox = chip.get("bbox")
+            if _valid_normalized_bbox(bbox):
+                chip_view["bbox"] = list(bbox)
+                center = chip.get("center")
+                if (_finite_numeric_list(center, 2)
+                        and bbox[0] <= center[0] <= bbox[2]
+                        and bbox[1] <= center[1] <= bbox[3]):
+                    chip_view["center"] = list(center)
+                else:
+                    chip_view["center"] = [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2]
+            else:
+                chip_view["bbox"] = None
+                chip_view["center"] = None
+            chips.append(chip_view)
+        group_view["chips"] = chips
+        groups.append(group_view)
+
+    # The UI joins by label; repeated spatial labels cannot select one geometry.
+    for group in groups:
+        for chip in group["chips"]:
+            if label_counts[chip.get("label", "")] > 1:
+                chip["bbox"] = None
+                chip["center"] = None
+    view["groups"] = groups
+    return view
 
 def _enrich_chips_with_bboxes(fig_key: str, groups: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Merges spatial coordinates (bbox and center) from manifest into chips."""
