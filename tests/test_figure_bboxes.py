@@ -213,3 +213,127 @@ def test_nlq_query_asset_and_bbox_resolution():
                 assert c["bbox"][0] < c["bbox"][2]
                 assert c["bbox"][1] < c["bbox"][3]
 
+
+
+@pytest.fixture
+def isolated_bbox_registry(monkeypatch):
+    """Substitute only synthetic geometry; source/figure registries stay real."""
+    import src.figure_inspectors as inspectors
+
+    key = "Figure B1"
+    label = FIGURE_INSPECTORS[key]["groups"][0]["chips"][0]["label"]
+    baseline = get_figure_data(key)
+
+    def install(records):
+        registry = {key: {"figure_id": key, "groups": [{"chips": records}]}}
+        monkeypatch.setattr(inspectors, "_BBOX_MANIFEST", registry)
+        return registry
+
+    return key, label, baseline, install
+
+
+def _synthetic_geometry(label, bbox, center=None):
+    return {"label": label, "bbox": bbox, "center": center, "panel": "A"}
+
+
+@pytest.mark.parametrize("bbox", [
+    None, [], [0, 0, 1], [0, 0, 1, 1, 1], (0, 0, 1, 1),
+    "0011", {"ymin": 0, "xmin": 0, "ymax": 1, "xmax": 1},
+    [False, 0, 1, 1], [0, "0", 1, 1], [0, None, 1, 1],
+    [float("nan"), 0, 1, 1], [0, 0, float("inf"), 1],
+    [0, float("-inf"), 1, 1], [.7, .2, .1, .8], [.1, .8, .7, .2],
+    [.2, .2, .2, .8], [.1, .5, .7, .5], [-.01, .2, .7, .8],
+    [.1, .2, 1.01, .8], [100, 200, 600, 800],
+], ids=[
+    "none", "empty", "short", "long", "tuple", "string", "mapping",
+    "bool", "numeric-string", "null-coordinate", "nan", "positive-infinity",
+    "negative-infinity", "reversed-y", "reversed-x", "zero-height", "zero-width",
+    "negative", "above-one", "wrong-scale",
+])
+def test_invalid_geometry_suppresses_focus_without_losing_figure_data(isolated_bbox_registry, bbox):
+    key, label, baseline, install = isolated_bbox_registry
+    registry = install([_synthetic_geometry(label, bbox, [.4, .5])])
+    original = json.dumps(registry, sort_keys=True)
+
+    data = get_figure_data(key)
+    chip = data["groups"][0]["chips"][0]
+    assert chip["bbox"] is None
+    assert chip["center"] is None
+    assert chip["panel"] == "A"
+    assert chip["label"] == baseline["groups"][0]["chips"][0]["label"]
+    assert chip["query"] == baseline["groups"][0]["chips"][0]["query"]
+    for field in ("image_file", "image_files", "source_anchors", "title", "page"):
+        assert data[field] == baseline[field]
+    assert get_figure_bboxes("B1")["groups"][0]["chips"][0]["bbox"] is None
+    assert "chip-focus-btn" not in get_inspector_html(key)
+    catalog_item = next(item for item in get_all_figures_catalog() if item["id"] == key)
+    assert catalog_item["groups"][0]["chips"][0]["bbox"] is None
+    assert json.dumps(registry, sort_keys=True) == original
+
+
+@pytest.mark.parametrize("center", [
+    None, [], [.35], [.35, .5, .6], (.35, .5),
+    [False, .5], [".35", .5], [float("nan"), .5],
+    [.35, float("inf")], [.9, .5], [.35, .9],
+], ids=["missing", "empty", "short", "long", "tuple", "bool", "string", "nan", "infinity", "outside-y", "outside-x"])
+def test_valid_box_derives_midpoint_for_invalid_center(isolated_bbox_registry, center):
+    key, label, _, install = isolated_bbox_registry
+    box = [.1, .2, .6, .8]
+    registry = install([_synthetic_geometry(label, box, center)])
+    original = json.dumps(registry, sort_keys=True)
+
+    data = get_figure_data(key)
+    chip = data["groups"][0]["chips"][0]
+    assert chip["bbox"] == box
+    assert type(chip["bbox"]) is list
+    assert chip["center"] == [.35, .5]
+    raw_view = get_figure_bboxes(key)["groups"][0]["chips"][0]
+    assert raw_view["center"] == [.35, .5]
+    assert json.dumps(registry, sort_keys=True) == original
+
+
+@pytest.mark.parametrize("box,center", [
+    ([.1, .2, .6, .8], [.4, .6]),
+    ([0, 0, 1, 1], [0, 1]),
+])
+def test_valid_geometry_preserves_values_axis_order_and_center(isolated_bbox_registry, box, center):
+    key, label, _, install = isolated_bbox_registry
+    registry = install([_synthetic_geometry(label, box, center)])
+    original = json.dumps(registry, sort_keys=True)
+    chip = get_figure_data(key)["groups"][0]["chips"][0]
+    assert chip["bbox"] == box
+    assert type(chip["bbox"]) is list
+    assert chip["center"] == center
+    assert type(chip["center"]) is list
+    assert "chip-focus-btn" in get_inspector_html(key)
+    assert json.dumps(registry, sort_keys=True) == original
+
+
+@pytest.mark.parametrize("second_box", [[.4, .5, .9, .9], [.1, .2, .6, .8]], ids=["different", "identical"])
+def test_duplicate_spatial_labels_are_ambiguous_not_last_writer(isolated_bbox_registry, second_box):
+    key, label, baseline, install = isolated_bbox_registry
+    registry = install([
+        _synthetic_geometry(label, [.1, .2, .6, .8], [.35, .5]),
+        _synthetic_geometry(label, second_box, [.5, .7]),
+    ])
+    original = json.dumps(registry, sort_keys=True)
+    chip = get_figure_data(key)["groups"][0]["chips"][0]
+    assert chip["bbox"] is None
+    assert chip["center"] is None
+    assert chip["query"] == baseline["groups"][0]["chips"][0]["query"]
+    for record in get_figure_bboxes(key)["groups"][0]["chips"]:
+        assert record["bbox"] is None
+        assert record["center"] is None
+    assert json.dumps(registry, sort_keys=True) == original
+
+
+def test_absent_geometry_and_unknown_figure_contracts_remain_compatible(monkeypatch):
+    import src.figure_inspectors as inspectors
+
+    monkeypatch.setattr(inspectors, "_BBOX_MANIFEST", {})
+    assert get_figure_bboxes("B1") is None
+    chip = get_figure_data("B1")["groups"][0]["chips"][0]
+    assert "bbox" not in chip and "center" not in chip
+    assert get_figure_bboxes("B120") is None
+    assert get_figure_data("B120") == {}
+    assert get_inspector_html("B120") == ""

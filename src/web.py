@@ -1272,8 +1272,12 @@ HTML_INDEX = """<!DOCTYPE html>
 
             modalImg.src = imgSrc;
             modalCaption.innerHTML = caption || "Figure Inspector";
-            activeBbox = bbox || null;
-            activeLabel = label || null;
+            const validBbox = Array.isArray(bbox) && bbox.length === 4
+                && bbox.every(v => typeof v === "number" && Number.isFinite(v))
+                && 0 <= bbox[0] && bbox[0] < bbox[2] && bbox[2] <= 1
+                && 0 <= bbox[1] && bbox[1] < bbox[3] && bbox[3] <= 1;
+            activeBbox = validBbox ? bbox : null;
+            activeLabel = validBbox ? (label || null) : null;
 
             modal.style.display = "flex";
             document.body.style.overflow = "hidden";
@@ -1293,10 +1297,11 @@ HTML_INDEX = """<!DOCTYPE html>
                     const boxH = Math.max(0.04, ymax - ymin);
                     const boxW = Math.max(0.04, xmax - xmin);
 
-                    const rx = xmin * 1000;
-                    const ry = ymin * 1000;
                     const rw = boxW * 1000;
                     const rh = boxH * 1000;
+                    // Contain only the minimum-size display rectangle, not source coordinates.
+                    const rx = Math.max(0, Math.min(xmin * 1000, 1000 - rw));
+                    const ry = Math.max(0, Math.min(ymin * 1000, 1000 - rh));
 
                     highlightRect.setAttribute("x", rx);
                     highlightRect.setAttribute("y", ry);
@@ -1341,7 +1346,8 @@ HTML_INDEX = """<!DOCTYPE html>
                 updateModalTransform();
             }
 
-            if (modalImg.complete && modalImg.naturalWidth > 0) {
+            // Invalid or absent focus can reset immediately, even if this image never loads.
+            if (!activeBbox || (modalImg.complete && modalImg.naturalWidth > 0)) {
                 setupView();
             } else {
                 modalImg.onload = setupView;
@@ -1707,7 +1713,7 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                 print(f"[API QUERY] Engine={engine}, Mode={mode}")
                 res = run_query(query, mode=mode, engine=engine, api_key=api_key, model_name=model_name, base_url=base_url)
 
-                if res.get("error_code") == "RETRIEVAL_INDEX_MISSING":
+                if res.get("error_code") in {"RETRIEVAL_INDEX_MISSING", "TERMINOLOGY_REGISTRY_INVALID"}:
                     self._send_json(503, res)
                     return
 

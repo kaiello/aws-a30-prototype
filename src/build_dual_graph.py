@@ -78,6 +78,12 @@ def classify_ontology_entity(name: str, desc: str) -> Tuple[str, str]:
 
     return node_type, status
 
+def project_terminology_mappings(graph, records):
+    """Opt-in in-memory adapter; the existing builder never calls this helper."""
+    from src.terminology_mappings import project_mapping_records
+    return project_mapping_records(graph, records)
+
+
 def build_dual_layer_graph() -> nx.MultiDiGraph:
     print("\n" + "="*70)
     print("STARTING DUAL-LAYER EPISTEMIC GRAPH PROJECTION")

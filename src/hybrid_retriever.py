@@ -30,6 +30,7 @@ from src.config import (
     ENABLE_RERANKER
 )
 from src.pre_retrieval import expand_query
+from src.terminology_retrieval import get_terminology_evidence
 
 DUAL_SQLITE_PATH = STORAGE_DIR / "dual_layer_registry.db"
 CONTEXTUAL_VDB_PATH = STORAGE_DIR / "vdb_chunks_contextual.json"
@@ -206,6 +207,9 @@ def hybrid_retrieve(query_str: str, top_k: int = 5) -> List[Dict[str, Any]]:
     """
     # Check the required store before expansion, database reads or model loading.
     get_vdb_data()
+    # Validate relevant reviewed evidence before expansion or model loading.
+    # Selection has no I/O for unrelated inputs; top_k zero keeps the old path.
+    terminology = get_terminology_evidence(query_str) if top_k > 0 else None
 
     # 1. Expand query terms and acronyms
     expansion = expand_query(query_str)
@@ -221,6 +225,10 @@ def hybrid_retrieve(query_str: str, top_k: int = 5) -> List[Dict[str, Any]]:
     # 4. Cross-Encoder Reranking
     final_hits = rerank_candidates(query_str, fused_candidates, top_k=top_k)
 
+    # Keep exact terminology separate from RRF/CE scores and preserve every
+    # target/sense together, including when top_k is one.
+    if terminology is not None:
+        return [terminology] + final_hits[:top_k - 1]
     return final_hits
 
 if __name__ == "__main__":

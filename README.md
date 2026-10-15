@@ -132,6 +132,10 @@ Detailed system specifications, operational rules, and architecture rationale ar
 - [Value and Outcomes Assessment](docs/navy_weld_value_and_outcomes_assessment.md)
 - [Technical Implementation Plan](docs/aws_a30_standalone_prototype_plan.md)
 
+**Helper hardening (2026-10-15):** UI geometry is validated without changing the stored registry; canonical figure/table ranges are bounded and resolved atomically; pure terminology helpers preserve target/sense/process/provenance records through an explicit in-memory projection. These changes do not rebuild stores, activate terminology expansion in live retrieval, or establish better answer accuracy. See [implementation evidence and limits](docs/helper_hardening_implementation.md).
+
+**Live terminology validation (2026-10-15):** Three reviewed headwords now supply source-bound evidence bundles to actual hybrid retrieval and generation. The frozen 33-case comparison preserves all 10 unrelated controls; complete reviewed evidence improves from 1/12 within the previous top five to 12/12 at rank one. Local-model answer errors and citation failures remain, so this is not full multimodal NLQ readiness. See [results, reproduction and limits](docs/terminology_live_results.md).
+
 ## Local API security boundaries
 
 Model API roots are approved through server configuration. Request-level `base_url`
