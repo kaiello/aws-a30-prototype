@@ -138,3 +138,12 @@ At the completion of any milestone, card, or substantial refactor, the active ag
    git commit -m "docs: add agents, architecture, and goal documentation"
    git push origin main
    ```
+
+## Local security boundary maintenance (2026-10-15)
+
+Keep server-approved provider endpoints, asset containment and browser-origin checks
+in the supported query path. Requests must not authorize new model destinations.
+Use the isolated checks in [security boundary notes](security_boundary_notes.md)
+when testing security changes without model calls. These checks make no gold
+answer-quality claim; external-model benchmark runs, commits and pushes remain
+subject to the active owner's authorization and constraints.

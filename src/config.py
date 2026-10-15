@@ -57,3 +57,6 @@ CUSTOM_MODEL = os.getenv("CUSTOM_MODEL", "gpt-4o-mini")
 # Local Ollama (Optional alternative)
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 VLM_MODEL = os.getenv("VLM_MODEL", "qwen3-vl:8b-instruct")
+
+# Optional production UI origins; request bodies cannot change this allowlist.
+ALLOWED_WEB_ORIGINS = tuple(value.strip() for value in os.getenv("A30_ALLOWED_ORIGINS", "").split(",") if value.strip())

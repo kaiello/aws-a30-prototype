@@ -304,3 +304,12 @@ The automated benchmark harness ([`eval/test_scorer.py`](file:///C:/Users/kenai/
 | **Qualifier** | 2 | Root opening vs root face, Back weld vs backing weld sequence | 100.0% |
 | **Abstention** | 8 | ASTM A36 preheat (D1.1), Porosity acceptance limits, E7018 yield strength, Fictitious Fig B120, Table A10 | 100.0% |
 | **TOTAL** | **50** | **Comprehensive normative coverage across all 190 pages of AWS A3.0** | **100.0%** |
+
+## Local API boundary update (2026-10-15)
+
+Asset reads now use startup allowlists and file containment/identity checks. Model
+clients enforce the selected engine's configured endpoint and disable redirects
+and environment proxy inheritance. Exact Host/Origin and JSON request checks protect
+the loopback API, with explicit production UI origins configurable server-side.
+See [security boundary notes](security_boundary_notes.md) for contracts and limitations.
+This update does not establish new retrieval or answer-accuracy results.

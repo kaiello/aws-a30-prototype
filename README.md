@@ -133,3 +133,13 @@ Detailed system specifications, operational rules, and architecture rationale ar
 - [Framework Roadmap](docs/navy_weld_framework_roadmap.md)
 - [Value and Outcomes Assessment](docs/navy_weld_value_and_outcomes_assessment.md)
 - [Technical Implementation Plan](docs/aws_a30_standalone_prototype_plan.md)
+
+## Local API security boundaries
+
+Model API roots are approved through server configuration. Request-level `base_url`
+overrides must match the selected engine's configured root. Existing model and
+retrieval defaults are preserved. Assets are served from a startup allowlist with
+path and link containment checks. A separate production UI can be approved using
+`A30_ALLOWED_ORIGINS`; query clients must send JSON with Content-Length.
+Browser-entered API keys stay in page memory. See [security boundary notes](docs/security_boundary_notes.md)
+for compatibility details, isolated tests and the deliberately deferred HTML risks.

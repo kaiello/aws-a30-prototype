@@ -13,6 +13,7 @@ import asyncio
 import argparse
 from pathlib import Path
 from openai import AsyncOpenAI
+import httpx
 from sentence_transformers import SentenceTransformer
 
 from lightrag import LightRAG
@@ -42,6 +43,7 @@ from src.config import (
     EMBEDDING_MODEL,
     EMBEDDING_DIM
 )
+from src.security_boundaries import validate_model_endpoint
 
 _embed_model = None
 _RAG_INSTANCES: Dict[Tuple, LightRAG] = {}
@@ -63,24 +65,26 @@ def get_rag_instance(
     working_dir.mkdir(parents=True, exist_ok=True)
     
     engine_lower = (engine or DEFAULT_ENGINE).lower()
+    if engine_lower not in {"deepseek", "gemini", "custom", "openai"}:
+        raise ValueError("Unsupported model engine.")
     
     if engine_lower == "gemini":
         effective_key = api_key or GEMINI_API_KEY
         if not effective_key:
             raise ValueError("GEMINI_API_KEY is not set! Supply via --api-key, Web UI settings, or .env")
-        effective_base_url = base_url or GEMINI_BASE_URL
+        effective_base_url = validate_model_endpoint(base_url, GEMINI_BASE_URL)
         effective_model = model_name or GEMINI_MODEL
     elif engine_lower in ["custom", "openai"]:
         effective_key = api_key or CUSTOM_API_KEY
         if not effective_key:
             raise ValueError("Custom API key is not set! Supply via --api-key, Web UI settings, or CUSTOM_API_KEY in .env")
-        effective_base_url = base_url or CUSTOM_BASE_URL
+        effective_base_url = validate_model_endpoint(base_url, CUSTOM_BASE_URL)
         effective_model = model_name or CUSTOM_MODEL
     else:
         effective_key = api_key or DEEPSEEK_API_KEY
         if not effective_key:
             raise ValueError("DEEPSEEK_API_KEY is not set! Supply via --api-key, Web UI settings, or .env")
-        effective_base_url = base_url or DEEPSEEK_BASE_URL
+        effective_base_url = validate_model_endpoint(base_url, DEEPSEEK_BASE_URL)
         effective_model = model_name or DEEPSEEK_MODEL
 
     cache_key = (str(working_dir), engine_lower, effective_key, effective_model, effective_base_url)
@@ -91,7 +95,8 @@ def get_rag_instance(
         api_key=effective_key,
         base_url=effective_base_url,
         timeout=30.0,
-        max_retries=2
+        max_retries=2,
+        http_client=httpx.AsyncClient(follow_redirects=False, trust_env=False)
     )
 
     async def llm_func(prompt, system_prompt=None, history_messages=None, **kwargs):
