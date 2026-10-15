@@ -1,0 +1,325 @@
+{
+  "base_commit": "89f4a529b05509d8dc45e439c858347abb2cf469",
+  "scope": "Synthetic injected candidates; no claim of live semantic recall. Baseline pure functions from pre-adapter source; no stores or models used.",
+  "baseline_pre_retrieval_sha256": "265333b48ceb3b4ca56b502f7279ead7b96a200000be5830aa22d7c08d536a6b",
+  "unchanged_hybrid_retriever_sha256": "290a162a4a79b0c775b143976c6cffb6f4301972077f313aa5d518043d5dbd36",
+  "sparse": [
+    {
+      "id": "fixture_chunk_a",
+      "full_doc_id": "fixture_document_1",
+      "content": "Synthetic A",
+      "score": -5.2
+    },
+    {
+      "id": "fixture_chunk_b",
+      "full_doc_id": "fixture_document_2",
+      "content": "Synthetic B",
+      "score": -3.1
+    },
+    {
+      "id": "fixture_chunk_c",
+      "full_doc_id": "fixture_document_3",
+      "content": "Synthetic C",
+      "score": -2.0
+    }
+  ],
+  "dense": [
+    {
+      "id": "fixture_chunk_b",
+      "full_doc_id": "fixture_document_2",
+      "content": "Synthetic B",
+      "score": 0.91
+    },
+    {
+      "id": "fixture_chunk_a",
+      "full_doc_id": "fixture_document_1",
+      "content": "Synthetic A",
+      "score": 0.87
+    },
+    {
+      "id": "fixture_chunk_d",
+      "full_doc_id": "fixture_document_4",
+      "content": "Synthetic D",
+      "score": 0.83
+    }
+  ],
+  "cross_encoder_scores": {
+    "Synthetic A": 0.4,
+    "Synthetic B": 0.9,
+    "Synthetic C": 0.1,
+    "Synthetic D": 0.6
+  },
+  "rrf_hits": [
+    {
+      "id": "fixture_chunk_a",
+      "full_doc_id": "fixture_document_1",
+      "content": "Synthetic A",
+      "score": -5.2,
+      "rrf_score": 0.032522
+    },
+    {
+      "id": "fixture_chunk_b",
+      "full_doc_id": "fixture_document_2",
+      "content": "Synthetic B",
+      "score": -3.1,
+      "rrf_score": 0.032522
+    },
+    {
+      "id": "fixture_chunk_c",
+      "full_doc_id": "fixture_document_3",
+      "content": "Synthetic C",
+      "score": -2.0,
+      "rrf_score": 0.015873
+    },
+    {
+      "id": "fixture_chunk_d",
+      "full_doc_id": "fixture_document_4",
+      "content": "Synthetic D",
+      "score": 0.83,
+      "rrf_score": 0.015873
+    }
+  ],
+  "reranked_hits": [
+    {
+      "id": "fixture_chunk_b",
+      "full_doc_id": "fixture_document_2",
+      "content": "Synthetic B",
+      "score": -3.1,
+      "rrf_score": 0.032522,
+      "cross_encoder_score": 0.9
+    },
+    {
+      "id": "fixture_chunk_d",
+      "full_doc_id": "fixture_document_4",
+      "content": "Synthetic D",
+      "score": 0.83,
+      "rrf_score": 0.015873,
+      "cross_encoder_score": 0.6
+    },
+    {
+      "id": "fixture_chunk_a",
+      "full_doc_id": "fixture_document_1",
+      "content": "Synthetic A",
+      "score": -5.2,
+      "rrf_score": 0.032522,
+      "cross_encoder_score": 0.4
+    },
+    {
+      "id": "fixture_chunk_c",
+      "full_doc_id": "fixture_document_3",
+      "content": "Synthetic C",
+      "score": -2.0,
+      "rrf_score": 0.015873,
+      "cross_encoder_score": 0.1
+    }
+  ],
+  "pair_contents": [
+    "Synthetic A",
+    "Synthetic B",
+    "Synthetic C",
+    "Synthetic D"
+  ],
+  "cases": [
+    {
+      "query": "What is complete joint penetration?",
+      "expansion": {
+        "raw_query": "What is complete joint penetration?",
+        "enriched_query": "What is complete joint penetration?",
+        "matched_acronyms": {},
+        "referenced_figures": [],
+        "referenced_tables": [],
+        "matched_concepts": []
+      },
+      "searches": [
+        [
+          "sparse",
+          "What is complete joint penetration?",
+          30
+        ],
+        [
+          "dense",
+          "What is complete joint penetration?",
+          30
+        ]
+      ]
+    },
+    {
+      "query": "Explain GMAW and SMAW.",
+      "expansion": {
+        "raw_query": "Explain GMAW and SMAW.",
+        "enriched_query": "Explain GMAW and SMAW. gas metal arc welding shielded metal arc welding",
+        "matched_acronyms": {
+          "GMAW": "gas metal arc welding",
+          "SMAW": "shielded metal arc welding"
+        },
+        "referenced_figures": [],
+        "referenced_tables": [],
+        "matched_concepts": []
+      },
+      "searches": [
+        [
+          "sparse",
+          "Explain GMAW and SMAW. gas metal arc welding shielded metal arc welding",
+          30
+        ],
+        [
+          "dense",
+          "Explain GMAW and SMAW. gas metal arc welding shielded metal arc welding",
+          30
+        ]
+      ]
+    },
+    {
+      "query": "Describe 6GR.",
+      "expansion": {
+        "raw_query": "Describe 6GR.",
+        "enriched_query": "Describe 6GR. 6GR multiple position pipe with restriction ring groove weld",
+        "matched_acronyms": {
+          "6GR": "6GR multiple position pipe with restriction ring groove weld"
+        },
+        "referenced_figures": [],
+        "referenced_tables": [],
+        "matched_concepts": []
+      },
+      "searches": [
+        [
+          "sparse",
+          "Describe 6GR. 6GR multiple position pipe with restriction ring groove weld",
+          30
+        ],
+        [
+          "dense",
+          "Describe 6GR. 6GR multiple position pipe with restriction ring groove weld",
+          30
+        ]
+      ]
+    },
+    {
+      "query": "Show Figure B25 and Figure B12.",
+      "expansion": {
+        "raw_query": "Show Figure B25 and Figure B12.",
+        "enriched_query": "Show Figure B25 and Figure B12. Figure B25 Figure B12",
+        "matched_acronyms": {},
+        "referenced_figures": [
+          "Figure B25",
+          "Figure B12"
+        ],
+        "referenced_tables": [],
+        "matched_concepts": []
+      },
+      "searches": [
+        [
+          "sparse",
+          "Show Figure B25 and Figure B12. Figure B25 Figure B12",
+          30
+        ],
+        [
+          "dense",
+          "Show Figure B25 and Figure B12. Figure B25 Figure B12",
+          30
+        ]
+      ]
+    },
+    {
+      "query": "Show Fig. B13.",
+      "expansion": {
+        "raw_query": "Show Fig. B13.",
+        "enriched_query": "Show Fig. B13. Figure B13",
+        "matched_acronyms": {},
+        "referenced_figures": [
+          "Figure B13"
+        ],
+        "referenced_tables": [],
+        "matched_concepts": []
+      },
+      "searches": [
+        [
+          "sparse",
+          "Show Fig. B13. Figure B13",
+          30
+        ],
+        [
+          "dense",
+          "Show Fig. B13. Figure B13",
+          30
+        ]
+      ]
+    },
+    {
+      "query": "Compare Table A1 and Table A5.",
+      "expansion": {
+        "raw_query": "Compare Table A1 and Table A5.",
+        "enriched_query": "Compare Table A1 and Table A5. Table A1 Table A5",
+        "matched_acronyms": {},
+        "referenced_figures": [],
+        "referenced_tables": [
+          "Table A1",
+          "Table A5"
+        ],
+        "matched_concepts": []
+      },
+      "searches": [
+        [
+          "sparse",
+          "Compare Table A1 and Table A5. Table A1 Table A5",
+          30
+        ],
+        [
+          "dense",
+          "Compare Table A1 and Table A5. Table A1 Table A5",
+          30
+        ]
+      ]
+    },
+    {
+      "query": "What changed in Table D2?",
+      "expansion": {
+        "raw_query": "What changed in Table D2?",
+        "enriched_query": "What changed in Table D2? Table D2",
+        "matched_acronyms": {},
+        "referenced_figures": [],
+        "referenced_tables": [
+          "Table D2"
+        ],
+        "matched_concepts": []
+      },
+      "searches": [
+        [
+          "sparse",
+          "What changed in Table D2? Table D2",
+          30
+        ],
+        [
+          "dense",
+          "What changed in Table D2? Table D2",
+          30
+        ]
+      ]
+    },
+    {
+      "query": "Show Figure B16C.",
+      "expansion": {
+        "raw_query": "Show Figure B16C.",
+        "enriched_query": "Show Figure B16C. Figure B16C",
+        "matched_acronyms": {},
+        "referenced_figures": [
+          "Figure B16C"
+        ],
+        "referenced_tables": [],
+        "matched_concepts": []
+      },
+      "searches": [
+        [
+          "sparse",
+          "Show Figure B16C. Figure B16C",
+          30
+        ],
+        [
+          "dense",
+          "Show Figure B16C. Figure B16C",
+          30
+        ]
+      ]
+    }
+  ]
+}

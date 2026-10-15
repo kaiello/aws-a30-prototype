@@ -266,14 +266,17 @@ def indexer_fixture(tmp_path):
     embeddings = types.ModuleType("sentence_transformers")
     embeddings.SentenceTransformer = lambda name: model_loads.append(name) or types.SimpleNamespace()
     lightrag = types.ModuleType("lightrag")
-    lightrag.LightRAG = lambda **kw: types.SimpleNamespace(**kw)
+    lightrag.LightRAG = lambda **kw: types.SimpleNamespace(chunks_vdb=types.SimpleNamespace(adapter_installed=False), **kw)
+    vector_compat = types.ModuleType("src.vector_reader_compat")
+    vector_compat.install_vector_reader = lambda storage: setattr(storage, "adapter_installed", True)
     utils = types.ModuleType("lightrag.utils")
     utils.EmbeddingFunc = lambda **kw: kw
     httpx = types.ModuleType("httpx")
     httpx.AsyncClient = lambda **kw: types.SimpleNamespace(settings=kw)
     indexer = load_module("isolated_indexer", "indexer.py", {
         "src.config": cfg, "openai": openai, "sentence_transformers": embeddings,
-        "lightrag": lightrag, "lightrag.utils": utils, "httpx": httpx})
+        "lightrag": lightrag, "lightrag.utils": utils, "httpx": httpx,
+        "src.vector_reader_compat": vector_compat})
     return indexer, cfg, clients, model_loads
 
 
@@ -293,6 +296,7 @@ def test_trusted_model_client_preserves_bge_and_blocks_redirects_and_proxies(ind
     rag = indexer.get_rag_instance(working_dir=cfg.STORAGE_DIR)
     assert models == ["BAAI/bge-large-en-v1.5"]
     assert rag.embedding_func["embedding_dim"] == 1024
+    assert rag.chunks_vdb.adapter_installed
     assert clients[0]["api_key"] == "fake-server-key"
     transport = clients[0]["http_client"]
     assert transport.settings["follow_redirects"] is False
@@ -334,12 +338,15 @@ def test_real_sdk_does_not_follow_provider_redirect(tmp_path, monkeypatch):
     embedding = types.ModuleType("sentence_transformers")
     embedding.SentenceTransformer = lambda name: object()
     lightrag = types.ModuleType("lightrag")
-    lightrag.LightRAG = lambda **kwargs: types.SimpleNamespace(**kwargs)
+    lightrag.LightRAG = lambda **kwargs: types.SimpleNamespace(chunks_vdb=types.SimpleNamespace(), **kwargs)
+    vector_compat = types.ModuleType("src.vector_reader_compat")
+    vector_compat.install_vector_reader = lambda storage: None
     utils = types.ModuleType("lightrag.utils")
     utils.EmbeddingFunc = lambda **kwargs: kwargs
     indexer = load_module("isolated_sdk_indexer", "indexer.py", {
         "src.config": cfg, "sentence_transformers": embedding,
-        "lightrag": lightrag, "lightrag.utils": utils})
+        "lightrag": lightrag, "lightrag.utils": utils,
+        "src.vector_reader_compat": vector_compat})
 
     async def exercise():
         rag = indexer.get_rag_instance(working_dir=cfg.STORAGE_DIR)

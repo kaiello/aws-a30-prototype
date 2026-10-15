@@ -6,10 +6,12 @@ for AWS A3.0M/A3.0:2020.
 import re
 from typing import Dict, Any, List
 
-# Known ground truth elements in AWS A3.0
-VALID_CLAUSES = ["Clause 1", "Clause 2", "Clause 3", "Clause 4", "Annex A", "Annex B", "Annex C", "Annex D", "Annex E", "Annex F"]
-VALID_TABLES = ["Table A1", "Table A2", "Table A3", "Table A4", "Table A5", "Table D1", "Table D2", "Table D3", "Table D4", "Table D5", "Table D6"]
-VALID_FIGURES = [f"Figure A{i}" for i in range(1, 7)] + [f"Figure B{i}" for i in range(1, 98)]
+from src.standard_manifest import get_manifest, extract_references
+
+# Compatibility constants projected from the one source inventory.
+VALID_CLAUSES = list(get_manifest().labels("sections"))
+VALID_TABLES = list(get_manifest().labels("tables"))
+VALID_FIGURES = list(get_manifest().labels("figures"))
 
 STRONG_ABSTENTION_PREFIXES = [
     "i don't have enough information",
@@ -53,34 +55,16 @@ def check_abstention(response_text: str) -> bool:
     return any(p in lowered for p in STRONG_ABSTENTION_SUBSTRINGS)
 
 def extract_citations(response_text: str) -> Dict[str, Any]:
-    """Extracts cited clauses, tables, figures, and pages from response."""
-    if not response_text:
-        return {
-            "has_citation": False,
-            "clauses": [],
-            "tables": [],
-            "figures": [],
-            "pages": []
-        }
-    text = str(response_text)
-    cited_clauses = [c for c in VALID_CLAUSES if c.lower() in text.lower()]
-    cited_tables = [t for t in VALID_TABLES if t.lower() in text.lower()]
-    
-    # Extract figures (e.g., Figure A6, Figure B4, Figure B16A, Figure B20)
-    fig_matches = re.findall(r'Figure\s+[AB]\d+[A-Z]?', text, re.IGNORECASE)
-    cited_figures = list(set([re.sub(r'\s+', ' ', f.title()) for f in fig_matches]))
-    
-    # Extract page references
-    page_matches = re.findall(r'(?:page|p\.)\s*(\d+)', text, re.IGNORECASE)
-    cited_pages = [int(p) for p in page_matches]
-    
-    return {
-        "has_citation": bool(cited_clauses or cited_tables or cited_figures or cited_pages),
-        "clauses": cited_clauses,
-        "tables": cited_tables,
-        "figures": cited_figures,
-        "pages": cited_pages
-    }
+    """Resolve canonical source IDs; unresolved tokens never count as exact citations."""
+    text = str(response_text or "")
+    result = extract_references(text)
+    valid_pages = {int(p["printed_label"]) for p in get_manifest().document["pages"]
+                   if p["printed_label"] and p["printed_label"].isdigit()}
+    result["pages"] = list(dict.fromkeys(int(p) for p in re.findall(r"(?:page|p\.)\s*(\d+)", text, re.IGNORECASE) if int(p) in valid_pages))
+    result["has_citation"] = bool(result["clauses"] or result["tables"] or result["figures"] or result["pages"])
+    result["source_anchors"] = {label: get_manifest().source_anchors(label)
+                                for key in ["clauses", "tables", "figures"] for label in result[key]}
+    return result
 
 def extract_grounded_claims(response_text: str) -> List[Dict[str, Any]]:
     """Extracts material claims and links each to its cited source anchors."""
@@ -93,7 +77,9 @@ def extract_grounded_claims(response_text: str) -> List[Dict[str, Any]]:
             clean_text = re.sub(r'^[\*\-•\d\.\s]+', '', line).strip()
             if len(clean_text) > 15:
                 # Find any bracketed or inline citations in this line
-                cits = re.findall(r'\[\d+\]|\(Clause\s+\d+.*?\)|(?:Figure|Table)\s+[AB]\d+|p\.\s*\d+', clean_text, re.IGNORECASE)
+                refs = extract_references(clean_text)
+                cits = list(dict.fromkeys([label for key in ["clauses", "figures", "tables"] for label in refs[key]]
+                                         + re.findall(r'\[\d+\]|p\.\s*\d+', clean_text, re.IGNORECASE)))
                 claims.append({
                     "claim": clean_text,
                     "anchors": cits if cits else ["Inferred from context"]
@@ -130,7 +116,10 @@ def verify_response(query_item: Dict[str, Any], response_text: str) -> Dict[str,
             if target_el:
                 cit_match = (target_el.lower() in response_text.lower())
         
-        if not qualifier_pass:
+        if citations.get("unresolved_elements"):
+            is_pass = False
+            reason = "Unknown, ambiguous or unverified source citation"
+        elif not qualifier_pass:
             is_pass = False
             reason = f"Omitted required qualifier(s): {missing_qualifiers}"
         elif did_abstain:

@@ -1,8 +1,12 @@
 # AWS A3.0 Standalone Multimodal Prototype
 
+**Vector reader fix and evaluation (2026-10-15):** The chunk reader now accepts validated existing numeric lists and native encoded vectors, with an exact LightRAG 1.5.7 contract guard. On frozen questions, strict target Hit@10 was 1/28 before and 11/28 after in a fixed-pool component comparison; the separate current hybrid lane reached 23/28. Only 12 targets are mapped in the reader pool. These results and 220 selected Python checks do not establish factual answer accuracy. See [protocol, results and limits](docs/vector_reader_compatibility.md).
+
 A clean-slate, standalone prototype for Natural Language Querying (NLQ) over the full 190-page **AWS A3.0M/A3.0:2020 Standard Welding Terms and Definitions**.
 
 This prototype demonstrates multimodal search and retrieval—connecting text definitions, process designation tables, and engineering diagrams with exact source citations and strict abstentions.
+
+**Source metadata update (2026-10-15):** [the verified manifest](config/aws_a30_2020_manifest.json) now supplies canonical locations and explicit existing asset bindings through `src/standard_manifest.py`. Its inventory is 190 PDF pages, 62 figures (including distinct B16A/B/C) and 11 tables (A1-A5, D1-D6). Printed pages and viewer ordinals remain distinct. Annex B's applicability conflict is retained. See the [implementation evidence and limits](docs/declarative_manifest_implementation.md); historical feature/count claims below are not fresh ingestion or answer-quality evidence.
 
 ---
 
@@ -24,16 +28,16 @@ flowchart LR
 ```
 
 1. **Native Multimodal LightRAG 1.5.7**:
-   - Resolves the RAG-Anything version wrinkle: RAG-Anything was merged directly upstream into LightRAG v1.5.0 in May 2026. This prototype uses `lightrag-hku>=1.5.7` with built-in sidecar and Docling support.
+   - Resolves the RAG-Anything version wrinkle: RAG-Anything was merged directly upstream into LightRAG v1.5.0 in May 2026. This prototype uses `lightrag-hku==1.5.7` with built-in sidecar and Docling support.
 2. **First-Class Google Gemini Inference**:
    - Uses `gemini-2.0-flash` for high-throughput multimodal reasoning, graph entity/relationship extraction, and answer synthesis.
-   - Uses `models/text-embedding-004` (768-dim) for semantic vectors.
+   - Existing contextual retrieval uses local `BAAI/bge-large-en-v1.5` vectors with 1024 dimensions; this manifest change does not re-embed data or change provider settings.
 3. **High-Fidelity Vector Figure Rendering**:
-   - The PDF contains vector drawings in `/Form` XObjects rather than raster scans. PyMuPDF renders all 97 Annex B engineering diagrams into crisp 180 DPI images (`parsed/figures/`).
+   - Existing page renders are bound explicitly to 62 source figures. The 97 historical Annex-B JSONL records are per-page artifacts, including misclassified later pages; they are not 97 distinct diagrams.
 4. **Complete Corpus & Environment Isolation**:
    - Pure local file-based storage (`./storage/`) via NetworkX and NanoVectorDB. Zero external database servers (no Neo4j, no Docker required).
 5. **Exact Citation & Abstention Harness**:
-   - 12-question gold benchmark (`eval/gold_benchmark.json`) verifying that answers cite exact clauses, pages, and figure/table IDs, and cleanly abstain on out-of-scope topics.
+   - The frozen 50-question benchmark (`eval/gold_benchmark.json`) is unchanged. This change was checked with offline deterministic fixtures, without rerunning model-based answer evaluation.
 
 ---
 
@@ -64,7 +68,6 @@ aws-a30-prototype/
 │   ├── navy_weld_value_and_outcomes_assessment.md
 │   └── aws_a30_standalone_prototype_plan.md
 ├── .env.example                       # Environment configuration template
-├── pyproject.toml                     # Python dependencies
 └── README.md
 ```
 
@@ -73,12 +76,7 @@ aws-a30-prototype/
 ## Quickstart
 
 ### 1. Prerequisites & Environment
-Python 3.11+ is recommended. Install dependencies:
-```bash
-pip install -r requirements.txt
-# Or:
-pip install "lightrag-hku>=1.5.7" pymupdf docling google-genai openai pydantic python-dotenv
-```
+Python 3.11+ is recommended. This repository currently has neither `requirements.txt` nor `pyproject.toml`; its historical setup is not a complete reproducible install specification. The reader fix requires the reviewed `lightrag-hku==1.5.7` contract. See [tested package/model versions](docs/vector_reader_compatibility.md) before changing the existing environment.
 
 ### 2. Configure Gemini API Key
 Copy `.env.example` to `.env` and set your key:
