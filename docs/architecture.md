@@ -313,3 +313,7 @@ and environment proxy inheritance. Exact Host/Origin and JSON request checks pro
 the loopback API, with explicit production UI origins configurable server-side.
 See [security boundary notes](security_boundary_notes.md) for contracts and limitations.
 This update does not establish new retrieval or answer-accuracy results.
+
+Missing contextual indexes now fail before database/model work with an explicit
+`RETRIEVAL_INDEX_MISSING` result, HTTP 503 and CLI exit 1. Recovery is a trusted
+operator action; the query path never starts an automatic rebuild.

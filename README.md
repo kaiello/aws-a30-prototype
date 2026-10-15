@@ -143,3 +143,7 @@ path and link containment checks. A separate production UI can be approved using
 `A30_ALLOWED_ORIGINS`; query clients must send JSON with Content-Length.
 Browser-entered API keys stay in page memory. See [security boundary notes](docs/security_boundary_notes.md)
 for compatibility details, isolated tests and the deliberately deferred HTML risks.
+
+If the required contextual retrieval index is absent, queries return
+`RETRIEVAL_INDEX_MISSING` with restoration guidance (HTTP 503; CLI exit 1).
+The application does not automatically rebuild the index or generate an answer.

@@ -95,3 +95,5 @@ Security work dated 2026-10-15 is scoped to local asset, provider, credential an
 request boundaries, with isolated regression evidence described in
 [security boundary notes](security_boundary_notes.md). It preserves retrieval/model
 defaults and does not claim a new multimodal accuracy milestone or production release.
+The authorized missing-index follow-up adds explicit prerequisite failure handling,
+without rebuilding data or claiming additional retrieval/answer coverage.

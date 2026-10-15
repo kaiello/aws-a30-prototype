@@ -33,7 +33,7 @@ from src.citation_checker import extract_citations, extract_grounded_claims
 from src.epistemic_verifier import verify_epistemic_provenance
 from src.answer_routes import resolve_answer_route
 from src.pre_retrieval import check_early_abstention, expand_query
-from src.hybrid_retriever import hybrid_retrieve
+from src.hybrid_retriever import ContextualIndexMissingError, hybrid_retrieve
 
 TABLE_COMPANION_FIGURES = {
     "Table A1": ["Figure A1", "Figure A4"],
@@ -192,7 +192,25 @@ async def async_query(
         }
 
     # 1. Two-stage hybrid retrieval (FTS5 BM25 + BGE-large dense + RRF + Cross-Encoder)
-    hybrid_evidence = hybrid_retrieve(query_str, top_k=5)
+    try:
+        hybrid_evidence = hybrid_retrieve(query_str, top_k=5)
+    except ContextualIndexMissingError:
+        return {
+            "query": query_str,
+            "answer": "",
+            "error": (
+                "Required local retrieval index is missing. Restore a compatible "
+                "storage/vdb_chunks_contextual.json from a trusted backup, or ask the "
+                "project maintainer to provision it before retrying. No answer was generated."
+            ),
+            "error_code": "RETRIEVAL_INDEX_MISSING",
+            "citations": {},
+            "grounded_claims": [],
+            "resolved_figures": [],
+            "resolved_tables": [],
+            "see_also": [],
+            "retrieved_evidence": []
+        }
 
     try:
         rag = get_rag_instance(
@@ -331,6 +349,10 @@ def main():
         model_name=args.model,
         base_url=args.base_url
     )
+
+    if result.get("error_code") == "RETRIEVAL_INDEX_MISSING":
+        print(f"ERROR: {result['error']}", file=sys.stderr)
+        raise SystemExit(1)
     
     print("\n" + "="*70)
     print(f"QUERY: {result['query']}")

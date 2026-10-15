@@ -38,6 +38,11 @@ _dense_model = None
 _reranker_model = None
 _vdb_cache = None
 
+
+class ContextualIndexMissingError(FileNotFoundError):
+    """The required contextual vector store has not been provisioned."""
+
+
 def get_dense_model():
     global _dense_model
     if _dense_model is None:
@@ -62,7 +67,7 @@ def get_vdb_data() -> Dict[str, Any]:
     global _vdb_cache
     if _vdb_cache is None:
         if not CONTEXTUAL_VDB_PATH.exists():
-            raise FileNotFoundError(f"Contextual vector store missing at {CONTEXTUAL_VDB_PATH}")
+            raise ContextualIndexMissingError("Required contextual vector store is missing.")
         with open(CONTEXTUAL_VDB_PATH, "r", encoding="utf-8") as f:
             _vdb_cache = json.load(f)
     return _vdb_cache
@@ -199,6 +204,9 @@ def hybrid_retrieve(query_str: str, top_k: int = 5) -> List[Dict[str, Any]]:
     Full end-to-end two-stage retrieval pipeline:
     Pre-retrieval expansion -> Sparse BM25 + Dense Cosine -> RRF Fusion -> Cross-Encoder Reranking.
     """
+    # Check the required store before expansion, database reads or model loading.
+    get_vdb_data()
+
     # 1. Expand query terms and acronyms
     expansion = expand_query(query_str)
     search_query = expansion["enriched_query"]

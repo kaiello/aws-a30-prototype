@@ -44,6 +44,12 @@ before query execution. This is browser-origin isolation, not authentication aga
 other processes on the trusted local machine. Do not expose this listener as an
 authenticated multi-user service without separate authorization and design.
 
+An absent required contextual vector store returns `RETRIEVAL_INDEX_MISSING`,
+HTTP 503 and restoration guidance, with an empty answer/evidence payload. The CLI
+prints the error and exits with status 1. The prerequisite is checked before
+database reads or model initialization; no rebuild or provider call is attempted.
+Corrupt stores and unrelated missing files are not classified as this error.
+
 ## Asset reads
 
 PNG figure assets and PNG/Markdown table assets must be present in their respective
@@ -79,11 +85,13 @@ passed, and all source Python files parsed. An independent source-free review
 assessed the boundary contract and coverage; the implementation diff was reviewed
 locally by the integrator. No independent source-code review or live NLQ run is claimed.
 
-Git closeout validation also passed 83 isolated Python checks covering the security
+Git closeout validation also passed 89 isolated Python checks covering the security
 suite, pre-retrieval rules, bounding-box registry and pure rank fusion. Model
 construction, database connections, dotenv loading and application network access
 were blocked; the only socket connection permitted was Windows asyncio's private
 wakeup socketpair. The live retrieval and answer benchmarks were not run.
+The missing-index regression includes real loader/query paths, CLI failure and
+HTTP 503, plus nearby corruption and unrelated-file cases.
 
 The final review compares against the preserved dirty owner-state baseline, rather
 than attributing all pre-existing changes from HEAD to this task. The original checkout

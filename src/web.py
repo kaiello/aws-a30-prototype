@@ -1707,6 +1707,10 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                 print(f"[API QUERY] Engine={engine}, Mode={mode}")
                 res = run_query(query, mode=mode, engine=engine, api_key=api_key, model_name=model_name, base_url=base_url)
 
+                if res.get("error_code") == "RETRIEVAL_INDEX_MISSING":
+                    self._send_json(503, res)
+                    return
+
                 resp_bytes = json.dumps(res).encode("utf-8")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
