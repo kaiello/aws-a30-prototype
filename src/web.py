@@ -25,13 +25,17 @@ from src.config import (
     PARSED_TABLES_DIR,
     DEFAULT_ENGINE,
     DEEPSEEK_MODEL,
+    DEEPSEEK_BASE_URL,
     GEMINI_MODEL,
+    GEMINI_BASE_URL,
     CUSTOM_MODEL,
     CUSTOM_BASE_URL,
     DEEPSEEK_API_KEY,
     GEMINI_API_KEY,
-    CUSTOM_API_KEY
+    CUSTOM_API_KEY,
+    ALLOWED_WEB_ORIGINS
 )
+from src.security_boundaries import AssetStore, canonical_origin, validate_local_request, validate_model_endpoint
 from src.query import run_query, resolve_multimodal_assets
 from src.figure_inspectors import (
     FIGURE_INSPECTORS,
@@ -712,15 +716,22 @@ HTML_INDEX = """<!DOCTYPE html>
             }
         }
 
+        function readSavedSettings() {
+            const saved = JSON.parse(localStorage.getItem("aws_a30_model_settings") || "{}");
+            // Purge keys left by earlier versions; current keys stay in page memory.
+            delete saved.deepseekKey;
+            delete saved.geminiKey;
+            delete saved.customKey;
+            localStorage.setItem("aws_a30_model_settings", JSON.stringify(saved));
+            return saved;
+        }
+
         function loadSavedSettings() {
             try {
-                const saved = JSON.parse(localStorage.getItem("aws_a30_model_settings") || "{}");
-                if (saved.deepseekKey) document.getElementById("cfgDeepseekKey").value = saved.deepseekKey;
+                const saved = readSavedSettings();
                 if (saved.deepseekModel) document.getElementById("cfgDeepseekModel").value = saved.deepseekModel;
-                if (saved.geminiKey) document.getElementById("cfgGeminiKey").value = saved.geminiKey;
                 if (saved.geminiModel) document.getElementById("cfgGeminiModel").value = saved.geminiModel;
                 if (saved.customBaseUrl) document.getElementById("cfgCustomBaseUrl").value = saved.customBaseUrl;
-                if (saved.customKey) document.getElementById("cfgCustomKey").value = saved.customKey;
                 if (saved.customModel) document.getElementById("cfgCustomModel").value = saved.customModel;
                 if (saved.selectedEngine) {
                     document.getElementById("engineSelect").value = saved.selectedEngine;
@@ -734,17 +745,14 @@ HTML_INDEX = """<!DOCTYPE html>
         function saveCustomSettings() {
             const selectedEngine = document.getElementById("engineSelect").value;
             const settings = {
-                deepseekKey: document.getElementById("cfgDeepseekKey").value.trim(),
                 deepseekModel: document.getElementById("cfgDeepseekModel").value.trim(),
-                geminiKey: document.getElementById("cfgGeminiKey").value.trim(),
                 geminiModel: document.getElementById("cfgGeminiModel").value.trim(),
                 customBaseUrl: document.getElementById("cfgCustomBaseUrl").value.trim(),
-                customKey: document.getElementById("cfgCustomKey").value.trim(),
                 customModel: document.getElementById("cfgCustomModel").value.trim(),
                 selectedEngine: selectedEngine
             };
             localStorage.setItem("aws_a30_model_settings", JSON.stringify(settings));
-            alert("API & Model settings saved to browser storage.");
+            alert("Model settings saved. API keys stay in this page until it is closed or reloaded.");
             toggleSettingsDrawer();
         }
 
@@ -810,21 +818,21 @@ HTML_INDEX = """<!DOCTYPE html>
             const engine = document.getElementById("engineSelect").value;
             const mode = document.getElementById("modeSelect").value;
 
-            // Collect any custom API key / model overrides from settings / localStorage
+            // Keys remain in page memory; only nonsecret model settings are persisted.
             let apiKey = null;
             let modelName = null;
             let baseUrl = null;
 
             try {
-                const saved = JSON.parse(localStorage.getItem("aws_a30_model_settings") || "{}");
+                const saved = readSavedSettings();
                 if (engine === "deepseek") {
-                    if (saved.deepseekKey) apiKey = saved.deepseekKey;
+                    apiKey = document.getElementById("cfgDeepseekKey").value.trim() || null;
                     if (saved.deepseekModel) modelName = saved.deepseekModel;
                 } else if (engine === "gemini") {
-                    if (saved.geminiKey) apiKey = saved.geminiKey;
+                    apiKey = document.getElementById("cfgGeminiKey").value.trim() || null;
                     if (saved.geminiModel) modelName = saved.geminiModel;
                 } else if (engine === "custom" || engine === "openai") {
-                    if (saved.customKey) apiKey = saved.customKey;
+                    apiKey = document.getElementById("cfgCustomKey").value.trim() || null;
                     if (saved.customModel) modelName = saved.customModel;
                     if (saved.customBaseUrl) baseUrl = saved.customBaseUrl;
                 }
@@ -1493,6 +1501,50 @@ HTML_INDEX = """<!DOCTYPE html>
 """
 
 class MultimodalRequestHandler(BaseHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Referrer-Policy", "no-referrer")
+        if getattr(self, "_approved_origin", None):
+            self.send_header("Access-Control-Allow-Origin", self._approved_origin)
+            self.send_header("Vary", "Origin")
+        super().end_headers()
+
+    def _check_request(self):
+        self._approved_origin = None
+        try:
+            self._approved_origin = validate_local_request(
+                self.headers, self.server.server_address, self.server.allowed_origins
+            )
+        except ValueError:
+            self.send_error(403, "Request host or origin is not approved")
+            return False
+        return True
+
+    def _send_json(self, status, value):
+        data = json.dumps(value).encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def do_OPTIONS(self):
+        if not self._check_request():
+            return
+        requested_headers = {h.strip().lower() for h in self.headers.get("Access-Control-Request-Headers", "").split(",") if h.strip()}
+        if (urllib.parse.urlsplit(self.path).path != "/api/query"
+                or not self._approved_origin
+                or self.headers.get("Access-Control-Request-Method") != "POST"
+                or requested_headers - {"content-type"}):
+            self.send_error(403, "Preflight is not approved")
+            return
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Methods", "POST")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
     def log_message(self, format, *args):
         sys.stderr.write("%s - - [%s] %s\n" %
                          (self.address_string(),
@@ -1501,6 +1553,8 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
         sys.stderr.flush()
 
     def do_GET(self):
+        if not self._check_request():
+            return
         try:
             parsed = urllib.parse.urlparse(self.path)
             path = parsed.path
@@ -1574,33 +1628,29 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                 return
 
             elif path.startswith("/figures/"):
-                filename = path.replace("/figures/", "")
-                target_file = PARSED_FIGURES_DIR / filename
-                if target_file.exists():
-                    img_bytes = target_file.read_bytes()
+                try:
+                    _, img_bytes = self.server.asset_stores["figures"].read(path[len("/figures/"):])
                     self.send_response(200)
                     self.send_header("Content-Type", "image/png")
                     self.send_header("Content-Length", str(len(img_bytes)))
                     self.end_headers()
                     self.wfile.write(img_bytes)
                     return
-                else:
+                except (ValueError, OSError):
                     self.send_error(404, "Figure image not found")
                     return
 
             elif path.startswith("/tables/"):
-                filename = path.replace("/tables/", "")
-                target_file = PARSED_TABLES_DIR / filename
-                if target_file.exists():
+                try:
+                    filename, t_bytes = self.server.asset_stores["tables"].read(path[len("/tables/"):])
                     content_type = "image/png" if filename.lower().endswith(".png") else "text/plain; charset=utf-8"
-                    t_bytes = target_file.read_bytes()
                     self.send_response(200)
                     self.send_header("Content-Type", content_type)
                     self.send_header("Content-Length", str(len(t_bytes)))
                     self.end_headers()
                     self.wfile.write(t_bytes)
                     return
-                else:
+                except (ValueError, OSError):
                     self.send_error(404, "Table file not found")
                     return
 
@@ -1608,15 +1658,31 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             import traceback
             traceback.print_exc()
-            self.send_error(500, f"Server error: {e}")
+            self.send_error(500, "Server request failed")
 
     def do_POST(self):
+        if not self._check_request():
+            return
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path == "/api/query":
             try:
-                content_length = int(self.headers.get("Content-Length", 0))
+                content_types = self.headers.get_all("Content-Type", [])
+                lengths = self.headers.get_all("Content-Length", [])
+                if len(content_types) != 1 or content_types[0].split(";", 1)[0].strip().lower() != "application/json":
+                    self._send_json(415, {"error": "Content-Type must be application/json."})
+                    return
+                if len(lengths) != 1 or self.headers.get("Transfer-Encoding"):
+                    raise ValueError("A single Content-Length is required.")
+                content_length = int(lengths[0])
+                if not 0 < content_length <= 65536:
+                    self._send_json(413, {"error": "Query request exceeds the supported size."})
+                    return
                 body = self.rfile.read(content_length).decode("utf-8")
+                if len(body.encode("utf-8")) != content_length:
+                    raise ValueError("Incomplete query request.")
                 data = json.loads(body)
+                if not isinstance(data, dict):
+                    raise ValueError("Query request must be a JSON object.")
 
                 query = data.get("query", "")
                 engine = data.get("engine", DEFAULT_ENGINE)
@@ -1625,8 +1691,25 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                 model_name = data.get("model_name") or None
                 base_url = data.get("base_url") or None
 
-                print(f"[API QUERY] Engine={engine}, Mode={mode}, Model={model_name}, CustomKey={'***' if api_key else 'None'}, BaseUrl={base_url}, Query='{query}'")
+                endpoints = {"deepseek": DEEPSEEK_BASE_URL, "gemini": GEMINI_BASE_URL,
+                             "custom": CUSTOM_BASE_URL, "openai": CUSTOM_BASE_URL}
+                if not isinstance(engine, str) or engine.lower() not in endpoints:
+                    raise ValueError("Unsupported model engine.")
+                engine = engine.lower()
+                if not isinstance(query, str) or not query.strip() or len(query) > 16384:
+                    raise ValueError("Query must be nonempty text within 16384 characters.")
+                if not isinstance(mode, str) or mode not in {"mix", "local", "global", "naive"}:
+                    raise ValueError("Unsupported retrieval mode.")
+                if any(value is not None and not isinstance(value, str) for value in (api_key, model_name, base_url)):
+                    raise ValueError("Model settings must be strings.")
+                base_url = validate_model_endpoint(base_url, endpoints[engine])
+
+                print(f"[API QUERY] Engine={engine}, Mode={mode}")
                 res = run_query(query, mode=mode, engine=engine, api_key=api_key, model_name=model_name, base_url=base_url)
+
+                if res.get("error_code") == "RETRIEVAL_INDEX_MISSING":
+                    self._send_json(503, res)
+                    return
 
                 resp_bytes = json.dumps(res).encode("utf-8")
                 self.send_response(200)
@@ -1635,10 +1718,13 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(resp_bytes)
                 return
+            except (ValueError, UnicodeError) as e:
+                self._send_json(400, {"error": str(e)})
+                return
             except Exception as e:
                 import traceback
                 traceback.print_exc()
-                err_bytes = json.dumps({"error": str(e)}).encode("utf-8")
+                err_bytes = json.dumps({"error": "Query execution failed."}).encode("utf-8")
                 self.send_response(500)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Content-Length", str(len(err_bytes)))
@@ -1650,7 +1736,12 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
 
 def run_server(port: int = 8000, open_browser: bool = False):
     server_address = ("127.0.0.1", port)
+    allowed_origins = tuple(canonical_origin(value) for value in ALLOWED_WEB_ORIGINS)
+    asset_stores = {"figures": AssetStore(PARSED_FIGURES_DIR, {".png"}),
+                    "tables": AssetStore(PARSED_TABLES_DIR, {".png", ".md"})}
     httpd = ThreadingHTTPServer(server_address, MultimodalRequestHandler)
+    httpd.allowed_origins = allowed_origins
+    httpd.asset_stores = asset_stores
     url = f"http://localhost:{port}"
     print("\n" + "="*70)
     print(f"AWS A3.0 Multimodal Visual Explorer running at: {url}")

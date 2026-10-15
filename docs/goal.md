@@ -90,3 +90,10 @@ To maintain high velocity, deterministic reproducibility, and zero infrastructur
 - [x] **Card 06: Complete Interactive Diagram Directory**: High-resolution image assets and 267+ interactive callout chips across all 60 standard figures in Annex A and B.
 - [x] **Card 07: Dual-Layer Epistemic Knowledge Graph**: Decoupling of Domain Ontology (2,522 nodes) from Normative Evidence (471 nodes) via 5,854 epistemic grounding bridges, backed by SQLite FTS5 and an auditable runtime Epistemic Verifier.
 - [ ] **Next Steps**: Packaging as an installable Python package, containerized deployment option for enterprise air-gapped environments, and integration with broader military/aerospace fabrication specifications.
+
+Security work dated 2026-10-15 is scoped to local asset, provider, credential and
+request boundaries, with isolated regression evidence described in
+[security boundary notes](security_boundary_notes.md). It preserves retrieval/model
+defaults and does not claim a new multimodal accuracy milestone or production release.
+The authorized missing-index follow-up adds explicit prerequisite failure handling,
+without rebuilding data or claiming additional retrieval/answer coverage.

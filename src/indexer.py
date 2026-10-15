@@ -13,12 +13,17 @@ import asyncio
 import argparse
 from pathlib import Path
 from openai import AsyncOpenAI
+import httpx
 from sentence_transformers import SentenceTransformer
 
 from lightrag import LightRAG
 from lightrag.utils import EmbeddingFunc
 
 from typing import Optional, Dict, Tuple
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
 from src.config import (
     STORAGE_DIR,
@@ -38,6 +43,7 @@ from src.config import (
     EMBEDDING_MODEL,
     EMBEDDING_DIM
 )
+from src.security_boundaries import validate_model_endpoint
 
 _embed_model = None
 _RAG_INSTANCES: Dict[Tuple, LightRAG] = {}
@@ -59,31 +65,39 @@ def get_rag_instance(
     working_dir.mkdir(parents=True, exist_ok=True)
     
     engine_lower = (engine or DEFAULT_ENGINE).lower()
+    if engine_lower not in {"deepseek", "gemini", "custom", "openai"}:
+        raise ValueError("Unsupported model engine.")
     
     if engine_lower == "gemini":
         effective_key = api_key or GEMINI_API_KEY
         if not effective_key:
             raise ValueError("GEMINI_API_KEY is not set! Supply via --api-key, Web UI settings, or .env")
-        effective_base_url = base_url or GEMINI_BASE_URL
+        effective_base_url = validate_model_endpoint(base_url, GEMINI_BASE_URL)
         effective_model = model_name or GEMINI_MODEL
     elif engine_lower in ["custom", "openai"]:
         effective_key = api_key or CUSTOM_API_KEY
         if not effective_key:
             raise ValueError("Custom API key is not set! Supply via --api-key, Web UI settings, or CUSTOM_API_KEY in .env")
-        effective_base_url = base_url or CUSTOM_BASE_URL
+        effective_base_url = validate_model_endpoint(base_url, CUSTOM_BASE_URL)
         effective_model = model_name or CUSTOM_MODEL
     else:
         effective_key = api_key or DEEPSEEK_API_KEY
         if not effective_key:
             raise ValueError("DEEPSEEK_API_KEY is not set! Supply via --api-key, Web UI settings, or .env")
-        effective_base_url = base_url or DEEPSEEK_BASE_URL
+        effective_base_url = validate_model_endpoint(base_url, DEEPSEEK_BASE_URL)
         effective_model = model_name or DEEPSEEK_MODEL
 
     cache_key = (str(working_dir), engine_lower, effective_key, effective_model, effective_base_url)
     if cache_key in _RAG_INSTANCES:
         return _RAG_INSTANCES[cache_key]
 
-    client = AsyncOpenAI(api_key=effective_key, base_url=effective_base_url)
+    client = AsyncOpenAI(
+        api_key=effective_key,
+        base_url=effective_base_url,
+        timeout=30.0,
+        max_retries=2,
+        http_client=httpx.AsyncClient(follow_redirects=False, trust_env=False)
+    )
 
     async def llm_func(prompt, system_prompt=None, history_messages=None, **kwargs):
         messages = []
@@ -103,7 +117,7 @@ def get_rag_instance(
     model = get_embed_model()
 
     async def embed_func(texts):
-        return model.encode(texts)
+        return model.encode(texts, normalize_embeddings=True)
 
     rag = LightRAG(
         working_dir=str(working_dir),
@@ -118,7 +132,7 @@ def get_rag_instance(
     _RAG_INSTANCES[cache_key] = rag
     return rag
 
-def load_all_chunks(max_figures: int = 40):
+def load_all_chunks(max_figures: int = 0):
     chunks = []
     
     # 1. Text chunks (Clause 4 & Preamble)
@@ -158,13 +172,13 @@ def load_all_chunks(max_figures: int = 40):
                     "content": data["content"]
                 })
                 f_count += 1
-                if max_figures and f_count >= max_figures:
+                if max_figures > 0 and f_count >= max_figures:
                     break
         print(f"Loaded {f_count} figure chunks from {annex_b_jsonl}")
 
     return chunks
 
-async def async_index(dry_run: bool = False, max_figures: int = 40, limit: int = 0, batch_size: int = 20):
+async def async_index(dry_run: bool = False, max_figures: int = 0, limit: int = 0, batch_size: int = 20):
     chunks = load_all_chunks(max_figures=max_figures)
     if limit > 0:
         chunks = chunks[:limit]
@@ -190,13 +204,13 @@ async def async_index(dry_run: bool = False, max_figures: int = 40, limit: int =
 
     print("\nAll batches complete! Local graph and vector stores saved to ./storage")
 
-def run_index(dry_run: bool = False, max_figures: int = 40, limit: int = 0, batch_size: int = 20):
+def run_index(dry_run: bool = False, max_figures: int = 0, limit: int = 0, batch_size: int = 20):
     asyncio.run(async_index(dry_run=dry_run, max_figures=max_figures, limit=limit, batch_size=batch_size))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Index AWS A3.0 multimodal chunks into LightRAG")
     parser.add_argument("--dry-run", action="store_true", help="Validate chunk loading without calling model APIs")
-    parser.add_argument("--max-figures", type=int, default=40, help="Maximum figure chunks to index")
+    parser.add_argument("--max-figures", type=int, default=0, help="Maximum figure chunks to index (0 for all)")
     parser.add_argument("--limit", type=int, default=0, help="Limit total chunks for testing")
     parser.add_argument("--batch-size", type=int, default=20, help="Batch size for insertion")
     args = parser.parse_args()

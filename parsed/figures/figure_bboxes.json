@@ -747,13 +747,13 @@
             "query": "What is a butt joint illustrated in Figure B1(A)?",
             "panel": "A",
             "bbox": [
-              0.05,
+              0.038,
               0.1,
               0.205,
               0.58
             ],
             "center": [
-              0.128,
+              0.121,
               0.34
             ]
           },
@@ -918,13 +918,13 @@
             "query": "What is a flanged butt joint in Figure B2(A)?",
             "panel": "A",
             "bbox": [
-              0.08,
-              0.28,
-              0.25,
-              0.72
+              0.07,
+              0.22,
+              0.165,
+              0.78
             ],
             "center": [
-              0.165,
+              0.118,
               0.5
             ]
           },
@@ -933,14 +933,14 @@
             "query": "What is a flanged corner joint in Figure B2(B)?",
             "panel": "B",
             "bbox": [
-              0.24,
-              0.1,
-              0.45,
-              0.5
+              0.195,
+              0.16,
+              0.375,
+              0.51
             ],
             "center": [
-              0.345,
-              0.3
+              0.285,
+              0.335
             ]
           },
           {
@@ -948,14 +948,14 @@
             "query": "What is a flanged T-joint in Figure B2(C)?",
             "panel": "C",
             "bbox": [
-              0.24,
-              0.5,
-              0.45,
-              0.9
+              0.185,
+              0.48,
+              0.375,
+              0.78
             ],
             "center": [
-              0.345,
-              0.7
+              0.28,
+              0.63
             ]
           },
           {
@@ -963,13 +963,13 @@
             "query": "What is a flanged lap joint in Figure B2(D)?",
             "panel": "D",
             "bbox": [
-              0.44,
-              0.28,
-              0.62,
-              0.72
+              0.415,
+              0.22,
+              0.525,
+              0.78
             ],
             "center": [
-              0.53,
+              0.47,
               0.5
             ]
           },
@@ -978,14 +978,14 @@
             "query": "What is a flanged parallel joint in Figure B2(E)?",
             "panel": "E",
             "bbox": [
-              0.61,
-              0.25,
-              0.76,
-              0.75
+              0.565,
+              0.3,
+              0.755,
+              0.65
             ],
             "center": [
-              0.685,
-              0.5
+              0.66,
+              0.475
             ]
           }
         ]
@@ -1143,13 +1143,13 @@
             "query": "Which figure illustrates groove face, root edge, and root face?",
             "panel": "",
             "bbox": [
-              0.08,
+              0.1,
               0.12,
               0.4,
               0.88
             ],
             "center": [
-              0.24,
+              0.25,
               0.5
             ]
           },
@@ -1158,13 +1158,13 @@
             "query": "What is the structural difference between root opening and root face in a weld joint?",
             "panel": "",
             "bbox": [
-              0.38,
+              0.3,
               0.12,
-              0.65,
+              0.52,
               0.88
             ],
             "center": [
-              0.515,
+              0.41,
               0.5
             ]
           },
@@ -1173,14 +1173,14 @@
             "query": "What is the difference between root face and root edge on Figure B5?",
             "panel": "",
             "bbox": [
-              0.62,
+              0.42,
               0.12,
-              0.88,
-              0.88
+              0.76,
+              0.52
             ],
             "center": [
-              0.75,
-              0.5
+              0.59,
+              0.32
             ]
           },
           {
@@ -1188,14 +1188,14 @@
             "query": "Define bevel face on Figure B5",
             "panel": "",
             "bbox": [
-              0.15,
-              0.2,
+              0.42,
               0.5,
-              0.8
+              0.76,
+              0.9
             ],
             "center": [
-              0.325,
-              0.5
+              0.59,
+              0.7
             ]
           }
         ]
@@ -2943,14 +2943,14 @@
             "query": "Define actual throat and explain how it differs from theoretical throat in a fillet weld",
             "panel": "",
             "bbox": [
-              0.08,
-              0.5,
-              0.45,
-              0.92
+              0.09,
+              0.22,
+              0.18,
+              0.44
             ],
             "center": [
-              0.265,
-              0.71
+              0.135,
+              0.33
             ]
           },
           {
@@ -2958,14 +2958,14 @@
             "query": "Identify the three distinct fillet weld throats illustrated in Figure B25",
             "panel": "",
             "bbox": [
-              0.45,
-              0.1,
-              0.85,
-              0.52
+              0.17,
+              0.22,
+              0.26,
+              0.44
             ],
             "center": [
-              0.65,
-              0.31
+              0.215,
+              0.33
             ]
           },
           {
@@ -2973,14 +2973,14 @@
             "query": "Define theoretical throat on Figure B25",
             "panel": "",
             "bbox": [
-              0.08,
-              0.1,
-              0.45,
-              0.52
+              0.26,
+              0.36,
+              0.38,
+              0.58
             ],
             "center": [
-              0.265,
-              0.31
+              0.32,
+              0.47
             ]
           },
           {
@@ -2988,14 +2988,14 @@
             "query": "What is convexity on Figure B25?",
             "panel": "",
             "bbox": [
-              0.45,
-              0.5,
-              0.85,
-              0.92
+              0.08,
+              0.54,
+              0.18,
+              0.74
             ],
             "center": [
-              0.65,
-              0.71
+              0.13,
+              0.64
             ]
           },
           {
@@ -3003,14 +3003,14 @@
             "query": "What is fillet weld leg size on Figure B25?",
             "panel": "",
             "bbox": [
-              0.2,
-              0.2,
-              0.6,
-              0.6
+              0.11,
+              0.54,
+              0.22,
+              0.78
             ],
             "center": [
-              0.4,
-              0.4
+              0.165,
+              0.66
             ]
           }
         ]
@@ -4008,13 +4008,13 @@
             "query": "What are the characteristics of a neutral flame on Figure B40?",
             "panel": "",
             "bbox": [
-              0.36,
-              0.08,
-              0.62,
-              0.92
+              0.23,
+              0.12,
+              0.39,
+              0.88
             ],
             "center": [
-              0.49,
+              0.31,
               0.5
             ]
           },
@@ -4023,13 +4023,13 @@
             "query": "What are the characteristics of a carburizing flame on Figure B40?",
             "panel": "",
             "bbox": [
-              0.08,
-              0.08,
-              0.36,
-              0.92
+              0.55,
+              0.12,
+              0.71,
+              0.88
             ],
             "center": [
-              0.22,
+              0.63,
               0.5
             ]
           },
@@ -4038,14 +4038,14 @@
             "query": "What is the acetylene feather in Figure B40?",
             "panel": "",
             "bbox": [
-              0.12,
-              0.25,
-              0.3,
-              0.75
+              0.58,
+              0.2,
+              0.66,
+              0.5
             ],
             "center": [
-              0.21,
-              0.5
+              0.62,
+              0.35
             ]
           },
           {
@@ -4053,13 +4053,13 @@
             "query": "What are the characteristics of an oxidizing flame on Figure B40?",
             "panel": "",
             "bbox": [
-              0.62,
-              0.08,
-              0.88,
-              0.92
+              0.39,
+              0.12,
+              0.55,
+              0.88
             ],
             "center": [
-              0.75,
+              0.47,
               0.5
             ]
           }
@@ -4413,14 +4413,14 @@
             "query": "Define advancing side in friction stir welding on Figure B46",
             "panel": "",
             "bbox": [
-              0.2,
-              0.08,
-              0.7,
-              0.45
+              0.22,
+              0.15,
+              0.44,
+              0.55
             ],
             "center": [
-              0.45,
-              0.265
+              0.33,
+              0.35
             ]
           },
           {
@@ -4429,13 +4429,13 @@
             "panel": "",
             "bbox": [
               0.2,
-              0.55,
-              0.7,
-              0.92
+              0.45,
+              0.44,
+              0.7
             ],
             "center": [
-              0.45,
-              0.735
+              0.32,
+              0.575
             ]
           },
           {
@@ -4443,14 +4443,14 @@
             "query": "What is the function of the tool shoulder on Figure B46?",
             "panel": "",
             "bbox": [
-              0.12,
-              0.35,
-              0.45,
-              0.65
+              0.1,
+              0.58,
+              0.38,
+              0.88
             ],
             "center": [
-              0.285,
-              0.5
+              0.24,
+              0.73
             ]
           },
           {
@@ -4458,14 +4458,14 @@
             "query": "What is the probe or pin in friction stir welding on Figure B46?",
             "panel": "",
             "bbox": [
-              0.38,
-              0.4,
-              0.65,
-              0.6
+              0.24,
+              0.62,
+              0.42,
+              0.82
             ],
             "center": [
-              0.515,
-              0.5
+              0.33,
+              0.72
             ]
           },
           {
@@ -4473,14 +4473,14 @@
             "query": "What is the stir zone in friction stir welding on Figure B46?",
             "panel": "",
             "bbox": [
-              0.55,
-              0.3,
-              0.85,
+              0.26,
+              0.4,
+              0.44,
               0.7
             ],
             "center": [
-              0.7,
-              0.5
+              0.35,
+              0.55
             ]
           }
         ]
