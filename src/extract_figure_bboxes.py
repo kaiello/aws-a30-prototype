@@ -65,7 +65,7 @@ LAYOUT_PRESETS: Dict[str, Dict[str, List[float]]] = {
     },
     # Figure B1: Joint Types (Left Column: Joint Illustration & Label; Right Column: Applicable Welds)
     "Figure B1": {
-        "Panel (A) Butt Joint": [0.050, 0.100, 0.205, 0.580],
+        "Panel (A) Butt Joint": [0.038, 0.100, 0.205, 0.580],
         "Panel (B) Corner Joint": [0.210, 0.100, 0.385, 0.580],
         "Panel (C) T-Joint": [0.385, 0.100, 0.535, 0.580],
         "Panel (D) Lap Joint": [0.535, 0.100, 0.690, 0.580],
@@ -78,18 +78,18 @@ LAYOUT_PRESETS: Dict[str, Dict[str, List[float]]] = {
     },
     # Figure B2: Flanged Joints (Individual Joint Variations)
     "Figure B2": {
-        "Flanged Butt Joint (A)": [0.080, 0.280, 0.250, 0.720],
-        "Flanged Corner Joint (B)": [0.240, 0.100, 0.450, 0.500],
-        "Flanged T-Joint (C)": [0.240, 0.500, 0.450, 0.900],
-        "Flanged Lap Joint (D)": [0.440, 0.280, 0.620, 0.720],
-        "Flanged Parallel Joint (E)": [0.610, 0.250, 0.760, 0.750],
+        "Flanged Butt Joint (A)": [0.070, 0.220, 0.165, 0.780],
+        "Flanged Corner Joint (B)": [0.195, 0.160, 0.375, 0.510],
+        "Flanged T-Joint (C)": [0.185, 0.480, 0.375, 0.780],
+        "Flanged Lap Joint (D)": [0.415, 0.220, 0.525, 0.780],
+        "Flanged Parallel Joint (E)": [0.565, 0.300, 0.755, 0.650],
     },
     # Figure B5: Groove Face, Root Edge, and Root Face
     "Figure B5": {
-        "Groove Face": [0.08, 0.12, 0.40, 0.88],
-        "Root Face vs Root Opening": [0.38, 0.12, 0.65, 0.88],
-        "Root Edge (Zero Land)": [0.62, 0.12, 0.88, 0.88],
-        "Bevel Face": [0.15, 0.20, 0.50, 0.80],
+        "Groove Face": [0.100, 0.120, 0.400, 0.880],
+        "Root Face vs Root Opening": [0.300, 0.120, 0.520, 0.880],
+        "Root Edge (Zero Land)": [0.420, 0.120, 0.760, 0.520],
+        "Bevel Face": [0.420, 0.500, 0.760, 0.900],
     },
     # Figure B16A: 3D Welding Coordinates
     "Figure B16A": {
@@ -118,26 +118,26 @@ LAYOUT_PRESETS: Dict[str, Dict[str, List[float]]] = {
     },
     # Figure B25: Fillet Weld Throats & Sizes
     "Figure B25": {
-        "Theoretical Throat": [0.08, 0.10, 0.45, 0.52],
-        "Actual Throat": [0.08, 0.50, 0.45, 0.92],
-        "Effective Throat": [0.45, 0.10, 0.85, 0.52],
-        "Convexity": [0.45, 0.50, 0.85, 0.92],
-        "Leg Size": [0.20, 0.20, 0.60, 0.60],
+        "Theoretical Throat": [0.260, 0.360, 0.380, 0.580],
+        "Actual Throat": [0.090, 0.220, 0.180, 0.440],
+        "Effective Throat": [0.170, 0.220, 0.260, 0.440],
+        "Convexity": [0.080, 0.540, 0.180, 0.740],
+        "Leg Size": [0.110, 0.540, 0.220, 0.780],
     },
-    # Figure B40: Oxyacetylene Flame Types (Vertical 3-stack)
+    # Figure B40: Oxyacetylene Flame Types (Vertical 4-stack)
     "Figure B40": {
-        "Neutral Flame": [0.36, 0.08, 0.62, 0.92],
-        "Carburizing (Reducing) Flame": [0.08, 0.08, 0.36, 0.92],
-        "Acetylene Feather": [0.12, 0.25, 0.30, 0.75],
-        "Oxidizing Flame": [0.62, 0.08, 0.88, 0.92],
+        "Neutral Flame": [0.230, 0.120, 0.390, 0.880],
+        "Carburizing (Reducing) Flame": [0.550, 0.120, 0.710, 0.880],
+        "Acetylene Feather": [0.580, 0.200, 0.660, 0.500],
+        "Oxidizing Flame": [0.390, 0.120, 0.550, 0.880],
     },
     # Figure B46: Friction Stir Welding Schematic
     "Figure B46": {
-        "Advancing Side": [0.20, 0.08, 0.70, 0.45],
-        "Retreating Side": [0.20, 0.55, 0.70, 0.92],
-        "Tool Shoulder": [0.12, 0.35, 0.45, 0.65],
-        "Tool Probe (Pin)": [0.38, 0.40, 0.65, 0.60],
-        "Stir Zone": [0.55, 0.30, 0.85, 0.70],
+        "Advancing Side": [0.220, 0.150, 0.440, 0.550],
+        "Retreating Side": [0.200, 0.450, 0.440, 0.700],
+        "Tool Shoulder": [0.100, 0.580, 0.380, 0.880],
+        "Tool Probe (Pin)": [0.240, 0.620, 0.420, 0.820],
+        "Stir Zone": [0.260, 0.400, 0.440, 0.700],
     },
 }
 

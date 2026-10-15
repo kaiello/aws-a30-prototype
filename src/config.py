@@ -35,9 +35,13 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
 DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 
-# Local MiniLM Embedding
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
-EMBEDDING_DIM = 384
+# High-Capacity BGE-Large Embedding (1024-dim, 512 context)
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "BAAI/bge-large-en-v1.5")
+EMBEDDING_DIM = 1024
+
+# Cross-Encoder Reranker Configuration
+RERANKER_MODEL = os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-base")
+ENABLE_RERANKER = os.getenv("ENABLE_RERANKER", "true").lower() == "true"
 
 # Google Gemini (Dual-engine alternative)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY", "")

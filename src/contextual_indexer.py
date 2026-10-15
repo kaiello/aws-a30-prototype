@@ -28,7 +28,7 @@ if str(ROOT_DIR) not in sys.path:
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-from src.config import STORAGE_DIR
+from src.config import STORAGE_DIR, PARSED_FIGURES_DIR, PARSED_TABLES_DIR
 
 CHUNKS_KV_PATH = STORAGE_DIR / "kv_store_text_chunks.json"
 CONTEXTUAL_VDB_PATH = STORAGE_DIR / "vdb_chunks_contextual.json"
@@ -91,54 +91,113 @@ def get_clause_context_header(full_doc_id: str) -> str:
             "SECTION: Clauses 1-3 General Requirements & Preamble."
         )
 
+def sync_sqlite_chunks_fts(chunks: List[Dict[str, Any]]):
+    """Synchronizes all chunks into an FTS5 virtual table for high-speed BM25 sparse search."""
+    if not DUAL_SQLITE_PATH.exists():
+        return
+    print(f"Synchronizing {len(chunks)} chunks into SQLite FTS5 virtual table 'chunks_fts'...")
+    conn = sqlite3.connect(DUAL_SQLITE_PATH)
+    cur = conn.cursor()
+    cur.execute("DROP TABLE IF EXISTS chunks_fts")
+    cur.execute("CREATE VIRTUAL TABLE chunks_fts USING fts5(chunk_id, full_doc_id, content, section, header)")
+    for c in chunks:
+        doc_id = c["full_doc_id"]
+        section = doc_id.split("_")[0] if "_" in doc_id else "general"
+        header = c["contextual_text"].split("\n\nCONTENT:\n")[0]
+        cur.execute(
+            "INSERT INTO chunks_fts(chunk_id, full_doc_id, content, section, header) VALUES (?, ?, ?, ?, ?)",
+            (c["chunk_id"], doc_id, c["raw_content"], section, header)
+        )
+    conn.commit()
+    conn.close()
+    print(f"Successfully populated 'chunks_fts' ({len(chunks)} rows) in {DUAL_SQLITE_PATH}.")
+
 def build_contextual_chunks() -> List[Dict[str, Any]]:
-    """Enriches raw text chunks with their structural hierarchy and cross-reference context."""
-    if not CHUNKS_KV_PATH.exists():
-        raise FileNotFoundError(f"Chunks store not found at {CHUNKS_KV_PATH}")
-
-    with open(CHUNKS_KV_PATH, "r", encoding="utf-8") as f:
-        chunks_data = json.load(f)
-
+    """Enriches raw text, table, and figure chunks with structural hierarchy and cross-reference context."""
     contextual_chunks = []
-    for chunk_id, info in chunks_data.items():
-        doc_ref = info.get("full_doc_id", "")
-        raw_content = info.get("content", "")
-        
-        # 1. Structural clause context
-        clause_header = get_clause_context_header(doc_ref)
-        
-        # 2. Extract salient terms defined in this chunk
-        # E.g. find lines that look like term definitions
-        term_matches = []
-        for line in raw_content.split("\n"):
-            line = line.strip()
-            if line and not line.startswith("[") and not line.startswith("#"):
-                parts = line.split(". ")
-                if len(parts) > 1 and len(parts[0]) < 60:
-                    term_matches.append(parts[0])
+    seen_ids = set()
 
-        terms_summary = f"KEY DEFINITIONS IN CHUNK: {', '.join(term_matches[:6])}" if term_matches else ""
+    # 1. Existing text & table chunks from kv_store
+    if CHUNKS_KV_PATH.exists():
+        with open(CHUNKS_KV_PATH, "r", encoding="utf-8") as f:
+            chunks_data = json.load(f)
+        for chunk_id, info in chunks_data.items():
+            doc_ref = info.get("full_doc_id", "")
+            raw_content = info.get("content", "")
+            clause_header = get_clause_context_header(doc_ref)
+            
+            term_matches = []
+            for line in raw_content.split("\n"):
+                line = line.strip()
+                if line and not line.startswith("[") and not line.startswith("#"):
+                    parts = line.split(". ")
+                    if len(parts) > 1 and len(parts[0]) < 60:
+                        term_matches.append(parts[0])
 
-        # 3. Formulate the fully contextualized representation
-        contextual_text = f"{clause_header}\n{terms_summary}\n\nCONTENT:\n{raw_content}"
+            terms_summary = f"KEY DEFINITIONS IN CHUNK: {', '.join(term_matches[:6])}" if term_matches else ""
+            contextual_text = f"{clause_header}\n{terms_summary}\n\nCONTENT:\n{raw_content}"
 
-        contextual_chunks.append({
-            "chunk_id": chunk_id,
-            "full_doc_id": doc_ref,
-            "raw_content": raw_content,
-            "contextual_text": contextual_text
-        })
+            contextual_chunks.append({
+                "chunk_id": chunk_id,
+                "full_doc_id": doc_ref,
+                "raw_content": raw_content,
+                "contextual_text": contextual_text
+            })
+            seen_ids.add(chunk_id)
+
+    # 2. Add all Annex B figure chunks (including Figures B24 to B54)
+    annex_b_jsonl = PARSED_FIGURES_DIR / "annex_b_figures.jsonl"
+    if annex_b_jsonl.exists():
+        f_added = 0
+        with open(annex_b_jsonl, "r", encoding="utf-8") as f:
+            for line in f:
+                data = json.loads(line)
+                cid = data["chunk_id"]
+                if cid not in seen_ids:
+                    content = data["content"]
+                    clause_header = get_clause_context_header(cid)
+                    contextual_chunks.append({
+                        "chunk_id": cid,
+                        "full_doc_id": cid,
+                        "raw_content": content,
+                        "contextual_text": f"{clause_header}\n\nCONTENT:\n{content}"
+                    })
+                    seen_ids.add(cid)
+                    f_added += 1
+        print(f"Added {f_added} additional Annex B figure chunks to contextual corpus.")
+
+    # 3. Add all Annex A table chunks
+    annex_a_jsonl = PARSED_TABLES_DIR / "annex_a_tables.jsonl"
+    if annex_a_jsonl.exists():
+        t_added = 0
+        with open(annex_a_jsonl, "r", encoding="utf-8") as f:
+            for line in f:
+                data = json.loads(line)
+                cid = data["chunk_id"]
+                if cid not in seen_ids:
+                    content = data["content"]
+                    clause_header = get_clause_context_header(cid)
+                    contextual_chunks.append({
+                        "chunk_id": cid,
+                        "full_doc_id": cid,
+                        "raw_content": content,
+                        "contextual_text": f"{clause_header}\n\nCONTENT:\n{content}"
+                    })
+                    seen_ids.add(cid)
+                    t_added += 1
+        if t_added:
+            print(f"Added {t_added} additional Annex A table chunks to contextual corpus.")
 
     return contextual_chunks
 
 def index_contextual_chunks(force: bool = False):
-    """Encodes all contextualized chunks into 1024-dim vectors and saves to JSON."""
+    """Encodes all contextualized chunks into 1024-dim vectors and saves to JSON, syncing SQLite FTS5."""
     if CONTEXTUAL_VDB_PATH.exists() and not force:
         print(f"Contextual vector store already exists at {CONTEXTUAL_VDB_PATH}. Use --force to rebuild.")
         return
 
     chunks = build_contextual_chunks()
-    print(f"Loaded {len(chunks)} chunks for contextual encoding...")
+    print(f"Loaded {len(chunks)} total chunks for contextual encoding...")
 
     model = get_context_model()
 
@@ -169,6 +228,9 @@ def index_contextual_chunks(force: bool = False):
         json.dump(output_payload, f)
 
     print(f"Successfully saved {len(records)} contextual vectors to {CONTEXTUAL_VDB_PATH}")
+    
+    # Synchronize SQLite FTS5
+    sync_sqlite_chunks_fts(chunks)
 
 def search_contextual_chunks(query: str, top_k: int = 5) -> List[Dict[str, Any]]:
     """Performs cosine similarity search against contextual chunk embeddings."""

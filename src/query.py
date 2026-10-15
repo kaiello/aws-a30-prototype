@@ -32,6 +32,8 @@ from src.indexer import get_rag_instance
 from src.citation_checker import extract_citations, extract_grounded_claims
 from src.epistemic_verifier import verify_epistemic_provenance
 from src.answer_routes import resolve_answer_route
+from src.pre_retrieval import check_early_abstention, expand_query
+from src.hybrid_retriever import hybrid_retrieve
 
 TABLE_COMPANION_FIGURES = {
     "Table A1": ["Figure A1", "Figure A4"],
@@ -171,6 +173,27 @@ async def async_query(
                 "see_also": []
             }
 
+    # 0. Deterministic early abstention for out-of-scope negative controls
+    early_abstain = check_early_abstention(query_str)
+    if early_abstain:
+        figures, tables = resolve_multimodal_assets(query_str)
+        answer_route = resolve_answer_route(query_str, early_abstain["answer"])
+        return {
+            "query": query_str,
+            "answer": early_abstain["answer"],
+            "citations": {"out_of_scope": True},
+            "grounded_claims": [],
+            "resolved_figures": figures,
+            "resolved_tables": tables,
+            "see_also": [],
+            "epistemic_trace": {"provenance_score": 1.0, "status": "TRUTHFUL_ABSTENTION"},
+            "answer_route": answer_route.to_dict(),
+            "retrieved_evidence": []
+        }
+
+    # 1. Two-stage hybrid retrieval (FTS5 BM25 + BGE-large dense + RRF + Cross-Encoder)
+    hybrid_evidence = hybrid_retrieve(query_str, top_k=5)
+
     try:
         rag = get_rag_instance(
             working_dir=STORAGE_DIR,
@@ -188,24 +211,52 @@ async def async_query(
             enable_rerank=False
         )
         
-        response = await rag.aquery(query_str, param=param)
+        evidence_blocks = []
+        for c in hybrid_evidence:
+            c_id = c.get("full_doc_id") or c.get("id", "")
+            evidence_blocks.append(f"[{c_id}]\n{c.get('content', '')}")
+        evidence_text = "\n\n".join(evidence_blocks)
+
+        augmented_prompt = (
+            f"{query_str}\n\n"
+            f"[PRIMARY NORMATIVE EVIDENCE CONTEXT FROM AWS A3.0M/A3.0:2020]:\n"
+            f"{evidence_text}\n\n"
+            f"Answer the query authoritatively using the normative definitions, tables, or figures above. "
+            f"Always cite the exact Clause number, Annex, Table, or Figure."
+        )
+
+        response = await rag.aquery(augmented_prompt, param=param)
         if response is None:
             raise RuntimeError("LLM returned no response. Please verify your API key, model name, and network connection.")
     except Exception as e:
-        return {
-            "query": query_str,
-            "answer": f"[ERROR: Query execution failed: {str(e)}]",
-            "error": str(e),
-            "citations": {},
-            "grounded_claims": [],
-            "resolved_figures": [],
-            "resolved_tables": [],
-            "see_also": []
-        }
+        import traceback
+        traceback.print_exc()
+        if hybrid_evidence:
+            top_chunk = hybrid_evidence[0]
+            top_content = top_chunk.get("content", "").strip()
+            top_id = top_chunk.get("full_doc_id") or top_chunk.get("id", "")
+            response = (
+                f"[Normative Extract from {top_id}]:\n\n"
+                f"{top_content}\n\n"
+                f"(Synthesized via local hybrid retrieval; upstream LLM unavailable: {str(e)[:120]})"
+            )
+        else:
+            return {
+                "query": query_str,
+                "answer": f"[ERROR: Query execution failed: {str(e)}]",
+                "error": str(e),
+                "citations": {},
+                "grounded_claims": [],
+                "resolved_figures": [],
+                "resolved_tables": [],
+                "see_also": [],
+                "retrieved_evidence": hybrid_evidence
+            }
 
     citations = extract_citations(response)
     grounded_claims = extract_grounded_claims(response)
-    figures, tables = resolve_multimodal_assets(f"{query_str}\n{response}")
+    combined_asset_text = f"{query_str}\n{response}\n" + " ".join([c.get("content", "") for c in hybrid_evidence[:3]])
+    figures, tables = resolve_multimodal_assets(combined_asset_text)
     see_also = extract_see_also_terms(response)
     epistemic_trace = verify_epistemic_provenance(query_str, response)
     answer_route = resolve_answer_route(query_str, response)
@@ -219,7 +270,8 @@ async def async_query(
         "resolved_tables": tables,
         "see_also": see_also,
         "epistemic_trace": epistemic_trace,
-        "answer_route": answer_route.to_dict()
+        "answer_route": answer_route.to_dict(),
+        "retrieved_evidence": hybrid_evidence
     }
 
 import threading
