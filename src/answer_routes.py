@@ -30,6 +30,7 @@ from src.config import (
 )
 from src.citation_checker import check_abstention, extract_citations
 from src.figure_inspectors import FIGURE_INSPECTORS
+from src.standard_manifest import get_manifest
 
 DUAL_SQLITE_PATH = STORAGE_DIR / "dual_layer_registry.db"
 
@@ -62,6 +63,32 @@ class AnswerRoute:
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
         return d
+
+def _apply_source_metadata(item):
+    """Overlay source locations without changing retrieved candidates or scores."""
+    manifest = get_manifest()
+    record = manifest.element(item.element_id)
+    if not record:
+        item.metadata["source_location_verification"] = "legacy_unverified"
+        if item.evidence_type in {"figure", "table"}:
+            item.page = None
+            item.file_path = None
+            item.metadata["source_resolution"] = manifest.resolve(item.element_id)
+        return
+    label = record["label"]
+    if item.evidence_type in {"figure", "table"}:
+        item.element_id = label
+        item.title = record["title"]
+        paths = manifest.asset_paths(label, {".png"} if item.evidence_type == "figure" else {".md"})
+        item.file_path = paths[0] if paths else None
+        binding = next((a for a in record["assets"] if str(manifest.root / a["relpath"]) == item.file_path), None)
+        item.metadata["asset_binding_verification"] = binding["verification"]["state"] if binding else "unavailable"
+        if item.evidence_type == "figure":
+            item.callout_chips = [chip for group in FIGURE_INSPECTORS.get(label, {}).get("groups", []) for chip in group.get("chips", [])]
+    item.page = manifest.page_range(label)
+    item.metadata["source_anchors"] = manifest.source_anchors(label)
+    item.metadata["source_location_verification"] = "verified"
+
 
 def _clean_term_for_fts(term: str) -> str:
     # Remove symbols that break SQLite FTS syntax
@@ -189,43 +216,27 @@ def resolve_answer_route(query: str, candidate_answer: str = "") -> AnswerRoute:
 
         # Figure Evidence
         if enode_type == "Figure":
-            fig_match = re.search(r'Figure\s+([AB]\d+[A-Z]?)', ename, re.IGNORECASE)
-            fig_key = fig_match.group(0).upper() if fig_match else ename
-            
-            # Resolve image file
-            clean_fig_code = fig_key.replace("Figure ", "").upper()
-            matching_pngs = list(PARSED_FIGURES_DIR.glob(f"Figure_{clean_fig_code}_*.png"))
-            img_path = str(matching_pngs[0]) if matching_pngs else (eimg or "")
-
-            # Resolve Callout Chips from registry
-            callout_chips = []
-            if fig_key in FIGURE_INSPECTORS:
-                for grp in FIGURE_INSPECTORS[fig_key].get("groups", []):
-                    callout_chips.extend(grp.get("chips", []))
+            fig_match = re.search(r'(?<!\w)Figure\s+([A-Za-z0-9][\w./-]*)', ename, re.IGNORECASE)
+            fig_key = fig_match.group(0).rstrip(".") if fig_match else ename
 
             evidence_items.append(EvidenceItem(
                 evidence_type="figure",
                 element_id=fig_key,
                 title=ename,
                 page=epage,
-                file_path=img_path,
-                callout_chips=callout_chips,
                 metadata={"bridge_type": bridge_type or rel_type}
             ))
 
         # Table Evidence
         elif enode_type == "Table":
-            tbl_match = re.search(r'Table\s+([AD]\d+)', ename, re.IGNORECASE)
-            tbl_key = tbl_match.group(0).upper() if tbl_match else ename
-            clean_tbl_code = tbl_key.replace("Table ", "").lower()
-            md_path = str(PARSED_TABLES_DIR / f"table_{clean_tbl_code}.md")
+            tbl_match = re.search(r'(?<!\w)Table\s+([A-Za-z0-9][\w./-]*)', ename, re.IGNORECASE)
+            tbl_key = tbl_match.group(0).rstrip(".") if tbl_match else ename
             
             evidence_items.append(EvidenceItem(
                 evidence_type="table",
                 element_id=tbl_key,
                 title=ename,
                 page=epage,
-                file_path=md_path if os.path.exists(md_path) else None,
                 metadata={"bridge_type": bridge_type or rel_type}
             ))
 
@@ -243,32 +254,25 @@ def resolve_answer_route(query: str, candidate_answer: str = "") -> AnswerRoute:
     citations = extract_citations(candidate_answer)
     for fig_cite in citations.get("figures", []):
         if fig_cite not in [ev.element_id for ev in evidence_items]:
-            clean_fig = fig_cite.replace("Figure ", "").upper()
-            matching_pngs = list(PARSED_FIGURES_DIR.glob(f"Figure_{clean_fig}_*.png"))
-            chips = []
-            if fig_cite in FIGURE_INSPECTORS:
-                for grp in FIGURE_INSPECTORS[fig_cite].get("groups", []):
-                    chips.extend(grp.get("chips", []))
             evidence_items.append(EvidenceItem(
                 evidence_type="figure",
                 element_id=fig_cite,
-                title=f"{fig_cite} (Cited in Answer)",
-                file_path=str(matching_pngs[0]) if matching_pngs else None,
-                callout_chips=chips
+                title=f"{fig_cite} (Cited in Answer)"
             ))
 
     for tbl_cite in citations.get("tables", []):
         if tbl_cite not in [ev.element_id for ev in evidence_items]:
-            clean_tbl = tbl_cite.replace("Table ", "").lower()
-            md_path = str(PARSED_TABLES_DIR / f"table_{clean_tbl}.md")
             evidence_items.append(EvidenceItem(
                 evidence_type="table",
                 element_id=tbl_cite,
-                title=f"{tbl_cite} (Cited in Answer)",
-                file_path=md_path if os.path.exists(md_path) else None
+                title=f"{tbl_cite} (Cited in Answer)"
             ))
 
     conn.close()
+
+    # Persisted graph pages/assets are hints, never source-location authority.
+    for evidence_item in evidence_items:
+        _apply_source_metadata(evidence_item)
 
     # 4. Determine Primary Citation & Answer
     primary_cite = "Clause 4"
@@ -282,9 +286,12 @@ def resolve_answer_route(query: str, candidate_answer: str = "") -> AnswerRoute:
     needs_figure = any(k in query.lower() for k in ["diagram", "figure", "show", "orient", "illustrat", "drawing"])
     needs_table = any(k in query.lower() for k in ["table", "letter designation", "process chart", "summary", "group"])
     
-    has_figure = any(ev.evidence_type == "figure" for ev in evidence_items)
-    has_table = any(ev.evidence_type == "table" for ev in evidence_items)
+    has_figure = any(ev.evidence_type == "figure" and ev.metadata.get("source_location_verification") == "verified" for ev in evidence_items)
+    has_table = any(ev.evidence_type == "table" and ev.metadata.get("source_location_verification") == "verified" for ev in evidence_items)
     has_clause = any(ev.evidence_type == "clause" for ev in evidence_items)
+    unresolved_source = bool(citations.get("unresolved_elements")) or any(
+        ev.evidence_type in {"figure", "table"} and ev.metadata.get("source_location_verification") != "verified"
+        for ev in evidence_items)
 
     requirements_met = 1.0
     if needs_figure and not has_figure:
@@ -292,8 +299,10 @@ def resolve_answer_route(query: str, candidate_answer: str = "") -> AnswerRoute:
     if needs_table and not has_table:
         requirements_met *= 0.5
 
-    all_recovered = (not needs_figure or has_figure) and (not needs_table or has_table) and len(evidence_items) > 0
+    all_recovered = (not needs_figure or has_figure) and (not needs_table or has_table) and len(evidence_items) > 0 and not unresolved_source
     epistemic_score = 1.0 if all_recovered else (0.8 if len(evidence_items) > 0 else 0.5)
+    if unresolved_source:
+        epistemic_score = min(epistemic_score, 0.7)
 
     manifest = f"Resolved Answer Route for '{concept_name}' ({concept_type}): {len(evidence_items)} supporting evidence items recovered."
 

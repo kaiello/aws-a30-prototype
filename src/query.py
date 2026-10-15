@@ -35,67 +35,42 @@ from src.answer_routes import resolve_answer_route
 from src.pre_retrieval import check_early_abstention, expand_query
 from src.hybrid_retriever import ContextualIndexMissingError, hybrid_retrieve
 
-TABLE_COMPANION_FIGURES = {
-    "Table A1": ["Figure A1", "Figure A4"],
-    "Table A2": ["Figure A1", "Figure A2"],
-    "Table A3": ["Figure A1"],
-    "Table A4": ["Figure A1"],
-    "Table A5": ["Figure A2", "Figure A5", "Figure A6"],
-}
+from src.standard_manifest import get_manifest, extract_references
+
+TABLE_COMPANION_FIGURES = get_manifest().companions()
 
 def resolve_multimodal_assets(text: str):
-    """Finds referenced figures or tables and resolves them to local disk paths."""
-    resolved_figures = []
-    all_target_figures = set()
-    
-    # 1. Match both Annex A figures (Figure A1-A6) and Annex B figures (Figure B1-B97)
-    # Handles: "Figure B25", "Figures B.24, B.25, and B.26", "Figure B.6", etc.
-    for block in re.finditer(r'Figure[s]?\s+([AB]?\.?\d+[A-Z]?(?:[,\s]+(?:and\s+)?[AB]?\.?\d+[A-Z]?)*)', text, re.IGNORECASE):
-        prefix = 'B' if 'B' in block.group(0).upper() else 'A'
-        sub_figs = re.findall(r'([AB])?\.?(\d+[A-Z]?)', block.group(0), re.IGNORECASE)
-        for pfx, num in sub_figs:
-            final_pfx = pfx.upper() if pfx else prefix
-            all_target_figures.add(f"{final_pfx}{num.upper()}")
-            
-    isolated = re.findall(r'Figure\s+([AB]\d+[A-Z]?)', text, re.IGNORECASE)
-    for fig in isolated:
-        all_target_figures.add(fig.upper())
-    
-    # 2. Match Table mentions (e.g. Table A1–A5, Table D1–D6)
-    table_matches = re.findall(r'Table\s+([AD]\d+)', text, re.IGNORECASE)
-    
-    # Automatically include companion Annex A classification charts for any cited table
-    for t_num in set(table_matches):
-        t_key = f"Table {t_num.upper()}"
-        if t_key in TABLE_COMPANION_FIGURES:
-            for companion in TABLE_COMPANION_FIGURES[t_key]:
-                all_target_figures.add(companion.replace("Figure ", ""))
-
-    for fig_num in sorted(all_target_figures):
-        clean_num = fig_num.upper()
-        matching_pngs = list(PARSED_FIGURES_DIR.glob(f"Figure_{clean_num}_*.png"))
-        if not matching_pngs:
-            base_num = re.sub(r'[A-Z]$', '', clean_num)
-            matching_pngs = list(PARSED_FIGURES_DIR.glob(f"Figure_{base_num}_*.png"))
-        if matching_pngs:
-            resolved_figures.append({
-                "figure_id": f"Figure {clean_num}",
-                "image_path": str(matching_pngs[0])
-            })
-            
-    resolved_tables = []
-    for t_num in set(table_matches):
-        clean_t = t_num.lower()
-        t_file = PARSED_TABLES_DIR / f"table_{clean_t}.md"
-        t_images = list(PARSED_TABLES_DIR.glob(f"Table_{clean_t.upper()}_*.png"))
-        if t_file.exists():
-            resolved_tables.append({
-                "table_id": f"Table {t_num.upper()}",
-                "table_path": str(t_file),
-                "image_paths": [str(img) for img in t_images]
-            })
-            
-    return resolved_figures, resolved_tables
+    """Resolve canonical elements and every declared page without glob guesses."""
+    manifest = get_manifest()
+    references = extract_references(text)
+    direct = set(references["figures"])
+    groups = {label: entry["text"] for entry in references["unresolved_elements"]
+              if entry["status"] == "group" for label in entry["candidates"]}
+    targets = direct | set(groups)
+    companions = manifest.companions()
+    for table in references["tables"]:
+        targets.update(companions.get(table, []))
+    figures = []
+    for label in sorted(targets):
+        paths = manifest.asset_paths(label, {".png"})
+        if paths:
+            record = {"figure_id": label, "image_path": paths[0], "image_paths": paths,
+                      "source_anchors": manifest.source_anchors(label)}
+            if label in groups and label not in direct:
+                record["requested_as_group"] = groups[label]
+            if label not in direct and label not in groups:
+                record.update(relationship="ui_companion", relationship_verification="candidate")
+            figures.append(record)
+    tables = []
+    for label in references["tables"]:
+        markdown = manifest.asset_paths(label, {".md"})
+        images = manifest.asset_paths(label, {".png"})
+        # Preserve the existing table_path interface; do not invent absent exports.
+        if markdown:
+            tables.append({"table_id": label, "table_path": markdown[0], "image_paths": images,
+                           "source_anchors": manifest.source_anchors(label),
+                           "text_asset_verification": "candidate"})
+    return figures, tables
 
 def extract_see_also_terms(text: str):
     """Extracts 'See also' terms and bulleted subtypes as actionable cross-links."""

@@ -19,6 +19,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from src.config import STORAGE_DIR
+from src.standard_manifest import extract_references
 
 DUAL_SQLITE_PATH = STORAGE_DIR / "dual_layer_registry.db"
 
@@ -158,21 +159,18 @@ def check_early_abstention(query: str) -> Optional[Dict[str, Any]]:
     return None
 
 def extract_referenced_elements(query: str) -> Dict[str, List[str]]:
-    """Extracts explicit figure and table citations from the query string."""
-    figures = []
-    # Match Figures like Figure B25, Figure A1, Fig. B13
-    for m in re.finditer(r'(?:Figure|Fig\.?)\s*([AB]\d+[A-Z]?)', query, re.IGNORECASE):
-        fig_id = f"Figure {m.group(1).upper()}"
-        if fig_id not in figures:
-            figures.append(fig_id)
-
-    tables = []
-    for m in re.finditer(r'Table\s*([AD]\d+)', query, re.IGNORECASE):
-        tbl_id = f"Table {m.group(1).upper()}"
-        if tbl_id not in tables:
-            tables.append(tbl_id)
-
-    return {"figures": figures, "tables": tables}
+    """Preserve supported enrichment forms while resolving complete canonical IDs."""
+    result = {"figures": [], "tables": []}
+    # Preserve the pre-existing singular enrichment grammar; asset/citation lookup
+    # also supports plural lists, without changing valid retrieval query strings.
+    for match in re.finditer(r"(?<!\w)(Figure|Fig\.?|Table)\s*([A-Za-z0-9][\w./-]*)", query, re.IGNORECASE):
+        kind = "Figure" if match[1].lower().startswith("fig") else "Table"
+        found = extract_references(kind + " " + match[2], lists=False)
+        for key in result:
+            for label in found[key]:
+                if label not in result[key]:
+                    result[key].append(label)
+    return result
 
 def expand_query(query: str) -> Dict[str, Any]:
     """

@@ -4,10 +4,11 @@ os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
 from pathlib import Path
 from dotenv import load_dotenv
+from src.standard_manifest import get_manifest
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
-PDF_PATH = DATA_DIR / "AWS_A3.0_2020.pdf"
+PDF_PATH = BASE_DIR / get_manifest().document["pdf_relpath"]
 
 PARSED_DIR = BASE_DIR / "parsed"
 PARSED_TEXT_FILE = PARSED_DIR / "text_chunks.jsonl"
@@ -26,9 +27,10 @@ load_dotenv(Path.home() / ".env")
 
 # Ingestion configuration
 FIGURE_RENDER_DPI = 180
-ANNEX_B_START_PAGE = 93  # 0-indexed PDF page where Annex B starts
-ANNEX_A_START_PAGE = 81  # 0-indexed PDF page where Annex A starts
-GLOSSARY_START_PAGE = 18 # 0-indexed PDF page where Clause 4 starts
+ANNEX_B_START_PAGE = get_manifest().section("Annex B")["spans"][0]["start_pdf_index"]
+ANNEX_B_END_PAGE = get_manifest().section("Annex B")["spans"][-1]["end_pdf_index"]
+ANNEX_A_START_PAGE = get_manifest().section("Annex A")["spans"][0]["start_pdf_index"]
+GLOSSARY_START_PAGE = get_manifest().section("Clause 4")["spans"][0]["start_pdf_index"]
 
 # Inference Configuration
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")

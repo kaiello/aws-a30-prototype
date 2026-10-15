@@ -1,9 +1,15 @@
 # Project Goal: AWS A3.0 Multimodal NLQ & Epistemic Knowledge System
 
+## Vector-selection milestone evidence (2026-10-15)
+
+The numeric-list compatibility failure is repaired and covered by 44 actual-native-reader regression checks, alongside 176 selected existing Python checks and 4 JavaScript checks. A frozen fixed-pool comparison recorded 42/42 original fallbacks versus 42/42 successful cosine selections after the fix. Target Hit@10 improved from 1/28 to 11/28; only 12 targets have mapped candidates in that pool. The separate hybrid lane retrieved 23/28. Eight negative gates passed; 20 final-run fresh local answers remain factually ungraded. [Protocol and limits](vector_reader_compatibility.md) qualify the historical success claims below; full multimodal NLQ remains undemonstrated.
+
 **Specification Target:** AWS A3.0M/A3.0:2020 (*Standard Welding Terms and Definitions*)  
 **Repository:** `kaiello/aws-a30-prototype`  
 **Current Milestone:** Card 07 Completed (Dual-Layer Epistemic Graph Projection & 100% Gold Benchmark Verification)  
 **Status:** Active Production Prototype  
+
+**2026-10-15 evidence qualification:** Card 07's historical scores below are not a fresh demonstration of full multimodal NLQ. The [manifest implementation](declarative_manifest_implementation.md) verifies source locations for 190 pages, 62 figures and 11 tables and preserves injected retrieval behavior. It does not establish table-cell/footnote fidelity, diagram understanding, claim entailment, multi-hop completeness or live answer accuracy. Clause 4 occupies PDF indices 17-80, printed pp. 5-68; Annex B's normative/informative status conflicts between the contents and its opening page and is retained as conflicting. Existing stores and gold receipts were not regenerated.
 
 ---
 

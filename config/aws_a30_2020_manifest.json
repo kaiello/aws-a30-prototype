@@ -1,0 +1,5815 @@
+{
+  "schema_version": "1.0.0",
+  "manifest_revision": 1,
+  "document": {
+    "id": "doc:aws_a30_2020",
+    "standard_id": "AWS_A3.0_2020",
+    "title": "AWS A3.0M/A3.0:2020 Standard Welding Terms and Definitions",
+    "publisher": "American Welding Society",
+    "edition": "2020",
+    "edition_number": 13,
+    "pdf_relpath": "data/AWS_A3.0_2020.pdf",
+    "sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+    "byte_length": 3377668,
+    "page_count": 190,
+    "identity_pdf_indices": [
+      1
+    ],
+    "verification": {
+      "state": "verified",
+      "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+      "method": "manual_visual",
+      "verifier": "local-source-audit",
+      "verified_at_utc": "2026-10-15T17:20:36+00:00",
+      "evidence_pdf_indices": [
+        1
+      ],
+      "note": "Title page declares 13th Edition; approval dated 2019-10-22."
+    },
+    "pages": [
+      {
+        "pdf_index": 0,
+        "printed_label": null,
+        "role": "front_matter"
+      },
+      {
+        "pdf_index": 1,
+        "printed_label": null,
+        "role": "front_matter"
+      },
+      {
+        "pdf_index": 2,
+        "printed_label": "ii",
+        "role": "front_matter"
+      },
+      {
+        "pdf_index": 3,
+        "printed_label": "iii",
+        "role": "front_matter"
+      },
+      {
+        "pdf_index": 4,
+        "printed_label": "iv",
+        "role": "blank"
+      },
+      {
+        "pdf_index": 5,
+        "printed_label": "v",
+        "role": "front_matter"
+      },
+      {
+        "pdf_index": 6,
+        "printed_label": "vi",
+        "role": "front_matter"
+      },
+      {
+        "pdf_index": 7,
+        "printed_label": "vii",
+        "role": "front_matter"
+      },
+      {
+        "pdf_index": 8,
+        "printed_label": "viii",
+        "role": "front_matter"
+      },
+      {
+        "pdf_index": 9,
+        "printed_label": "ix",
+        "role": "front_matter"
+      },
+      {
+        "pdf_index": 10,
+        "printed_label": "x",
+        "role": "front_matter"
+      },
+      {
+        "pdf_index": 11,
+        "printed_label": "xi",
+        "role": "front_matter"
+      },
+      {
+        "pdf_index": 12,
+        "printed_label": "xii",
+        "role": "blank"
+      },
+      {
+        "pdf_index": 13,
+        "printed_label": "1",
+        "role": "body"
+      },
+      {
+        "pdf_index": 14,
+        "printed_label": "2",
+        "role": "body"
+      },
+      {
+        "pdf_index": 15,
+        "printed_label": "3",
+        "role": "body"
+      },
+      {
+        "pdf_index": 16,
+        "printed_label": "4",
+        "role": "body"
+      },
+      {
+        "pdf_index": 17,
+        "printed_label": "5",
+        "role": "body"
+      },
+      {
+        "pdf_index": 18,
+        "printed_label": "6",
+        "role": "body"
+      },
+      {
+        "pdf_index": 19,
+        "printed_label": "7",
+        "role": "body"
+      },
+      {
+        "pdf_index": 20,
+        "printed_label": "8",
+        "role": "body"
+      },
+      {
+        "pdf_index": 21,
+        "printed_label": "9",
+        "role": "body"
+      },
+      {
+        "pdf_index": 22,
+        "printed_label": "10",
+        "role": "body"
+      },
+      {
+        "pdf_index": 23,
+        "printed_label": "11",
+        "role": "body"
+      },
+      {
+        "pdf_index": 24,
+        "printed_label": "12",
+        "role": "body"
+      },
+      {
+        "pdf_index": 25,
+        "printed_label": "13",
+        "role": "body"
+      },
+      {
+        "pdf_index": 26,
+        "printed_label": "14",
+        "role": "body"
+      },
+      {
+        "pdf_index": 27,
+        "printed_label": "15",
+        "role": "body"
+      },
+      {
+        "pdf_index": 28,
+        "printed_label": "16",
+        "role": "body"
+      },
+      {
+        "pdf_index": 29,
+        "printed_label": "17",
+        "role": "body"
+      },
+      {
+        "pdf_index": 30,
+        "printed_label": "18",
+        "role": "body"
+      },
+      {
+        "pdf_index": 31,
+        "printed_label": "19",
+        "role": "body"
+      },
+      {
+        "pdf_index": 32,
+        "printed_label": "20",
+        "role": "body"
+      },
+      {
+        "pdf_index": 33,
+        "printed_label": "21",
+        "role": "body"
+      },
+      {
+        "pdf_index": 34,
+        "printed_label": "22",
+        "role": "body"
+      },
+      {
+        "pdf_index": 35,
+        "printed_label": "23",
+        "role": "body"
+      },
+      {
+        "pdf_index": 36,
+        "printed_label": "24",
+        "role": "body"
+      },
+      {
+        "pdf_index": 37,
+        "printed_label": "25",
+        "role": "body"
+      },
+      {
+        "pdf_index": 38,
+        "printed_label": "26",
+        "role": "body"
+      },
+      {
+        "pdf_index": 39,
+        "printed_label": "27",
+        "role": "body"
+      },
+      {
+        "pdf_index": 40,
+        "printed_label": "28",
+        "role": "body"
+      },
+      {
+        "pdf_index": 41,
+        "printed_label": "29",
+        "role": "body"
+      },
+      {
+        "pdf_index": 42,
+        "printed_label": "30",
+        "role": "body"
+      },
+      {
+        "pdf_index": 43,
+        "printed_label": "31",
+        "role": "body"
+      },
+      {
+        "pdf_index": 44,
+        "printed_label": "32",
+        "role": "body"
+      },
+      {
+        "pdf_index": 45,
+        "printed_label": "33",
+        "role": "body"
+      },
+      {
+        "pdf_index": 46,
+        "printed_label": "34",
+        "role": "body"
+      },
+      {
+        "pdf_index": 47,
+        "printed_label": "35",
+        "role": "body"
+      },
+      {
+        "pdf_index": 48,
+        "printed_label": "36",
+        "role": "body"
+      },
+      {
+        "pdf_index": 49,
+        "printed_label": "37",
+        "role": "body"
+      },
+      {
+        "pdf_index": 50,
+        "printed_label": "38",
+        "role": "body"
+      },
+      {
+        "pdf_index": 51,
+        "printed_label": "39",
+        "role": "body"
+      },
+      {
+        "pdf_index": 52,
+        "printed_label": "40",
+        "role": "body"
+      },
+      {
+        "pdf_index": 53,
+        "printed_label": "41",
+        "role": "body"
+      },
+      {
+        "pdf_index": 54,
+        "printed_label": "42",
+        "role": "body"
+      },
+      {
+        "pdf_index": 55,
+        "printed_label": "43",
+        "role": "body"
+      },
+      {
+        "pdf_index": 56,
+        "printed_label": "44",
+        "role": "body"
+      },
+      {
+        "pdf_index": 57,
+        "printed_label": "45",
+        "role": "body"
+      },
+      {
+        "pdf_index": 58,
+        "printed_label": "46",
+        "role": "body"
+      },
+      {
+        "pdf_index": 59,
+        "printed_label": "47",
+        "role": "body"
+      },
+      {
+        "pdf_index": 60,
+        "printed_label": "48",
+        "role": "body"
+      },
+      {
+        "pdf_index": 61,
+        "printed_label": "49",
+        "role": "body"
+      },
+      {
+        "pdf_index": 62,
+        "printed_label": "50",
+        "role": "body"
+      },
+      {
+        "pdf_index": 63,
+        "printed_label": "51",
+        "role": "body"
+      },
+      {
+        "pdf_index": 64,
+        "printed_label": "52",
+        "role": "body"
+      },
+      {
+        "pdf_index": 65,
+        "printed_label": "53",
+        "role": "body"
+      },
+      {
+        "pdf_index": 66,
+        "printed_label": "54",
+        "role": "body"
+      },
+      {
+        "pdf_index": 67,
+        "printed_label": "55",
+        "role": "body"
+      },
+      {
+        "pdf_index": 68,
+        "printed_label": "56",
+        "role": "body"
+      },
+      {
+        "pdf_index": 69,
+        "printed_label": "57",
+        "role": "body"
+      },
+      {
+        "pdf_index": 70,
+        "printed_label": "58",
+        "role": "body"
+      },
+      {
+        "pdf_index": 71,
+        "printed_label": "59",
+        "role": "body"
+      },
+      {
+        "pdf_index": 72,
+        "printed_label": "60",
+        "role": "body"
+      },
+      {
+        "pdf_index": 73,
+        "printed_label": "61",
+        "role": "body"
+      },
+      {
+        "pdf_index": 74,
+        "printed_label": "62",
+        "role": "body"
+      },
+      {
+        "pdf_index": 75,
+        "printed_label": "63",
+        "role": "body"
+      },
+      {
+        "pdf_index": 76,
+        "printed_label": "64",
+        "role": "body"
+      },
+      {
+        "pdf_index": 77,
+        "printed_label": "65",
+        "role": "body"
+      },
+      {
+        "pdf_index": 78,
+        "printed_label": "66",
+        "role": "body"
+      },
+      {
+        "pdf_index": 79,
+        "printed_label": "67",
+        "role": "body"
+      },
+      {
+        "pdf_index": 80,
+        "printed_label": "68",
+        "role": "blank"
+      },
+      {
+        "pdf_index": 81,
+        "printed_label": "69",
+        "role": "body"
+      },
+      {
+        "pdf_index": 82,
+        "printed_label": "70",
+        "role": "body"
+      },
+      {
+        "pdf_index": 83,
+        "printed_label": "71",
+        "role": "body"
+      },
+      {
+        "pdf_index": 84,
+        "printed_label": "72",
+        "role": "body"
+      },
+      {
+        "pdf_index": 85,
+        "printed_label": "73",
+        "role": "body"
+      },
+      {
+        "pdf_index": 86,
+        "printed_label": "74",
+        "role": "body"
+      },
+      {
+        "pdf_index": 87,
+        "printed_label": "75",
+        "role": "body"
+      },
+      {
+        "pdf_index": 88,
+        "printed_label": "76",
+        "role": "body"
+      },
+      {
+        "pdf_index": 89,
+        "printed_label": "77",
+        "role": "body"
+      },
+      {
+        "pdf_index": 90,
+        "printed_label": "78",
+        "role": "body"
+      },
+      {
+        "pdf_index": 91,
+        "printed_label": "79",
+        "role": "body"
+      },
+      {
+        "pdf_index": 92,
+        "printed_label": "80",
+        "role": "blank"
+      },
+      {
+        "pdf_index": 93,
+        "printed_label": "81",
+        "role": "body"
+      },
+      {
+        "pdf_index": 94,
+        "printed_label": "82",
+        "role": "body"
+      },
+      {
+        "pdf_index": 95,
+        "printed_label": "83",
+        "role": "body"
+      },
+      {
+        "pdf_index": 96,
+        "printed_label": "84",
+        "role": "body"
+      },
+      {
+        "pdf_index": 97,
+        "printed_label": "85",
+        "role": "body"
+      },
+      {
+        "pdf_index": 98,
+        "printed_label": "86",
+        "role": "body"
+      },
+      {
+        "pdf_index": 99,
+        "printed_label": "87",
+        "role": "body"
+      },
+      {
+        "pdf_index": 100,
+        "printed_label": "88",
+        "role": "body"
+      },
+      {
+        "pdf_index": 101,
+        "printed_label": "89",
+        "role": "body"
+      },
+      {
+        "pdf_index": 102,
+        "printed_label": "90",
+        "role": "body"
+      },
+      {
+        "pdf_index": 103,
+        "printed_label": "91",
+        "role": "body"
+      },
+      {
+        "pdf_index": 104,
+        "printed_label": "92",
+        "role": "body"
+      },
+      {
+        "pdf_index": 105,
+        "printed_label": "93",
+        "role": "body"
+      },
+      {
+        "pdf_index": 106,
+        "printed_label": "94",
+        "role": "body"
+      },
+      {
+        "pdf_index": 107,
+        "printed_label": "95",
+        "role": "body"
+      },
+      {
+        "pdf_index": 108,
+        "printed_label": "96",
+        "role": "body"
+      },
+      {
+        "pdf_index": 109,
+        "printed_label": "97",
+        "role": "body"
+      },
+      {
+        "pdf_index": 110,
+        "printed_label": "98",
+        "role": "body"
+      },
+      {
+        "pdf_index": 111,
+        "printed_label": "99",
+        "role": "body"
+      },
+      {
+        "pdf_index": 112,
+        "printed_label": "100",
+        "role": "body"
+      },
+      {
+        "pdf_index": 113,
+        "printed_label": "101",
+        "role": "body"
+      },
+      {
+        "pdf_index": 114,
+        "printed_label": "102",
+        "role": "body"
+      },
+      {
+        "pdf_index": 115,
+        "printed_label": "103",
+        "role": "body"
+      },
+      {
+        "pdf_index": 116,
+        "printed_label": "104",
+        "role": "body"
+      },
+      {
+        "pdf_index": 117,
+        "printed_label": "105",
+        "role": "body"
+      },
+      {
+        "pdf_index": 118,
+        "printed_label": "106",
+        "role": "body"
+      },
+      {
+        "pdf_index": 119,
+        "printed_label": "107",
+        "role": "body"
+      },
+      {
+        "pdf_index": 120,
+        "printed_label": "108",
+        "role": "body"
+      },
+      {
+        "pdf_index": 121,
+        "printed_label": "109",
+        "role": "body"
+      },
+      {
+        "pdf_index": 122,
+        "printed_label": "110",
+        "role": "body"
+      },
+      {
+        "pdf_index": 123,
+        "printed_label": "111",
+        "role": "body"
+      },
+      {
+        "pdf_index": 124,
+        "printed_label": "112",
+        "role": "body"
+      },
+      {
+        "pdf_index": 125,
+        "printed_label": "113",
+        "role": "body"
+      },
+      {
+        "pdf_index": 126,
+        "printed_label": "114",
+        "role": "body"
+      },
+      {
+        "pdf_index": 127,
+        "printed_label": "115",
+        "role": "body"
+      },
+      {
+        "pdf_index": 128,
+        "printed_label": "116",
+        "role": "body"
+      },
+      {
+        "pdf_index": 129,
+        "printed_label": "117",
+        "role": "body"
+      },
+      {
+        "pdf_index": 130,
+        "printed_label": "118",
+        "role": "body"
+      },
+      {
+        "pdf_index": 131,
+        "printed_label": "119",
+        "role": "body"
+      },
+      {
+        "pdf_index": 132,
+        "printed_label": "120",
+        "role": "body"
+      },
+      {
+        "pdf_index": 133,
+        "printed_label": "121",
+        "role": "body"
+      },
+      {
+        "pdf_index": 134,
+        "printed_label": "122",
+        "role": "body"
+      },
+      {
+        "pdf_index": 135,
+        "printed_label": "123",
+        "role": "body"
+      },
+      {
+        "pdf_index": 136,
+        "printed_label": "124",
+        "role": "body"
+      },
+      {
+        "pdf_index": 137,
+        "printed_label": "125",
+        "role": "body"
+      },
+      {
+        "pdf_index": 138,
+        "printed_label": "126",
+        "role": "body"
+      },
+      {
+        "pdf_index": 139,
+        "printed_label": "127",
+        "role": "body"
+      },
+      {
+        "pdf_index": 140,
+        "printed_label": "128",
+        "role": "body"
+      },
+      {
+        "pdf_index": 141,
+        "printed_label": "129",
+        "role": "body"
+      },
+      {
+        "pdf_index": 142,
+        "printed_label": "130",
+        "role": "body"
+      },
+      {
+        "pdf_index": 143,
+        "printed_label": "131",
+        "role": "body"
+      },
+      {
+        "pdf_index": 144,
+        "printed_label": "132",
+        "role": "body"
+      },
+      {
+        "pdf_index": 145,
+        "printed_label": "133",
+        "role": "body"
+      },
+      {
+        "pdf_index": 146,
+        "printed_label": "134",
+        "role": "body"
+      },
+      {
+        "pdf_index": 147,
+        "printed_label": "135",
+        "role": "body"
+      },
+      {
+        "pdf_index": 148,
+        "printed_label": "136",
+        "role": "body"
+      },
+      {
+        "pdf_index": 149,
+        "printed_label": "137",
+        "role": "body"
+      },
+      {
+        "pdf_index": 150,
+        "printed_label": "138",
+        "role": "body"
+      },
+      {
+        "pdf_index": 151,
+        "printed_label": "139",
+        "role": "body"
+      },
+      {
+        "pdf_index": 152,
+        "printed_label": "140",
+        "role": "body"
+      },
+      {
+        "pdf_index": 153,
+        "printed_label": "141",
+        "role": "body"
+      },
+      {
+        "pdf_index": 154,
+        "printed_label": "142",
+        "role": "body"
+      },
+      {
+        "pdf_index": 155,
+        "printed_label": "143",
+        "role": "body"
+      },
+      {
+        "pdf_index": 156,
+        "printed_label": "144",
+        "role": "body"
+      },
+      {
+        "pdf_index": 157,
+        "printed_label": "145",
+        "role": "body"
+      },
+      {
+        "pdf_index": 158,
+        "printed_label": "146",
+        "role": "body"
+      },
+      {
+        "pdf_index": 159,
+        "printed_label": "147",
+        "role": "body"
+      },
+      {
+        "pdf_index": 160,
+        "printed_label": "148",
+        "role": "body"
+      },
+      {
+        "pdf_index": 161,
+        "printed_label": "149",
+        "role": "body"
+      },
+      {
+        "pdf_index": 162,
+        "printed_label": "150",
+        "role": "body"
+      },
+      {
+        "pdf_index": 163,
+        "printed_label": "151",
+        "role": "body"
+      },
+      {
+        "pdf_index": 164,
+        "printed_label": "152",
+        "role": "body"
+      },
+      {
+        "pdf_index": 165,
+        "printed_label": "153",
+        "role": "body"
+      },
+      {
+        "pdf_index": 166,
+        "printed_label": "154",
+        "role": "body"
+      },
+      {
+        "pdf_index": 167,
+        "printed_label": "155",
+        "role": "body"
+      },
+      {
+        "pdf_index": 168,
+        "printed_label": "156",
+        "role": "body"
+      },
+      {
+        "pdf_index": 169,
+        "printed_label": "157",
+        "role": "body"
+      },
+      {
+        "pdf_index": 170,
+        "printed_label": "158",
+        "role": "blank"
+      },
+      {
+        "pdf_index": 171,
+        "printed_label": "159",
+        "role": "body"
+      },
+      {
+        "pdf_index": 172,
+        "printed_label": "160",
+        "role": "body"
+      },
+      {
+        "pdf_index": 173,
+        "printed_label": "161",
+        "role": "body"
+      },
+      {
+        "pdf_index": 174,
+        "printed_label": "162",
+        "role": "body"
+      },
+      {
+        "pdf_index": 175,
+        "printed_label": "163",
+        "role": "body"
+      },
+      {
+        "pdf_index": 176,
+        "printed_label": "164",
+        "role": "body"
+      },
+      {
+        "pdf_index": 177,
+        "printed_label": "165",
+        "role": "body"
+      },
+      {
+        "pdf_index": 178,
+        "printed_label": "166",
+        "role": "body"
+      },
+      {
+        "pdf_index": 179,
+        "printed_label": "167",
+        "role": "body"
+      },
+      {
+        "pdf_index": 180,
+        "printed_label": "168",
+        "role": "body"
+      },
+      {
+        "pdf_index": 181,
+        "printed_label": "169",
+        "role": "body"
+      },
+      {
+        "pdf_index": 182,
+        "printed_label": "170",
+        "role": "body"
+      },
+      {
+        "pdf_index": 183,
+        "printed_label": "171",
+        "role": "body"
+      },
+      {
+        "pdf_index": 184,
+        "printed_label": "172",
+        "role": "blank"
+      },
+      {
+        "pdf_index": 185,
+        "printed_label": "173",
+        "role": "body"
+      },
+      {
+        "pdf_index": 186,
+        "printed_label": "174",
+        "role": "body"
+      },
+      {
+        "pdf_index": 187,
+        "printed_label": "175",
+        "role": "body"
+      },
+      {
+        "pdf_index": 188,
+        "printed_label": "176",
+        "role": "blank"
+      },
+      {
+        "pdf_index": 189,
+        "printed_label": null,
+        "role": "back"
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "clause:clause_1",
+      "label": "Clause 1",
+      "title": "General Requirements",
+      "spans": [
+        {
+          "start_pdf_index": 13,
+          "end_pdf_index": 14
+        }
+      ],
+      "normative_status": "unknown",
+      "qualification_pdf_indices": [
+        13
+      ],
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          13
+        ],
+        "note": "Heading and source span checked; unknown applicability is not promoted."
+      }
+    },
+    {
+      "id": "clause:clause_2",
+      "label": "Clause 2",
+      "title": "Normative References",
+      "spans": [
+        {
+          "start_pdf_index": 15,
+          "end_pdf_index": 15
+        }
+      ],
+      "normative_status": "unknown",
+      "qualification_pdf_indices": [
+        15
+      ],
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          15
+        ],
+        "note": "Heading and source span checked; unknown applicability is not promoted."
+      }
+    },
+    {
+      "id": "clause:clause_3",
+      "label": "Clause 3",
+      "title": "Terms and Definitions",
+      "spans": [
+        {
+          "start_pdf_index": 16,
+          "end_pdf_index": 16
+        }
+      ],
+      "normative_status": "unknown",
+      "qualification_pdf_indices": [
+        16
+      ],
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          16
+        ],
+        "note": "Heading and source span checked; unknown applicability is not promoted."
+      }
+    },
+    {
+      "id": "clause:clause_4",
+      "label": "Clause 4",
+      "title": "Glossary",
+      "spans": [
+        {
+          "start_pdf_index": 17,
+          "end_pdf_index": 80
+        }
+      ],
+      "normative_status": "unknown",
+      "qualification_pdf_indices": [
+        17
+      ],
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          17
+        ],
+        "note": "Heading and source span checked; unknown applicability is not promoted."
+      }
+    },
+    {
+      "id": "clause:annex_a",
+      "label": "Annex A",
+      "title": "Process, Classifications, and Designations",
+      "spans": [
+        {
+          "start_pdf_index": 81,
+          "end_pdf_index": 91
+        }
+      ],
+      "normative_status": "normative",
+      "qualification_pdf_indices": [
+        81
+      ],
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          81
+        ],
+        "note": "Heading and source span checked; unknown applicability is not promoted."
+      }
+    },
+    {
+      "id": "clause:annex_b",
+      "label": "Annex B",
+      "title": "Figures",
+      "spans": [
+        {
+          "start_pdf_index": 93,
+          "end_pdf_index": 169
+        }
+      ],
+      "normative_status": "conflicting",
+      "qualification_pdf_indices": [
+        9,
+        93
+      ],
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          93
+        ],
+        "note": "Annex B applicability conflicts between contents index 9 and opening index 93."
+      }
+    },
+    {
+      "id": "clause:annex_c",
+      "label": "Annex C",
+      "title": "Principles of A3.0M/A3.0 Style",
+      "spans": [
+        {
+          "start_pdf_index": 171,
+          "end_pdf_index": 176
+        }
+      ],
+      "normative_status": "informative",
+      "qualification_pdf_indices": [
+        171
+      ],
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          171
+        ],
+        "note": "Heading and source span checked; unknown applicability is not promoted."
+      }
+    },
+    {
+      "id": "clause:annex_d",
+      "label": "Annex D",
+      "title": "Modifications from 2010",
+      "spans": [
+        {
+          "start_pdf_index": 177,
+          "end_pdf_index": 182
+        }
+      ],
+      "normative_status": "informative",
+      "qualification_pdf_indices": [
+        177
+      ],
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          177
+        ],
+        "note": "Heading and source span checked; unknown applicability is not promoted."
+      }
+    },
+    {
+      "id": "clause:annex_e",
+      "label": "Annex E",
+      "title": "Terminology from Other Sources",
+      "spans": [
+        {
+          "start_pdf_index": 183,
+          "end_pdf_index": 183
+        }
+      ],
+      "normative_status": "informative",
+      "qualification_pdf_indices": [
+        183
+      ],
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          183
+        ],
+        "note": "Heading and source span checked; unknown applicability is not promoted."
+      }
+    },
+    {
+      "id": "clause:annex_f",
+      "label": "Annex F",
+      "title": "Requesting an Official Interpretation",
+      "spans": [
+        {
+          "start_pdf_index": 185,
+          "end_pdf_index": 186
+        }
+      ],
+      "normative_status": "informative",
+      "qualification_pdf_indices": [
+        185
+      ],
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          185
+        ],
+        "note": "Heading and source span checked; unknown applicability is not promoted."
+      }
+    }
+  ],
+  "figures": [
+    {
+      "id": "figure:figure_a1",
+      "label": "Figure A1",
+      "title": "Master Chart of Welding and Joining Processes",
+      "parent_id": "clause:annex_a",
+      "anchors": [
+        {
+          "pdf_index": 87,
+          "printed_label": "75",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              87
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_A1_p88.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "252c885b609a0855ce557416e6b4bf18d30e18b43a33b586903460e08fd4f83d",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              87
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_a2",
+      "label": "Figure A2",
+      "title": "Master Chart of Allied Processes",
+      "parent_id": "clause:annex_a",
+      "anchors": [
+        {
+          "pdf_index": 88,
+          "printed_label": "76",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              88
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_A2_p89.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "5edd79d522ebe63cf5a8033eeb737def678faf478c81200a5ba05494bc8e0f9f",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              88
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_a3",
+      "label": "Figure A3",
+      "title": "Joining Method Chart",
+      "parent_id": "clause:annex_a",
+      "anchors": [
+        {
+          "pdf_index": 88,
+          "printed_label": "76",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              88
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_A3_p89.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "5edd79d522ebe63cf5a8033eeb737def678faf478c81200a5ba05494bc8e0f9f",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              88
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_a4",
+      "label": "Figure A4",
+      "title": "Fusion Welding Classification Chart",
+      "parent_id": "clause:annex_a",
+      "anchors": [
+        {
+          "pdf_index": 89,
+          "printed_label": "77",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              89
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_A4_p90.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "3c8dcd265c1a36f4494b953c17347bac143a426f137e9ec31f2bd795991e676e",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              89
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_a5",
+      "label": "Figure A5",
+      "title": "Solid-State Welding Classification Chart",
+      "parent_id": "clause:annex_a",
+      "anchors": [
+        {
+          "pdf_index": 90,
+          "printed_label": "78",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              90
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_A5_p91.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "c2f0181c895b6c981691141d106d5ae3bac3bd85f837f0f94a77f1b59b161bf9",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              90
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_a6",
+      "label": "Figure A6",
+      "title": "Brazing and Soldering Classification Chart",
+      "parent_id": "clause:annex_a",
+      "anchors": [
+        {
+          "pdf_index": 91,
+          "printed_label": "79",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              91
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_A6_p92.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "5a7f8f133be12e1cd843e223a35b1bddd24f8e3e14c1db3d786ba41cee455604",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              91
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b1",
+      "label": "Figure B1",
+      "title": "Joint Types",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 94,
+          "printed_label": "82",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              94
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B1_p94.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "1c7b580a6bef050d452cb5757f383131f5312b8535c4005d4a08f3067c4680c6",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              94
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b2",
+      "label": "Figure B2",
+      "title": "Flanged Joints",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 95,
+          "printed_label": "83",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              95
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B2_p95.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "16172d8a1c68c080f79f9b6642f76499e2ea2a9a7ebbd1654a50162f3da7364b",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              95
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b3",
+      "label": "Figure B3",
+      "title": "Spliced Butt Joints",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 96,
+          "printed_label": "84",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              96
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B3_p96.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "b9eb194f383cc707ca06612b97ba8de6a6d65d1d4d95aaca64935ff2d8979e88",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              96
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b4",
+      "label": "Figure B4",
+      "title": "Joint Root",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 97,
+          "printed_label": "85",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              97
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B4_p97.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "f1378b21f5529463cbb946f341f3230610d1225fda0b52952315034e2ca9392a",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              97
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b5",
+      "label": "Figure B5",
+      "title": "Groove Face, Root Edge, and Root Face",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 98,
+          "printed_label": "86",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              98
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B5_p98.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "11d82d51a7b0f507398d421264efc61a117b8ba6dc867da347ec0503a42e04b4",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              98
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b6",
+      "label": "Figure B6",
+      "title": "Bevel Angle, Bevel Face, Bevel Depth, Groove Angle, Groove Depth, Bevel Radius, and Root Opening",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 99,
+          "printed_label": "87",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              99
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 100,
+          "printed_label": "88",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              100
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 101,
+          "printed_label": "89",
+          "order": 2,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              101
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B6_p99.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "d5527730f05f3b36c0467382414070e1f4fe419d5929ccc0b03e53cd6edc7cff",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              99
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B6_p100.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "b438e45f874dcd7ebfeb6f58008648bc36dc88280fa1ed32672dc28eb3f6c653",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              100
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B6_p101.png",
+          "source_anchor_orders": [
+            2
+          ],
+          "sha256": "ab82412723963a6cf9689212e09e07996d468b723bbeb5e79ffc2d604c4107db",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              101
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b7",
+      "label": "Figure B7",
+      "title": "Edge Shapes",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 102,
+          "printed_label": "90",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              102
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B7_p102.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "7c7b1d5c2ede3732e47ab58fb0264ff213392672a811dfa3302ee600b7a45373",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              102
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b8",
+      "label": "Figure B8",
+      "title": "Single-Groove Weld Types",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 103,
+          "printed_label": "91",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              103
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 104,
+          "printed_label": "92",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              104
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 105,
+          "printed_label": "93",
+          "order": 2,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              105
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B8_p103.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "c22161c4d5afb2f3f6cbc5e0b9b547185c622b7b8f4452d3fc99da5ea26403fc",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              103
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B8_p104.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "f1087293082110ff403a06c2396d5ad45cf06402225f6f741d5b3c1490e61dae",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              104
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B8_p105.png",
+          "source_anchor_orders": [
+            2
+          ],
+          "sha256": "b8e33bf480f585381ce599abf9a8fe6f49c821b0d293fbf47194a524218df702",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              105
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b9",
+      "label": "Figure B9",
+      "title": "Double-Groove Weld Types",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 106,
+          "printed_label": "94",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              106
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 107,
+          "printed_label": "95",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              107
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B9_p106.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "910b950effd55bd641f29fcc0c6e150e22a68f6f887c7dbf7b6cf6f8d3c4e9e6",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              106
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B9_p107.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "270ffd76d30104881180426c183bba84d0ab34dcc4b05478ec44c6570fdcc93b",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              107
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b10",
+      "label": "Figure B10",
+      "title": "Welds in Flanged Joints",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 108,
+          "printed_label": "96",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              108
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B10_p108.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "071dcc2ce423b8aa2c76ea825f828d2fe529993b254366d2b5542029dd773f09",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              108
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b11",
+      "label": "Figure B11",
+      "title": "Butting and Nonbutting Workpiece or Workpieces",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 109,
+          "printed_label": "97",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              109
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B11_p109.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "c3a4176565eaab83749d2d4ff29817ba9f4cdf0182412b78fb8cf527b21329c1",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              109
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b12",
+      "label": "Figure B12",
+      "title": "End Dam, Shelf, Split Pipe Backing, Sump, Starting Weld Tab, and Runoff Tab",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 110,
+          "printed_label": "98",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              110
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B12_p110.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "e833a4b8d50b9c228e5bac76afbdb7a63933bace2f2f1c07586827772dd81189",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              110
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b13",
+      "label": "Figure B13",
+      "title": "Edge Weld, Scarf Groove, Joint Mismatch, Root Face Extension, Consumable Insert, and Preplaced Filler Metal",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 111,
+          "printed_label": "99",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              111
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B13_p111.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "adb7748d866b0ad872ae9f8cd4a816b42495df5ecdd07ce10df1fa3ba12bd4ad",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              111
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b14",
+      "label": "Figure B14",
+      "title": "Seam and Spot Weld Types",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 112,
+          "printed_label": "100",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              112
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B14_p112.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "334449a2bf225d72b95a14e30ba23f609cb642e374d2cc3edd0c1b6cd87a0435",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              112
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b15",
+      "label": "Figure B15",
+      "title": "Various Weld Types",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 113,
+          "printed_label": "101",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              113
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B15_p113.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "6269e2f411c97d6bc652c5159eaf858263bf551432c65516beac054f98e435f6",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              113
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b16a",
+      "label": "Figure B16A",
+      "title": "Welding Position Diagram for Groove Welds and Surfacing Welds in Plate",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 114,
+          "printed_label": "102",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              114
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B16A_p114.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "f5d9602cfd65be30fe9466feecd0a503aa4e40c258fb93312508dea005f098f2",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              114
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b16b",
+      "label": "Figure B16B",
+      "title": "Welding Position Diagram for Fillet Welds in Plate",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 115,
+          "printed_label": "103",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              115
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B16B_p115.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "bfcbdff4d7693a521d4f5374262b1381c5dbd681b7ec06fcda2e52b69d5a1e8d",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              115
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b16c",
+      "label": "Figure B16C",
+      "title": "Welding Position Diagram for Groove Welds and Surfacing Welds in Pipe",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 116,
+          "printed_label": "104",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              116
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B16C_p116.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "5db32135b66eff486064c3aaddfa4b660d315fe93e8886e20505d44c49b1240a",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              116
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b17",
+      "label": "Figure B17",
+      "title": "Welding Test Positions and Their Designations for Groove Welds and Surfacing Welds in Plate",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 117,
+          "printed_label": "105",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              117
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B17_p117.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "e03e860c7d8828a319c3e42aa52cde552b32857569c02ec90e6e8c3dba6cdcc2",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              117
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b18",
+      "label": "Figure B18",
+      "title": "Welding Test Positions and Their Designations for Fillet Welds in Plate",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 118,
+          "printed_label": "106",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              118
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 119,
+          "printed_label": "107",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              119
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B18_p118.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "3a2a020652f706c77591aa22fa59207eb7ab20520c3be1c3f36216b6442d424a",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              118
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B18_p119.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "e8e465373988478bb625276bebecf6d971a0faf79a6e88c5eacef620b0aa7c75",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              119
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b19",
+      "label": "Figure B19",
+      "title": "Welding Test Positions and Their Designations for Groove Welds and Surfacing in Pipe",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 120,
+          "printed_label": "108",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              120
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 121,
+          "printed_label": "109",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              121
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B19_p120.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "ccdb7e7a6673bcdcdc53533095607807d5be78eecc0db78255c143beeed05f0a",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              120
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B19_p121.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "edd91f3dd36dfc1945f1f83426d8d09bfd0058809695433524f80d7b2e164170",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              121
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b20",
+      "label": "Figure B20",
+      "title": "Welding Test Positions and Their Designations for Fillet Welds in Pipe",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 122,
+          "printed_label": "110",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              122
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 123,
+          "printed_label": "111",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              123
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B20_p122.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "cea3730bda5938c95c19b9e669ad8c7504f0723f0e57191ab2f65af8437d7667",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              122
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B20_p123.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "3ee210463e4b171b29b9209c3d080424bb4c18b85a36f8d358e696f3171dced9",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              123
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b21",
+      "label": "Figure B21",
+      "title": "Position of Beam, Filler Material, Gun, or Torch",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 124,
+          "printed_label": "112",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              124
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B21_p124.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "2dbef59136b0d6d08684bf3101855b0ceefd7e9089595a0ee268c80b94ffd76d",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              124
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b22",
+      "label": "Figure B22",
+      "title": "Weld Bead Types",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 125,
+          "printed_label": "113",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              125
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B22_p125.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "ae63706cf77cbc24d9371e96f895ff454fbc653ce3b0a14493b3f65286b7974e",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              125
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b23",
+      "label": "Figure B23",
+      "title": "Welding Application Nomenclature",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 126,
+          "printed_label": "114",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              126
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 127,
+          "printed_label": "115",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              127
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 128,
+          "printed_label": "116",
+          "order": 2,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              128
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B23_p126.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "bc4c4e874d621221a146550d9792daf97ce7dd53290adde63ff4c5400eb548bf",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              126
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B23_p127.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "9ff2148f82015c275e3ba1621d52057c50a64ca853e185591b2fec118d9c02b0",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              127
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B23_p128.png",
+          "source_anchor_orders": [
+            2
+          ],
+          "sha256": "9e363b65e497e3c05f526f3fb632b1ae88645ad749407fa1f5d17ebd0f32ebde",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              128
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b24",
+      "label": "Figure B24",
+      "title": "Parts of a Weld",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 129,
+          "printed_label": "117",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              129
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 130,
+          "printed_label": "118",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              130
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 131,
+          "printed_label": "119",
+          "order": 2,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              131
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 132,
+          "printed_label": "120",
+          "order": 3,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              132
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 133,
+          "printed_label": "121",
+          "order": 4,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              133
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 134,
+          "printed_label": "122",
+          "order": 5,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              134
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B24_p129.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "b4139333ef17ae778c33089e755c972736f446596653e088d7da802f1cd9600a",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              129
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B24_p130.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "a85b0cb2469dd2953843c4c5cc06d6ad5671e1e33bef89ee1b3df35f00b21194",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              130
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B24_p131.png",
+          "source_anchor_orders": [
+            2
+          ],
+          "sha256": "7946bfa9486945588be48d06cf730c634c40c4e79f27b34209dd017b0203eb3f",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              131
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B24_p132.png",
+          "source_anchor_orders": [
+            3
+          ],
+          "sha256": "333bb00f3db67bc2698721dae525a8ae4c47d5b158a44439e6aaa45f1cff7dae",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              132
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B24_p133.png",
+          "source_anchor_orders": [
+            4
+          ],
+          "sha256": "2f428c1196c2e8199c34ed360b313e0244a9536c14bf6d855664e7bcbef8e387",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              133
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B24_p134.png",
+          "source_anchor_orders": [
+            5
+          ],
+          "sha256": "a4d3b4b8d83c2c5693fa9107eb792d54b30166cbcacf5ed8145a6a1bb40cef28",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              134
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b25",
+      "label": "Figure B25",
+      "title": "Weld Sizes",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 135,
+          "printed_label": "123",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              135
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 136,
+          "printed_label": "124",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              136
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 137,
+          "printed_label": "125",
+          "order": 2,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              137
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 138,
+          "printed_label": "126",
+          "order": 3,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              138
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B25_p135.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "3722d5f39556b79be9ca14f6988307ec1d3aa1e070726b99f089dd06e2321680",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              135
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B25_p136.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "47649e6c1dac747fd4d1b717830d291befa3c0387d3a51bf4104ff9776b4008a",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              136
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B25_p137.png",
+          "source_anchor_orders": [
+            2
+          ],
+          "sha256": "6f866401264167d3d514c343baac1303694e5938bef1ece719b1951dae9cbbae",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              137
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B25_p138.png",
+          "source_anchor_orders": [
+            3
+          ],
+          "sha256": "afc5f1a1c0e696745ddb9a285f0cd0ce3c2748258089a29e759f4882869060f6",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              138
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b26",
+      "label": "Figure B26",
+      "title": "Groove Weld Size and Joint Penetration",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 139,
+          "printed_label": "127",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              139
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 140,
+          "printed_label": "128",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              140
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 141,
+          "printed_label": "129",
+          "order": 2,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              141
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B26_p139.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "a5aedb8f7ce76ca38f119aa53c8d600ba151d4174aa8173c530f358f817e477f",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              139
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B26_p140.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "9f04e4bd1b899028ca9639b90c6c03f4bd20d2092dfefb9687fa15c34a21f124",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              140
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B26_p141.png",
+          "source_anchor_orders": [
+            2
+          ],
+          "sha256": "a3dba5f835900b0a89c66a20bbadf3b5a141783b5ff3c4eafd4884679443a43a",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              141
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b27",
+      "label": "Figure B27",
+      "title": "Melt-Through and Root Surface Profile",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 142,
+          "printed_label": "130",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              142
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B27_p142.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "4dba7df644eca82438c4dbae72cb7c7c6835cd79a41ebf7539d9f034192bad7a",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              142
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b28",
+      "label": "Figure B28",
+      "title": "Complete Fusion",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 143,
+          "printed_label": "131",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              143
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B28_p143.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "26cd106588ebda03d35d8d1b3580e9c688b4614deec672350690a8c474af4dea",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              143
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b29",
+      "label": "Figure B29",
+      "title": "Incomplete Fusion",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 144,
+          "printed_label": "132",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              144
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B29_p144.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "3fd4832e66f65e11b9a72c08ddaf3528ed0731687392222d4be322000c3b1b08",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              144
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b30",
+      "label": "Figure B30",
+      "title": "Fusion Welds (Transverse Section)",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 145,
+          "printed_label": "133",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              145
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 146,
+          "printed_label": "134",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              146
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B30_p145.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "9e673eb08a15406bcea0a327456db7b4767ab4b8fd641b98347b9fd4bd561807",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              145
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B30_p146.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "4dae84172270dfd3b51e78a2f6220b2992c8cfd10e484d4b4f154840a4436711",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              146
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b31",
+      "label": "Figure B31",
+      "title": "Joining Without Fusion",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 147,
+          "printed_label": "135",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              147
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B31_p147.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "13c68131f74b52b880e0f311e636733a1c786792f3ab807c2cf505d523a730de",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              147
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b32",
+      "label": "Figure B32",
+      "title": "Weld Discontinuities",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 148,
+          "printed_label": "136",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              148
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 149,
+          "printed_label": "137",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              149
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 150,
+          "printed_label": "138",
+          "order": 2,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              150
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B32_p148.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "9831a2da034e2717979ad2409984bf9438a5466243eeee80e3519cf2bad7a4fa",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              148
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B32_p149.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "f2b477cb0a530779e118cf0bc80f00fa47ec20de3fdc6ceefe995d73036da460",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              149
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B32_p150.png",
+          "source_anchor_orders": [
+            2
+          ],
+          "sha256": "06cc570441e6d81156d7116697d70be072efdfc6fee376b09cb527f8d4187375",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              150
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b33",
+      "label": "Figure B33",
+      "title": "Crack Types",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 151,
+          "printed_label": "139",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              151
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B33_p151.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "772c9c2450a27184181fb1e3566a3a66644c85c34ba255d0f44ec7c7394fdf7b",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              151
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b34",
+      "label": "Figure B34",
+      "title": "Welding Current Polarity",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 152,
+          "printed_label": "140",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              152
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B34_p152.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "353bff227609f4ee9f012c7d9795f309c730da8844d5d737dcc548398d006690",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              152
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b35",
+      "label": "Figure B35",
+      "title": "Plasma Arc Torch Nomenclature",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 153,
+          "printed_label": "141",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              153
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B35_p153.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "a50563c957fb54440f2307b8310da2c26d44b7a8c6a1cceeddac842f7a0bcb7e",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              153
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b36",
+      "label": "Figure B36",
+      "title": "Gas Tungsten Arc Welding Torch Nomenclature",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 153,
+          "printed_label": "141",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              153
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B36_p153.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "a50563c957fb54440f2307b8310da2c26d44b7a8c6a1cceeddac842f7a0bcb7e",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              153
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b37",
+      "label": "Figure B37",
+      "title": "Electroslag Welding Process Nomenclature",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 154,
+          "printed_label": "142",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              154
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B37_p154.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "228a07ef99ea68add97d6d6d4418e6ea22e39aed629eb472c05e21fc1afd5444",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              154
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b38",
+      "label": "Figure B38",
+      "title": "Gas Metal Arc and Flux Cored Arc Welding Gun Nomenclature",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 155,
+          "printed_label": "143",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              155
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B38_p155.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "605ff9201b29e4de9f98098cfb920c3aabecb9b8eb3d943d0b1d6c7a1746eb1e",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              155
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b39",
+      "label": "Figure B39",
+      "title": "Metal Transfer in Gas Metal Arc Welding",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 156,
+          "printed_label": "144",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              156
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B39_p156.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "12d931dbc69ec6e021d6f505a03439f562854e83074a86c712344e327f537aa6",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              156
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b40",
+      "label": "Figure B40",
+      "title": "Oxyacetylene Flame Types",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 157,
+          "printed_label": "145",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              157
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B40_p157.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "6c94c617d2983b30217c1f73043267ca4fce27a9b2b26497d8694b3bc6124086",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              157
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b41",
+      "label": "Figure B41",
+      "title": "Oxygen Cutting",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 158,
+          "printed_label": "146",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              158
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B41_p158.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "601dedcd24102aa177d564d060cf57f7f500db920607c52b31c99c4176f06abf",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              158
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b42",
+      "label": "Figure B42",
+      "title": "Filler Metal Packaging",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 158,
+          "printed_label": "146",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              158
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B42_p158.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "601dedcd24102aa177d564d060cf57f7f500db920607c52b31c99c4176f06abf",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              158
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b43",
+      "label": "Figure B43",
+      "title": "Thermal Spraying Surface Preparation",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 159,
+          "printed_label": "147",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              159
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B43_p159.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "a3b8c995663329551fdd858d33a6f9e30f5c5780990a90062f39e2358383d416",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              159
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b44",
+      "label": "Figure B44",
+      "title": "Generalized Diagram of Inertia Friction Welding",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 160,
+          "printed_label": "148",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              160
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B44_p160.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "0f363ad26171bce818d7a64a5e9ba34a3ea73e8802aabd1c1a48adac11fbea1d",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              160
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b45",
+      "label": "Figure B45",
+      "title": "Generalized Diagram of Direct Drive Friction Welding",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 161,
+          "printed_label": "149",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              161
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B45_p161.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "e8a2e703f9a1002b8717a8ee49847ec19b1af3e0dcde442481c0ee092ad54698",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              161
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b46",
+      "label": "Figure B46",
+      "title": "Schematic of the Friction Stir Welding Process",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 162,
+          "printed_label": "150",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              162
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B46_p162.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "6cc3fed52701ba4727a0d0a1a95c665432392859d88809556a3779528d9b81af",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              162
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b47",
+      "label": "Figure B47",
+      "title": "Typical Arrangements for Multiple Spot Welding",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 163,
+          "printed_label": "151",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              163
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B47_p163.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "096733649011128f2cf5d23ed1a510b62e472c19943a88f1f29117a0a00c2acb",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              163
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b48",
+      "label": "Figure B48",
+      "title": "Typical Arrangements for Single Spot Welds",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 164,
+          "printed_label": "152",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              164
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B48_p164.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "4e682e201aed89d4b6e88e7f8b00920c967c32665ca41a47c96a7eb67489d964",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              164
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b49",
+      "label": "Figure B49",
+      "title": "Example of a Pulsation Welding Waveform for Resistance Spot Welding",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 165,
+          "printed_label": "153",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              165
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B49_p165.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "bc583e354340a9114c77e90aa541ace1d719c1a3d8c13aa335d9e3284fc15ebc",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              165
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b50",
+      "label": "Figure B50",
+      "title": "Example of a Single-Pulse Resistance Spot Welding Waveform",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 165,
+          "printed_label": "153",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              165
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B50_p165.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "bc583e354340a9114c77e90aa541ace1d719c1a3d8c13aa335d9e3284fc15ebc",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              165
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b51",
+      "label": "Figure B51",
+      "title": "Electro-Mechanical Synchronization in Typical Flash Welding Cycle",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 166,
+          "printed_label": "154",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              166
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B51_p166.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "15faf53ff34a12865e85fb380b2f5b67e327388d1f625065856839702c590d26",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              166
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b52",
+      "label": "Figure B52",
+      "title": "High-Frequency Resistance Welding",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 167,
+          "printed_label": "155",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              167
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 168,
+          "printed_label": "156",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              168
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B52_p167.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "bee38da4bdbb38ede5fd50d10c0a5ac810c987e363b0dbd5d87d374201e3fe47",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              167
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/figures/Figure_B52_p168.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "5bda8a1404ce58a98f3e5b468149335b918a97ea5f441336898508f0ca29fd3d",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              168
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b53",
+      "label": "Figure B53",
+      "title": "An Example of a Welding Cycle for Pulsed Welding",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 169,
+          "printed_label": "157",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              169
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B53_p169.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "77eb321f377001f0b9dccfef761c0ab196623cee04ba8ad3094d37e38f84b0d7",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              169
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "figure:figure_b54",
+      "label": "Figure B54",
+      "title": "Typical GMAW, FCAW, and SAW Welding Cycle",
+      "parent_id": "clause:annex_b",
+      "anchors": [
+        {
+          "pdf_index": 169,
+          "printed_label": "157",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              169
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/figures/Figure_B54_p169.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "77eb321f377001f0b9dccfef761c0ab196623cee04ba8ad3094d37e38f84b0d7",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              169
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "id": "table:table_a1",
+      "label": "Table A1",
+      "title": "Letter Designations of Welding, Joining, and Allied Processes",
+      "parent_id": "clause:annex_a",
+      "anchors": [
+        {
+          "pdf_index": 81,
+          "printed_label": "69",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              81
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 82,
+          "printed_label": "70",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              82
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/tables/table_a1.md",
+          "source_anchor_orders": [
+            0,
+            1
+          ],
+          "sha256": "0f74187069f9ed7c8fa92f84372c786cf998d52e260f1310a70d1bb0ab4da704",
+          "verification": {
+            "state": "candidate",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "legacy_unverified",
+            "verifier": null,
+            "verified_at_utc": null,
+            "evidence_pdf_indices": [
+              81,
+              82
+            ],
+            "note": "Existing derived text; cell/footnote fidelity unverified."
+          }
+        },
+        {
+          "relpath": "parsed/tables/Table_A1_p82.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "7fd473d9f4da7a439b2e679c3da4bef515e85b1f158d81c19eb01ebc409cc9c6",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              81
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/tables/Table_A1_p83.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "0e759d07221a2d252081a4729d17149c95372fc35fd61a2d2f79f6ce67af0e8f",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              82
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "table:table_a2",
+      "label": "Table A2",
+      "title": "Alphabetical Cross-Reference to Table A1 by Process",
+      "parent_id": "clause:annex_a",
+      "anchors": [
+        {
+          "pdf_index": 83,
+          "printed_label": "71",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              83
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 84,
+          "printed_label": "72",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              84
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/tables/table_a2.md",
+          "source_anchor_orders": [
+            0,
+            1
+          ],
+          "sha256": "b38a87afc420cd7b70f2e9c71321ba874b997505370ee47e5b2b3239a1f0ff1d",
+          "verification": {
+            "state": "candidate",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "legacy_unverified",
+            "verifier": null,
+            "verified_at_utc": null,
+            "evidence_pdf_indices": [
+              83,
+              84
+            ],
+            "note": "Existing derived text; cell/footnote fidelity unverified."
+          }
+        },
+        {
+          "relpath": "parsed/tables/Table_A2_p84.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "7b079a4390d301a1247e68f94d3d80baf55b76a8e00f3065445d9e366f3acc32",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              83
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/tables/Table_A2_A3_p85.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "7aef0f21616f4b226855031be665d1b63ede0a0535a22913c2293b69fa8823b7",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              84
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "table:table_a3",
+      "label": "Table A3",
+      "title": "Alphabetical Cross-Reference to Table A1 by Letter Designation",
+      "parent_id": "clause:annex_a",
+      "anchors": [
+        {
+          "pdf_index": 84,
+          "printed_label": "72",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              84
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 85,
+          "printed_label": "73",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              85
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/tables/table_a3.md",
+          "source_anchor_orders": [
+            0,
+            1
+          ],
+          "sha256": "5276759057391081ff5127520dce8447e6af8770257e4a5f68affd7bd7d8e004",
+          "verification": {
+            "state": "candidate",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "legacy_unverified",
+            "verifier": null,
+            "verified_at_utc": null,
+            "evidence_pdf_indices": [
+              84,
+              85
+            ],
+            "note": "Existing derived text; cell/footnote fidelity unverified."
+          }
+        },
+        {
+          "relpath": "parsed/tables/Table_A2_A3_p85.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "7aef0f21616f4b226855031be665d1b63ede0a0535a22913c2293b69fa8823b7",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              84
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        },
+        {
+          "relpath": "parsed/tables/Table_A3_p86.png",
+          "source_anchor_orders": [
+            1
+          ],
+          "sha256": "9f8676073f5508ed3b30f4be25ff8551fd1abdc8ebfd42241ba5f8a9b66091ef",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              85
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "table:table_a4",
+      "label": "Table A4",
+      "title": "Suffixes for Application Mode of Welding, Joining, and Allied Processes",
+      "parent_id": "clause:annex_a",
+      "anchors": [
+        {
+          "pdf_index": 86,
+          "printed_label": "74",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              86
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/tables/table_a4.md",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "38d0c544e19a7a9ebd6ae53403cf30278e3ed5440870b25ca0b5ec8d7d5fe32b",
+          "verification": {
+            "state": "candidate",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "legacy_unverified",
+            "verifier": null,
+            "verified_at_utc": null,
+            "evidence_pdf_indices": [
+              86
+            ],
+            "note": "Existing derived text; cell/footnote fidelity unverified."
+          }
+        },
+        {
+          "relpath": "parsed/tables/Table_A4_A5_p87.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "227e4702c4b8de50563cafdea8fd7013d09efd0b5ebed93a628e673f3331d308",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              86
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "table:table_a5",
+      "label": "Table A5",
+      "title": "Obsolete or Seldom Used Processes",
+      "parent_id": "clause:annex_a",
+      "anchors": [
+        {
+          "pdf_index": 86,
+          "printed_label": "74",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              86
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/tables/table_a5.md",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "747b8dfbc3704afd439466b5cb096d206ad410096d7c5ddccc83f8308287bbba",
+          "verification": {
+            "state": "candidate",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "legacy_unverified",
+            "verifier": null,
+            "verified_at_utc": null,
+            "evidence_pdf_indices": [
+              86
+            ],
+            "note": "Existing derived text; cell/footnote fidelity unverified."
+          }
+        },
+        {
+          "relpath": "parsed/tables/Table_A4_A5_p87.png",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "227e4702c4b8de50563cafdea8fd7013d09efd0b5ebed93a628e673f3331d308",
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "render_match",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              86
+            ],
+            "note": "Full-page pixels match local source rendered at 180 DPI; region remains null."
+          }
+        }
+      ]
+    },
+    {
+      "id": "table:table_d1",
+      "label": "Table D1",
+      "title": "New Terms and Definitions",
+      "parent_id": "clause:annex_d",
+      "anchors": [
+        {
+          "pdf_index": 177,
+          "printed_label": "165",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              177
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 178,
+          "printed_label": "166",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              178
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/tables/table_d1.md",
+          "source_anchor_orders": [
+            0,
+            1
+          ],
+          "sha256": "ad37a84436c89e7312c90f92264df2c654a8625ba85d849f67b5f6380a45ad4e",
+          "verification": {
+            "state": "candidate",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "legacy_unverified",
+            "verifier": null,
+            "verified_at_utc": null,
+            "evidence_pdf_indices": [
+              177,
+              178
+            ],
+            "note": "Existing derived text; cell/footnote fidelity unverified."
+          }
+        }
+      ]
+    },
+    {
+      "id": "table:table_d2",
+      "label": "Table D2",
+      "title": "Modified Terms/Definitions",
+      "parent_id": "clause:annex_d",
+      "anchors": [
+        {
+          "pdf_index": 179,
+          "printed_label": "167",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              179
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        },
+        {
+          "pdf_index": 180,
+          "printed_label": "168",
+          "order": 1,
+          "role": "continuation",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              180
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": []
+    },
+    {
+      "id": "table:table_d3",
+      "label": "Table D3",
+      "title": "Terms/Definitions with Editorial Revisions",
+      "parent_id": "clause:annex_d",
+      "anchors": [
+        {
+          "pdf_index": 181,
+          "printed_label": "169",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              181
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": []
+    },
+    {
+      "id": "table:table_d4",
+      "label": "Table D4",
+      "title": "Terms Revised from Standard to Nonstandard",
+      "parent_id": "clause:annex_d",
+      "anchors": [
+        {
+          "pdf_index": 182,
+          "printed_label": "170",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              182
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": []
+    },
+    {
+      "id": "table:table_d5",
+      "label": "Table D5",
+      "title": "Terms Revised from Nonstandard to Standard",
+      "parent_id": "clause:annex_d",
+      "anchors": [
+        {
+          "pdf_index": 182,
+          "printed_label": "170",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              182
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": []
+    },
+    {
+      "id": "table:table_d6",
+      "label": "Table D6",
+      "title": "Deleted Terms (Also see New Terms for revisions in delimiters)",
+      "parent_id": "clause:annex_d",
+      "anchors": [
+        {
+          "pdf_index": 182,
+          "printed_label": "170",
+          "order": 0,
+          "role": "start",
+          "region": null,
+          "verification": {
+            "state": "verified",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "caption_text",
+            "verifier": "local-source-audit",
+            "verified_at_utc": "2026-10-15T17:20:36+00:00",
+            "evidence_pdf_indices": [
+              182
+            ],
+            "note": "Source location only; no entailment or region certification."
+          }
+        }
+      ],
+      "assets": [
+        {
+          "relpath": "parsed/tables/table_d6.md",
+          "source_anchor_orders": [
+            0
+          ],
+          "sha256": "b70432174f0f47d1934d5014f7f35a13ee1a8397e77664a2c00b099f9bfe199c",
+          "verification": {
+            "state": "candidate",
+            "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+            "method": "legacy_unverified",
+            "verifier": null,
+            "verified_at_utc": null,
+            "evidence_pdf_indices": [
+              182
+            ],
+            "note": "Existing derived text; cell/footnote fidelity unverified."
+          }
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "from_id": "table:table_a1",
+      "to_id": "figure:figure_a1",
+      "kind": "ui_companion",
+      "verification": {
+        "state": "candidate",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "legacy_unverified",
+        "verifier": null,
+        "verified_at_utc": null,
+        "evidence_pdf_indices": [],
+        "note": "Existing UI navigation aid; no source entailment or applicability claim."
+      }
+    },
+    {
+      "from_id": "table:table_a1",
+      "to_id": "figure:figure_a4",
+      "kind": "ui_companion",
+      "verification": {
+        "state": "candidate",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "legacy_unverified",
+        "verifier": null,
+        "verified_at_utc": null,
+        "evidence_pdf_indices": [],
+        "note": "Existing UI navigation aid; no source entailment or applicability claim."
+      }
+    },
+    {
+      "from_id": "table:table_a2",
+      "to_id": "figure:figure_a1",
+      "kind": "ui_companion",
+      "verification": {
+        "state": "candidate",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "legacy_unverified",
+        "verifier": null,
+        "verified_at_utc": null,
+        "evidence_pdf_indices": [],
+        "note": "Existing UI navigation aid; no source entailment or applicability claim."
+      }
+    },
+    {
+      "from_id": "table:table_a2",
+      "to_id": "figure:figure_a2",
+      "kind": "ui_companion",
+      "verification": {
+        "state": "candidate",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "legacy_unverified",
+        "verifier": null,
+        "verified_at_utc": null,
+        "evidence_pdf_indices": [],
+        "note": "Existing UI navigation aid; no source entailment or applicability claim."
+      }
+    },
+    {
+      "from_id": "table:table_a3",
+      "to_id": "figure:figure_a1",
+      "kind": "ui_companion",
+      "verification": {
+        "state": "candidate",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "legacy_unverified",
+        "verifier": null,
+        "verified_at_utc": null,
+        "evidence_pdf_indices": [],
+        "note": "Existing UI navigation aid; no source entailment or applicability claim."
+      }
+    },
+    {
+      "from_id": "table:table_a4",
+      "to_id": "figure:figure_a1",
+      "kind": "ui_companion",
+      "verification": {
+        "state": "candidate",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "legacy_unverified",
+        "verifier": null,
+        "verified_at_utc": null,
+        "evidence_pdf_indices": [],
+        "note": "Existing UI navigation aid; no source entailment or applicability claim."
+      }
+    },
+    {
+      "from_id": "table:table_a5",
+      "to_id": "figure:figure_a2",
+      "kind": "ui_companion",
+      "verification": {
+        "state": "candidate",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "legacy_unverified",
+        "verifier": null,
+        "verified_at_utc": null,
+        "evidence_pdf_indices": [],
+        "note": "Existing UI navigation aid; no source entailment or applicability claim."
+      }
+    },
+    {
+      "from_id": "table:table_a5",
+      "to_id": "figure:figure_a5",
+      "kind": "ui_companion",
+      "verification": {
+        "state": "candidate",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "legacy_unverified",
+        "verifier": null,
+        "verified_at_utc": null,
+        "evidence_pdf_indices": [],
+        "note": "Existing UI navigation aid; no source entailment or applicability claim."
+      }
+    },
+    {
+      "from_id": "table:table_a5",
+      "to_id": "figure:figure_a6",
+      "kind": "ui_companion",
+      "verification": {
+        "state": "candidate",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "legacy_unverified",
+        "verifier": null,
+        "verified_at_utc": null,
+        "evidence_pdf_indices": [],
+        "note": "Existing UI navigation aid; no source entailment or applicability claim."
+      }
+    },
+    {
+      "from_id": "table:table_a2",
+      "to_id": "table:table_a1",
+      "kind": "explicit_reference",
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          83
+        ],
+        "note": "Source location only; no entailment or region certification."
+      }
+    },
+    {
+      "from_id": "table:table_a3",
+      "to_id": "table:table_a1",
+      "kind": "explicit_reference",
+      "verification": {
+        "state": "verified",
+        "source_sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+        "method": "caption_text",
+        "verifier": "local-source-audit",
+        "verified_at_utc": "2026-10-15T17:20:36+00:00",
+        "evidence_pdf_indices": [
+          84
+        ],
+        "note": "Source location only; no entailment or region certification."
+      }
+    }
+  ],
+  "legacy_aliases": [
+    {
+      "legacy_value": "Figure B16",
+      "namespace": "display",
+      "target_ids": [
+        "figure:figure_b16a",
+        "figure:figure_b16b",
+        "figure:figure_b16c"
+      ],
+      "resolution": "group"
+    },
+    {
+      "legacy_value": "clauses_1_to_3_scope",
+      "namespace": "chunk_id",
+      "target_ids": [],
+      "resolution": "unresolved"
+    }
+  ]
+}

@@ -19,10 +19,14 @@ from src.config import (
     PARSED_TABLES_DIR,
     PARSED_FIGURES_DIR,
     ANNEX_B_START_PAGE,
+    ANNEX_B_END_PAGE,
     ANNEX_A_START_PAGE,
     GLOSSARY_START_PAGE,
     FIGURE_RENDER_DPI
 )
+
+from src.standard_manifest import get_manifest
+
 
 def clean_text_line(line: str) -> str:
     # Replace non-printable characters and normalize dashes
@@ -39,7 +43,7 @@ def extract_clause4_glossary(doc: fitz.Document):
     
     # Also extract Clauses 1-3 preamble
     preamble_lines = []
-    for pno in range(0, GLOSSARY_START_PAGE):
+    for pno in range(get_manifest().section("Clause 1")["spans"][0]["start_pdf_index"], GLOSSARY_START_PAGE):
         p_text = doc[pno].get_text()
         for l in p_text.split('\n'):
             cleaned = clean_text_line(l)
@@ -49,7 +53,7 @@ def extract_clause4_glossary(doc: fitz.Document):
     chunks.append({
         "chunk_id": "clauses_1_to_3_scope",
         "clause": "Clauses 1–3",
-        "pdf_page_start": 0,
+        "pdf_page_start": get_manifest().section("Clause 1")["spans"][0]["start_pdf_index"],
         "pdf_page_end": GLOSSARY_START_PAGE - 1,
         "printed_pages": "1–4",
         "title": "Scope, Normative References, and General Requirements",
@@ -65,18 +69,15 @@ def extract_clause4_glossary(doc: fitz.Document):
         lines = [l for l in lines if l]
         
         # Determine printed page
-        printed_page = None
+        printed_page = int(get_manifest().document["pages"][pno]["printed_label"])
         filtered_lines = []
         for l in lines:
             if re.match(r'^\d+$', l):
-                printed_page = int(l)
                 continue
             if "CLAUSE 4. GLOSSARY" in l or "AWS A3.0M/A3.0:2020" in l:
                 continue
             filtered_lines.append(l)
         
-        if printed_page is None:
-            printed_page = pno - 12 # estimate fallback
             
         page_content = " ".join(filtered_lines)
         
@@ -108,15 +109,11 @@ def extract_annex_a_tables(doc: fitz.Document):
     table_chunks = []
     
     current_table = "Table A1"
-    table_lines = {
-        "Table A1": [],
-        "Table A2": [],
-        "Table A3": [],
-        "Table A4": [],
-        "Table A5": []
-    }
+    table_lines = {label: [] for label in get_manifest().labels("tables") if label.startswith("Table A")}
     
-    for pno in range(ANNEX_A_START_PAGE, ANNEX_B_START_PAGE):
+    table_pages = sorted({a["pdf_index"] for label in get_manifest().labels("tables")
+                          if label.startswith("Table A") for a in get_manifest().anchors(label)})
+    for pno in table_pages:
         text = doc[pno].get_text()
         for line in text.split('\n'):
             l = clean_text_line(line)
@@ -124,9 +121,9 @@ def extract_annex_a_tables(doc: fitz.Document):
                 continue
             
             # Table switch detection
-            for t_id in ["Table A1", "Table A2", "Table A3", "Table A4", "Table A5"]:
-                if t_id in l:
-                    current_table = t_id
+            caption = re.sub(r"\s+\(Continued\)$", "", l)
+            if caption in table_lines:
+                current_table = caption
             
             table_lines[current_table].append(l)
 
@@ -156,13 +153,13 @@ def extract_annex_a_tables(doc: fitz.Document):
     print(f"Extracted {len(table_chunks)} tables to {PARSED_TABLES_DIR}")
 
 def extract_annex_b_figures(doc: fitz.Document, render_images: bool = True):
-    print(f"Extracting Annex B Figures from pages {ANNEX_B_START_PAGE} to {len(doc) - 1}...")
+    print(f"Extracting Annex B Figures from pages {ANNEX_B_START_PAGE} to {ANNEX_B_END_PAGE}...")
     PARSED_FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     figures = []
     
     fig_title_regex = re.compile(r'Figure\s+(B\d+)(?:\s*\(Continued\))?\s*[—–\-]?\s*(.*)', re.IGNORECASE)
     
-    for pno in range(ANNEX_B_START_PAGE, len(doc)):
+    for pno in range(ANNEX_B_START_PAGE, ANNEX_B_END_PAGE + 1):
         page = doc[pno]
         text = page.get_text()
         
@@ -170,13 +167,7 @@ def extract_annex_b_figures(doc: fitz.Document, render_images: bool = True):
         lines = [clean_text_line(l) for l in text.split('\n')]
         lines = [l for l in lines if l]
         
-        printed_page = None
-        for l in lines:
-            if re.match(r'^\d+$', l):
-                printed_page = int(l)
-                break
-        if printed_page is None:
-            printed_page = pno - 12
+        printed_page = int(get_manifest().document["pages"][pno]["printed_label"])
             
         # Detect figure title
         fig_id = None

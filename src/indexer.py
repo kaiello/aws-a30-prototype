@@ -44,6 +44,7 @@ from src.config import (
     EMBEDDING_DIM
 )
 from src.security_boundaries import validate_model_endpoint
+from src.vector_reader_compat import install_vector_reader
 
 _embed_model = None
 _RAG_INSTANCES: Dict[Tuple, LightRAG] = {}
@@ -129,6 +130,7 @@ def get_rag_instance(
         ),
         llm_model_name=effective_model
     )
+    install_vector_reader(rag.chunks_vdb)
     _RAG_INSTANCES[cache_key] = rag
     return rag
 

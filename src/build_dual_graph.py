@@ -24,6 +24,7 @@ import networkx as nx
 from src.config import STORAGE_DIR, PARSED_FIGURES_DIR, PARSED_TABLES_DIR
 from src.figure_inspectors import FIGURE_INSPECTORS, FIGURE_CATEGORIES
 from src.citation_checker import extract_citations
+from src.standard_manifest import get_manifest
 
 GRAPHML_RAW_PATH = STORAGE_DIR / "graph_chunk_entity_relation.graphml"
 CHUNKS_KV_PATH = STORAGE_DIR / "kv_store_text_chunks.json"
@@ -34,39 +35,11 @@ DUAL_GRAPHML_PATH = STORAGE_DIR / "dual_layer_knowledge_graph.graphml"
 DUAL_SQLITE_PATH = STORAGE_DIR / "dual_layer_registry.db"
 
 # Master document specification
-DOCUMENT_META = {
-    "id": "doc:aws_a30_2020",
-    "title": "AWS A3.0M/A3.0:2020 Standard Welding Terms and Definitions",
-    "edition": "2020",
-    "publisher": "American Welding Society",
-    "total_pages": 180,
-    "year": 2020
-}
+DOCUMENT_META = get_manifest().document_metadata()
 
-STANDARD_CLAUSES = [
-    {"id": "clause:clause_1", "clause_num": "Clause 1", "title": "Scope", "pages": "1"},
-    {"id": "clause:clause_2", "clause_num": "Clause 2", "title": "Normative References", "pages": "1"},
-    {"id": "clause:clause_3", "clause_num": "Clause 3", "title": "Terms and Definitions (General)", "pages": "1-2"},
-    {"id": "clause:clause_4", "clause_num": "Clause 4", "title": "Glossary of Welding Terms", "pages": "2-73"},
-    {"id": "clause:annex_a", "clause_num": "Annex A", "title": "Process Classification Charts", "pages": "74-84"},
-    {"id": "clause:annex_b", "clause_num": "Annex B", "title": "Figures & Joint Anatomy", "pages": "85-171"},
-    {"id": "clause:annex_c", "clause_num": "Annex C", "title": "Subcommittee Style and Rationale", "pages": "172-176"},
-    {"id": "clause:annex_d", "clause_num": "Annex D", "title": "Summary of 2020 Revisions", "pages": "177-184"},
-    {"id": "clause:annex_e", "clause_num": "Annex E", "title": "Guidelines for Preparing Technical Inquiries", "pages": "185"},
-    {"id": "clause:annex_f", "clause_num": "Annex F", "title": "Official Inquiry Procedures", "pages": "186-187"},
-]
+STANDARD_CLAUSES = get_manifest().section_metadata()
 
-STANDARD_TABLES = [
-    {"id": "table:table_a1", "table_num": "Table A1", "title": "Letter Designations of Welding, Allied, and Other Processes", "clause": "clause:annex_a", "page": "82-83"},
-    {"id": "table:table_a2", "table_num": "Table A2", "title": "Alphabetical Cross-Reference by Process", "clause": "clause:annex_a", "page": "84"},
-    {"id": "table:table_a3", "table_num": "Table A3", "title": "Alphabetical Cross-Reference by Letter Designation", "clause": "clause:annex_a", "page": "85"},
-    {"id": "table:table_d1", "table_num": "Table D1", "title": "New Terms in the 2020 Edition", "clause": "clause:annex_d", "page": "177-179"},
-    {"id": "table:table_d2", "table_num": "Table D2", "title": "Terms with Significant Technical Changes in 2020", "clause": "clause:annex_d", "page": "180"},
-    {"id": "table:table_d3", "table_num": "Table D3", "title": "Terms with Editorial or Formatting Changes", "clause": "clause:annex_d", "page": "181"},
-    {"id": "table:table_d4", "table_num": "Table D4", "title": "Terms Changed from Standard to Nonstandard in 2020", "clause": "clause:annex_d", "page": "182"},
-    {"id": "table:table_d5", "table_num": "Table D5", "title": "Terms Changed from Nonstandard to Standard in 2020", "clause": "clause:annex_d", "page": "183"},
-    {"id": "table:table_d6", "table_num": "Table D6", "title": "Terms Deleted in the 2020 Edition", "clause": "clause:annex_d", "page": "184"},
-]
+STANDARD_TABLES = get_manifest().table_metadata()
 
 def slugify(text: str) -> str:
     s = re.sub(r'[^a-zA-Z0-9]+', '_', text.strip()).strip('_').lower()
@@ -127,6 +100,7 @@ def build_dual_layer_graph() -> nx.MultiDiGraph:
         edition=DOCUMENT_META["edition"],
         publisher=DOCUMENT_META["publisher"],
         total_pages=DOCUMENT_META["total_pages"],
+        source_sha256=DOCUMENT_META["source_sha256"],
         name=DOCUMENT_META["title"]
     )
 
@@ -140,6 +114,7 @@ def build_dual_layer_graph() -> nx.MultiDiGraph:
             clause_num=cl["clause_num"],
             title=cl["title"],
             pages=cl["pages"],
+            normative_status=cl["normative_status"],
             name=f"{cl['clause_num']}: {cl['title']}"
         )
         G.add_edge(doc_id, cl_id, key="CONTAINS_CLAUSE", rel_type="CONTAINS_CLAUSE", layer="evidence")
@@ -160,7 +135,7 @@ def build_dual_layer_graph() -> nx.MultiDiGraph:
             title=fig_info.get("title", ""),
             page=fig_info.get("page", ""),
             category=fig_info.get("category", ""),
-            image_file=fig_info.get("image_file", f"Figure_{clean_num}.png"),
+            image_file=Path(get_manifest().asset_paths(fig_id, {".png"})[0]).name,
             name=f"{fig_id} - {fig_info.get('title', '')}"
         )
         G.add_edge(parent_clause, fig_node_id, key="CONTAINS_FIGURE", rel_type="CONTAINS_FIGURE", layer="evidence")

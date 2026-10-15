@@ -29,8 +29,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
     # GROUP 1: ANNEX A CLASSIFICATION TREES (A1 - A6)
     # =========================================================================
     "Figure A1": {
-        "title": "Master Chart of Welding and Joining Processes",
-        "page": "Annex A, p. 75 (PDF p. 88)",
         "category": "classification",
         "groups": [
             {
@@ -49,8 +47,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure A2": {
-        "title": "Master Chart of Allied Processes",
-        "page": "Annex A, p. 76 (PDF p. 89)",
         "category": "classification",
         "groups": [
             {
@@ -67,8 +63,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure A3": {
-        "title": "Joining Method Chart",
-        "page": "Annex A, p. 76 (PDF p. 89)",
         "category": "classification",
         "groups": [
             {
@@ -84,8 +78,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure A4": {
-        "title": "Fusion Welding Classification Chart",
-        "page": "Annex A, p. 77 (PDF p. 90)",
         "category": "classification",
         "groups": [
             {
@@ -101,8 +93,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure A5": {
-        "title": "Solid-State Welding Classification Chart",
-        "page": "Annex A, p. 78 (PDF p. 91)",
         "category": "classification",
         "groups": [
             {
@@ -120,8 +110,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure A6": {
-        "title": "Brazing and Soldering Classification Chart",
-        "page": "Annex A, p. 79 (PDF p. 92)",
         "category": "classification",
         "groups": [
             {
@@ -165,8 +153,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
     # GROUP 2: ANNEX B JOINT GEOMETRY & EDGES (B1 - B7)
     # =========================================================================
     "Figure B1": {
-        "title": "Joint Types",
-        "page": "Annex B, p. 82 (PDF p. 95)",
         "category": "joint_geometry",
         "groups": [
             {
@@ -194,8 +180,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B2": {
-        "title": "Flanged Joints",
-        "page": "Annex B, p. 83 (PDF p. 96)",
         "category": "joint_geometry",
         "groups": [
             {
@@ -212,8 +196,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B3": {
-        "title": "Spliced Butt Joints",
-        "page": "Annex B, p. 84 (PDF p. 97)",
         "category": "joint_geometry",
         "groups": [
             {
@@ -228,8 +210,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B4": {
-        "title": "Joint Root",
-        "page": "Annex B, p. 85 (PDF p. 98)",
         "category": "joint_geometry",
         "groups": [
             {
@@ -245,8 +225,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B5": {
-        "title": "Groove Face, Root Edge, and Root Face",
-        "page": "Annex B, p. 86 (PDF p. 99)",
         "category": "joint_geometry",
         "groups": [
             {
@@ -262,8 +240,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B6": {
-        "title": "Bevel Angle, Bevel Face, Bevel Depth, Groove Angle, Groove Depth, Bevel Radius, and Root Opening",
-        "page": "Annex B, p. 87-89 (PDF pp. 100-102)",
         "category": "joint_geometry",
         "groups": [
             {
@@ -280,8 +256,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B7": {
-        "title": "Edge Shapes",
-        "page": "Annex B, p. 90 (PDF p. 103)",
         "category": "joint_geometry",
         "groups": [
             {
@@ -302,8 +276,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
     # GROUP 3: ANNEX B GROOVES, FLANGED WELDS, TABS & WORKPIECES (B8 - B15)
     # =========================================================================
     "Figure B8": {
-        "title": "Single-Groove Weld Types",
-        "page": "Annex B, p. 91-93 (PDF pp. 104-106)",
         "category": "grooves_tabs",
         "groups": [
             {
@@ -321,8 +293,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B9": {
-        "title": "Double-Groove Weld Types",
-        "page": "Annex B, p. 94-95 (PDF pp. 107-108)",
         "category": "grooves_tabs",
         "groups": [
             {
@@ -338,8 +308,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B10": {
-        "title": "Welds in Flanged Joints",
-        "page": "Annex B, p. 96 (PDF p. 109)",
         "category": "grooves_tabs",
         "groups": [
             {
@@ -354,8 +322,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B11": {
-        "title": "Butting and Nonbutting Workpiece or Workpieces",
-        "page": "Annex B, p. 97 (PDF p. 110)",
         "category": "grooves_tabs",
         "groups": [
             {
@@ -370,8 +336,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B12": {
-        "title": "End Dam, Shelf, Split Pipe Backing, Sump, Starting Weld Tab, and Runoff Tab",
-        "page": "Annex B, p. 98 (PDF p. 111)",
         "category": "grooves_tabs",
         "groups": [
             {
@@ -389,8 +353,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B13": {
-        "title": "Edge Weld, Scarf Groove, Joint Mismatch, Root Face Extension, Consumable Insert, and Preplaced Filler Metal",
-        "page": "Annex B, p. 99 (PDF p. 112)",
         "category": "grooves_tabs",
         "groups": [
             {
@@ -407,8 +369,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B14": {
-        "title": "Seam and Spot Weld Types",
-        "page": "Annex B, p. 100 (PDF p. 113)",
         "category": "grooves_tabs",
         "groups": [
             {
@@ -424,8 +384,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B15": {
-        "title": "Various Weld Types",
-        "page": "Annex B, p. 101 (PDF p. 114)",
         "category": "grooves_tabs",
         "groups": [
             {
@@ -446,8 +404,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
     # GROUP 4: ANNEX B WELDING POSITIONS & COORDINATES (B16A - B21)
     # =========================================================================
     "Figure B16A": {
-        "title": "Welding Position Diagram for Groove Welds and Surfacing Welds in Plate",
-        "page": "Annex B, p. 102 (PDF p. 115)",
         "category": "positions",
         "groups": [
             {
@@ -465,8 +421,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B16B": {
-        "title": "Welding Position Diagram for Fillet Welds in Plate",
-        "page": "Annex B, p. 103 (PDF p. 116)",
         "category": "positions",
         "groups": [
             {
@@ -482,8 +436,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B16C": {
-        "title": "Welding Position Diagram for Groove Welds and Surfacing Welds in Pipe",
-        "page": "Annex B, p. 104 (PDF p. 117)",
         "category": "positions",
         "groups": [
             {
@@ -497,8 +449,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B17": {
-        "title": "Welding Test Positions and Their Designations for Groove Welds and Surfacing Welds in Plate",
-        "page": "Annex B, p. 105 (PDF p. 118)",
         "category": "positions",
         "groups": [
             {
@@ -514,8 +464,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B18": {
-        "title": "Welding Test Positions and Their Designations for Fillet Welds in Plate",
-        "page": "Annex B, p. 106-107 (PDF pp. 119-120)",
         "category": "positions",
         "groups": [
             {
@@ -531,8 +479,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B19": {
-        "title": "Welding Test Positions and Their Designations for Groove Welds and Surfacing in Pipe",
-        "page": "Annex B, p. 108-109 (PDF pp. 121-122)",
         "category": "positions",
         "groups": [
             {
@@ -548,8 +494,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B20": {
-        "title": "Welding Test Positions and Their Designations for Fillet Welds in Pipe",
-        "page": "Annex B, p. 110-111 (PDF pp. 123-124)",
         "category": "positions",
         "groups": [
             {
@@ -566,8 +510,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B21": {
-        "title": "Position of Beam, Filler Material, Gun, or Torch",
-        "page": "Annex B, p. 112 (PDF p. 125)",
         "category": "positions",
         "groups": [
             {
@@ -588,8 +530,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
     # GROUP 5: ANNEX B WELD BEADS, NOMENCLATURE & THROATS (B22 - B26)
     # =========================================================================
     "Figure B22": {
-        "title": "Weld Bead Types",
-        "page": "Annex B, p. 113 (PDF p. 126)",
         "category": "beads_throats",
         "groups": [
             {
@@ -605,8 +545,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B23": {
-        "title": "Welding Application Nomenclature",
-        "page": "Annex B, p. 114-116 (PDF pp. 127-129)",
         "category": "beads_throats",
         "groups": [
             {
@@ -623,8 +561,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B24": {
-        "title": "Parts of a Weld",
-        "page": "Annex B, p. 117-122 (PDF pp. 130-135)",
         "category": "beads_throats",
         "groups": [
             {
@@ -641,8 +577,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B25": {
-        "title": "Weld Sizes",
-        "page": "Annex B, p. 123-126 (PDF pp. 136-139)",
         "category": "beads_throats",
         "groups": [
             {
@@ -659,8 +593,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B26": {
-        "title": "Groove Weld Size and Joint Penetration",
-        "page": "Annex B, p. 127-129 (PDF pp. 140-142)",
         "category": "beads_throats",
         "groups": [
             {
@@ -682,8 +614,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
     # GROUP 6: ANNEX B FUSION & DISCONTINUITIES (B27 - B33)
     # =========================================================================
     "Figure B27": {
-        "title": "Melt-Through and Root Surface Profile",
-        "page": "Annex B, p. 130 (PDF p. 143)",
         "category": "fusion_cracks",
         "groups": [
             {
@@ -698,8 +628,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B28": {
-        "title": "Complete Fusion",
-        "page": "Annex B, p. 131 (PDF p. 144)",
         "category": "fusion_cracks",
         "groups": [
             {
@@ -713,8 +641,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B29": {
-        "title": "Incomplete Fusion",
-        "page": "Annex B, p. 132 (PDF p. 145)",
         "category": "fusion_cracks",
         "groups": [
             {
@@ -729,8 +655,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B30": {
-        "title": "Fusion Welds (Transverse Section)",
-        "page": "Annex B, p. 133-134 (PDF pp. 146-147)",
         "category": "fusion_cracks",
         "groups": [
             {
@@ -745,8 +669,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B31": {
-        "title": "Joining Without Fusion",
-        "page": "Annex B, p. 135 (PDF p. 148)",
         "category": "fusion_cracks",
         "groups": [
             {
@@ -760,8 +682,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B32": {
-        "title": "Weld Discontinuities",
-        "page": "Annex B, p. 136-138 (PDF pp. 149-151)",
         "category": "fusion_cracks",
         "groups": [
             {
@@ -778,8 +698,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B33": {
-        "title": "Crack Types",
-        "page": "Annex B, p. 139 (PDF p. 152)",
         "category": "fusion_cracks",
         "groups": [
             {
@@ -800,8 +718,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
     # GROUP 7: ANNEX B TORCHES, GUNS, CUTTING & TRANSFERS (B34 - B43)
     # =========================================================================
     "Figure B34": {
-        "title": "Welding Current Polarity",
-        "page": "Annex B, p. 140 (PDF p. 153)",
         "category": "torches_cutting",
         "groups": [
             {
@@ -816,8 +732,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B35": {
-        "title": "Plasma Arc Torch Nomenclature",
-        "page": "Annex B, p. 141 (PDF p. 154)",
         "category": "torches_cutting",
         "groups": [
             {
@@ -833,8 +747,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B36": {
-        "title": "Gas Tungsten Arc Welding Torch Nomenclature",
-        "page": "Annex B, p. 141 (PDF p. 154)",
         "category": "torches_cutting",
         "groups": [
             {
@@ -850,8 +762,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B37": {
-        "title": "Electroslag Welding Process Nomenclature",
-        "page": "Annex B, p. 142 (PDF p. 155)",
         "category": "torches_cutting",
         "groups": [
             {
@@ -866,8 +776,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B38": {
-        "title": "Gas Metal Arc and Flux Cored Arc Welding Gun Nomenclature",
-        "page": "Annex B, p. 143 (PDF p. 156)",
         "category": "torches_cutting",
         "groups": [
             {
@@ -883,8 +791,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B39": {
-        "title": "Metal Transfer in Gas Metal Arc Welding",
-        "page": "Annex B, p. 144 (PDF p. 157)",
         "category": "torches_cutting",
         "groups": [
             {
@@ -900,8 +806,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B40": {
-        "title": "Oxyacetylene Flame Types",
-        "page": "Annex B, p. 145 (PDF p. 158)",
         "category": "torches_cutting",
         "groups": [
             {
@@ -917,8 +821,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B41": {
-        "title": "Oxygen Cutting",
-        "page": "Annex B, p. 146 (PDF p. 159)",
         "category": "torches_cutting",
         "groups": [
             {
@@ -934,8 +836,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B42": {
-        "title": "Filler Metal Packaging",
-        "page": "Annex B, p. 146 (PDF p. 159)",
         "category": "torches_cutting",
         "groups": [
             {
@@ -951,8 +851,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B43": {
-        "title": "Thermal Spraying Surface Preparation",
-        "page": "Annex B, p. 147 (PDF p. 160)",
         "category": "torches_cutting",
         "groups": [
             {
@@ -971,8 +869,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
     # GROUP 8: ANNEX B FRICTION, RESISTANCE & WAVEFORMS (B44 - B54)
     # =========================================================================
     "Figure B44": {
-        "title": "Generalized Diagram of Inertia Friction Welding",
-        "page": "Annex B, p. 148 (PDF p. 161)",
         "category": "friction_waveforms",
         "groups": [
             {
@@ -987,8 +883,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B45": {
-        "title": "Generalized Diagram of Direct Drive Friction Welding",
-        "page": "Annex B, p. 149 (PDF p. 162)",
         "category": "friction_waveforms",
         "groups": [
             {
@@ -1003,8 +897,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B46": {
-        "title": "Schematic of the Friction Stir Welding Process",
-        "page": "Annex B, p. 150 (PDF p. 163)",
         "category": "friction_waveforms",
         "groups": [
             {
@@ -1021,8 +913,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B47": {
-        "title": "Typical Arrangements for Multiple Spot Welding",
-        "page": "Annex B, p. 151 (PDF p. 164)",
         "category": "friction_waveforms",
         "groups": [
             {
@@ -1037,8 +927,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B48": {
-        "title": "Typical Arrangements for Single Spot Welds",
-        "page": "Annex B, p. 152 (PDF p. 165)",
         "category": "friction_waveforms",
         "groups": [
             {
@@ -1053,8 +941,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B49": {
-        "title": "Example of a Pulsation Welding Waveform for Resistance Spot Welding",
-        "page": "Annex B, p. 153 (PDF p. 166)",
         "category": "friction_waveforms",
         "groups": [
             {
@@ -1069,8 +955,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B50": {
-        "title": "Example of a Single-Pulse Resistance Spot Welding Waveform",
-        "page": "Annex B, p. 153 (PDF p. 166)",
         "category": "friction_waveforms",
         "groups": [
             {
@@ -1086,8 +970,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B51": {
-        "title": "Electro-Mechanical Synchronization in Typical Flash Welding Cycle",
-        "page": "Annex B, p. 154 (PDF p. 167)",
         "category": "friction_waveforms",
         "groups": [
             {
@@ -1103,8 +985,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B52": {
-        "title": "High-Frequency Resistance Welding",
-        "page": "Annex B, p. 155-156 (PDF pp. 168-169)",
         "category": "friction_waveforms",
         "groups": [
             {
@@ -1120,8 +1000,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B53": {
-        "title": "An Example of a Welding Cycle for Pulsed Welding",
-        "page": "Annex B, p. 157 (PDF p. 170)",
         "category": "friction_waveforms",
         "groups": [
             {
@@ -1136,8 +1014,6 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
         ]
     },
     "Figure B54": {
-        "title": "Typical GMAW, FCAW, and SAW Welding Cycle",
-        "page": "Annex B, p. 157 (PDF p. 170)",
         "category": "friction_waveforms",
         "groups": [
             {
@@ -1154,9 +1030,28 @@ FIGURE_INSPECTORS: Dict[str, Dict[str, Any]] = {
     }
 }
 
+from src.standard_manifest import get_manifest, ManifestError
+
+def _source_metadata(fig_key):
+    manifest = get_manifest()
+    item = manifest.element(fig_key)
+    if not item:
+        raise ManifestError("MANIFEST_REFERENCE_INVALID", "Figure registry has no verified source record.")
+    section = manifest.section(item["parent_id"])
+    pages = manifest.page_range(fig_key)
+    ordinal = manifest.page_range(fig_key, ordinal=True)
+    prefix = "pp." if len(item["anchors"]) > 1 else "p."
+    return {"title": item["title"], "page": f"{section['label']}, p. {pages} (PDF {prefix} {ordinal})"}
+
+if set(FIGURE_INSPECTORS) != set(get_manifest().labels("figures")):
+    raise ManifestError("MANIFEST_REFERENCE_INVALID", "Figure UI/source inventories differ.")
+for _key, _info in FIGURE_INSPECTORS.items():
+    _info.update(_source_metadata(_key))
+
 import json
 import re
 import urllib.parse
+from pathlib import Path
 from src.config import PARSED_FIGURES_DIR, BASE_DIR
 
 _BBOX_FILE = BASE_DIR / "parsed" / "figures" / "figure_bboxes.json"
@@ -1205,13 +1100,12 @@ def _enrich_chips_with_bboxes(fig_key: str, groups: List[Dict[str, Any]]) -> Lis
     return enriched
 
 def resolve_figure_image_filename(fig_key: str) -> str:
-    """Finds matching PNG filename on disk for a figure key."""
-    clean_num = fig_key.replace("Figure ", "").strip().upper()
-    matches = list(PARSED_FIGURES_DIR.glob(f"Figure_{clean_num}_*.png"))
-    if not matches:
-        base_num = re.sub(r'[A-Z]$', '', clean_num)
-        matches = list(PARSED_FIGURES_DIR.glob(f"Figure_{base_num}_*.png"))
-    return matches[0].name if matches else ""
+    """Return the explicit first-page binding, independent of directory order."""
+    label = str(fig_key).strip()
+    if re.fullmatch(r"[AB]\.?\d+[A-Z]?", label, re.IGNORECASE):
+        label = "Figure " + label
+    paths = get_manifest().asset_paths(label, {".png"})
+    return Path(paths[0]).name if paths else ""
 
 def get_figure_data(fig_key: str) -> Dict[str, Any]:
     """Retrieves metadata and chips for a specific figure ID (e.g. 'Figure A6' or 'Figure B25')."""
@@ -1221,8 +1115,11 @@ def get_figure_data(fig_key: str) -> Dict[str, Any]:
     data = FIGURE_INSPECTORS.get(clean_key, {})
     if data:
         data = dict(data)
-        if "image_file" not in data:
-            data["image_file"] = resolve_figure_image_filename(clean_key)
+        data.update(_source_metadata(clean_key))
+        paths = get_manifest().asset_paths(clean_key, {".png"})
+        data["image_files"] = [Path(path).name for path in paths]
+        data["image_file"] = data["image_files"][0] if paths else ""
+        data["source_anchors"] = get_manifest().source_anchors(clean_key)
         data["groups"] = _enrich_chips_with_bboxes(clean_key, data.get("groups", []))
     return data
 
