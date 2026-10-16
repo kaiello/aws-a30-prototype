@@ -89,12 +89,12 @@ def test_valid_range_is_bounded_by_inventory_not_arbitrary_twenty_member_limit()
 
 @pytest.mark.parametrize("text", [
     "Figures B54–B55", "Tables A1–A10", "Figures B3–B1", "Figures A1-B3",
-    "Figures B15–B17", "Figures B16A–B16C", "Figure B1 to B3", "Figure B1 through B3",
+    "Figures B15–B17", "Figures B16A–B16C", "Figure B1 to B3", "Figure B1 through Figure B3",
     "Figures B1/B3", "Figure B1–", "Figure B1--B3", "Figure B1–B1.5",
     "Figure B16C-extra", "Clause 1–4", "Annex A–F",
     "Figures B1–" + "9" * 5000,
 ], ids=["unknown-end", "unknown-table", "descending", "mixed-prefix", "group-interior",
-        "suffix-range", "to", "through", "slash", "missing-end", "double-dash",
+        "suffix-range", "to", "repeated-kind-through", "slash", "missing-end", "double-dash",
         "decimal-suffix", "trailing-suffix", "clause-range", "annex-range", "huge-end"])
 def test_invalid_or_unsupported_expression_never_accepts_partial_exact_citation(text):
     result = extract_citations(text)

@@ -1,5 +1,56 @@
 # Multi-Agent System (MAS) Operating Guidelines: AWS A3.0 Prototype
 
+### Publication and running-app evidence boundary (2026-10-16)
+
+Keep the actual guarded API 19/19 and Chrome 8/8 smoke results distinct from
+synthetic fixtures and semantic accuracy. The favicon 404 still fails strict
+clean-network acceptance; provider-disabled runtime checks do not exercise
+generated-answer behavior. Preserve original failed fresh 2/6 and 3/6 results
+and the exposed DEVELOPMENT 4/6,489/491 replay, including both conservative
+scalar-policy mismatches. Publish implementation, synthetic tests and aggregate
+source-safe documentation only; keep licensed sources, private cases/labels/raw
+answers, credentials, local machine receipts and generated stores local. This
+historical evidence grants no future provider, restart or publication authority.
+
+### Through-range repair evidence boundary (2026-10-16)
+
+Preserve the element-only full-match `through` rule and existing canonical
+range guards; do not broaden page grammar or normalize unsupported endpoints.
+Compound asset-fault regressions must retain all required source records,
+independent diagnostics and healthy subsets without support upgrades. The
+first fresh 3/6, 461/491 result remains frozen; the repaired exposed replay is
+DEVELOPMENT 4/6, 489/491. Its two remaining scalar-policy failures remain
+failures. The original plan allows unassessed or insufficient in these pure
+resolver cases; generated-answer rejection is a separate wrapper boundary.
+No runtime reload, new cohort or publication authority follows from this repair.
+
+### Claim/evidence resolution boundary (2026-10-16)
+
+Preserve per-element asset failures without dropping unrelated source identity
+or claim diagnostics. Direct inspection consumes ordered continuations.
+Canonical parent qualifiers and independent sources have distinct binding roles.
+Generated source-identity failures return insufficient evidence; rejected links
+remain diagnostics, never asserted/supporting facts. Keep fixture acceptance
+separate from the unreloaded app, semantic grading and failed frozen workflow gate.
+
+Use the canonical complete-reference parser and per-asset validator. Preserve
+raw mentions/qualifiers, canonical identity, explicit per-claim selectors, native
+entry/span/hash proof, raw declaration order and validated render order. Keep
+optional companions separate from required evidence. Only server-derived
+reviewed fact views grant support; client flags, page overlap, available pixels
+and graph links do not. Generic extraction remains incomplete and unassessed.
+The [implementation receipt](claim_evidence_implementation.md) retains original
+failed development scoring and a separately amended navigation protocol. Do not
+relabel replayed cases as fresh, state-contract metrics as semantic truth, or
+offline UI checks as live browser/API acceptance. No publication or runtime
+reload authority is granted by this receipt.
+
+Keep literal citation roles separate from selected-context provenance. Retain
+selected navigation annotations and reject them as required selected evidence;
+do not rewrite an explicit direct citation as navigation to satisfy a grader.
+Preserve the first fresh 2/6 result and frozen strict expectations. Later exposed
+replays are DEVELOPMENT, including after the conservative role-selection repair.
+
 ### Bounded answer grounding boundary (2026-10-16)
 
 Preserve the pure reviewed-fact composer, complete alternative/sense groups, exact span/hash/source bindings and explicit outcome/origin/assessment contracts. A supported asserted fact is not proof of complete question coverage; leave generated/unassessed scores nullable and do not restore graph-derived truth or unconditional verification labels. Keep frozen original/holdout cases and rubric denominators unchanged. [The current receipt](answer_grounding_implementation.md) preserves the original two omissions and reports their repaired DEVELOPMENT replay separately; reused holdouts cannot count as fresh unseen validation. Keep application scope-policy notes separate from factual claims and native source anchors. Real-browser query/figure flows pass with a retained favicon 404; synthetic tests and a failed clean-network assertion must not be relabeled as complete clean-browser acceptance. Local inference, reloads, browser/API actions, rebuilds and publication require their own applicable owner authorization; this historical receipt grants none.

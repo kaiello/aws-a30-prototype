@@ -677,6 +677,7 @@ HTML_INDEX = """<!DOCTYPE html>
                 <div class="answer-content" id="answerContent"></div>
                 <div class="citations-box" id="citationsBox"></div>
                 <div id="groundedClaimsBox" style="margin-top: 16px; display: none;"></div>
+                <div id="claimEvidenceBox" role="region" aria-label="Claim evidence links" style="margin-top: 16px; display: none;"></div>
                 <div id="seeAlsoBox" style="margin-top: 16px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: none;"></div>
                 <div id="epistemicTraceBox" style="margin-top: 16px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: none;"></div>
                 <div id="answerRouteBox" style="margin-top: 16px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: none;"></div>
@@ -833,6 +834,83 @@ HTML_INDEX = """<!DOCTYPE html>
             }
         }
 
+        function evidenceFileName(path) {
+            return String(path || "").replaceAll(String.fromCharCode(92), "/").split("/").pop();
+        }
+
+        function appendEvidenceImage(parent, path, caption, route) {
+            const fileName = evidenceFileName(path);
+            if (!fileName) return null;
+            // A payload supplies an asset name, never an image URL or handler.
+            const url = route + encodeURIComponent(fileName);
+            const card = document.createElement("div");
+            card.className = "figure-card";
+            appendEvidenceText(card, "div", caption).className = "figure-caption";
+            const container = document.createElement("div");
+            container.className = "figure-img-container";
+            container.title = "Click magnifying glass to zoom & pan in high resolution";
+            container.tabIndex = 0;
+            container.setAttribute("role", "button");
+            container.setAttribute("aria-label", "Zoom " + caption);
+            const open = () => openImageModal(url, caption);
+            container.addEventListener("click", open);
+            container.addEventListener("keydown", event => {
+                if (event.key === "Enter" || event.key === " ") {event.preventDefault(); open();}
+            });
+            const image = document.createElement("img");
+            image.src = url;
+            image.alt = caption;
+            container.appendChild(image);
+            appendEvidenceText(container, "span", "Zoom / Pan").className = "zoom-badge";
+            card.appendChild(container);
+            parent.appendChild(card);
+            return card;
+        }
+
+        function renderClaimEvidence(data) {
+            const panel = document.getElementById("claimEvidenceBox");
+            panel.textContent = "";
+            const links = Array.isArray(data.claim_evidence_links) ? data.claim_evidence_links : [];
+            panel.style.display = links.length ? "block" : "none";
+            if (!links.length) return;
+            const answerWithheld = (data.claim_evidence_assessment || {}).answer_withheld === true;
+            appendEvidenceText(panel, "strong", answerWithheld ? "Rejected generated claim diagnostics" : "Claim evidence links");
+            if (answerWithheld) appendEvidenceText(panel, "div", "The generated answer was withheld. The text below is rejected output retained for source-identity diagnostics; it is not an asserted answer or proof of support.");
+            appendEvidenceText(panel, "div", "Reference resolution, evidence binding, asset availability and claim support are separate results.");
+            links.forEach((link, index) => {
+                const row = document.createElement("div");
+                row.style.cssText = "background: var(--bg-card); border-left: 3px solid #38bdf8; border-radius: 4px; padding: 8px 12px; margin-top: 8px; font-size: 12.5px;";
+                appendEvidenceText(row, "strong", "[" + (link.claim_id || "Claim " + (index + 1)) + "] " + (link.claim || ""));
+                for (const [label, value] of [
+                    ["Reference resolution", link.reference_status || "not_cited"],
+                    ["Evidence binding", link.binding_status || "unavailable"],
+                    ["Asset availability", link.asset_status || "unavailable"],
+                    ["Claim support", link.support_status || "UNASSESSED"]
+                ]) appendEvidenceText(row, "div", label + ": " + value);
+                const mentions = Array.isArray(link.mentions) ? link.mentions : [];
+                mentions.forEach(mention => appendEvidenceText(row, "div", "Citation mention: " + (mention.raw || mention.requested_label || "None explicit")));
+                const evidence = Array.isArray(link.ordered_evidence) ? link.ordered_evidence : [];
+                evidence.forEach(item => {
+                    const source = document.createElement("div");
+                    const relationship = item.relationship === "navigation_candidate" ? "Navigation candidate" : item.relationship === "direct" ? "Direct evidence" : "Source reference";
+                    appendEvidenceText(source, "span", relationship + ": ");
+                    appendSourceReference(source, item.label || item.element_id || "Source reference");
+                    appendEvidenceText(source, "div", "Asset availability: " + (item.asset_status || "unavailable"));
+                    const anchors = Array.isArray(item.source_anchors) ? item.source_anchors : [];
+                    anchors.forEach(anchor => appendEvidenceText(source, "div", "Source anchor: " + [anchor.section_id, anchor.printed_label == null ? "" : "p. " + anchor.printed_label].filter(Boolean).join(", ")));
+                    const assets = Array.isArray(item.assets) ? item.assets : [];
+                    assets.forEach((asset, assetIndex) => {
+                        const orders = Array.isArray(asset.source_anchor_orders) ? asset.source_anchor_orders.join(", ") : "unspecified";
+                        appendEvidenceText(source, "div", "Asset " + (assetIndex + 1) + ": " + evidenceFileName(asset.path) + " (" + (asset.kind || "asset") + "; " + (asset.verification_state || "unverified") + "; source anchor orders: " + orders + ")");
+                    });
+                    row.appendChild(source);
+                });
+                const diagnostics = Array.isArray(link.diagnostics) ? link.diagnostics : [];
+                diagnostics.forEach(code => appendEvidenceText(row, "div", "Diagnostic: " + code));
+                panel.appendChild(row);
+            });
+        }
+
         function renderAnswerEvidence(data) {
             const assessment = data.answer_assessment || {};
             const reviewed = assessment.status === "SUPPORTED_REVIEWED_FACTS" && assessment.validated === true;
@@ -904,6 +982,8 @@ HTML_INDEX = """<!DOCTYPE html>
                 });
             }
 
+            renderClaimEvidence(data);
+
             const seeAlsoBox = document.getElementById("seeAlsoBox");
             seeAlsoBox.textContent = "";
             const terms = Array.isArray(data.see_also) ? data.see_also : [];
@@ -951,9 +1031,11 @@ HTML_INDEX = """<!DOCTYPE html>
             }
         }
 
+        let searchGeneration = 0;
         async function executeSearch() {
             const query = document.getElementById("queryInput").value.trim();
             if (!query) return;
+            const generation = ++searchGeneration;
 
             const engine = document.getElementById("engineSelect").value;
             const mode = document.getElementById("modeSelect").value;
@@ -961,7 +1043,7 @@ HTML_INDEX = """<!DOCTYPE html>
             // Clear evidence before awaiting a response so previous source links
             // cannot be mistaken for support for this request.
             const resetResultPanels = () => {
-                ["citationsBox", "groundedClaimsBox", "seeAlsoBox", "epistemicTraceBox", "answerRouteBox", "visualContent"].forEach(id => {
+                ["citationsBox", "groundedClaimsBox", "claimEvidenceBox", "seeAlsoBox", "epistemicTraceBox", "answerRouteBox", "visualContent"].forEach(id => {
                     const panel = document.getElementById(id);
                     panel.textContent = "";
                     panel.style.display = "none";
@@ -1005,6 +1087,7 @@ HTML_INDEX = """<!DOCTYPE html>
                     body: JSON.stringify(payload)
                 });
                 const data = await response.json();
+                if (generation !== searchGeneration) return;
 
                 document.getElementById("loadingSpinner").style.display = "none";
                 document.getElementById("resultPanel").style.display = "grid";
@@ -1031,70 +1114,99 @@ HTML_INDEX = """<!DOCTYPE html>
                 let hasVisual = false;
 
                 if (data.resolved_figures && data.resolved_figures.length > 0) {
-                    hasVisual = true;
                     data.resolved_figures.forEach(fig => {
-                        const fileName = fig.image_path.split(/\\\\|\\//).pop();
-                        const card = document.createElement("div");
-                        card.className = "figure-card";
-                        
-                        let inspectorHtml = "";
-                        const figKey = fig.figure_id;
+                        const paths = Array.isArray(fig.image_paths) && fig.image_paths.length
+                            ? fig.image_paths : fig.image_path ? [fig.image_path] : [];
+                        const figKey = String(fig.figure_id || "");
                         const figData = figureMap[figKey] || figureMap[figKey.replace("Figure ", "")] || figureMap["Figure " + figKey];
-                        if (figData) {
-                            inspectorHtml = renderInspectorHtml(figKey, figData);
-                        }
-
-                        card.innerHTML = `
-                            <div class="figure-caption">Visual Diagram: ${fig.figure_id}</div>
-                            <div class="figure-img-container" onclick="openImageModal('/figures/${fileName}', 'Visual Diagram: ${fig.figure_id}')" title="Click magnifying glass to zoom & pan in high resolution">
-                                <img src="/figures/${fileName}" alt="${fig.figure_id}" />
-                                <span class="zoom-badge">🔍 Zoom / Pan</span>
-                            </div>
-                            ${inspectorHtml}
-                        `;
-                        visualBox.appendChild(card);
+                        paths.forEach((path, index) => {
+                            const caption = "Visual Diagram: " + figKey + (paths.length > 1 ? " (asset " + (index + 1) + " of " + paths.length + ")" : "");
+                            const card = appendEvidenceImage(visualBox, path, caption, "/figures/");
+                            if (!card) return;
+                            hasVisual = true;
+                            if (figData && index === 0) {
+                                const inspector = document.createElement("div");
+                                inspector.innerHTML = renderInspectorHtml(figKey, figData);
+                                card.appendChild(inspector);
+                            }
+                        });
                     });
                 }
 
                 if (data.resolved_tables && data.resolved_tables.length > 0) {
                     hasVisual = true;
                     data.resolved_tables.forEach(tbl => {
-                        const fileName = tbl.table_path.split(/\\\\|\\//).pop();
+                        const fileName = evidenceFileName(tbl.table_path);
+                        const imagePaths = Array.isArray(tbl.image_paths) ? tbl.image_paths : [];
                         const card = document.createElement("div");
                         card.style.marginTop = "16px";
-                        card.innerHTML = `
-                            <h3 style="color: var(--accent-cyan); font-size: 15px; margin-bottom: 8px;">${tbl.table_id}</h3>
-                            <pre class="table-pre" id="tbl_${fileName}">Loading table content...</pre>
-                        `;
-                        visualBox.appendChild(card);
-                        fetch(`/tables/${fileName}`)
-                            .then(r => r.text())
-                            .then(txt => { document.getElementById(`tbl_${fileName}`).innerText = txt; });
-
-                        if (tbl.image_paths && tbl.image_paths.length > 0) {
-                            tbl.image_paths.forEach(img => {
-                                const imgFile = img.split(/\\\\|\\//).pop();
-                                const imgCard = document.createElement("div");
-                                imgCard.className = "figure-card";
-                                imgCard.style.marginTop = "12px";
-                                imgCard.innerHTML = `
-                                    <div class="figure-caption">Table Reference Scan: ${tbl.table_id}</div>
-                                    <div class="figure-img-container" onclick="openImageModal('/tables/${imgFile}', 'Table Reference Scan: ${tbl.table_id}')" title="Click magnifying glass to zoom & pan in high resolution">
-                                        <img src="/tables/${imgFile}" alt="${tbl.table_id}" />
-                                        <span class="zoom-badge">🔍 Zoom / Pan</span>
-                                    </div>
-                                `;
-                                visualBox.appendChild(imgCard);
-                            });
+                        const title = appendEvidenceText(card, "h3", tbl.table_id || "Table source reference");
+                        title.style.cssText = "color: var(--accent-cyan); font-size: 15px; margin-bottom: 8px;";
+                        const anchors = Array.isArray(tbl.source_anchors) ? tbl.source_anchors : [];
+                        anchors.forEach(anchor => appendEvidenceText(card, "div", "Source anchor: " + [anchor.section_id, anchor.printed_label == null ? "" : "p. " + anchor.printed_label].filter(Boolean).join(", ")));
+                        if (tbl.asset_status) appendEvidenceText(card, "div", "Asset availability: " + tbl.asset_status);
+                        if (fileName) {
+                            const content = appendEvidenceText(card, "pre", "Loading table content...");
+                            content.className = "table-pre";
+                            fetch("/tables/" + encodeURIComponent(fileName))
+                                .then(response => {
+                                    if (!response.ok) throw new Error("Table export unavailable");
+                                    return response.text();
+                                })
+                                .then(text => {
+                                    if (generation === searchGeneration) content.textContent = text;
+                                })
+                                .catch(() => {
+                                    if (generation === searchGeneration) content.textContent = "Table export unavailable.";
+                                });
+                        } else {
+                            appendEvidenceText(card, "div", imagePaths.length
+                                ? "No Markdown export available."
+                                : "Source-only table reference; no rendered export is available.");
                         }
+                        visualBox.appendChild(card);
+                        imagePaths.forEach((imagePath, index) => {
+                            const caption = "Table Reference Scan: " + tbl.table_id
+                                + (imagePaths.length > 1 ? " (asset " + (index + 1) + " of " + imagePaths.length + ")" : "");
+                            appendEvidenceImage(visualBox, imagePath, caption, "/tables/");
+                        });
                     });
                 }
+
+                // Claim assets also cover compact citations and healthy members
+                // when legacy whole-set navigation is unavailable.
+                const legacyTableIds = new Set((Array.isArray(data.resolved_tables) ? data.resolved_tables : []).map(table => table.table_id));
+                const legacyFigureIds = new Set((Array.isArray(data.resolved_figures) ? data.resolved_figures : []).map(figure => figure.figure_id));
+                const shownTableAssets = new Set();
+                const links = Array.isArray(data.claim_evidence_links) ? data.claim_evidence_links : [];
+                links.forEach(link => {
+                    const evidence = Array.isArray(link.ordered_evidence) ? link.ordered_evidence : [];
+                    evidence.forEach(item => {
+                        const element = String(item.element_id || "");
+                        const label = String(item.label || element);
+                        const isTable = /^table:/.test(element) || /^Table [AD]\\d+$/.test(label);
+                        const isFigure = /^figure:/.test(element) || /^Figure [AB]\\d+[A-Z]?$/.test(label);
+                        if ((!isTable && !isFigure) || (isTable ? legacyTableIds : legacyFigureIds).has(label)) return;
+                        const assets = Array.isArray(item.assets) ? item.assets : [];
+                        assets.forEach(asset => {
+                            if (asset.kind !== "image" || asset.verification_state !== "verified") return;
+                            const key = element + "|" + String(asset.path || "");
+                            if (shownTableAssets.has(key)) return;
+                            const caption = (isTable ? "Table Reference Scan: " : "Visual Diagram: ") + label + (item.relationship === "navigation_candidate" ? " (navigation candidate)" : "");
+                            if (appendEvidenceImage(visualBox, asset.path, caption, isTable ? "/tables/" : "/figures/")) {
+                                shownTableAssets.add(key);
+                                hasVisual = true;
+                            }
+                        });
+                    });
+                });
 
                 if (!hasVisual) {
                     visualBox.innerHTML = '<p style="color: var(--text-secondary); font-size: 14px;">No visual diagrams or tables referenced in this answer.</p>';
                 }
 
             } catch (err) {
+                if (generation !== searchGeneration) return;
                 resetResultPanels();
                 document.getElementById("loadingSpinner").style.display = "none";
                 document.getElementById("resultPanel").style.display = "grid";
@@ -1234,25 +1346,25 @@ HTML_INDEX = """<!DOCTYPE html>
         function inspectFigureDirectly(figId) {
             const figData = figureMap[figId] || figureMap[figId.replace("Figure ", "")];
             if (!figData) return;
+            ++searchGeneration;
+            document.getElementById("loadingSpinner").style.display = "none";
 
             document.getElementById("resultPanel").style.display = "grid";
             const visualBox = document.getElementById("visualContent");
             visualBox.innerHTML = "";
 
-            const card = document.createElement("div");
-            card.className = "figure-card";
-            const imgFile = figData.image_file;
-            const inspectorHtml = renderInspectorHtml(figId, figData);
-
-            card.innerHTML = `
-                <div class="figure-caption">Visual Diagram: ${figData.id} - ${figData.title}</div>
-                <div class="figure-img-container" onclick="openImageModal('/figures/${imgFile}', 'Visual Diagram: ${figData.id} - ${figData.title}')" title="Click magnifying glass to zoom & pan in high resolution">
-                    <img src="/figures/${imgFile}" alt="${figData.id}" />
-                    <span class="zoom-badge">🔍 Zoom / Pan</span>
-                </div>
-                ${inspectorHtml}
-            `;
-            visualBox.appendChild(card);
+            const imageFiles = Array.isArray(figData.image_files) && figData.image_files.length
+                ? figData.image_files : figData.image_file ? [figData.image_file] : [];
+            imageFiles.forEach((imageFile, index) => {
+                const caption = "Visual Diagram: " + figData.id + " - " + figData.title
+                    + (imageFiles.length > 1 ? " (asset " + (index + 1) + " of " + imageFiles.length + ")" : "");
+                const card = appendEvidenceImage(visualBox, imageFile, caption, "/figures/");
+                if (card && index === 0) {
+                    const inspector = document.createElement("div");
+                    inspector.innerHTML = renderInspectorHtml(figId, figData);
+                    card.appendChild(inspector);
+                }
+            });
 
             const answerBox = document.getElementById("answerContent");
             answerBox.innerHTML = `
@@ -1262,9 +1374,12 @@ HTML_INDEX = """<!DOCTYPE html>
             `;
 
             const citationsBox = document.getElementById("citationsBox");
-            citationsBox.innerHTML = `<div><strong>Figure source reference:</strong> AWS A3.0M/A3.0:2020, ${figData.page}</div>`;
+            citationsBox.textContent = "";
+            citationsBox.style.display = "block";
+            appendEvidenceText(citationsBox, "strong", "Figure source reference: ");
+            appendEvidenceText(citationsBox, "span", "AWS A3.0M/A3.0:2020, " + figData.page);
 
-            ["groundedClaimsBox", "seeAlsoBox", "epistemicTraceBox", "answerRouteBox"].forEach(id => {
+            ["groundedClaimsBox", "claimEvidenceBox", "seeAlsoBox", "epistemicTraceBox", "answerRouteBox"].forEach(id => {
                 const panel = document.getElementById(id);
                 panel.textContent = "";
                 panel.style.display = "none";
@@ -1737,6 +1852,7 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                     "TERMINOLOGY_REGISTRY_INVALID": 503,
                     "MODEL_PROVIDER_UNCONFIGURED": 503,
                     "GENERATION_FAILED": 502,
+                    "EVIDENCE_BINDING_FAILED": 503,
                 }.get(res.get("error_code"))
                 if error_status:
                     self._send_json(error_status, res)

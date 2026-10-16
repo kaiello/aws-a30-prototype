@@ -20,6 +20,7 @@ let stored = JSON.stringify({deepseekKey: 'legacy-secret', geminiKey: 'legacy-se
   customKey: 'legacy-secret', deepseekModel: 'saved-model', selectedEngine: 'deepseek'});
 let submitted;
 const context = vm.createContext({
+  searchGeneration: 0,
   document: {getElementById: element},
   localStorage: {getItem() {return stored;}, setItem(key, value) {stored = value;}},
   alert() {}, toggleSettingsDrawer() {}, updateEngineBadge() {}, console,

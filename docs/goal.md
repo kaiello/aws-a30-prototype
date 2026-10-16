@@ -1,5 +1,63 @@
 # Project Goal: AWS A3.0 Multimodal NLQ & Epistemic Knowledge System
 
+## Guarded running-app check and retained acceptance gaps (2026-10-16)
+
+The latest increment was loaded into the local prototype under a provider-free
+process guard. Actual API **19/19** and isolated Chrome **8/8** smoke checks
+passed for source-composed answers, truthful evidence/status rendering, safe
+failures, navigation and all required Figure B6 images/zoom. The favicon 404
+still fails strict clean-network acceptance. Providers stayed disabled; no new
+generated semantic/visual/table or multi-hop accuracy evidence was obtained.
+Final regressions pass 827 guarded Python, 44 native-reader and 68 JavaScript
+checks. Original fresh **2/6, 78/89** and separate fresh **3/6, 461/491** remain
+failed; the repaired exposed replay is **DEVELOPMENT 4/6, 489/491**, with two
+conservative scalar mismatches retained. Strict fresh, latency-budget and full
+multimodal acceptance remain unmet or unassessed. Earlier unreloaded statements
+below are historical checkpoints. See the
+[current aggregate evidence](claim_evidence_implementation.md).
+
+## Bounded through-range repair (2026-10-16)
+
+Canonical bare numeric `through` ranges now retain their full ordered evidence
+sets through simultaneous missing/corrupt assets. The repair preserves the
+existing identity, binding and support boundaries; independent scoped review
+cleared it. Final guarded checks pass 827 Python, 44 native-reader and 68
+JavaScript cases. The exposed replay is DEVELOPMENT **4/6, 489/491**, with the
+repaired workflow at 52/52 and zero unsafe support upgrades. Two stricter rubric
+scalar mismatches remain documented; the original plan permits their unassessed
+outcome. Original **2/6, 78/89** and first fresh **3/6, 461/491** remain failed
+and unchanged. Apps remain unreloaded; semantic/visual accuracy, full multimodal
+NLQ and latency-budget acceptance remain unassessed or unmet. See the
+[implementation receipt](claim_evidence_implementation.md).
+
+## Bounded claim/evidence resolution (2026-10-16)
+
+The scoped follow-up preserves diagnostics through damaged navigation assets,
+consumes direct figure continuations, retains source-only tables, distinguishes
+citation parents from independent sources, and withholds generated references
+with unresolved/wrong source identity. Guarded API/core and isolated synthetic
+browser checks pass; existing apps were not reloaded and no new unseen or
+semantic acceptance is claimed. Original failures and latency-budget/acceptance
+gaps remain in the receipt.
+
+Structured claims now have separate canonical-reference, selected-binding,
+asset-availability and support results in the actual query code path. Complete
+mentions, unsupported panels and ordered continuation sets are retained; only
+server-projected exact reviewed facts can grant reviewed support status. Generic
+generated claims remain unassessed and usually lack explicit evidence selectors.
+The [implementation receipt](claim_evidence_implementation.md) preserves initial
+development failures, the original strict replay and the explicitly amended
+navigation protocol. Offline checks and bounded identity/state evaluations do
+not establish visual/table understanding, complete claim extraction, multi-hop
+reasoning or full multimodal NLQ. No new live-app acceptance or latency SLA is
+claimed.
+
+The initial fresh workflow gate was **2/6** (78/89 assertions), not complete
+acceptance. Independent diagnosis identified a selected-role projection defect
+and rubric conflicts between identity, availability and support states. A
+conservative role-selection repair is tested; exposed-case replays remain
+DEVELOPMENT. Original scores and support requirements are preserved.
+
 ## Bounded source-composed answers (2026-10-16)
 
 The three-headword definition/alias route now composes exact reviewed source facts with validated citations and truthful outcome/assessment labels. Initial frozen actual-system results were 11/12 original questions (31/32 facts) and 5/6 unseen holdouts (19/20 facts) strictly complete. A source-bounded policy repair now passes 12/12 and 6/6 on the same rubric as DEVELOPMENT; reused holdouts are not fresh unseen validation, and the original failures are preserved. All 18 responses remain composed (16 extractive, two clarifications), establishing no model-reasoning improvement. Original three HTTP acceptance cases pass content and citations; real-browser query/figure flows pass, with a retained favicon 404 that fails the strict clean-network assertion. [Implementation, evidence and limits](answer_grounding_implementation.md) separate this bounded milestone from full multimodal NLQ, which remains undemonstrated.

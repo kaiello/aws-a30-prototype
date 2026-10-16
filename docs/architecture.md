@@ -1,5 +1,62 @@
 # System Architecture: AWS A3.0 Multimodal Prototype
 
+## Guarded actual-runtime verification (2026-10-16)
+
+The current increment was verified in the actual local app with an external
+process-local provider-free guard, using the real registry/composer/projector,
+resolver, catalog, inspector, assets and browser UI. API 19/19 and Chrome 8/8
+smoke checks passed; all three Figure B6 images fetched/decoded in order and
+retained distinct zoom targets. No application dependency was stubbed for this
+running-app check. Generation remained disabled and the guard is not a new
+repository configuration feature. The known favicon 404, failed frozen fresh
+gates and semantic/latency gaps remain. Earlier unreloaded statements below
+describe earlier checkpoints; aggregate limits are retained in the
+[implementation receipt](claim_evidence_implementation.md).
+
+## Element through-range boundary (2026-10-16)
+
+The canonical element resolver accepts full-match bare numeric `through`
+ranges and reuses endpoint/inventory/width/order checks before expansion.
+Printed-page ranges retain their separate dash-only grammar; unsupported
+repeated-kind, panel, suffix, mixed-prefix and unknown-member expressions still
+fail whole. No evidence/support service or provider path changed. Compound
+asset failures retain all source identities, declaration order, both diagnostics
+and healthy shared render bytes without certifying claim meaning. The exposed
+replay is DEVELOPMENT 4/6, 489/491; first fresh 3/6, 461/491 remains failed.
+
+## Claim-associated evidence projection (2026-10-16)
+
+The integration follow-up reuses per-asset validation for optional navigation
+and legacy display, preserves source-only table identity, and consumes ordered
+direct-inspection continuations. A shared hierarchy/page projection feeds both
+claim binding and full-response generated-reference validation. Unresolved or
+contradictory source identity withholds the generated answer while retaining
+explicitly labeled diagnostic links. These gates establish identity, not semantic
+support. Provider-free handler/core and synthetic Chrome fixtures pass; existing
+apps remain unreloaded and original frozen acceptance remains unmet.
+
+The query path attaches `claim_evidence_links` and
+`claim_evidence_assessment` through the pure deterministic
+`src/evidence_resolution.py` service. Complete references use the shared
+manifest lexer; asset validation uses a per-record canonical seam while legacy
+path lookup remains atomic. Exact selectors/native bindings are separate from
+asset integrity and semantic support. Only the composed server route supplies a
+reviewed fact view; generic generated claims retain unassessed support and have
+no inferred evidence selector. Required reviewed failures produce HTTP 503.
+The UI consumes ordered available assets and prevents late-response evidence
+from replacing a newer request. [The bounded receipt](claim_evidence_implementation.md)
+distinguishes tests, strict/amended development protocols, fresh heldout evidence,
+offline timing and the remaining semantic/live-runtime gaps. Corpus/index/graph
+schemas, provider behavior and persisted stores are unchanged.
+
+`ordered_evidence.relationship` describes the canonical citation/navigation
+reference role. `binding_evidence` separately retains each selected context's
+relationship and selection role. Explicit navigation-only contexts cannot fill
+required selected-source bindings, even when their identity metadata matches.
+This separation fixes omitted provenance without promoting available assets to
+semantic authority. The first fresh 2/6 gate remains recorded as failed; later
+exposed-case replays do not establish new unseen coverage.
+
 ## Bounded answer composition and assessment (2026-10-16)
 
 `src/query.py` now applies deterministic scope handling and the pure `src/grounded_answer.py` definition/alias composer before provider initialization. The terminology adapter supplies a reviewed bundle; the pure composer validates its spans, hashes and canonical anchors, preserves complete alternatives/conditions and returns exact claim-to-fact bindings. Unsupported intents retain the existing generation path. Responses distinguish outcome, composed/generated origin and hash-bound assessment scope; graph links and nullable coverage metrics cannot certify whole-answer truth. UI evidence rendering uses safe text and clears stale panels. Composed answers also expose an explicit `answer_policy_notes` scope limit outside factual claim bindings. [The implementation receipt](answer_grounding_implementation.md) separates the original two omissions from the repaired DEVELOPMENT replay, unchanged retrieval controls and browser functional passes with a retained favicon 404. Registry/source/store bytes were preserved; no new ingestion or cross-modal reasoning capability was added.

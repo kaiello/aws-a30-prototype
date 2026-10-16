@@ -61,6 +61,7 @@ def main():
         "tests/test_security_boundaries.py", "tests/test_pre_retrieval.py",
         "tests/test_query_prerequisites.py",
         "tests/test_figure_bboxes.py",
+        "tests/test_figure_catalog.py",
         "tests/test_hybrid_retrieval.py::test_reciprocal_rank_fusion",
         "tests/test_standard_manifest.py", "tests/test_manifest_citations.py", "tests/test_manifest_assets.py",
         "tests/test_manifest_metadata.py", "tests/test_manifest_retrieval_contract.py",
@@ -69,6 +70,8 @@ def main():
         "tests/test_answer_assessment.py", "tests/test_grounded_answer.py",
         "tests/test_answer_grounding_query.py", "tests/test_answer_grounding_evaluation.py",
         "tests/test_legacy_assessment_metrics.py",
+        "tests/test_reference_records.py", "tests/test_citation_evidence_resolution.py",
+        "tests/test_citation_evidence_evaluation.py",
     ]))
 
 
