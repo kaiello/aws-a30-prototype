@@ -64,11 +64,13 @@ def query_modules(tmp_path):
     verifier.verify_epistemic_provenance = forbidden
     routes = types.ModuleType("src.answer_routes")
     routes.resolve_answer_route = forbidden
+    grounded = types.ModuleType("src.grounded_answer")
+    grounded.compose_grounded_answer = lambda *args: None
     query = load_module("isolated_query", "query.py", {
         "src.config": cfg, "src.pre_retrieval": pre,
         "src.hybrid_retriever": hybrid, "src.indexer": indexer,
         "lightrag": lightrag, "src.citation_checker": citations,
-        "src.epistemic_verifier": verifier, "src.answer_routes": routes})
+        "src.epistemic_verifier": verifier, "src.answer_routes": routes, "src.grounded_answer": grounded})
     return query, hybrid
 
 

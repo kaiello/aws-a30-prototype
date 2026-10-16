@@ -1,5 +1,9 @@
 # Project Goal: AWS A3.0 Multimodal NLQ & Epistemic Knowledge System
 
+## Bounded source-composed answers (2026-10-16)
+
+The three-headword definition/alias route now composes exact reviewed source facts with validated citations and truthful outcome/assessment labels. Initial frozen actual-system results were 11/12 original questions (31/32 facts) and 5/6 unseen holdouts (19/20 facts) strictly complete. A source-bounded policy repair now passes 12/12 and 6/6 on the same rubric as DEVELOPMENT; reused holdouts are not fresh unseen validation, and the original failures are preserved. All 18 responses remain composed (16 extractive, two clarifications), establishing no model-reasoning improvement. Original three HTTP acceptance cases pass content and citations; real-browser query/figure flows pass, with a retained favicon 404 that fails the strict clean-network assertion. [Implementation, evidence and limits](answer_grounding_implementation.md) separate this bounded milestone from full multimodal NLQ, which remains undemonstrated.
+
 ## Bounded live terminology milestone (2026-10-15)
 
 Three manually reviewed headwords are wired into actual hybrid retrieval and generation through an additive ignored local registry. A frozen 33-case before/after run demonstrates complete reviewed evidence for 12/12 terminology questions at rank one, exact parity for 10 unrelated controls, and eight retained scope gates. These evidence results are distinct from source-backed answer accuracy; fresh local generation still produces term and citation errors. The restarted loopback app and detailed outcomes are recorded in [the live terminology receipt](terminology_live_results.md). Full multimodal NLQ remains undemonstrated; broader terminology, diagram/table understanding, claim support and multi-hop evaluation remain separate milestones.

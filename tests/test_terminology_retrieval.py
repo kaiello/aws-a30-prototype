@@ -3,6 +3,7 @@ import ast
 import asyncio
 import hashlib
 import json
+import time
 from copy import deepcopy
 from pathlib import Path
 from types import SimpleNamespace
@@ -15,7 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def actual_function(path, name, namespace):
     tree = ast.parse((ROOT / path).read_text(encoding="utf-8"))
     node = next(node for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == name)
-    exec(compile(ast.Module(body=[node], type_ignores=[]), path, "exec"), namespace)
+    helpers = [item for item in tree.body if path == "src/query.py" and isinstance(item, ast.FunctionDef) and item.name in {"_query_failure", "_scope_decision", "_reviewed_trace"}]
+    exec(compile(ast.Module(body=helpers + [node], type_ignores=[]), path, "exec"), namespace)
     return namespace[name]
 
 
@@ -104,6 +106,8 @@ def query_namespace(evidence):
     namespace = {"Optional": object, "DEFAULT_ENGINE": "custom", "CUSTOM_API_KEY": "",
                  "GEMINI_API_KEY": "", "DEEPSEEK_API_KEY": "", "STORAGE_DIR": Path("fixture-no-store"),
                  "check_early_abstention": lambda query: None,
+                 "get_terminology_evidence": lambda query: None, "compose_grounded_answer": lambda *args: None,
+                 "time": time, "hashlib": hashlib,
                  "hybrid_retrieve": lambda *args, **kwargs: deepcopy(evidence),
                  "ContextualIndexMissingError": FileNotFoundError,
                  "get_rag_instance": lambda **kwargs: Rag(), "QueryParam": lambda **kwargs: kwargs,

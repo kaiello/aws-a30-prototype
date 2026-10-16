@@ -9,6 +9,8 @@ import re
 import asyncio
 import argparse
 import json
+import hashlib
+import time
 from typing import Optional
 from pathlib import Path
 
@@ -35,7 +37,8 @@ from src.epistemic_verifier import verify_epistemic_provenance
 from src.answer_routes import resolve_answer_route
 from src.pre_retrieval import check_early_abstention, expand_query
 from src.hybrid_retriever import ContextualIndexMissingError, hybrid_retrieve
-from src.terminology_retrieval import TerminologyRegistryError
+from src.terminology_retrieval import TerminologyRegistryError, get_terminology_evidence
+from src.grounded_answer import compose_grounded_answer
 
 from src.standard_manifest import get_manifest, extract_references
 
@@ -103,6 +106,32 @@ def extract_see_also_terms(text: str):
             result.append(item)
     return result
 
+def _query_failure(query, code, message, retrieved_evidence=None):
+    return {"query": query, "answer": "", "error": message, "error_code": code,
+            "answer_outcome": "error", "answer_origin": "none",
+            "answer_assessment": {"status": "UNASSESSED", "validated": False,
+                                  "citation_support": "unassessed"},
+            "citations": {}, "grounded_claims": [], "resolved_figures": [],
+            "resolved_tables": [], "see_also": [],
+            "retrieved_evidence": retrieved_evidence or []}
+
+
+def _scope_decision(answer):
+    return {"status": "TRUTHFUL_ABSTENTION", "validated": True,
+            "answer_sha256": hashlib.sha256(answer.encode("utf-8")).hexdigest(),
+            "assessment_scope": "deterministic_scope_policy"}
+
+
+def _reviewed_trace(assessment):
+    supported = assessment.get("status") == "SUPPORTED_REVIEWED_FACTS" and assessment.get("validated") is True
+    return {"epistemic_status": "SUPPORTED_REVIEWED_FACTS" if supported else "INSUFFICIENT_EVIDENCE",
+            "assessment_status": assessment.get("status", "UNASSESSED"),
+            "assessment_scope": "reviewed_fact_bindings", "provenance_score": None,
+            "graph_link_coverage": None, "is_abstention": False,
+            "concepts_verified": [], "unverified_concepts": [],
+            "manifest_summary": "Reviewed fact/source bindings assessed; graph connectivity is not an answer-truth score."}
+
+
 async def async_query(
     query_str: str,
     mode: str = "mix",
@@ -111,117 +140,57 @@ async def async_query(
     model_name: Optional[str] = None,
     base_url: Optional[str] = None
 ) -> dict:
-    engine_lower = (engine or DEFAULT_ENGINE).lower()
-    
-    if engine_lower == "gemini":
-        key = api_key or GEMINI_API_KEY
-        if not key:
-            return {
-                "query": query_str,
-                "answer": "[ERROR: GEMINI_API_KEY not configured. Set GEMINI_API_KEY in .env, supply via --api-key, or enter in Web UI settings.]",
-                "citations": {},
-                "grounded_claims": [],
-                "resolved_figures": [],
-                "resolved_tables": [],
-                "see_also": []
-            }
-    elif engine_lower in ["custom", "openai"]:
-        key = api_key or CUSTOM_API_KEY
-        if not key:
-            return {
-                "query": query_str,
-                "answer": "[ERROR: Custom API Key not configured. Supply via --api-key, CUSTOM_API_KEY in .env, or enter in Web UI settings.]",
-                "citations": {},
-                "grounded_claims": [],
-                "resolved_figures": [],
-                "resolved_tables": [],
-                "see_also": []
-            }
-    else:
-        key = api_key or DEEPSEEK_API_KEY
-        if not key:
-            return {
-                "query": query_str,
-                "answer": "[ERROR: DEEPSEEK_API_KEY not configured. Set DEEPSEEK_API_KEY in .env, supply via --api-key, or enter in Web UI settings.]",
-                "citations": {},
-                "grounded_claims": [],
-                "resolved_figures": [],
-                "resolved_tables": [],
-                "see_also": []
-            }
-
-    # 0. Deterministic early abstention for out-of-scope negative controls
+    started = time.perf_counter()
+    # Deterministic scope decisions and reviewed composition require no provider.
     early_abstain = check_early_abstention(query_str)
     if early_abstain:
+        answer = early_abstain["answer"]
+        decision = _scope_decision(answer)
         figures, tables = resolve_multimodal_assets(query_str)
-        answer_route = resolve_answer_route(query_str, early_abstain["answer"])
-        return {
-            "query": query_str,
-            "answer": early_abstain["answer"],
-            "citations": {"out_of_scope": True},
-            "grounded_claims": [],
-            "resolved_figures": figures,
-            "resolved_tables": tables,
-            "see_also": [],
-            "epistemic_trace": {"provenance_score": 1.0, "status": "TRUTHFUL_ABSTENTION"},
-            "answer_route": answer_route.to_dict(),
-            "retrieved_evidence": []
-        }
+        return {"query": query_str, "answer": answer, "citations": {"out_of_scope": True},
+                "grounded_claims": [], "resolved_figures": figures, "resolved_tables": tables,
+                "see_also": [], "answer_outcome": "abstention", "answer_origin": "none",
+                "answer_assessment": dict(decision, citation_support="not_applicable"),
+                "epistemic_trace": verify_epistemic_provenance(query_str, answer, decision=decision),
+                "answer_route": resolve_answer_route(query_str, answer, decision=decision).to_dict(),
+                "retrieved_evidence": [], "timings_ms": {"total": round((time.perf_counter()-started)*1000, 3)}}
 
-    # 1. Two-stage hybrid retrieval (FTS5 BM25 + BGE-large dense + RRF + Cross-Encoder)
+    try:
+        reviewed = get_terminology_evidence(query_str)
+    except TerminologyRegistryError:
+        return _query_failure(query_str, "TERMINOLOGY_REGISTRY_INVALID",
+            "Reviewed local terminology evidence is unavailable or stale. Ask the maintainer to restore the reviewed registry and matching sources before retrying. No answer was generated.")
+    if reviewed is not None:
+        composed = compose_grounded_answer(query_str, reviewed)
+        if composed is not None:
+            answer = composed.get("answer", "")
+            figures, tables = resolve_multimodal_assets(query_str + "\n" + answer)
+            return dict(composed, query=query_str, resolved_figures=figures, resolved_tables=tables,
+                        see_also=[], retrieved_evidence=[reviewed],
+                        terminology_resolution=reviewed.get("terminology_resolution", {}),
+                        epistemic_trace=_reviewed_trace(composed.get("answer_assessment", {})),
+                        timings_ms={"total": round((time.perf_counter()-started)*1000, 3)})
+
+    engine_lower = (engine or DEFAULT_ENGINE).lower()
+    key = api_key or (GEMINI_API_KEY if engine_lower == "gemini" else
+                     CUSTOM_API_KEY if engine_lower in {"custom", "openai"} else DEEPSEEK_API_KEY)
+    if not key:
+        return _query_failure(query_str, "MODEL_PROVIDER_UNCONFIGURED",
+                              "The selected model provider is not configured. No generated answer is available.")
     try:
         hybrid_evidence = hybrid_retrieve(query_str, top_k=5)
     except ContextualIndexMissingError:
-        return {
-            "query": query_str,
-            "answer": "",
-            "error": (
-                "Required local retrieval index is missing. Restore a compatible "
-                "storage/vdb_chunks_contextual.json from a trusted backup, or ask the "
-                "project maintainer to provision it before retrying. No answer was generated."
-            ),
-            "error_code": "RETRIEVAL_INDEX_MISSING",
-            "citations": {},
-            "grounded_claims": [],
-            "resolved_figures": [],
-            "resolved_tables": [],
-            "see_also": [],
-            "retrieved_evidence": []
-        }
-
+        return _query_failure(query_str, "RETRIEVAL_INDEX_MISSING",
+            "Required local retrieval index is missing. Restore a compatible storage/vdb_chunks_contextual.json from a trusted backup, or ask the project maintainer to provision it before retrying. No answer was generated.")
     except TerminologyRegistryError:
-        return {
-            "query": query_str,
-            "answer": "",
-            "error": ("Reviewed local terminology evidence is unavailable or stale. "
-                      "Ask the maintainer to restore the reviewed registry and matching sources before retrying. "
-                      "No answer was generated."),
-            "error_code": "TERMINOLOGY_REGISTRY_INVALID",
-            "citations": {},
-            "grounded_claims": [],
-            "resolved_figures": [],
-            "resolved_tables": [],
-            "see_also": [],
-            "retrieved_evidence": []
-        }
+        return _query_failure(query_str, "TERMINOLOGY_REGISTRY_INVALID",
+            "Reviewed local terminology evidence is unavailable or stale. Ask the maintainer to restore the reviewed registry and matching sources before retrying. No answer was generated.")
 
     try:
-        rag = get_rag_instance(
-            working_dir=STORAGE_DIR,
-            engine=engine,
-            api_key=key,
-            model_name=model_name,
-            base_url=base_url
-        )
+        rag = get_rag_instance(working_dir=STORAGE_DIR, engine=engine, api_key=key,
+                               model_name=model_name, base_url=base_url)
         await rag.initialize_storages()
-        
-        param = QueryParam(
-            mode=mode,
-            top_k=40,
-            chunk_top_k=20,
-            enable_rerank=False
-        )
-        
+        param = QueryParam(mode=mode, top_k=40, chunk_top_k=20, enable_rerank=False)
         evidence_blocks = []
         for c in hybrid_evidence:
             c_id = c.get("full_doc_id") or c.get("id", "")
@@ -234,72 +203,36 @@ async def async_query(
             else:
                 evidence_blocks.append(f"[{c_id}]\n{c.get('content', '')}")
         evidence_text = "\n\n".join(evidence_blocks)
-
-        augmented_prompt = (
-            f"{query_str}\n\n"
-            f"[PRIMARY NORMATIVE EVIDENCE CONTEXT FROM AWS A3.0M/A3.0:2020]:\n"
-            f"{evidence_text}\n\n"
-            f"Answer the query authoritatively using the normative definitions, tables, or figures above. "
-            f"Always cite the exact Clause number, Annex, Table, or Figure."
-        )
-
+        augmented_prompt = (f"{query_str}\n\n[PRIMARY SELECTED EVIDENCE CONTEXT FROM AWS A3.0M/A3.0:2020]:\n"
+                            f"{evidence_text}\n\nAnswer only what the supplied evidence supports. "
+                            "Retain conditions and uncertainty. Cite the exact supporting source; "
+                            "an existing page or element alone does not establish support.")
         if any(c.get("evidence_type") == "terminology_mapping" for c in hybrid_evidence):
-            augmented_prompt += (
-                "\nFor reviewed terminology evidence, retain every preferred target and process/sense qualifier. "
-                "'When used for' is conditional: do not label every use of that spelling nonstandard. "
-                "For ambiguous_senses explain the supplied standard and conditional senses or request clarification. "
-                "Cite the supplied source anchors; parser projection spans are local text spans, not PDF geometry."
-            )
+            augmented_prompt += ("\nFor reviewed terminology evidence, retain every preferred target and process/sense qualifier. "
+                                 "'When used for' is conditional: do not label every use of that spelling nonstandard. "
+                                 "For ambiguous_senses explain the supplied standard and conditional senses or request clarification. "
+                                 "Cite the supplied source anchors; parser projection spans are local text spans, not PDF geometry.")
         response = await rag.aquery(augmented_prompt, param=param)
-        if response is None:
-            raise RuntimeError("LLM returned no response. Please verify your API key, model name, and network connection.")
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        if hybrid_evidence:
-            top_chunk = hybrid_evidence[0]
-            top_content = top_chunk.get("content", "").strip()
-            top_id = top_chunk.get("full_doc_id") or top_chunk.get("id", "")
-            response = (
-                f"[Normative Extract from {top_id}]:\n\n"
-                f"{top_content}\n\n"
-                f"(Synthesized via local hybrid retrieval; upstream LLM unavailable: {str(e)[:120]})"
-            )
-        else:
-            return {
-                "query": query_str,
-                "answer": f"[ERROR: Query execution failed: {str(e)}]",
-                "error": str(e),
-                "citations": {},
-                "grounded_claims": [],
-                "resolved_figures": [],
-                "resolved_tables": [],
-                "see_also": [],
-                "retrieved_evidence": hybrid_evidence
-            }
+        if not isinstance(response, str) or not response.strip():
+            raise RuntimeError("No model response")
+    except Exception:
+        return _query_failure(query_str, "GENERATION_FAILED",
+                              "Answer generation is unavailable. No generated answer was returned.")
 
     citations = extract_citations(response)
-    grounded_claims = extract_grounded_claims(response)
-    combined_asset_text = f"{query_str}\n{response}\n" + " ".join([c.get("content", "") for c in hybrid_evidence[:3]])
+    combined_asset_text = f"{query_str}\n{response}\n" + " ".join(c.get("content", "") for c in hybrid_evidence[:3])
     figures, tables = resolve_multimodal_assets(combined_asset_text)
-    see_also = extract_see_also_terms(response)
-    epistemic_trace = verify_epistemic_provenance(query_str, response)
-    answer_route = resolve_answer_route(query_str, response)
-    
-    result = {
-        "query": query_str,
-        "answer": response,
-        "citations": citations,
-        "grounded_claims": grounded_claims,
-        "resolved_figures": figures,
-        "resolved_tables": tables,
-        "see_also": see_also,
-        "epistemic_trace": epistemic_trace,
-        "answer_route": answer_route.to_dict(),
-        "retrieved_evidence": hybrid_evidence
-    }
-    resolution = next((item["terminology_resolution"] for item in hybrid_evidence
-                       if item.get("evidence_type") == "terminology_mapping"), None)
+    result = {"query": query_str, "answer": response, "citations": citations,
+              "grounded_claims": extract_grounded_claims(response), "resolved_figures": figures,
+              "resolved_tables": tables, "see_also": extract_see_also_terms(response),
+              "answer_outcome": "generated", "answer_origin": "generated",
+              "answer_assessment": {"status": "UNASSESSED", "validated": False,
+                                    "citation_support": "unassessed", "assessment_scope": "none"},
+              "epistemic_trace": verify_epistemic_provenance(query_str, response),
+              "answer_route": resolve_answer_route(query_str, response).to_dict(),
+              "retrieved_evidence": hybrid_evidence,
+              "timings_ms": {"total": round((time.perf_counter()-started)*1000, 3)}}
+    resolution = next((c["terminology_resolution"] for c in hybrid_evidence if c.get("evidence_type") == "terminology_mapping"), None)
     if resolution is not None:
         result["terminology_resolution"] = resolution
     return result
@@ -362,7 +295,7 @@ def main():
         base_url=args.base_url
     )
 
-    if result.get("error_code") == "RETRIEVAL_INDEX_MISSING":
+    if result.get("error_code"):
         print(f"ERROR: {result['error']}", file=sys.stderr)
         raise SystemExit(1)
     

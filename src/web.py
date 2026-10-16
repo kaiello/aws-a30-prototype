@@ -672,7 +672,8 @@ HTML_INDEX = """<!DOCTYPE html>
 
         <div class="result-panel" id="resultPanel">
             <div class="panel">
-                <h2>Verified Standard Answer</h2>
+                <h2>Standard Answer</h2>
+                <div id="answerStatusBox" style="font-size: 13px; margin-bottom: 10px;"></div>
                 <div class="answer-content" id="answerContent"></div>
                 <div class="citations-box" id="citationsBox"></div>
                 <div id="groundedClaimsBox" style="margin-top: 16px; display: none;"></div>
@@ -811,12 +812,163 @@ HTML_INDEX = """<!DOCTYPE html>
             executeSearch();
         }
 
+        function appendEvidenceText(parent, tag, text) {
+            const node = document.createElement(tag);
+            node.textContent = String(text == null ? "" : text);
+            parent.appendChild(node);
+            return node;
+        }
+
+        function appendSourceReference(parent, reference) {
+            const label = String(reference);
+            // Only catalog-backed figure IDs receive local navigation. Other
+            // references remain text; model output never supplies a URL/handler.
+            if (/^Figure [AB]\\d+[A-Z]?$/.test(label) && figureMap[label]) {
+                const link = appendEvidenceText(parent, "button", label);
+                link.type = "button";
+                link.className = "pill";
+                link.addEventListener("click", () => inspectFigureDirectly(label));
+            } else {
+                appendEvidenceText(parent, "span", label);
+            }
+        }
+
+        function renderAnswerEvidence(data) {
+            const assessment = data.answer_assessment || {};
+            const reviewed = assessment.status === "SUPPORTED_REVIEWED_FACTS" && assessment.validated === true;
+            const outcome = data.answer_outcome || "generated";
+            const labels = {
+                extractive: reviewed ? "Reviewed source answer" : "Source extract",
+                generated: "Generated answer",
+                clarification: "More context needed",
+                abstention: "Out of scope",
+                insufficient_evidence: "Insufficient evidence",
+                error: "Answer unavailable"
+            };
+            const statusBox = document.getElementById("answerStatusBox");
+            statusBox.textContent = "";
+            appendEvidenceText(statusBox, "strong", labels[outcome] || "Answer");
+            let supportText = "Support is not assessed; this answer is not independently verified.";
+            if (reviewed) {
+                supportText = data.answer_origin === "composed"
+                    ? "Composed from reviewed source facts. Claim-to-source bindings were validated."
+                    : "Reviewed fact-to-source bindings were validated.";
+            } else if (outcome === "abstention") {
+                supportText = "The request is outside this standard's supported scope.";
+            } else if (outcome === "clarification") {
+                supportText = "More application context is needed before selecting an answer.";
+            } else if (outcome === "insufficient_evidence") {
+                supportText = "The available evidence does not support a complete answer.";
+            }
+            appendEvidenceText(statusBox, "div", supportText);
+
+            const citationsBox = document.getElementById("citationsBox");
+            citationsBox.textContent = "";
+            citationsBox.style.display = "block";
+            appendEvidenceText(citationsBox, "strong", reviewed ? "Reviewed source references" : "Source references (support not assessed)");
+            const citations = data.citations || {};
+            for (const [key, label] of [["clauses", "Clauses"], ["pages", "Printed pages"], ["figures", "Figures"], ["tables", "Tables"]]) {
+                const row = document.createElement("div");
+                appendEvidenceText(row, "strong", label + ": ");
+                const references = Array.isArray(citations[key]) ? citations[key] : [];
+                if (!references.length) appendEvidenceText(row, "span", "None explicit");
+                references.forEach((reference, index) => {
+                    if (index) appendEvidenceText(row, "span", ", ");
+                    appendSourceReference(row, reference);
+                });
+                citationsBox.appendChild(row);
+            }
+
+            const claimsBox = document.getElementById("groundedClaimsBox");
+            claimsBox.textContent = "";
+            const claims = Array.isArray(data.grounded_claims) ? data.grounded_claims : [];
+            claimsBox.style.display = claims.length ? "block" : "none";
+            if (claims.length) {
+                appendEvidenceText(claimsBox, "strong", "Claim support (" + claims.length + " statements)");
+                claims.forEach((item, index) => {
+                    const row = document.createElement("div");
+                    row.style.cssText = "background: var(--bg-card); border-left: 3px solid #38bdf8; border-radius: 4px; padding: 8px 12px; margin-top: 8px; font-size: 12.5px;";
+                    appendEvidenceText(row, "div", "[Claim " + (index + 1) + "] " + (item.claim || ""));
+                    const anchors = Array.isArray(item.anchors) ? item.anchors : [];
+                    const hasReferences = anchors.length && !anchors.some(anchor => String(anchor).toLowerCase().includes("inferred from context"));
+                    appendEvidenceText(row, "div", reviewed && hasReferences ? "Reviewed source binding" : "Support not assessed; references are not verified.");
+                    const references = document.createElement("div");
+                    appendEvidenceText(references, "span", "References: ");
+                    if (!anchors.length) appendEvidenceText(references, "span", "None explicit");
+                    anchors.forEach((anchor, anchorIndex) => {
+                        if (anchorIndex) appendEvidenceText(references, "span", ", ");
+                        appendSourceReference(references, anchor);
+                    });
+                    row.appendChild(references);
+                    claimsBox.appendChild(row);
+                });
+            }
+
+            const seeAlsoBox = document.getElementById("seeAlsoBox");
+            seeAlsoBox.textContent = "";
+            const terms = Array.isArray(data.see_also) ? data.see_also : [];
+            seeAlsoBox.style.display = terms.length ? "block" : "none";
+            if (terms.length) {
+                appendEvidenceText(seeAlsoBox, "strong", "Cross-references & related terms");
+                terms.forEach(term => {
+                    const chip = appendEvidenceText(seeAlsoBox, "button", term);
+                    chip.type = "button";
+                    chip.className = "pill";
+                    chip.addEventListener("click", () => setQuery("What is " + String(term) + "?"));
+                });
+            }
+
+            const traceBox = document.getElementById("epistemicTraceBox");
+            traceBox.textContent = "";
+            const trace = data.epistemic_trace;
+            const concepts = trace && Array.isArray(trace.concepts_verified) ? trace.concepts_verified : [];
+            traceBox.style.display = concepts.length ? "block" : "none";
+            if (concepts.length) {
+                appendEvidenceText(traceBox, "strong", "Related concepts and source links");
+                appendEvidenceText(traceBox, "div", "Graph links support navigation; answer support is assessed separately.");
+                concepts.slice(0, 5).forEach(concept => {
+                    const row = document.createElement("div");
+                    appendEvidenceText(row, "strong", concept.concept || "Related concept");
+                    const sources = Array.isArray(concept.primary_evidence) ? concept.primary_evidence : [];
+                    sources.slice(0, 3).forEach(source => appendEvidenceText(row, "div", [source.name, source.page].filter(Boolean).join(" · ")));
+                    traceBox.appendChild(row);
+                });
+            }
+
+            const routeBox = document.getElementById("answerRouteBox");
+            routeBox.textContent = "";
+            const route = data.answer_route || {};
+            const evidence = Array.isArray(route.evidence_group) ? route.evidence_group : [];
+            routeBox.style.display = evidence.length ? "block" : "none";
+            if (evidence.length) {
+                appendEvidenceText(routeBox, "strong", "Source links from graph context");
+                appendEvidenceText(routeBox, "div", "These links do not measure complete evidence recall or answer correctness.");
+                evidence.slice(0, 6).forEach(item => {
+                    const element = String(item.element_id || "");
+                    const label = item.title || (/^(Clause |Annex |Figure |Table )/.test(element) ? element : "Source reference");
+                    appendEvidenceText(routeBox, "div", [label, item.page ? "p. " + item.page : ""].filter(Boolean).join(" · "));
+                });
+            }
+        }
+
         async function executeSearch() {
             const query = document.getElementById("queryInput").value.trim();
             if (!query) return;
 
             const engine = document.getElementById("engineSelect").value;
             const mode = document.getElementById("modeSelect").value;
+
+            // Clear evidence before awaiting a response so previous source links
+            // cannot be mistaken for support for this request.
+            const resetResultPanels = () => {
+                ["citationsBox", "groundedClaimsBox", "seeAlsoBox", "epistemicTraceBox", "answerRouteBox", "visualContent"].forEach(id => {
+                    const panel = document.getElementById(id);
+                    panel.textContent = "";
+                    panel.style.display = "none";
+                });
+                document.getElementById("answerStatusBox").textContent = "";
+            };
+            resetResultPanels();
 
             // Keys remain in page memory; only nonsecret model settings are persisted.
             let apiKey = null;
@@ -857,165 +1009,25 @@ HTML_INDEX = """<!DOCTYPE html>
                 document.getElementById("loadingSpinner").style.display = "none";
                 document.getElementById("resultPanel").style.display = "grid";
 
-                if (!response.ok || data.error) {
-                    document.getElementById("answerContent").innerHTML = `
-                        <div style="color: #f87171; background: rgba(248,113,113,0.1); padding: 12px; border-radius: 6px; border: 1px solid rgba(248,113,113,0.3);">
-                            <strong>Query Error:</strong> ${data.error || 'Server error ' + response.status}
-                        </div>
-                    `;
-                    document.getElementById("citationsBox").innerHTML = "";
+                if (!response.ok || data.error || data.answer_outcome === "error") {
+                    resetResultPanels();
+                    document.getElementById("answerStatusBox").textContent = "Answer unavailable";
+                    const message = data.error_code === "MODEL_PROVIDER_UNCONFIGURED"
+                        ? "Configure an approved model provider before retrying this request."
+                        : "The request could not be completed. Check local configuration or try again.";
+                    document.getElementById("answerContent").textContent = message;
                     document.getElementById("resultPanel").scrollIntoView({ behavior: "smooth" });
                     return;
                 }
 
-                // Render answer
                 document.getElementById("answerContent").innerText = data.answer || "No text answer returned.";
+                renderAnswerEvidence(data);
                 document.getElementById("resultPanel").scrollIntoView({ behavior: "smooth" });
-
-                // Render citations
-                const c = data.citations || {};
-                let citHtml = "<strong>Verified Citations:</strong><br/>";
-                citHtml += "&bull; <strong>Clauses:</strong> " + (c.clauses && c.clauses.length ? c.clauses.join(", ") : "None explicit") + "<br/>";
-                citHtml += "&bull; <strong>Pages:</strong> " + (c.pages && c.pages.length ? c.pages.join(", ") : "None explicit") + "<br/>";
-                citHtml += "&bull; <strong>Figures:</strong> " + (c.figures && c.figures.length ? c.figures.join(", ") : "None") + "<br/>";
-                citHtml += "&bull; <strong>Tables:</strong> " + (c.tables && c.tables.length ? c.tables.join(", ") : "None");
-                document.getElementById("citationsBox").innerHTML = citHtml;
-
-                // Render Grounded Claims Drawer
-                const groundedClaimsBox = document.getElementById("groundedClaimsBox");
-                if (data.grounded_claims && data.grounded_claims.length > 0) {
-                    let claimsHtml = `
-                        <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 14px;">
-                            <div style="font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
-                                <span>🛡️ Grounded Claim-Level Evidence (${data.grounded_claims.length} Claims Verified)</span>
-                                <span style="font-size: 11px; color: #10b981; font-weight: 600;">100% Traceable</span>
-                            </div>
-                            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">Every material proposition is mapped to its exact standard anchors:</div>
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                    `;
-                    data.grounded_claims.forEach((item, idx) => {
-                        const safeClaim = item.claim.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                        const anchorsStr = item.anchors && item.anchors.length ? item.anchors.join(", ") : "Clause 4 / Annex";
-                        claimsHtml += `
-                            <div style="background: var(--bg-card); border-left: 3px solid #38bdf8; border-radius: 4px; padding: 8px 12px; font-size: 12.5px; line-height: 1.4;">
-                                <div style="color: var(--text-primary); margin-bottom: 4px;"><strong>[Claim ${idx+1}]</strong> ${safeClaim}</div>
-                                <div style="color: #38bdf8; font-size: 11px; font-family: monospace;">📍 Anchors: ${anchorsStr}</div>
-                            </div>
-                        `;
-                    });
-                    claimsHtml += `</div></div>`;
-                    groundedClaimsBox.innerHTML = claimsHtml;
-                    groundedClaimsBox.style.display = "block";
-                } else {
-                    groundedClaimsBox.style.display = "none";
-                }
-
-                // Render See Also interactive cross-links
-                const seeAlsoBox = document.getElementById("seeAlsoBox");
-                if (data.see_also && data.see_also.length > 0) {
-                    seeAlsoBox.style.display = "block";
-                    let chipsHtml = "<div style='font-size: 13px; font-weight: 600; color: var(--accent-cyan); margin-bottom: 8px;'>🔗 Cross-References & Related Terms (Click to inspect):</div><div class='suggestions'>";
-                    data.see_also.forEach(term => {
-                        const safeTerm = term.replace(/'/g, "\\'");
-                        chipsHtml += `<span class='pill' onclick="setQuery('What is ${safeTerm}?')">${term}</span>`;
-                    });
-                    chipsHtml += "</div>";
-                    seeAlsoBox.innerHTML = chipsHtml;
-                } else {
-                    seeAlsoBox.style.display = "none";
-                }
-
-                // Render Dual-Layer Epistemic Provenance Trail
-                const epistemicBox = document.getElementById("epistemicTraceBox");
-                if (data.epistemic_trace) {
-                    const et = data.epistemic_trace;
-                    epistemicBox.style.display = "block";
-                    const statusColor = et.epistemic_status === "VERIFIED_GROUNDED" ? "#10b981" : (et.epistemic_status === "TRUTHFUL_ABSTENTION" ? "#fbbf24" : "#f87171");
-                    let epHtml = `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="font-size: 13px; font-weight: 700; color: var(--accent-cyan);">🔬 Dual-Layer Epistemic Provenance Trail:</span>
-                            <span style="font-size: 11px; font-weight: 700; color: ${statusColor}; background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 12px; border: 1px solid ${statusColor};">
-                                ${et.epistemic_status} (${Math.round(et.provenance_score * 100)}%)
-                            </span>
-                        </div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">${et.manifest_summary}</div>
-                    `;
-
-                    if (et.concepts_verified && et.concepts_verified.length > 0) {
-                        epHtml += `<div style="font-size: 11px; font-weight: 600; color: #a855f7; text-transform: uppercase; margin-bottom: 6px;">Ontology Concepts & Provenance Bridges:</div><div style="display: flex; flex-direction: column; gap: 6px;">`;
-                        et.concepts_verified.slice(0, 5).forEach(cv => {
-                            const badgeColor = cv.node_type === "Process" ? "#38bdf8" : (cv.node_type === "JointGeometry" ? "#fbbf24" : (cv.node_type === "Discontinuity" ? "#f87171" : "#4ade80"));
-                            let bridgeText = "";
-                            if (cv.primary_evidence && cv.primary_evidence.length > 0) {
-                                const pe = cv.primary_evidence[0];
-                                bridgeText = `[:${pe.relation}] &rarr; ${pe.evidence_type}: ${pe.name} ${pe.page ? '(' + pe.page + ')' : ''}`;
-                            }
-                            epHtml += `
-                                <div style="background: var(--bg-card); border-left: 3px solid ${badgeColor}; border-radius: 4px; padding: 6px 10px; font-size: 12px;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="font-weight: 600; color: var(--text-primary);">${cv.concept}</span>
-                                        <span style="font-size: 10px; color: ${badgeColor}; font-weight: 600;">:${cv.node_type} (${cv.standard_status})</span>
-                                    </div>
-                                    <div style="color: #94a3b8; font-size: 11px; margin-top: 2px; font-family: monospace;">${bridgeText}</div>
-                                </div>
-                            `;
-                        });
-                        epHtml += `</div>`;
-                    }
-                    epistemicBox.innerHTML = epHtml;
-                } else {
-                    epistemicBox.style.display = "none";
-                }
-
-                // Render Answer Route Bundle (Perplexity Context-Bench Evidence Group)
-                const answerRouteBox = document.getElementById("answerRouteBox");
-                if (data.answer_route && data.answer_route.evidence_group && data.answer_route.evidence_group.length > 0) {
-                    const ar = data.answer_route;
-                    answerRouteBox.style.display = "block";
-                    const isAll = ar.all_evidence_recovered;
-                    const badgeBg = isAll ? "rgba(16, 185, 129, 0.15)" : "rgba(251, 191, 36, 0.15)";
-                    const badgeBorder = isAll ? "#10b981" : "#fbbf24";
-                    const badgeColor = isAll ? "#10b981" : "#fbbf24";
-
-                    let arHtml = `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="font-size: 13px; font-weight: 700; color: #38bdf8;">📦 Verified Answer Route Bundle:</span>
-                            <span style="font-size: 11px; font-weight: 700; color: ${badgeColor}; background: ${badgeBg}; padding: 2px 8px; border-radius: 12px; border: 1px solid ${badgeBorder};">
-                                ${isAll ? 'ALL-EVIDENCE RECOVERED' : 'PARTIAL EVIDENCE'} (${Math.round(ar.evidence_recall_score * 100)}%)
-                            </span>
-                        </div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
-                            <strong>Context-Bench Metrics:</strong> Evidence Recall: ${Math.round(ar.evidence_recall_score * 100)}% | Epistemic Provenance: ${ar.epistemic_score} | Target: <span style="color: #f8fafc; font-weight: 600;">${ar.concept_name || 'Matched'}</span> (${ar.concept_type || 'Concept'})
-                        </div>
-                        <div style="font-size: 11px; font-weight: 600; color: #a855f7; text-transform: uppercase; margin-bottom: 6px;">
-                            Supporting Evidence Group (${ar.evidence_group.length} items):
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 6px;">
-                    `;
-                    ar.evidence_group.slice(0, 6).forEach(ev => {
-                        const chipCount = ev.callout_chips ? ev.callout_chips.length : 0;
-                        const chipInfo = chipCount > 0 ? ` &bull; <span style="color: #4ade80;">${chipCount} Interactive Callout Chips</span>` : '';
-                        arHtml += `
-                            <div style="background: var(--bg-card); border-left: 3px solid #38bdf8; border-radius: 4px; padding: 6px 10px; font-size: 12px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-weight: 600; color: #38bdf8;">[${ev.evidence_type.toUpperCase()}] ${ev.element_id}</span>
-                                    <span style="font-size: 10px; color: #94a3b8;">${ev.page ? 'p. ' + ev.page : ''}</span>
-                                </div>
-                                <div style="color: var(--text-secondary); font-size: 11px; margin-top: 2px;">
-                                    ${ev.title} ${chipInfo}
-                                </div>
-                            </div>
-                        `;
-                    });
-                    arHtml += `</div>`;
-                    answerRouteBox.innerHTML = arHtml;
-                } else if (answerRouteBox) {
-                    answerRouteBox.style.display = "none";
-                }
 
                 // Render visual evidence
                 const visualBox = document.getElementById("visualContent");
                 visualBox.innerHTML = "";
+                visualBox.style.display = "block";
                 let hasVisual = false;
 
                 if (data.resolved_figures && data.resolved_figures.length > 0) {
@@ -1083,8 +1095,11 @@ HTML_INDEX = """<!DOCTYPE html>
                 }
 
             } catch (err) {
+                resetResultPanels();
                 document.getElementById("loadingSpinner").style.display = "none";
-                alert("Error executing query: " + err);
+                document.getElementById("resultPanel").style.display = "grid";
+                document.getElementById("answerStatusBox").textContent = "Answer unavailable";
+                document.getElementById("answerContent").textContent = "The request could not be completed. Check local configuration or try again.";
             }
         }
 
@@ -1243,15 +1258,19 @@ HTML_INDEX = """<!DOCTYPE html>
             answerBox.innerHTML = `
                 <p><strong>Inspecting ${figData.id}: ${figData.title}</strong></p>
                 <p style="color: var(--text-secondary); margin-top: 8px;">Location: <code>${figData.page}</code></p>
-                <p style="margin-top: 10px;">This standard diagram contains <strong>${figData.chip_count} interactive callout chips</strong> across ${figData.groups.length} technical category groups. Click any chip in the right panel to execute a grounded natural language query with verified definitions and citations.</p>
+                <p style="margin-top: 10px;">This standard diagram contains <strong>${figData.chip_count} interactive callout chips</strong> across ${figData.groups.length} technical category groups. Click any chip in the right panel to execute a natural language query with source references.</p>
             `;
 
             const citationsBox = document.getElementById("citationsBox");
-            citationsBox.innerHTML = `<div><strong>Verified Figure Citation:</strong> AWS A3.0M/A3.0:2020, ${figData.page}</div>`;
+            citationsBox.innerHTML = `<div><strong>Figure source reference:</strong> AWS A3.0M/A3.0:2020, ${figData.page}</div>`;
 
-            document.getElementById("groundedClaimsBox").style.display = "none";
-            document.getElementById("seeAlsoBox").style.display = "none";
-            document.getElementById("epistemicTraceBox").style.display = "none";
+            ["groundedClaimsBox", "seeAlsoBox", "epistemicTraceBox", "answerRouteBox"].forEach(id => {
+                const panel = document.getElementById(id);
+                panel.textContent = "";
+                panel.style.display = "none";
+            });
+            document.getElementById("answerStatusBox").textContent = "Figure inspection";
+            visualBox.style.display = "block";
 
             document.getElementById("resultPanel").scrollIntoView({ behavior: "smooth" });
         }
@@ -1713,8 +1732,14 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                 print(f"[API QUERY] Engine={engine}, Mode={mode}")
                 res = run_query(query, mode=mode, engine=engine, api_key=api_key, model_name=model_name, base_url=base_url)
 
-                if res.get("error_code") in {"RETRIEVAL_INDEX_MISSING", "TERMINOLOGY_REGISTRY_INVALID"}:
-                    self._send_json(503, res)
+                error_status = {
+                    "RETRIEVAL_INDEX_MISSING": 503,
+                    "TERMINOLOGY_REGISTRY_INVALID": 503,
+                    "MODEL_PROVIDER_UNCONFIGURED": 503,
+                    "GENERATION_FAILED": 502,
+                }.get(res.get("error_code"))
+                if error_status:
+                    self._send_json(error_status, res)
                     return
 
                 resp_bytes = json.dumps(res).encode("utf-8")

@@ -1,3 +1,4 @@
+from src.epistemic_verifier import _decision_status
 """Existing metadata consumers, tested without running extraction or graph code."""
 import ast
 import importlib.util
@@ -58,12 +59,12 @@ def test_cached_graph_pages_cannot_override_source_locations():
 
 
 @pytest.mark.parametrize("label,node_type,expected", [
-    ("Figure B16", "Figure", "PARTIALLY_GROUNDED"),
-    ("Figure B55", "Figure", "PARTIALLY_GROUNDED"),
-    ("Figure B1.5", "Figure", "PARTIALLY_GROUNDED"),
-    ("Table A10", "Table", "PARTIALLY_GROUNDED"),
-    ("Table A1.5", "Table", "PARTIALLY_GROUNDED"),
-    ("Figure B6", "Figure", "VERIFIED_GROUNDED"),
+    ("Figure B16", "Figure", "INSUFFICIENT_EVIDENCE"),
+    ("Figure B55", "Figure", "INSUFFICIENT_EVIDENCE"),
+    ("Figure B1.5", "Figure", "INSUFFICIENT_EVIDENCE"),
+    ("Table A10", "Table", "INSUFFICIENT_EVIDENCE"),
+    ("Table A1.5", "Table", "INSUFFICIENT_EVIDENCE"),
+    ("Figure B6", "Figure", "INSUFFICIENT_EVIDENCE"),
 ])
 def test_unknown_cached_elements_cannot_satisfy_route_grounding(label, node_type, expected):
     tree = ast.parse((ROOT / "src/answer_routes.py").read_text(encoding="utf-8"))
@@ -89,8 +90,15 @@ def test_unknown_cached_elements_cannot_satisfy_route_grounding(label, node_type
     exec(compile(ast.Module(body=nodes, type_ignores=[]), "actual_route_with_synthetic_rows", "exec"), ns)
     route = ns['resolve_answer_route']('Show fixture weld figure or table')
     assert route.status == expected
-    if expected == 'PARTIALLY_GROUNDED':
+    assert not route.all_evidence_recovered
+    assert route.evidence_recall_score is None
+    if label != 'Figure B6':
         assert not route.all_evidence_recovered
         assert route.evidence_group[0].page is None
         assert route.evidence_group[0].file_path is None
         assert route.evidence_group[0].metadata['source_location_verification'] == 'legacy_unverified'
+
+    else:
+        assert route.evidence_group[0].metadata['source_location_verification'] == 'verified'
+        assert route.evidence_group[0].page == '87-89'
+        assert route.evidence_group[0].metadata['source_anchors']

@@ -1,9 +1,9 @@
 """
-epistemic_verifier.py: Epistemic Provenance Verification Engine
-Verifies that claims and concepts asserted in an answer are strictly grounded
-through explicit bridges to the Normative Evidence Layer in the Dual-Layer Graph.
+epistemic_verifier.py: Graph-link navigation and explicit answer assessment.
+Stored bridges establish navigation links, not entailment of generated claims.
 """
 
+import hashlib
 import re
 import sqlite3
 from typing import Dict, Any, List
@@ -14,35 +14,61 @@ from src.citation_checker import check_abstention, extract_citations
 
 DUAL_SQLITE_PATH = STORAGE_DIR / "dual_layer_registry.db"
 
-def verify_epistemic_provenance(query: str, answer: str) -> Dict[str, Any]:
+
+def _decision_status(answer, decision):
+    """Accept only an internal, validated decision bound to this exact answer.
+
+    The caller owns source/fact or scope-policy validation. This function does
+    not turn answer wording, graph links or citation identity into that review.
     """
-    Evaluates candidate query answer against the Dual-Layer Epistemic Graph.
-    Verifies that all technical concepts trace to valid Evidence nodes.
+    scopes = {"SUPPORTED_REVIEWED_FACTS": "reviewed_fact_bindings",
+              "TRUTHFUL_ABSTENTION": "deterministic_scope_policy"}
+    if not isinstance(decision, dict) or decision.get("validated") is not True:
+        return None
+    status = decision.get("status")
+    if not isinstance(status, str) or status not in scopes:
+        return None
+    if decision.get("assessment_scope") != scopes[status] or not isinstance(answer, str):
+        return None
+    digest = hashlib.sha256(answer.encode("utf-8")).hexdigest()
+    return status if decision.get("answer_sha256") == digest else None
+
+
+def verify_epistemic_provenance(query: str, answer: str, *, decision=None) -> Dict[str, Any]:
     """
-    # 1. Check if the model abstained
-    if check_abstention(answer):
-        return {
-            "provenance_score": 1.0,
-            "epistemic_status": "TRUTHFUL_ABSTENTION",
-            "is_abstention": True,
-            "concepts_verified": [],
-            "unverified_concepts": [],
-            "evidence_summary": {
-                "figures": [],
-                "clauses": [],
-                "tables": []
-            },
-            "manifest_summary": "Query appropriately abstained; no ungrounded technical claims asserted."
-        }
+    Report stored evidence links separately from reviewed answer support.
+
+    ``concepts_verified`` is retained as a legacy navigation key: its members
+    have graph links, not independently verified claims. Numeric coverage uses
+    only matched concepts and is not evidence recall or an answer truth score.
+    """
+    assessed_status = _decision_status(answer, decision)
+    trace = {
+        "provenance_score": None,
+        "graph_link_coverage": None,
+        "epistemic_status": assessed_status or "UNASSESSED",
+        "assessment_status": assessed_status or "UNASSESSED",
+        "assessment_scope": decision["assessment_scope"] if assessed_status else None,
+        "is_abstention": assessed_status == "TRUTHFUL_ABSTENTION",
+        "abstention_phrase_detected": False,
+        "total_concepts_evaluated": 0,
+        "concepts_verified": [],
+        "unverified_concepts": [],
+        "evidence_summary": {"figures": [], "clauses": [], "tables": []},
+        "unresolved_elements": [],
+        "manifest_summary": "Answer support has not been assessed."
+    }
+    if assessed_status:
+        trace["manifest_summary"] = "An explicit validated decision applies to this exact answer; graph coverage was not measured."
+        return trace
+
+    # A phrase is diagnostic only, including mixed refusal/assertion answers.
+    trace["abstention_phrase_detected"] = bool(check_abstention(answer))
 
     if not DUAL_SQLITE_PATH.exists():
-        return {
-            "provenance_score": 0.5,
-            "epistemic_status": "UNVERIFIED_DATABASE_MISSING",
-            "is_abstention": False,
-            "concepts_verified": [],
-            "unverified_concepts": []
-        }
+        trace["epistemic_status"] = "INSUFFICIENT_EVIDENCE"
+        trace["manifest_summary"] = "Graph navigation database missing; answer support is unassessed."
+        return trace
 
     conn = sqlite3.connect(DUAL_SQLITE_PATH)
     cur = conn.cursor()
@@ -131,7 +157,7 @@ def verify_epistemic_provenance(query: str, answer: str) -> Dict[str, Any]:
     conn.close()
 
     total_checked = len(verified_list) + len(unverified_list)
-    score = (len(verified_list) / total_checked) if total_checked > 0 else 1.0
+    coverage = (len(verified_list) / total_checked) if total_checked > 0 else None
 
     # Also incorporate direct regex citations from citation_checker
     citations = extract_citations(answer)
@@ -142,12 +168,11 @@ def verify_epistemic_provenance(query: str, answer: str) -> Dict[str, Any]:
     for c in citations.get("clauses", []):
         clauses_seen.add(c)
 
-    status_str = "VERIFIED_GROUNDED" if score >= 0.8 else ("PARTIALLY_GROUNDED" if score >= 0.5 else "UNGROUNDED")
-
-    return {
-        "provenance_score": round(score, 3),
+    unresolved = citations.get("unresolved_elements", [])
+    status_str = "INSUFFICIENT_EVIDENCE" if unresolved else "EVIDENCE_LINKS_FOUND" if verified_list else "UNASSESSED"
+    trace.update({
+        "graph_link_coverage": round(coverage, 3) if coverage is not None else None,
         "epistemic_status": status_str,
-        "is_abstention": False,
         "total_concepts_evaluated": total_checked,
         "concepts_verified": verified_list,
         "unverified_concepts": unverified_list,
@@ -156,8 +181,10 @@ def verify_epistemic_provenance(query: str, answer: str) -> Dict[str, Any]:
             "tables": sorted(list(tables_seen)),
             "clauses": sorted(list(clauses_seen))
         },
-        "manifest_summary": f"{len(verified_list)}/{total_checked} technical concepts anchored with explicit normative evidence bridges."
-    }
+        "unresolved_elements": unresolved,
+        "manifest_summary": f"{len(verified_list)}/{total_checked} matched concepts have stored evidence links; claim support is unassessed."
+    })
+    return trace
 
 if __name__ == "__main__":
     test_q = "Define actual throat and explain how it differs from theoretical throat in a fillet weld"
