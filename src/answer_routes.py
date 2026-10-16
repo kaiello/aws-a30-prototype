@@ -83,9 +83,19 @@ def _apply_source_metadata(item):
     if item.evidence_type in {"figure", "table"}:
         item.element_id = label
         item.title = record["title"]
-        paths = manifest.asset_paths(label, {".png"} if item.evidence_type == "figure" else {".md"})
-        item.file_path = paths[0] if paths else None
-        binding = next((a for a in record["assets"] if str(manifest.root / a["relpath"]) == item.file_path), None)
+        # Navigation is optional. Reuse canonical per-asset validation so a
+        # damaged continuation cannot discard healthy paths or claim results.
+        assets = manifest.validated_assets(label)
+        healthy = [asset for asset in assets if asset["status"] == "complete"]
+        suffix = ".png" if item.evidence_type == "figure" else ".md"
+        binding = next((asset for asset in healthy if Path(asset["relpath"]).suffix.lower() == suffix), None)
+        item.file_path = binding["path"] if binding else None
+        states = {asset["status"] for asset in assets}
+        item.metadata["assets"] = assets
+        item.metadata["image_paths"] = [asset["path"] for asset in healthy
+                                        if Path(asset["relpath"]).suffix.lower() == ".png"]
+        item.metadata["asset_status"] = next((state for state in ("corrupt", "missing", "unavailable")
+                                               if state in states), "complete" if assets else "source_only")
         item.metadata["asset_binding_verification"] = binding["verification"]["state"] if binding else "unavailable"
         if item.evidence_type == "figure":
             item.callout_chips = [chip for group in FIGURE_INSPECTORS.get(label, {}).get("groups", []) for chip in group.get("chips", [])]
@@ -285,6 +295,8 @@ def resolve_answer_route(query: str, candidate_answer: str = "", *, decision=Non
     has_table = any(ev.evidence_type == "table" and ev.metadata.get("source_location_verification") == "verified" for ev in evidence_items)
     unresolved_source = bool(citations.get("unresolved_elements")) or any(
         ev.evidence_type in {"figure", "table"} and ev.metadata.get("source_location_verification") != "verified"
+        for ev in evidence_items) or any(
+        ev.metadata.get("asset_status") in {"missing", "corrupt", "unavailable"}
         for ev in evidence_items)
 
     navigation_available = (bool(evidence_items) and not unresolved_source

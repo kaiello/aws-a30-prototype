@@ -46,7 +46,7 @@ def test_graph_constants_project_existing_ids_and_actual_pages():
 def test_cached_graph_pages_cannot_override_source_locations():
     tree = ast.parse((ROOT / "src/answer_routes.py").read_text(encoding="utf-8"))
     fn = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "_apply_source_metadata")
-    ns = {"get_manifest": get_manifest, "FIGURE_INSPECTORS": {}}
+    ns = {"get_manifest": get_manifest, "FIGURE_INSPECTORS": {}, "Path": Path}
     exec(compile(ast.Module(body=[fn], type_ignores=[]), "actual_evidence_overlay", "exec"), ns)
     item = types.SimpleNamespace(evidence_type="figure", element_id="FIGURE B6", page="999",
                                  file_path="untrusted-cache.png", callout_chips=[], metadata={})

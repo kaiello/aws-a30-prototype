@@ -66,6 +66,7 @@ def query_modules(tmp_path):
     routes.resolve_answer_route = forbidden
     grounded = types.ModuleType("src.grounded_answer")
     grounded.compose_grounded_answer = lambda *args: None
+    grounded.project_reviewed_facts = forbidden
     query = load_module("isolated_query", "query.py", {
         "src.config": cfg, "src.pre_retrieval": pre,
         "src.hybrid_retriever": hybrid, "src.indexer": indexer,

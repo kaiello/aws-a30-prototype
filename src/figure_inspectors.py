@@ -1241,6 +1241,7 @@ def get_all_figures_catalog() -> List[Dict[str, Any]]:
             "category": data.get("category", ""),
             "chip_count": total_chips,
             "image_file": data.get("image_file", ""),
+            "image_files": data.get("image_files", []),
             "groups": data.get("groups", [])
         })
     return catalog

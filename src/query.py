@@ -38,15 +38,20 @@ from src.answer_routes import resolve_answer_route
 from src.pre_retrieval import check_early_abstention, expand_query
 from src.hybrid_retriever import ContextualIndexMissingError, hybrid_retrieve
 from src.terminology_retrieval import TerminologyRegistryError, get_terminology_evidence
-from src.grounded_answer import compose_grounded_answer
+from src.grounded_answer import compose_grounded_answer, project_reviewed_facts
+from src.evidence_resolution import qualify_reference_hierarchy, resolve_claim_evidence
 
-from src.standard_manifest import get_manifest, extract_references
+from src.standard_manifest import ManifestError, get_manifest, extract_references, extract_reference_records
 
 TABLE_COMPANION_FIGURES = get_manifest().companions()
 
 def resolve_multimodal_assets(text: str):
     """Resolve canonical elements and every declared page without glob guesses."""
     manifest = get_manifest()
+    def availability(assets):
+        states = {asset["status"] for asset in assets}
+        return next((state for state in ("corrupt", "missing", "unavailable") if state in states),
+                    "complete" if assets else "source_only")
     references = extract_references(text)
     direct = set(references["figures"])
     groups = {label: entry["text"] for entry in references["unresolved_elements"]
@@ -57,24 +62,27 @@ def resolve_multimodal_assets(text: str):
         targets.update(companions.get(table, []))
     figures = []
     for label in sorted(targets):
-        paths = manifest.asset_paths(label, {".png"})
-        if paths:
-            record = {"figure_id": label, "image_path": paths[0], "image_paths": paths,
-                      "source_anchors": manifest.source_anchors(label)}
-            if label in groups and label not in direct:
-                record["requested_as_group"] = groups[label]
-            if label not in direct and label not in groups:
-                record.update(relationship="ui_companion", relationship_verification="candidate")
-            figures.append(record)
+        assets = manifest.validated_assets(label, {".png"})
+        paths = [asset["path"] for asset in assets if asset["status"] == "complete"]
+        record = {"figure_id": label, "image_path": paths[0] if paths else None, "image_paths": paths,
+                  "source_anchors": manifest.source_anchors(label),
+                  "asset_status": availability(assets), "assets": assets}
+        if label in groups and label not in direct:
+            record["requested_as_group"] = groups[label]
+        if label not in direct and label not in groups:
+            record.update(relationship="ui_companion", relationship_verification="candidate")
+        figures.append(record)
     tables = []
     for label in references["tables"]:
-        markdown = manifest.asset_paths(label, {".md"})
-        images = manifest.asset_paths(label, {".png"})
+        assets = manifest.validated_assets(label)
+        healthy = [asset for asset in assets if asset["status"] == "complete"]
+        markdown = [asset["path"] for asset in healthy if Path(asset["relpath"]).suffix.lower() == ".md"]
+        images = [asset["path"] for asset in healthy if Path(asset["relpath"]).suffix.lower() == ".png"]
         # Preserve the existing table_path interface; do not invent absent exports.
-        if markdown:
-            tables.append({"table_id": label, "table_path": markdown[0], "image_paths": images,
-                           "source_anchors": manifest.source_anchors(label),
-                           "text_asset_verification": "candidate"})
+        tables.append({"table_id": label, "table_path": markdown[0] if markdown else None,
+                       "image_paths": images, "source_anchors": manifest.source_anchors(label),
+                       "text_asset_verification": "candidate" if markdown else "unavailable",
+                       "asset_status": availability(assets), "assets": assets})
     return figures, tables
 
 def extract_see_also_terms(text: str):
@@ -113,7 +121,83 @@ def _query_failure(query, code, message, retrieved_evidence=None):
                                   "citation_support": "unassessed"},
             "citations": {}, "grounded_claims": [], "resolved_figures": [],
             "resolved_tables": [], "see_also": [],
-            "retrieved_evidence": retrieved_evidence or []}
+            "retrieved_evidence": retrieved_evidence or [],
+            "claim_evidence_links": [],
+            "claim_evidence_assessment": {"status": "UNASSESSED", "complete": False,
+                "required_fact_ids": [], "observed_fact_ids": [], "diagnostics": ["no_claims_extracted"]}}
+
+
+def _attach_claim_evidence(result, evidence_context=(), *, reviewed_bundle=None):
+    """Attach bounded identity evidence; only the server projects reviewed facts.
+
+    Generated claims have no inferred selection or reviewed authority. Extraction
+    may omit prose, so these links never certify complete generated answers.
+    """
+    claims = result.get("grounded_claims", [])
+    assessment = {"status": "UNASSESSED", "complete": False, "required_fact_ids": [],
+                  "observed_fact_ids": [], "diagnostics": ["no_claims_extracted"]}
+    resolution = {"links": [], "assessment": assessment, "timings_ms": {}}
+    if claims:
+        try:
+            view = project_reviewed_facts(reviewed_bundle) if reviewed_bundle is not None else None
+            resolution = resolve_claim_evidence(claims, evidence_context, reviewed_fact_view=view)
+        except (ValueError, TypeError, KeyError, RuntimeError, OSError):
+            resolution["assessment"] = dict(assessment, diagnostics=["claim_evidence_unavailable"])
+    reviewed = result.get("answer_assessment", {}).get("status") == "SUPPORTED_REVIEWED_FACTS"
+    if reviewed and not (resolution["assessment"].get("status") == "SUPPORTED_REVIEWED_FACTS"
+                         and resolution["assessment"].get("complete") is True):
+        # A conflicting badge must not survive a failed source binding, and no
+        # model fallback can repair an invalid reviewed extract's authority.
+        result = _query_failure(result.get("query", ""), "EVIDENCE_BINDING_FAILED",
+            "Reviewed source bindings could not be validated. No answer was returned.")
+        resolution = {"links": [], "assessment": dict(assessment, status="INSUFFICIENT_EVIDENCE",
+                      diagnostics=["reviewed_claim_evidence_incomplete"]), "timings_ms": resolution["timings_ms"]}
+    result["claim_evidence_links"] = resolution["links"]
+    result["claim_evidence_assessment"] = resolution["assessment"]
+    result.setdefault("timings_ms", {}).update({"claim_evidence_" + key: value
+                                               for key, value in resolution["timings_ms"].items()})
+    return result
+
+
+def _resolve_display_assets(text):
+    """Legacy navigation availability must not preempt claim-level assessment."""
+    try:
+        return resolve_multimodal_assets(text)
+    except (ManifestError, OSError):
+        return [], []
+
+
+def _reject_unresolved_citations(result):
+    """Withhold generated assertions with unresolved source identity.
+
+    Full-response parsing also covers prose missed by claim extraction. This
+    checks reference identity only; an exact citation never grants support.
+    Rejected claim links remain diagnostic records, not asserted facts.
+    """
+    response = result["answer"]
+    try:
+        hierarchy = qualify_reference_hierarchy(response, extract_reference_records(response))
+        mentions = hierarchy["mentions"]
+        diagnostics = list(hierarchy["diagnostics"])
+        if any(mention["resolution"]["status"] not in {"exact", "page_only"} for mention in mentions):
+            diagnostics.append("unresolved_generated_reference")
+    except (ManifestError, OSError):
+        mentions, diagnostics = [], ["source_identity_unavailable"]
+    if not diagnostics:
+        return result
+    answer = "The generated response contains a source reference that could not be validated. No generated answer was returned. Clarify the source reference or ask about an exact standard element."
+    result.update(answer=answer, answer_outcome="insufficient_evidence", answer_origin="none",
+                  grounded_claims=[], see_also=[],
+                  answer_assessment={"status": "INSUFFICIENT_EVIDENCE", "validated": False,
+                      "citation_support": "invalid", "assessment_scope": "source_identity_only",
+                      "answer_sha256": hashlib.sha256(answer.encode("utf-8")).hexdigest(),
+                      "diagnostics": diagnostics},
+                  citation_diagnostics={"references": mentions, "diagnostics": diagnostics})
+    result["claim_evidence_assessment"].update(answer_withheld=True, complete=False)
+    # Graph navigation may contain the rejected text as a compatibility field.
+    if isinstance(result.get("answer_route"), dict):
+        result["answer_route"]["primary_answer"] = None
+    return result
 
 
 def _scope_decision(answer):
@@ -146,14 +230,14 @@ async def async_query(
     if early_abstain:
         answer = early_abstain["answer"]
         decision = _scope_decision(answer)
-        figures, tables = resolve_multimodal_assets(query_str)
-        return {"query": query_str, "answer": answer, "citations": {"out_of_scope": True},
+        figures, tables = _resolve_display_assets(query_str)
+        return _attach_claim_evidence({"query": query_str, "answer": answer, "citations": {"out_of_scope": True},
                 "grounded_claims": [], "resolved_figures": figures, "resolved_tables": tables,
                 "see_also": [], "answer_outcome": "abstention", "answer_origin": "none",
                 "answer_assessment": dict(decision, citation_support="not_applicable"),
                 "epistemic_trace": verify_epistemic_provenance(query_str, answer, decision=decision),
                 "answer_route": resolve_answer_route(query_str, answer, decision=decision).to_dict(),
-                "retrieved_evidence": [], "timings_ms": {"total": round((time.perf_counter()-started)*1000, 3)}}
+                "retrieved_evidence": [], "timings_ms": {"total": round((time.perf_counter()-started)*1000, 3)}})
 
     try:
         reviewed = get_terminology_evidence(query_str)
@@ -164,12 +248,15 @@ async def async_query(
         composed = compose_grounded_answer(query_str, reviewed)
         if composed is not None:
             answer = composed.get("answer", "")
-            figures, tables = resolve_multimodal_assets(query_str + "\n" + answer)
-            return dict(composed, query=query_str, resolved_figures=figures, resolved_tables=tables,
+            figures, tables = _resolve_display_assets(query_str + "\n" + answer)
+            result = dict(composed, query=query_str, resolved_figures=figures, resolved_tables=tables,
                         see_also=[], retrieved_evidence=[reviewed],
                         terminology_resolution=reviewed.get("terminology_resolution", {}),
                         epistemic_trace=_reviewed_trace(composed.get("answer_assessment", {})),
-                        timings_ms={"total": round((time.perf_counter()-started)*1000, 3)})
+                        timings_ms={})
+            result = _attach_claim_evidence(result, [reviewed], reviewed_bundle=reviewed)
+            result["timings_ms"]["total"] = round((time.perf_counter()-started)*1000, 3)
+            return result
 
     engine_lower = (engine or DEFAULT_ENGINE).lower()
     key = api_key or (GEMINI_API_KEY if engine_lower == "gemini" else
@@ -221,7 +308,7 @@ async def async_query(
 
     citations = extract_citations(response)
     combined_asset_text = f"{query_str}\n{response}\n" + " ".join(c.get("content", "") for c in hybrid_evidence[:3])
-    figures, tables = resolve_multimodal_assets(combined_asset_text)
+    figures, tables = _resolve_display_assets(combined_asset_text)
     result = {"query": query_str, "answer": response, "citations": citations,
               "grounded_claims": extract_grounded_claims(response), "resolved_figures": figures,
               "resolved_tables": tables, "see_also": extract_see_also_terms(response),
@@ -235,6 +322,8 @@ async def async_query(
     resolution = next((c["terminology_resolution"] for c in hybrid_evidence if c.get("evidence_type") == "terminology_mapping"), None)
     if resolution is not None:
         result["terminology_resolution"] = resolution
+    result = _reject_unresolved_citations(_attach_claim_evidence(result, hybrid_evidence))
+    result["timings_ms"]["total"] = round((time.perf_counter()-started)*1000, 3)
     return result
 
 import threading

@@ -280,7 +280,12 @@ class StandardManifest:
         values = [str(a["pdf_index"] + 1) if ordinal else a["printed_label"] for a in anchors]
         return values[0] if len(values) == 1 else f"{values[0]}-{values[-1]}" if values else ""
 
-    def asset_paths(self, label, suffixes=None):
+    def validated_assets(self, label, suffixes=None):
+        """Canonical render order with independent local-byte availability states.
+
+        An available asset identifies matching bytes, not support for a claim.
+        Failure records preserve declared metadata without inventing another file.
+        """
         record = self.element(label)
         if not record:
             return []
@@ -288,15 +293,30 @@ class StandardManifest:
         for asset in sorted(record.get("assets", []), key=lambda a: a["source_anchor_orders"]):
             if suffixes and PurePosixPath(asset["relpath"]).suffix.lower() not in suffixes:
                 continue
-            path = _safe_path(self.root, asset["relpath"], ["parsed/figures", "parsed/tables"])
+            result = dict(asset, path=None, status="complete", error_code=None)
             try:
+                path = _safe_path(self.root, asset["relpath"], ["parsed/figures", "parsed/tables"])
+                result["path"] = str(path)
                 actual = path.read_bytes()
-            except FileNotFoundError as exc:
-                raise ManifestError("MANIFEST_ASSET_MISSING", "A declared asset is unavailable.") from exc
-            if asset["sha256"] is not None and hashlib.sha256(actual).hexdigest() != asset["sha256"]:
-                raise ManifestError("MANIFEST_ASSET_MISMATCH", "A declared asset has changed.")
-            results.append(str(path))
+            except FileNotFoundError:
+                result.update(status="missing", error_code="MANIFEST_ASSET_MISSING")
+            except ManifestError as exc:
+                result.update(status="unavailable", error_code=exc.code)
+            except OSError:
+                result.update(status="unavailable", error_code="MANIFEST_ASSET_UNAVAILABLE")
+            else:
+                if asset["sha256"] is not None and hashlib.sha256(actual).hexdigest() != asset["sha256"]:
+                    result.update(status="corrupt", error_code="MANIFEST_ASSET_MISMATCH")
+            results.append(result)
         return results
+
+    def asset_paths(self, label, suffixes=None):
+        assets = self.validated_assets(label, suffixes=suffixes)
+        for asset in assets:
+            if asset["status"] != "complete":
+                message = "A declared asset has changed." if asset["status"] == "corrupt" else "A declared asset is unavailable."
+                raise ManifestError(asset["error_code"], message)
+        return [asset["path"] for asset in assets]
 
     def companions(self):
         result = {}
@@ -360,6 +380,8 @@ _REFERENCE_ATOM = re.compile(r"(?:[A-Za-z0-9]|\.(?=\d))[\w./–—-]*")
 _RANGE_TAIL = re.compile(r"\s*(?:[-–—/]|(to|through)\b)\s*", re.IGNORECASE)
 _FOLLOWING = re.compile(r"\s*(?:[,;]\s*(?:and\s+)?|and\s+)", re.IGNORECASE)
 _NUMERIC_RANGE = re.compile(r"([A-Za-z]?)\.?(\d+)\s*[-–—]\s*([A-Za-z]?)\.?(\d+)", re.IGNORECASE)
+# Element-only word ranges keep the stricter printed-page grammar unchanged.
+_ELEMENT_THROUGH_RANGE = re.compile(r"([A-Za-z]?)\.?(\d+)\s+through\s+([A-Za-z]?)\.?(\d+)", re.IGNORECASE)
 _RANGE_MARKER = re.compile(r"[-–—/]|\b(?:to|through)\b", re.IGNORECASE)
 
 
@@ -368,17 +390,45 @@ def _reference_id_start(kind, text):
     return re.match(shape, text)
 
 
+def _parenthetical_tail(text, end):
+    """Retain a complete attached qualifier; never interpret it as a panel ID."""
+    opening = re.match(r"\s*\(", text[end:])
+    if not opening:
+        return end
+    cursor = end + opening.end() - 1
+    while True:
+        depth = 0
+        while cursor < len(text):
+            character = text[cursor]
+            if character in "\n;" and depth:
+                return cursor  # An unclosed qualifier cannot swallow a new clause.
+            depth += (character == "(") - (character == ")")
+            cursor += 1
+            if depth == 0:
+                break
+        end = cursor
+        separator = _RANGE_TAIL.match(text, end) or _FOLLOWING.match(text, end)
+        if not separator or separator.end() >= len(text) or text[separator.end()] != "(":
+            return end
+        cursor = separator.end()
+
+
 def _reference_expression(text, start, kind):
     """Read whole ID expressions; prose after 'to'/'through' is not a range."""
     atom = _REFERENCE_ATOM.match(text, start)
     if not atom:
         return "", start
-    end = atom.end()
+    end = _parenthetical_tail(text, atom.end())
     while tail := _RANGE_TAIL.match(text, end):
         endpoint = _REFERENCE_ATOM.match(text, tail.end())
         candidate_end = endpoint.end() if endpoint else tail.end()
         endpoint_kind = kind
         target = endpoint[0] if endpoint else ""
+        if (re.search(r"[\r\n][ \t]*-[ \t]+$", text[end:tail.end()])
+                and not _reference_id_start(kind, target)):
+            # Prose/full citations start a new bullet. Bare ID endpoints remain
+            # one range, including unknown endpoints that must fail whole.
+            break
         # Repeated kinds belong to a range only when followed by an ID. Keep
         # them in unsupported expressions so their endpoint cannot leak out as
         # an independent citation.
@@ -397,19 +447,19 @@ def _reference_expression(text, start, kind):
             target = target[shorthand.start(2):]
         if tail[1] and not _reference_id_start(endpoint_kind, target):
             break  # e.g. "Figure B1 to explain...", not an ID range.
-        end = candidate_end
+        end = _parenthetical_tail(text, candidate_end)
     return text[start:end].strip(), end
 
 
-def _reference_groups(text, *, lists=True, singular=False):
-    """Shared lexical boundary for citations and legacy singular enrichment.
-
-    Return kind plus raw expressions. Resolution belongs to extract_references;
-    this helper never loads metadata or expands a range.
-    """
+def _reference_spans(text, *, lists=True, singular=False, shorthand=False):
+    """One shared element lexer for legacy groups and complete span records."""
     text = str(text)
     covered = 0
-    for match in (_SINGULAR_REFERENCE if singular else _REFERENCE).finditer(text):
+    matches = list((_SINGULAR_REFERENCE if singular else _REFERENCE).finditer(text))
+    if shorthand and not singular:
+        matches.extend(_SINGULAR_REFERENCE.finditer(text))
+        matches.sort(key=lambda match: (match.start(), -match.end()))
+    for match in matches:
         if match.start() < covered:
             continue
         word = match[1].lower()
@@ -426,74 +476,176 @@ def _reference_groups(text, *, lists=True, singular=False):
                 expressions.append(raw)
                 end = following_end
         covered = end
+        yield kind, expressions, match.start(), end, match.start(2)
+
+
+def _reference_groups(text, *, lists=True, singular=False):
+    """Compatibility view of the shared element lexer; no metadata or I/O."""
+    for kind, expressions, _, _, _ in _reference_spans(text, lists=lists, singular=singular):
         yield kind, expressions
 
 
+def _reference_codes(kind, expressions):
+    prefix = ""
+    for raw in expressions:
+        code = raw.rstrip(".")
+        explicit = re.match(r"([A-Za-z])(?=\.?\d)", code)
+        if explicit:
+            prefix = explicit[1]
+        elif kind in {"Figure", "Table"} and prefix and re.match(r"\.?\d", code):
+            code = prefix + code
+        yield code
+
+
+def _combined_resolution(resolutions):
+    statuses = {result["status"] for result in resolutions}
+    status = next((value for value in ("unsupported_qualifier", "unknown", "unverified", "group") if value in statuses), "exact")
+    return {"status": status,
+            "labels": list(dict.fromkeys(label for result in resolutions for label in result["labels"])),
+            "target_ids": list(dict.fromkeys(identity for result in resolutions for identity in result["target_ids"]))}
+
+
+def _resolve_reference_code(kind, code, manifest, *, lists=True):
+    """The one canonical element/range resolver used by both public APIs."""
+    unknown = {"status": "unknown", "labels": [], "target_ids": []}
+    if "(" in code:
+        declared = manifest.resolve(kind + " " + code)
+        if declared["status"] == "exact":
+            return declared  # Only an explicitly declared full alias can be exact.
+        parent = _resolve_reference_code(kind, code.split("(", 1)[0].rstrip(), manifest, lists=lists)
+        return dict(parent, status="unsupported_qualifier")
+    if not _RANGE_MARKER.search(code):
+        return manifest.resolve(kind + " " + code)
+    matched = _NUMERIC_RANGE.fullmatch(code) or _ELEMENT_THROUGH_RANGE.fullmatch(code)
+    if not lists or kind not in {"Figure", "Table"} or not matched:
+        return unknown
+    first_prefix, first_digits, last_prefix, last_digits = matched.groups()
+    last_prefix = last_prefix or first_prefix
+    first, last = first_prefix + first_digits, last_prefix + last_digits
+    # Resolve original endpoints before numeric conversion: unknown and enormous
+    # IDs cannot become real IDs by truncation or normalization.
+    endpoints = [manifest.resolve(kind + " " + item) for item in (first, last)]
+    if not first_prefix or first_prefix.casefold() != last_prefix.casefold() or any(item["status"] != "exact" for item in endpoints):
+        return unknown
+    inventory = manifest.labels("figures" if kind == "Figure" else "tables")
+    width = max((len(m[0]) for label in inventory if (m := re.search(r"\d+", label))), default=0)
+    if max(len(first_digits), len(last_digits)) > width:
+        return unknown
+    first_number, last_number = int(first_digits), int(last_digits)
+    if first_number > last_number or last_number - first_number + 1 > len(inventory):
+        return unknown
+    members = [first_prefix + str(number) for number in range(first_number, last_number + 1)]
+    resolutions = [manifest.resolve(kind + " " + member) for member in members]
+    if any(item["status"] != "exact" for item in resolutions):
+        # A range crossing a group is not that group; candidates remain diagnostic.
+        candidates = _combined_resolution([item for item in resolutions if item["status"] != "exact"])
+        return dict(candidates, status="unknown")
+    return _combined_resolution(resolutions)
+
+
 def extract_references(text, *, lists=True):
-    """Resolve exact IDs and bounded numeric ranges without partial acceptance."""
+    """Resolve exact IDs/ranges; preserve the legacy schema and member order."""
     manifest = get_manifest()
     result = {"figures": [], "tables": [], "clauses": [], "unresolved_elements": []}
-
-    def unresolved(kind, code, found=None):
-        found = found or {"status": "unknown", "labels": []}
-        entry = {"text": kind + " " + code, "status": found["status"], "candidates": found["labels"]}
-        if entry not in result["unresolved_elements"]:
-            result["unresolved_elements"].append(entry)
-
-    def add(kind, code):
-        found = manifest.resolve(kind + " " + code)
-        if found["status"] != "exact":
-            unresolved(kind, code, found)
-            return
-        bucket = "figures" if kind == "Figure" else "tables" if kind == "Table" else "clauses"
-        canonical = found["labels"][0]
-        if canonical not in result[bucket]:
-            result[bucket].append(canonical)
-
     for kind, expressions in _reference_groups(text, lists=lists):
-        prefix = ""
-        for raw in expressions:
-            code = raw.rstrip(".")
-            explicit = re.match(r"([A-Za-z])(?=\.?\d)", code)
-            if explicit:
-                prefix = explicit[1]
-            elif kind in {"Figure", "Table"} and prefix and re.match(r"\.?\d", code):
-                code = prefix + code
-            if not _RANGE_MARKER.search(code):
-                add(kind, code)
-                continue
-
-            matched = _NUMERIC_RANGE.fullmatch(code)
-            if not lists or kind not in {"Figure", "Table"} or not matched:
-                unresolved(kind, code)
-                continue
-            first_prefix, first_digits, last_prefix, last_digits = matched.groups()
-            last_prefix = last_prefix or first_prefix
-            first = first_prefix + first_digits
-            last = last_prefix + last_digits
-            # Resolve original endpoints before numeric conversion: unknown and
-            # enormous IDs cannot become real IDs by truncation/normalization.
-            endpoints = [manifest.resolve(kind + " " + item) for item in (first, last)]
-            if not first_prefix or first_prefix.casefold() != last_prefix.casefold() or any(item["status"] != "exact" for item in endpoints):
-                unresolved(kind, code)
-                continue
-            inventory = manifest.labels("figures" if kind == "Figure" else "tables")
-            width = max((len(m[0]) for label in inventory if (m := re.search(r"\d+", label))), default=0)
-            if max(len(first_digits), len(last_digits)) > width:
-                unresolved(kind, code)
-                continue
-            first_number, last_number = int(first_digits), int(last_digits)
-            if first_number > last_number or last_number - first_number + 1 > len(inventory):
-                unresolved(kind, code)
-                continue
-            members = [first_prefix + str(number) for number in range(first_number, last_number + 1)]
-            resolutions = [manifest.resolve(kind + " " + member) for member in members]
-            if any(item["status"] != "exact" for item in resolutions):
-                # A range crossing B16 is not the B16 group itself. Retain its
-                # candidates diagnostically without triggering group assets.
-                candidates = list(dict.fromkeys(label for item in resolutions if item["status"] != "exact" for label in item["labels"]))
-                unresolved(kind, code, {"status": "unknown", "labels": candidates})
-                continue
-            for member in members:
-                add(kind, member)
+        for code in _reference_codes(kind, expressions):
+            found = _resolve_reference_code(kind, code, manifest, lists=lists)
+            if found["status"] == "exact":
+                bucket = "figures" if kind == "Figure" else "tables" if kind == "Table" else "clauses"
+                for label in found["labels"]:
+                    if label not in result[bucket]:
+                        result[bucket].append(label)
+            else:
+                entry = {"text": kind + " " + code, "status": found["status"], "candidates": found["labels"]}
+                if entry not in result["unresolved_elements"]:
+                    result["unresolved_elements"].append(entry)
     return result
+
+
+_PAGE_REFERENCE = re.compile(r"(?<!\w)(?:pp?\.\s*|pages?\s+)(?P<value>\d|[ivxlcdm]+\b)", re.IGNORECASE)
+
+
+def _page_expression(text, match):
+    raw, end = _reference_expression(text, match.start("value"), "Page")
+    # A sentence-ending period is punctuation, not a printed page identifier.
+    trimmed = raw.rstrip(".")
+    return trimmed, end - (len(raw) - len(trimmed))
+
+
+def _printed_page_candidates(value, manifest):
+    pages = manifest.document["pages"]
+    labels = [value]
+    if _RANGE_MARKER.search(value):
+        matched = _NUMERIC_RANGE.fullmatch(value)
+        if not matched or matched[1] or matched[3]:
+            return []
+        first, last = matched[2], matched[4]
+        width = max((len(page["printed_label"]) for page in pages if str(page.get("printed_label", "")).isdigit()), default=0)
+        if max(len(first), len(last)) > width:
+            return []
+        start, end = int(first), int(last)
+        if start > end or end - start + 1 > len(pages):
+            return []
+        labels = [str(number) for number in range(start, end + 1)]
+    candidates = []
+    for label in labels:
+        matches = [page for page in pages if page.get("printed_label") is not None
+                   and str(page["printed_label"]).casefold() == label.casefold()]
+        if not matches:
+            return []
+        candidates.extend({"pdf_index": page["pdf_index"], "pdf_page_ordinal": page["pdf_index"] + 1,
+                           "printed_label": page["printed_label"]} for page in matches)
+    return candidates
+
+
+def extract_reference_records(text, *, manifest=None):
+    """Complete occurrence/group records; identity/page candidates are not support.
+
+    Offsets are half-open Unicode character positions in the supplied text.
+    Repeated mentions remain separate. Unsupported qualifiers retain parent
+    candidates only for navigation; they never become exact parent support.
+    """
+    text = str(text or "")
+    manifest = get_manifest() if manifest is None else manifest
+    records = []
+    for kind, expressions, start, end, code_start in _reference_spans(text, shorthand=True):
+        codes = list(_reference_codes(kind, expressions))
+        resolution = _combined_resolution([_resolve_reference_code(kind, code, manifest) for code in codes])
+        code_end = end - (len(expressions[-1]) - len(expressions[-1].rstrip(".")))
+        requested = kind + " " + text[code_start:code_end].strip()
+        # Canonical identity is separate from the full original request below.
+        # Lists/ranges/groups keep their complete expression and member order.
+        if (len(codes) == 1 and len(resolution["labels"]) == 1
+                and resolution["status"] in {"exact", "unsupported_qualifier"}):
+            requested = resolution["labels"][0]
+        panel = text[code_start:code_end].split("(", 1)
+        qualifiers = {"panel": "(" + panel[1] if len(panel) == 2 else None, "page": None}
+        page_candidates = []
+        # Do not associate a page from a later sentence with this element.
+        if not expressions[-1].endswith("."):
+            separator = re.match(r"\s*,?\s*", text[end:])
+            page = _PAGE_REFERENCE.match(text, end + separator.end())
+            if page:
+                value, end = _page_expression(text, page)
+                qualifiers["page"] = text[page.start():end]
+                page_candidates = _printed_page_candidates(value, manifest)
+        end = max(code_end, end if qualifiers["page"] else code_end)
+        records.append({"raw": text[start:end], "start": start, "end": end,
+                        "span_space": "half_open_unicode_characters", "kind": kind.lower(),
+                        "requested_label": requested, "resolution": resolution,
+                        "qualifiers": qualifiers, "page_candidates": page_candidates})
+    for page in _PAGE_REFERENCE.finditer(text):
+        if any(record["start"] <= page.start() < record["end"] for record in records):
+            continue
+        value, end = _page_expression(text, page)
+        candidates = _printed_page_candidates(value, manifest)
+        raw = text[page.start():end]
+        records.append({"raw": raw, "start": page.start(), "end": end,
+                        "span_space": "half_open_unicode_characters", "kind": "page",
+                        "requested_label": "Page " + value,
+                        "resolution": {"status": "page_only" if candidates else "unknown", "labels": [], "target_ids": []},
+                        "qualifiers": {"panel": None, "page": raw}, "page_candidates": candidates})
+    records.sort(key=lambda record: record["start"])
+    for order, record in enumerate(records):
+        record["order"] = order
+    return records

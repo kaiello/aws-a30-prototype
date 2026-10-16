@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def actual_function(path, name, namespace):
     tree = ast.parse((ROOT / path).read_text(encoding="utf-8"))
     node = next(node for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == name)
-    helpers = [item for item in tree.body if path == "src/query.py" and isinstance(item, ast.FunctionDef) and item.name in {"_query_failure", "_scope_decision", "_reviewed_trace"}]
+    helpers = [item for item in tree.body if path == "src/query.py" and isinstance(item, ast.FunctionDef) and item.name in {"_query_failure", "_scope_decision", "_reviewed_trace", "_attach_claim_evidence", "_resolve_display_assets", "_reject_unresolved_citations"}]
     exec(compile(ast.Module(body=helpers + [node], type_ignores=[]), path, "exec"), namespace)
     return namespace[name]
 
@@ -112,6 +112,8 @@ def query_namespace(evidence):
                  "ContextualIndexMissingError": FileNotFoundError,
                  "get_rag_instance": lambda **kwargs: Rag(), "QueryParam": lambda **kwargs: kwargs,
                  "extract_citations": lambda text: {}, "extract_grounded_claims": lambda text: [],
+                 "extract_reference_records": lambda text: [],
+                 "qualify_reference_hierarchy": lambda text, mentions: {"mentions": mentions, "diagnostics": []},
                  "resolve_multimodal_assets": lambda text: ([], []), "extract_see_also_terms": lambda text: [],
                  "verify_epistemic_provenance": lambda *args: {},
                  "resolve_answer_route": lambda *args: SimpleNamespace(to_dict=lambda: {}), "json": json}
