@@ -93,8 +93,10 @@ def _anchor(value, manifest, document):
     _require(manifest.resolve(section)["status"] == "exact" and any(
         anchor["pdf_index"] == value["pdf_index"] and anchor["printed_label"] == value.get("printed_label")
         for anchor in manifest.anchors(section)))
+    labels = manifest.resolve(section).get("labels", [])
     return {"document_id": document["id"], "source_sha256": document["sha256"],
             "section_id": section, "pdf_index": value["pdf_index"],
+            "section_label": labels[0] if labels else section,
             "pdf_page_ordinal": value["pdf_index"] + 1, "printed_label": value["printed_label"],
             "verification_state": "verified"}
 
@@ -149,10 +151,20 @@ def _load_entries(path, root, manifest):
                      and isinstance(row.get("content"), str) and _digest(row["content"]) == member.get("content_sha256")
                      and isinstance(excerpt, str) and excerpt.strip() and _digest(excerpt) == member.get("excerpt_sha256")
                      and _normal(excerpt) in _normal(row["content"]))
+            boundaries = {}
+            if any(key in member for key in ("raw_content_span", "span_space", "source_entry_refs")):
+                span = member.get("raw_content_span")
+                refs = member.get("source_entry_refs")
+                _require(isinstance(span, list) and len(span) == 2 and all(type(v) is int for v in span)
+                         and 0 <= span[0] < span[1] <= len(row["content"])
+                         and row["content"][span[0]:span[1]] == excerpt
+                         and isinstance(member.get("span_space"), str) and member["span_space"].strip()
+                         and isinstance(refs, list) and refs and all(isinstance(ref, str) and ref for ref in refs))
+                boundaries = {key: deepcopy(member[key]) for key in ("raw_content_span", "span_space", "source_entry_refs")}
             supporting.append({"id": member["id"], "full_doc_id": member["full_doc_id"], "content": excerpt,
                                "excerpt_sha256": member["excerpt_sha256"], "content_sha256": member["content_sha256"],
                                "source_anchors": [_anchor(member, manifest, document)], "verification_state": "verified",
-                               "supports": deepcopy(member.get("supports", []))})
+                               "supports": deepcopy(member.get("supports", [])), **boundaries})
         standard = entry.get("standard_sense")
         if standard is not None:
             _require(isinstance(standard, dict) and isinstance(standard.get("text"), str) and standard["text"].strip()

@@ -145,3 +145,30 @@ def verify_response(query_item: Dict[str, Any], response_text: str) -> Dict[str,
         "missing_qualifiers": missing_qualifiers,
         "reason": reason
     }
+
+
+def validate_fact_bindings(claims, fact_view):
+    """Validate an exact complete server-composed fact set, not free-form entailment.
+
+    The supplied view must come from project_reviewed_facts. Legacy citation
+    extraction/scoring remains independent and cannot grant this assessment.
+    """
+    valid = isinstance(fact_view, dict) and fact_view.get("status") == "SUPPORTED_REVIEWED_FACTS"
+    facts = fact_view.get("facts", []) if isinstance(fact_view, dict) else []
+    valid = valid and bool(facts) and isinstance(claims, list) and len(claims) == len(facts)
+    if valid:
+        for claim, fact in zip(claims, facts):
+            if not isinstance(claim, dict) or not isinstance(fact, dict):
+                valid = False
+                break
+            expected = {"claim_id": "claim:" + str(fact.get("fact_id", "")).removeprefix("fact:"),
+                        "claim": fact.get("text"), "fact_ids": [fact.get("fact_id")],
+                        "anchors": fact.get("anchors"), "source_anchors": fact.get("source_anchors"),
+                        "source_bindings": fact.get("source_bindings")}
+            if any(claim.get(key) != value for key, value in expected.items()):
+                valid = False
+                break
+    return {"status": "SUPPORTED_REVIEWED_FACTS" if valid else "INSUFFICIENT_EVIDENCE",
+            "validated": bool(valid), "assessment_scope": "reviewed_fact_bindings",
+            "citation_support": "validated" if valid else "invalid",
+            "diagnostics": [] if valid else ["claim_fact_binding_mismatch"]}

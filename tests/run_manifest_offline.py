@@ -66,6 +66,9 @@ def main():
         "tests/test_manifest_metadata.py", "tests/test_manifest_retrieval_contract.py",
         "tests/test_terminology_mappings.py",
         "tests/test_terminology_retrieval.py", "tests/test_terminology_evaluation.py",
+        "tests/test_answer_assessment.py", "tests/test_grounded_answer.py",
+        "tests/test_answer_grounding_query.py", "tests/test_answer_grounding_evaluation.py",
+        "tests/test_legacy_assessment_metrics.py",
     ]))
 
 

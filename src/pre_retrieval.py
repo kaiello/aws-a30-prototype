@@ -138,9 +138,29 @@ def check_early_abstention(query: str) -> Optional[Dict[str, Any]]:
     Checks if query targets out-of-scope codes, acceptance criteria, or fabricated elements.
     Returns structured abstention dict if triggered, or None if in-scope.
     """
-    q_lower = query.lower()
+    q_lower = query.lower().replace("\u2019", "'")
     for pat in OUT_OF_SCOPE_PATTERNS:
-        match = re.search(pat, q_lower)
+        match = None
+        for candidate in re.finditer(pat, q_lower):
+            # An exclusion owns only adjacent known topics and conjunctions.
+            # Other words (including a later positive directive) end that scope.
+            prefix = q_lower[:candidate.start()]
+            excluded = False
+            markers = re.finditer(
+                r"\b(?:(?:do not|don't)\s+(?:discuss|include|cover|address|provide)"
+                r"|(?:without|excluding)(?:\s+(?:discussing|including|covering|addressing|providing))?)\s+",
+                prefix)
+            for marker in markers:
+                remainder = prefix[marker.end():]
+                for topic_pattern in OUT_OF_SCOPE_PATTERNS:
+                    remainder = re.sub(topic_pattern, " ", remainder)
+                remainder = re.sub(r"\b(?:and|or|any)\b|[\s,]+", "", remainder)
+                if not remainder:
+                    excluded = True
+                    break
+            if not excluded:
+                match = candidate
+                break
         if match:
             trigger = match.group(0)
             return {

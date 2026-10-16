@@ -28,9 +28,10 @@ from src.config import (
     PARSED_FIGURES_DIR,
     PARSED_TABLES_DIR
 )
-from src.citation_checker import check_abstention, extract_citations
+from src.citation_checker import extract_citations
 from src.figure_inspectors import FIGURE_INSPECTORS
 from src.standard_manifest import get_manifest
+from src.epistemic_verifier import _decision_status
 
 DUAL_SQLITE_PATH = STORAGE_DIR / "dual_layer_registry.db"
 
@@ -47,7 +48,7 @@ class EvidenceItem:
 @dataclass
 class AnswerRoute:
     query: str
-    status: str  # "VERIFIED_GROUNDED", "TRUTHFUL_ABSTENTION", "PARTIALLY_GROUNDED"
+    status: str  # Navigation state, or an explicit validated assessment decision.
     concept_id: Optional[str] = None
     concept_name: Optional[str] = None
     concept_type: Optional[str] = None
@@ -55,10 +56,13 @@ class AnswerRoute:
     primary_answer: Optional[str] = None
     primary_citation: Optional[str] = None
     evidence_group: List[EvidenceItem] = field(default_factory=list)
-    evidence_recall_score: float = 1.0
-    all_evidence_recovered: bool = True
-    epistemic_score: float = 1.0
+    evidence_recall_score: Optional[float] = None
+    all_evidence_recovered: bool = False
+    epistemic_score: Optional[float] = None
     manifest_summary: str = ""
+    assessment_status: str = "UNASSESSED"
+    assessment_scope: Optional[str] = None
+    graph_link_coverage: Optional[float] = None
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
@@ -99,35 +103,28 @@ def _clean_term_for_fts(term: str) -> str:
     # Return FTS phrase or AND query
     return " OR ".join(f'"{t}"' for t in tokens if len(t) > 2)
 
-def resolve_answer_route(query: str, candidate_answer: str = "") -> AnswerRoute:
+def resolve_answer_route(query: str, candidate_answer: str = "", *, decision=None) -> AnswerRoute:
     """
-    Given a user query and optional candidate answer, resolves the full Answer Route
-    by finding the primary concept and traversing epistemic grounding bridges to assemble
-    the complete evidence group.
+    Find navigation evidence for matched concepts without certifying claims.
+
+    Recall and answer support are unmeasured here. Only an explicit validated
+    decision bound to this exact answer supplies an assessed outcome.
     """
-    # 1. Clean abstention handling for out-of-scope negative controls
-    text_to_check = candidate_answer or query
-    if candidate_answer and check_abstention(candidate_answer):
+    assessed_status = _decision_status(candidate_answer, decision)
+    if assessed_status:
         return AnswerRoute(
             query=query,
-            status="TRUTHFUL_ABSTENTION",
-            concept_id="none",
-            concept_name="Out-of-Scope Control",
-            concept_type="Abstention",
-            standard_status="n/a",
+            status=assessed_status,
             primary_answer=candidate_answer,
-            primary_citation="Out-of-Scope (Governed by external fabrication/material code)",
-            evidence_group=[],
-            evidence_recall_score=1.0,
-            all_evidence_recovered=True,
-            epistemic_score=1.0,
-            manifest_summary="Truthful abstention: Query asks for requirements beyond AWS A3.0M/A3.0:2020 jurisdiction."
+            assessment_status=assessed_status,
+            assessment_scope=decision["assessment_scope"],
+            manifest_summary="An explicit validated decision applies to this exact answer; evidence recall was not measured."
         )
 
     if not DUAL_SQLITE_PATH.exists():
         return AnswerRoute(
             query=query,
-            status="PARTIALLY_GROUNDED",
+            status="INSUFFICIENT_EVIDENCE",
             primary_answer=candidate_answer or "Database not found.",
             manifest_summary="SQLite registry database missing."
         )
@@ -183,10 +180,9 @@ def resolve_answer_route(query: str, candidate_answer: str = "") -> AnswerRoute:
         # Non-matched general question
         return AnswerRoute(
             query=query,
-            status="PARTIALLY_GROUNDED",
+            status="INSUFFICIENT_EVIDENCE",
             primary_answer=candidate_answer,
-            epistemic_score=0.7,
-            manifest_summary="No specific ontology concept identified; general document match."
+            manifest_summary="No specific ontology concept identified; answer support is unassessed."
         )
 
     concept_id, concept_name, concept_type, standard_status, description = primary_node
@@ -281,34 +277,25 @@ def resolve_answer_route(query: str, candidate_answer: str = "") -> AnswerRoute:
             primary_cite = ev.title
             break
 
-    # 5. Compute Evidence Sufficiency & Recall
-    # Check what the query asked for:
+    # 5. Report navigation availability, not measured recall or claim support.
     needs_figure = any(k in query.lower() for k in ["diagram", "figure", "show", "orient", "illustrat", "drawing"])
     needs_table = any(k in query.lower() for k in ["table", "letter designation", "process chart", "summary", "group"])
     
     has_figure = any(ev.evidence_type == "figure" and ev.metadata.get("source_location_verification") == "verified" for ev in evidence_items)
     has_table = any(ev.evidence_type == "table" and ev.metadata.get("source_location_verification") == "verified" for ev in evidence_items)
-    has_clause = any(ev.evidence_type == "clause" for ev in evidence_items)
     unresolved_source = bool(citations.get("unresolved_elements")) or any(
         ev.evidence_type in {"figure", "table"} and ev.metadata.get("source_location_verification") != "verified"
         for ev in evidence_items)
 
-    requirements_met = 1.0
-    if needs_figure and not has_figure:
-        requirements_met *= 0.5
-    if needs_table and not has_table:
-        requirements_met *= 0.5
-
-    all_recovered = (not needs_figure or has_figure) and (not needs_table or has_table) and len(evidence_items) > 0 and not unresolved_source
-    epistemic_score = 1.0 if all_recovered else (0.8 if len(evidence_items) > 0 else 0.5)
-    if unresolved_source:
-        epistemic_score = min(epistemic_score, 0.7)
-
-    manifest = f"Resolved Answer Route for '{concept_name}' ({concept_type}): {len(evidence_items)} supporting evidence items recovered."
+    navigation_available = (bool(evidence_items) and not unresolved_source
+                            and (not needs_figure or has_figure)
+                            and (not needs_table or has_table))
+    manifest = (f"Graph navigation for '{concept_name}' ({concept_type}): {len(evidence_items)} evidence links. "
+                "Claim support is unassessed; evidence recall was not measured.")
 
     return AnswerRoute(
         query=query,
-        status="VERIFIED_GROUNDED" if epistemic_score >= 0.8 else "PARTIALLY_GROUNDED",
+        status="EVIDENCE_LINKS_FOUND" if navigation_available else "INSUFFICIENT_EVIDENCE",
         concept_id=concept_id,
         concept_name=concept_name,
         concept_type=concept_type,
@@ -316,9 +303,6 @@ def resolve_answer_route(query: str, candidate_answer: str = "") -> AnswerRoute:
         primary_answer=candidate_answer or description,
         primary_citation=primary_cite,
         evidence_group=evidence_items,
-        evidence_recall_score=round(requirements_met, 3),
-        all_evidence_recovered=all_recovered,
-        epistemic_score=round(epistemic_score, 3),
         manifest_summary=manifest
     )
 
