@@ -1,10 +1,32 @@
 # Implementation Plan: Standalone AWS A3.0 Multimodal NLQ Prototype
 
-Publication note (2026-10-21): the owner approved commit/push/merge and a final
+## Current local A1 pass 004 complete: stop after one replay (2026-10-21)
+
+1. Created `fix/a1-query-completeness` from clean synced main `799112f`.
+   Preserved all pass 001/002/003 raw outputs and graders.
+2. Used the existing routing/QA skills unchanged to repair generic parsing,
+   direct versus recursive planning and complete answers for the seven gaps.
+   Source graph/database and v1 default are unchanged; candidate indentation
+   remains layout evidence rather than reviewed semantic subtype.
+3. Focused changed-code checks passed 33/33 in 0.77 s; no full suite. Ran the
+   existing 15-question QA001 and 16-question QA002 once with harness
+   `a1-graph-qa-1.2.0` / planner `1.2.0`, model/provider NONE, zero calls.
+   Independent source/trace grading: **QA001 15 PASS; QA002 16 PASS**, no
+   failures, partials or regressions. Q16's explicit insufficient-evidence
+   response passes on its supported explanation. Details are in the
+   [private report](../storage/evidence_v2/a1_qa_repair_004/report.md).
+4. Stop and report. This is DEVELOPMENT on exposed questions, with bounded
+   grammar and candidate semantics, not unseen/model acceptance. No additional
+   repair/replay loop, CQs/framework, UI, figure, model, database change or skill
+   infrastructure. The owner subsequently authorized commit, push, PR merge
+   and local/online synchronization of this completed repair (2026-10-21).
+   Preserve its recorded development results; earlier approval is historical.
+
+Historical pass 003 publication note (2026-10-21): the owner approved commit/push/merge and a final
 pull/synchronization check. Preserve all original baselines and bounded QA
 results; no additional repair or evaluation loop is part of publication.
 
-## Final bounded repair result: stop and report remaining failures (2026-10-21)
+## Historical pass 003 result: stop and report remaining failures (2026-10-21)
 
 One harness `1.1.0` repair pass is complete. Both sets ran exactly once, model/
 provider NONE and zero calls. Independent results: **QA001 15 PASS / 0 FAIL /

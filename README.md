@@ -1,11 +1,26 @@
 # AWS A3.0 Standalone Multimodal Prototype
 
-**V2 publication status (2026-10-21):** The owner approved publishing the current
-prototype. V1 remains the default; v2 is opt-in. Figure A1 development QA remains
+**Current local A1 pass 004 complete (2026-10-21):** branch
+`fix/a1-query-completeness`, base main `799112f`. Harness
+`a1-graph-qa-1.2.0` / planner `1.2.0` independently grades **QA001 15 PASS** and
+**QA002 16 PASS**, with no failures, partials or regressions. Both existing sets
+ran once, 31 questions total, model/provider **NONE**, zero calls. The correct
+Q16 source-limit answer retains `insufficient_evidence`; grading is not a count
+of successful route statuses. Focused checks passed 33/33 in 0.77 s; no full suite.
+
+This is DEVELOPMENT on exposed questions, not unseen or LLM validation. The
+source graph, database, v1 default and prior runs/graders remain unchanged.
+Indentation remains candidate layout rather than reviewed semantic subtype;
+query grammar remains bounded. The existing routing/QA skills were reused
+unchanged. See the [private local report](storage/evidence_v2/a1_qa_repair_004/report.md).
+**Publication authorized (2026-10-21):** the owner approved commit, push, PR merge and local/online synchronization for this completed repair. Stop further repair and QA work; the bounded results and qualifications above remain unchanged.
+
+**Historical publication status, pass 003 (2026-10-21):** The owner approved
+publishing that prototype. V1 remains the default; v2 is opt-in. Figure A1 development QA remains
 15 PASS on QA001 and 9 PASS / 4 FAIL / 3 PARTIAL on QA002. Publication does not
 change those results or establish general answer correctness.
 
-**Bounded A1 repair complete (2026-10-21):** harness `1.1.0` independently
+**Historical bounded A1 pass 003 complete (2026-10-21):** harness `1.1.0` independently
 grades **15 PASS / 0 FAIL / 0 PARTIAL** on the original set and **9 PASS /
 4 FAIL / 3 PARTIAL** on the follow-up. Both sets ran once, 31 questions total,
 model/provider **NONE**, zero calls. This is DEVELOPMENT on exposed sets, not

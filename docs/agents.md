@@ -1,8 +1,31 @@
 # Multi-Agent System (MAS) Operating Guidelines: AWS A3.0 Prototype
 
-### Current publication authorization (2026-10-21)
+### Current local A1 pass 004 result and stop (2026-10-21)
 
-The owner has authorized committing and pushing the current v2 work, merging it
+The owner authorized one focused A1 backend repair on
+`fix/a1-query-completeness`, base main `799112f`. Harness
+`a1-graph-qa-1.2.0` / planner `1.2.0` independently grades **QA001 15 PASS** and
+**QA002 16 PASS**, with no failures, partials or regressions. Both sets ran once,
+31 questions total; model/provider NONE, zero calls. Focused checks passed
+33/33 in 0.77 s; no full suite. Q16 correctly retains `insufficient_evidence`
+while explaining absent operating information without inventing values.
+
+The existing [routing](../.agents/skills/evidence-graph-routing/SKILL.md) and
+[QA](../.agents/skills/evidence-graph-qa/SKILL.md) skills guided existing code and
+remain unchanged. No skill infrastructure was added. This is DEVELOPMENT on
+exposed questions with bounded grammar; candidate indentation is not reviewed
+semantic subtype. Source graph/database, v1 default and all earlier raw runs
+and graders are unchanged; gold stayed outside execution. See the
+[private report](../storage/evidence_v2/a1_qa_repair_004/report.md).
+
+**Stop further repair/replay work.** The owner subsequently authorized commit,
+push, PR merge and local/online synchronization for this completed pass (2026-10-21).
+Preserve the recorded results and source qualifications. This closeout adds no
+UI, other-figure, model or database work. Earlier pass 003 approval remains historical.
+
+### Historical one-time publication authorization, pass 003 (2026-10-21)
+
+The owner authorized committing and pushing the prior v2 work, merging it
 into main, then pulling and verifying local/remote synchronization. This replaces
 the historical local-only Git restrictions below for this publication. Preserve
 v1 defaults, the v1.0 baseline, private source/gold/raw runs and all documented
@@ -10,7 +33,7 @@ QA failures. No further repair loop, question/model run, UI or other-figure work
 is included. The bounded repair result below remains the evaluation record;
 publication does not promote the prototype to semantic or production acceptance.
 
-### Final bounded A1 repair result and stop (2026-10-21)
+### Historical bounded A1 pass 003 result and stop (2026-10-21)
 
 Independent grading is complete for the one harness `1.1.0` repair pass:
 QA001 is **15 PASS / 0 FAIL / 0 PARTIAL**; QA002 is **9 PASS / 4 FAIL /

@@ -1,10 +1,31 @@
 # Project Goal: AWS A3.0 Multimodal NLQ & Epistemic Knowledge System
 
-Publication note (2026-10-21): the owner approved commit, push, merge and local
+## Current local A1 pass 004: requested answers complete (2026-10-21)
+
+Branch `fix/a1-query-completeness`, base main `799112f`, completes the seven
+identified parsing/composition gaps with generic operations. Harness
+`a1-graph-qa-1.2.0` / planner `1.2.0` independently grades **QA001 15 PASS** and
+**QA002 16 PASS**, no failures, partials or regressions. The existing 31 questions
+ran once, model/provider NONE, zero calls. Focused checks passed 33/33 in 0.77 s;
+no full suite. The goal is supported complete answers, including Q16's correct
+insufficient-evidence explanation, rather than successful route counts.
+
+QA001 retains 90/90 source pairs, 29 qualified candidate children and 7/7 lookup
+facts. QA002 retains 13/13 mentions, 23/23 mappings and meets 11/11 limits
+criteria. See the [private report](../storage/evidence_v2/a1_qa_repair_004/report.md).
+This is DEVELOPMENT on exposed questions with bounded grammar, not general or
+LLM acceptance. Source graph/database, v1 default and prior runs/graders remain
+unchanged; candidate layout stays distinct from reviewed semantic subtype.
+The two existing thin skills were reused unchanged. Stop further repair/replay
+work. The owner subsequently authorized committing, pushing, PR merging and
+local/online synchronization of this completed repair (2026-10-21); publication
+does not broaden the demonstrated answer coverage or source authority.
+
+Historical pass 003 publication note (2026-10-21): the owner approved commit, push, merge and local
 synchronization of this prototype. The bounded DEVELOPMENT results and seven
 remaining QA002 gaps below are unchanged; publication is not release acceptance.
 
-## Final bounded A1 repair: original set retained, follow-up gaps remain (2026-10-21)
+## Historical pass 003: original set retained, follow-up gaps remained (2026-10-21)
 
 Harness `1.1.0` independently grades **15 PASS / 0 FAIL / 0 PARTIAL** on QA001
 and **9 PASS / 4 FAIL / 3 PARTIAL** on QA002. Preserve QA001's original 0/15
