@@ -164,6 +164,23 @@ def test_epistemic_query_reports_layout_support_without_semantic_upgrade(graph):
     assert "review" in result["answer"].lower() or "layout" in result["answer"].lower()
 
 
+@pytest.mark.parametrize("source,subject,expected", [
+    ("the chart", "Foil bind", "no"),
+    ("indentation", "Ribbon fold pulsed", "yes"),
+])
+def test_evidence_followup_preserves_literal_chart_relation(graph, source, subject, expected):
+    result = answer(graph, f"Does {source} place {subject} under Ribbon fold, "
+                          "and what evidence supports that relationship?", complete_chart=True)
+    assert result["answer_outcome"] == "graph_answer"
+    assert {operation["kind"] for operation in result["operations"]} == {"layout_relation", "epistemic_limits"}
+    assert not result["plan"]["unresolved_selectors"]
+    relation = next(operation for operation in result["operations"] if operation["kind"] == "layout_relation")
+    assert relation["candidate_layout_relation"] == expected
+    assert ("has no shown chart path" if expected == "no" else "has a shown chart path") in relation["answer"]
+    assert result["semantic_validation"] is False
+    assert result["verdict"] == "not_established"
+
+
 def test_process_control_information_is_not_inferred_from_chart(graph):
     result = answer(graph, "What operating temperature and timing should I use for Ribbon fold?")
     assert result["answer_outcome"] == "insufficient_evidence"

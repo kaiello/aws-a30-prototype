@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 
-PLANNER_VERSION = "a1-graph-planner-1.2.0"
+PLANNER_VERSION = "a1-graph-planner-1.2.1"
 
 
 def _words(value):
@@ -205,10 +205,9 @@ def plan_graph_query(graph, query):
         r"(?:^|[.:?]\s*)Does\s+(?:the\s+)?(?:chart|(?:figure\s+)?A1|indentation)\s+(?:place|show|list|put|depict|indicate|indent)\s+(.+?)\s+(?:under|beneath|in|within|as\s+(?:a\s+)?(?:sub)?type\s+of)\s+(.+?)[?.]*$",
         r"(?:^|[.:?]\s*)Does\s+(.+?)\s+(?:(?:appear|fall|sit|belong|go)\s+)?(?:under|beneath|in|within|to)\s+(.+?)[?.]*$",
     ]
-    # Pure chart-evidence questions must not be parsed as a process called
-    # "the indentation ...". A literal Is/Are subtype question still carries
-    # a relation request even when it asks about shared wording as its basis.
-    active_patterns = relation_patterns[:1] if epistemic else relation_patterns
+    # Evidence intent supplements literal relations. The captured-mention
+    # guard below rejects pure meta questions without dropping Does relations.
+    active_patterns = relation_patterns
     if lexical_overlap:
         # Lexical sharing is the proposed basis, not the left-hand entity.
         # The two captured selectors remain ordinary literal graph subjects.
@@ -226,13 +225,16 @@ def plan_graph_query(graph, query):
                     continue
             break
     member_sides = None
+    relation_spans = []
     if membership:
         sides = []
         for group in (1, 2):
             first, last = membership.span(group)
+            last = min(last, _body_end(query, first))
+            relation_spans.append((first, last))
             selected = [m for m in mentions if first <= m["start"] and m["end"] <= last]
             if not selected and group == 2:
-                candidates = _subsequence_category(graph, membership[group].strip(" ?."))
+                candidates = _subsequence_category(graph, query[first:last].strip(" ?."))
                 if candidates:
                     selected = [{"start": first, "end": last, "text": query[first:last], "candidate_ids": candidates,
                                  "status": "resolved" if len(candidates) == 1 else "ambiguous",
@@ -302,15 +304,9 @@ def plan_graph_query(graph, query):
                 operation.update({"subject_scope": "returned_children", "use_returned_children": True,
                                   "after_operations": child_operations})
     view_comparison = bool(entities and set(child_operations) >= {"direct_children", "descendants"})
-    relation_spans = []
-    if membership:
-        for group in (1, 2):
-            first, last = membership.span(group)
-            rationale = re.search(r"\b(?:because|since|given\s+that|on\s+the\s+basis\s+of)\b", query[first:last], re.I)
-            relation_spans.append((first, first + rationale.start() if rationale else last))
     unresolved = _unresolved_selectors(query, mentions, operation_views=view_comparison, relation_spans=relation_spans)
     if member_sides and any(len(side) != 1 for side in member_sides):
-        unresolved.extend(membership[group].strip(" ?.") for group, side in zip((1, 2), member_sides) if not side)
+        unresolved.extend(query[first:last].strip(" ?.") for (first, last), side in zip(relation_spans, member_sides) if not side)
     diagnostics = []
     if any(mention["status"] == "ambiguous" for mention in mentions):
         status = "clarification_required"

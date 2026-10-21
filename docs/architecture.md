@@ -2,6 +2,14 @@
 
 ## Current local A1 query-completeness pass 004 (2026-10-21)
 
+Post-review correction: planner `1.2.1` retains literal chart-relation operations
+when evidence is also requested, applies the existing literal-mention guard to
+pure meta questions, and trims follow-up clauses from selectors with `_body_end`.
+The earlier 31-question result below was captured with planner `1.2.0` and remains
+unchanged. The single focused check for this correction passed 3 cases in
+0.67 s, with 21 unrelated cases deselected; no 31-question replay or model call
+was run.
+
 Branch `fix/a1-query-completeness`, base main `799112f`, preserves the source
 adapter, graph, database, v1 default and opt-in CLI. Harness
 `a1-graph-qa-1.2.0` / planner `1.2.0` repairs generic source-context/relation
