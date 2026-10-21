@@ -1,0 +1,15 @@
+# Existing-environment direct dependency pins, observed 2026-10-21.
+# NOT a complete transitive or hash-verified lock; do not run pip-sync against it.
+# Python tested: CPython 3.12.7 win32. Native/GPU dependencies and model weights
+# require their own platform-specific provenance; no downloads or upgrades were run.
+# LightRAG must remain exactly 1.5.7 for src/vector_reader_compat.py's AST guard.
+lightrag-hku==1.5.7
+nano-vectordb==0.0.4.3
+numpy==2.2.6
+networkx==3.5
+sentence-transformers==5.1.2
+python-dotenv==1.2.2
+openai==2.31.0
+httpx==0.28.1
+requests==2.33.1
+PyMuPDF==1.26.5

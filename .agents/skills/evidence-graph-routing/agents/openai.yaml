@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evidence Graph Routing"
+  short_description: "Route queries through the qualified graph core"
+  default_prompt: "Use $evidence-graph-routing with the existing graph core to trace the requested operation and report selected evidence and limitations."

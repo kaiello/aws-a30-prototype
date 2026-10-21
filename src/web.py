@@ -1830,6 +1830,11 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                 api_key = data.get("api_key") or None
                 model_name = data.get("model_name") or None
                 base_url = data.get("base_url") or None
+                evidence_version = data.get("evidence_version", "v1")
+                v2_reader = data.get("v2_reader", "extractive")
+                if (not isinstance(evidence_version, str) or not isinstance(v2_reader, str)
+                        or evidence_version not in {"v1", "v2"} or v2_reader not in {"extractive", "local"}):
+                    raise ValueError("Unsupported evidence version or reader.")
 
                 endpoints = {"deepseek": DEEPSEEK_BASE_URL, "gemini": GEMINI_BASE_URL,
                              "custom": CUSTOM_BASE_URL, "openai": CUSTOM_BASE_URL}
@@ -1845,7 +1850,9 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                 base_url = validate_model_endpoint(base_url, endpoints[engine])
 
                 print(f"[API QUERY] Engine={engine}, Mode={mode}")
-                res = run_query(query, mode=mode, engine=engine, api_key=api_key, model_name=model_name, base_url=base_url)
+                version_options = ({"evidence_version": evidence_version, "v2_reader": v2_reader}
+                                   if evidence_version == "v2" else {})
+                res = run_query(query, mode=mode, engine=engine, api_key=api_key, model_name=model_name, base_url=base_url, **version_options)
 
                 error_status = {
                     "RETRIEVAL_INDEX_MISSING": 503,
@@ -1853,6 +1860,9 @@ class MultimodalRequestHandler(BaseHTTPRequestHandler):
                     "MODEL_PROVIDER_UNCONFIGURED": 503,
                     "GENERATION_FAILED": 502,
                     "EVIDENCE_BINDING_FAILED": 503,
+                    "V2_SOURCE_UNAVAILABLE": 503,
+                    "V2_READER_REQUIRED": 422,
+                    "V2_READER_FAILED": 502,
                 }.get(res.get("error_code"))
                 if error_status:
                     self._send_json(error_status, res)

@@ -222,9 +222,30 @@ async def async_query(
     engine: str = DEFAULT_ENGINE,
     api_key: Optional[str] = None,
     model_name: Optional[str] = None,
-    base_url: Optional[str] = None
+    base_url: Optional[str] = None,
+    evidence_version: str = "v1",
+    v2_reader: str = "extractive"
 ) -> dict:
     started = time.perf_counter()
+    if (not isinstance(evidence_version, str) or not isinstance(v2_reader, str)
+            or evidence_version not in {"v1", "v2"} or v2_reader not in {"extractive", "local"}):
+        raise ValueError("Unsupported evidence version or reader")
+    if evidence_version == "v2":
+        from src.evidence_sources import load_query_evidence
+        from src.evidence_v2 import EvidenceStore
+        from src.evidence_reader import LocalVisionReader, read_packet
+        from src.config import BASE_DIR, OLLAMA_BASE_URL, VLM_MODEL
+        try:
+            packet = EvidenceStore(load_query_evidence(BASE_DIR, query_str)).packet(query_str)
+            projected = time.perf_counter()
+            reader = LocalVisionReader(OLLAMA_BASE_URL, VLM_MODEL) if v2_reader == "local" else None
+            result = read_packet(packet, BASE_DIR, generate=reader)
+            result["timings_ms"]["source_projection"] = round((projected - started) * 1000, 3)
+            result["timings_ms"]["total"] = round((time.perf_counter() - started) * 1000, 3)
+            return result
+        except (ValueError, OSError, KeyError, TypeError):
+            return _query_failure(query_str, "V2_SOURCE_UNAVAILABLE",
+                "Version 2 source evidence is missing, stale or invalid. Restore its matching source and versioned extraction before retrying.")
     # Deterministic scope decisions and reviewed composition require no provider.
     early_abstain = check_early_abstention(query_str)
     if early_abstain:
@@ -348,7 +369,9 @@ def run_query(
     engine: str = DEFAULT_ENGINE,
     api_key: Optional[str] = None,
     model_name: Optional[str] = None,
-    base_url: Optional[str] = None
+    base_url: Optional[str] = None,
+    evidence_version: str = "v1",
+    v2_reader: str = "extractive"
 ) -> dict:
     """Thread-safe synchronous query executor using a persistent dedicated event loop."""
     loop = get_query_event_loop()
@@ -359,7 +382,9 @@ def run_query(
             engine=engine,
             api_key=api_key,
             model_name=model_name,
-            base_url=base_url
+            base_url=base_url,
+            evidence_version=evidence_version,
+            v2_reader=v2_reader
         ),
         loop
     )
@@ -373,6 +398,8 @@ def main():
     parser.add_argument("--api-key", type=str, default=None, help="Custom API key (overrides .env)")
     parser.add_argument("--model", type=str, default=None, help="Custom model name (e.g. gpt-4o, gemini-2.0-flash, deepseek-chat)")
     parser.add_argument("--base-url", type=str, default=None, help="Custom base URL (for OpenAI, Ollama, Groq, etc.)")
+    parser.add_argument("--evidence-version", choices=["v1", "v2"], default="v1")
+    parser.add_argument("--v2-reader", choices=["extractive", "local"], default="extractive")
     args = parser.parse_args()
 
     result = run_query(
@@ -381,7 +408,9 @@ def main():
         engine=args.engine,
         api_key=args.api_key,
         model_name=args.model,
-        base_url=args.base_url
+        base_url=args.base_url,
+        evidence_version=args.evidence_version,
+        v2_reader=args.v2_reader
     )
 
     if result.get("error_code"):

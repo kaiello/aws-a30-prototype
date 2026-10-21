@@ -1,0 +1,70 @@
+{
+  "schema_version": "a1-owner-cq-1.0",
+  "source_element": "Figure A1",
+  "questions": [
+    {
+      "id": "A1-QA002-01",
+      "query": "What are the acronyms and categories for carbon arc welding and gas carbon arc welding?"
+    },
+    {
+      "id": "A1-QA002-02",
+      "query": "What are the acronyms and categories for friction welding and friction stir welding?"
+    },
+    {
+      "id": "A1-QA002-03",
+      "query": "Compare induction welding, induction soldering and induction brazing: give each acronym and category."
+    },
+    {
+      "id": "A1-QA002-04",
+      "query": "Compare carbon arc welding, carbon arc brazing and carbon arc braze welding: give each acronym and category."
+    },
+    {
+      "id": "A1-QA002-05",
+      "query": "Which categories contain electron beam welding, electron beam brazing and electron beam braze welding?"
+    },
+    {
+      "id": "A1-QA002-06",
+      "query": "Which processes are shown directly beneath carbon arc welding in A1?"
+    },
+    {
+      "id": "A1-QA002-07",
+      "query": "Is gas carbon arc welding shown as a subtype of carbon arc welding? What in A1 supports that interpretation?"
+    },
+    {
+      "id": "A1-QA002-08",
+      "query": "What is the complete hierarchy path from gas carbon arc welding to arc welding?"
+    },
+    {
+      "id": "A1-QA002-09",
+      "query": "Which entries are directly beneath friction welding, and which broader category contains them?"
+    },
+    {
+      "id": "A1-QA002-10",
+      "query": "Is friction stir welding directly under solid-state welding, or under friction welding within that category?"
+    },
+    {
+      "id": "A1-QA002-11",
+      "query": "What hierarchy path connects high vacuum electron beam welding to high energy beam welding?"
+    },
+    {
+      "id": "A1-QA002-12",
+      "query": "List the direct children of arc welding separately from all descendants. Explain the difference in the two lists."
+    },
+    {
+      "id": "A1-QA002-13",
+      "query": "Does sharing “carbon arc” make carbon arc brazing a subtype of carbon arc welding in A1?"
+    },
+    {
+      "id": "A1-QA002-14",
+      "query": "Is induction welding a subtype of induction soldering in A1?"
+    },
+    {
+      "id": "A1-QA002-15",
+      "query": "Does A1 establish that every indented entry means “subtype of,” or is additional evidence needed to interpret indentation?"
+    },
+    {
+      "id": "A1-QA002-16",
+      "query": "Can A1 alone tell us the operating conditions for friction stir welding? If not, identify what information is missing."
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "status": "READY_FOR_OWNER_COMPETENCY_QUESTIONS",
+  "scope": "Figure A1 only; backend setup and structural checks; no owner CQ or model evaluation",
+  "source": {
+    "element": "Figure A1",
+    "edition_id": "doc:aws_a30_2020@205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+    "locator": {
+      "element_id": "Figure A1",
+      "canonical_element_id": "figure:figure_a1",
+      "source_identity_id": "source2:106f7a480d00ced054c58bede817a6055f8f6f165c195eb219a89f31b7dfcc68",
+      "pdf_index": 87,
+      "printed_page": "75",
+      "order": 0,
+      "region": null,
+      "region_scope": "full_page"
+    },
+    "asset_relpath": "parsed/figures/Figure_A1_p88.png",
+    "asset_sha256": "252c885b609a0855ce557416e6b4bf18d30e18b43a33b586903460e08fd4f83d",
+    "image_count": 1,
+    "required_evidence_count": 2
+  },
+  "versions": {
+    "evidence": "2.0.0",
+    "graph": "a1-geometry-1.0",
+    "owner_cq": "a1-owner-cq-1.0",
+    "PyMuPDF": "1.26.5"
+  },
+  "graph": {
+    "nodes": 99,
+    "edges": 127,
+    "edge_counts": {
+      "ENCLOSES_ROW": 90,
+      "CHART_CONNECTOR": 8,
+      "INDENTED_UNDER": 29
+    },
+    "source_bound_extraction": true,
+    "semantic_validation": false
+  },
+  "retrieval_implemented": [
+    "literal_full_process_name_or_case_sensitive_code",
+    "all_inbound_enclosure_and_candidate_parent_ancestors",
+    "root_and_all_category_context",
+    "complete_single_original_image_and_annex_note"
+  ],
+  "retrieval_deferred": [
+    "semantic_vector_ranking_for_A1",
+    "synonym_inference",
+    "reviewed_semantic_subtype_edges",
+    "other_images_or_figures",
+    "cross_edition_comparison",
+    "live_sql_graph_traversal"
+  ],
+  "registry": {
+    "open_mode": "ro",
+    "identity_join": "exact canonical manifest element ID",
+    "verification": "candidate",
+    "registry_has_edition_hash_columns": false,
+    "bridge_count": 9,
+    "asset_resolution": "manifest_only"
+  },
+  "checks": {
+    "targeted_synthetic_regressions": {
+      "passed": 149,
+      "seconds": 1.8
+    },
+    "existing_guarded_offline_regressions": {
+      "passed": 827,
+      "seconds": 18.0
+    },
+    "actual_query_inventory": {
+      "expected_reader_gate": "V2_READER_REQUIRED",
+      "packet_status": "complete",
+      "image_count": 1,
+      "graph_view_nodes": 9,
+      "graph_view_edges": 8,
+      "generation_attempts": {
+        "provider": 0,
+        "vision": 0
+      }
+    },
+    "protected_files_unchanged": true,
+    "protected_file_count": 9,
+    "offline_build": {
+      "status": "PASS",
+      "offline_source_snapshot": true,
+      "wheel_sha256": "62e4ce7cabc2bf577f58b1b02a4a1cea14c8dee748236e9018f84dd77b94bee4",
+      "wheel_name": "aws_a30_prototype-2.0.0a1-py3-none-any.whl",
+      "file_count": 52,
+      "contains_A1_modules": true,
+      "contains_source_assets_or_env_files": false,
+      "package_python_modules": {
+        "src": 38,
+        "eval": 10
+      },
+      "setuptools": "80.9.0",
+      "wheel": "0.45.1",
+      "fresh_dependency_install_validated": false
+    }
+  },
+  "owner_cq_count": 0,
+  "answer_accuracy": "PENDING_OWNER_QUESTIONS",
+  "model_calls": 0,
+  "external_calls": 0,
+  "prior_approved_comparison_cases": {
+    "DeepSeek_cases_started": 0,
+    "qwen2_5vl_trial_started": false,
+    "inference_pending": false,
+    "status": "deferred by later owner setup-only instruction"
+  },
+  "historical_A1_hybrid_observation": {
+    "status": "interrupted; process exit 1; no ranked-result receipt; no generation; not retried",
+    "completion": "unconfirmed"
+  },
+  "original_step3_release_acceptance": "incomplete; historical failed results preserved; not part of current setup readiness",
+  "baseline": "24bac45465bcb5c9ea14663f7a669927d5d2ed00",
+  "tag": "v1.0",
+  "branch": "v2/evidence-engine",
+  "committed_or_pushed": false
+}

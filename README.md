@@ -1,5 +1,113 @@
 # AWS A3.0 Standalone Multimodal Prototype
 
+**V2 publication status (2026-10-21):** The owner approved publishing the current
+prototype. V1 remains the default; v2 is opt-in. Figure A1 development QA remains
+15 PASS on QA001 and 9 PASS / 4 FAIL / 3 PARTIAL on QA002. Publication does not
+change those results or establish general answer correctness.
+
+**Bounded A1 repair complete (2026-10-21):** harness `1.1.0` independently
+grades **15 PASS / 0 FAIL / 0 PARTIAL** on the original set and **9 PASS /
+4 FAIL / 3 PARTIAL** on the follow-up. Both sets ran once, 31 questions total,
+model/provider **NONE**, zero calls. This is DEVELOPMENT on exposed sets, not
+unseen or LLM validation. Focused checks passed 33/33 in 0.56 s; no full suite.
+Original baselines remain intact, including the follow-up's 1.0 result of
+0 PASS / 15 FAIL / 1 PARTIAL.
+
+Multi-name resolution is correct for 13/13 mentions and 23/23 mappings, but layout
+and source-limit tasks still fail or omit requested detail. Follow-up PASS:
+01–08, 11; PARTIAL: 09, 14, 16; FAIL: 10, 12, 13, 15. See the
+[private local report](storage/evidence_v2/a1_qa_repair_003/report.md).
+The source graph, six protected sources and 168 prior receipt files are unchanged.
+**Stopped after this repair pass: no further repair or replay.**
+
+Two thin project skills invoke existing code:
+[evidence-graph-routing](.agents/skills/evidence-graph-routing/SKILL.md) and
+[evidence-graph-qa](.agents/skills/evidence-graph-qa/SKILL.md). Each contains only
+`SKILL.md` and `agents/openai.yaml`; no wrapper framework or automatic backend
+skill loading is integrated. The source adapter remains Figure A1 only.
+
+```powershell
+python -B -m src.evidence_a1_cli --root <repo> --input <cqs> --graph-qa --output <repo>/storage/evidence_v2/<new-run>.json
+```
+
+For an authorized future execution, record existing source/edition/image/graph
+and harness/input identities first with existing hash tools; keep private grades
+out of execution. No extra checks/infrastructure, UI/model/cloud, new database/
+global configuration or Git publication is part of this completed bounded pass.
+
+**Historical first owner A1 graph QA result:** unchanged prepared baseline completed
+0/15 questions; the added explicit `--graph-qa` harness independently passes
+15/15 on this exposed set. Model/provider **NONE**, zero calls. The source graph
+and stores are unchanged. This is deterministic DEVELOPMENT QA, not an LLM or
+unseen evaluation. See [harness, results and known routing limit](docs/evidence_v2_a1_qa_001.md).
+The bounded run has stopped. Earlier empty-CQ setup status below is historical.
+
+**Historical pre-question Figure A1 setup scope.** Backend source/graph bindings, real
+ancestor traversal and the complete single-image packet pass structural checks.
+The owner will supply competency questions; the shipped CQ dataset
+is empty. No new inference or answer-accuracy tests run in this scope. Start with:
+
+```powershell
+python -B -m src.evidence_a1_cli --input eval/evidence_v2_a1_owner_cqs.json
+```
+
+See [A1 setup, commands, limitations and readiness](docs/evidence_v2_a1_setup.md).
+V1 remains default; `main` is unchanged. Earlier B6/table/comparison work below
+is historical and deferred; do not run its model examples under the active scope.
+
+**Runtime recovery (2026-10-21):** The existing local vision model now reads the
+complete three-image packet with a 16,384-token request context. Independent
+grading of the original source slice is **4/6 cases**, **11/13 facts correct**
+and **10/13 source-supported**; multipage semantic acceptance remains incomplete.
+The repaired negative control and exposed visual replay are reported separately.
+See [runtime diagnosis and real reader comparison](docs/evidence_v2_runtime_recovery.md).
+V1 remains default; all work stays local with `main` unchanged.
+The [unchanged-v1 comparison status](docs/evidence_v2_live_comparison_blocker.md)
+records one executed provider-free pair and the exact local-only blocker for
+five configured cloud-generation cases, plus one installed-model trial recommendation.
+
+## Local v2 evidence slice (2026-10-21)
+
+The opt-in v2 slice adds content-bound evidence objects, typed lookup/ambiguity
+routes and a complete evidence-to-reader packet. Local annotated tag `v1.0`
+preserves baseline `24bac45465bcb5c9ea14663f7a669927d5d2ed00`; work is on
+`v2/evidence-engine`, with `main` unchanged and no commit, push, publication or
+merge in this task. This baseline is a prototype with known gaps, including
+heading-only A2/A3 Markdown and text-only generated answering.
+
+V1 remains the default. In the existing authorized local checkout:
+
+```powershell
+python -m src.query "Define root face" --evidence-version v2
+python -B -m src.evidence_a1_cli --input eval/evidence_v2_a1_owner_cqs.json
+```
+
+The second command performs structural checks only and never calls a model.
+The existing optional local reader uses the configured loopback Ollama service and
+installed `VLM_MODEL`; it is not exercised in the active setup scope.
+Its final answering request receives every required image
+as original validated pixels. No new credentials or private-data destination are
+needed. API clients may opt in through `{"evidence_version":"v2",
+"v2_reader":"extractive"}` or `"local"` in the existing guarded `/api/query`
+request. No browser UI changes are included. Omit the version or select `v1`
+to roll back behavior.
+
+The bounded source slice covers six definition/alias entries, structured Tables
+A2/A3 and Figure B6's three full-page continuations plus the source applicability
+note. A targeted three-page native extraction supplies 133/134 table rows in
+ignored `storage/evidence_v2/tables.v2.2.json`, preserving the original empty
+Markdown and source discrepancies. Keep licensed sources/derivatives and raw
+answers local; distributable fixtures contain original synthetic content only.
+Exact extraction validates source bindings; generated claims remain semantically
+`UNASSESSED` even when their evidence IDs and citations are valid.
+
+See the [current results and blockers](docs/evidence_v2_implementation.md),
+[schema/interface contract](docs/evidence_v2_schema.md),
+[dependency/build limits](docs/dependency_contract.md) and
+[active plan](docs/aws_a30_standalone_prototype_plan.md). Historical results below
+remain evidence for their stated scopes; they do not establish full multimodal
+answer accuracy or production readiness.
+
 **Vector reader fix and evaluation (2026-10-15):** The chunk reader now accepts validated existing numeric lists and native encoded vectors, with an exact LightRAG 1.5.7 contract guard. On frozen questions, strict target Hit@10 was 1/28 before and 11/28 after in a fixed-pool component comparison; the separate current hybrid lane reached 23/28. Only 12 targets are mapped in the reader pool. These results and 220 selected Python checks do not establish factual answer accuracy. See [protocol, results and limits](docs/vector_reader_compatibility.md).
 
 A clean-slate, standalone prototype for Natural Language Querying (NLQ) over the full 190-page **AWS A3.0M/A3.0:2020 Standard Welding Terms and Definitions**.
@@ -73,10 +181,12 @@ aws-a30-prototype/
 
 ---
 
-## Quickstart
+## Historical v1 quickstart
 
 ### 1. Prerequisites & Environment
-Python 3.11+ is recommended. This repository currently has neither `requirements.txt` nor `pyproject.toml`; its historical setup is not a complete reproducible install specification. The reader fix requires the reviewed `lightrag-hku==1.5.7` contract. See [tested package/model versions](docs/vector_reader_compatibility.md) before changing the existing environment.
+Python 3.11+ is required; the observed existing environment is Python 3.12.7. `pyproject.toml` defines the standard-library v2 core and exact optional direct v1/test/build pins; `requirements-v1.lock` records observed direct runtime versions. These are not a complete transitive or model/corpus lock. See [the dependency contract](docs/dependency_contract.md) and [the exact LightRAG 1.5.7 reader guard](docs/vector_reader_compatibility.md) before changing the environment.
+
+The following original setup commands are operator reference. The bounded v2 task does not authorize new credentials, full extraction, indexing or cloud calls.
 
 ### 2. Configure Gemini API Key
 Copy `.env.example` to `.env` and set your key:
