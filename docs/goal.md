@@ -1,5 +1,286 @@
 # Project Goal: AWS A3.0 Multimodal NLQ & Epistemic Knowledge System
 
+Publication note (2026-10-21): the owner approved commit, push, merge and local
+synchronization of this prototype. The bounded DEVELOPMENT results and seven
+remaining QA002 gaps below are unchanged; publication is not release acceptance.
+
+## Final bounded A1 repair: original set retained, follow-up gaps remain (2026-10-21)
+
+Harness `1.1.0` independently grades **15 PASS / 0 FAIL / 0 PARTIAL** on QA001
+and **9 PASS / 4 FAIL / 3 PARTIAL** on QA002. Preserve QA001's original 0/15
+pre-capability baseline and 1.0 DEVELOPMENT 15/15; QA002 1.0 remains
+0 PASS / 15 FAIL / 1 PARTIAL. This one 31-question repair pass is DEVELOPMENT
+on exposed questions, not unseen validation or an LLM benchmark. Both sets ran
+once, model/provider NONE and zero calls; focused checks were 33/33 in 0.56 s.
+No full-suite result is claimed.
+
+QA001 retains 90/90 correct supported source pairs, 29 qualified candidate
+children and 7/7 lookup facts including two bounded negatives. QA002's
+multi-name resolution is correct for 13/13 mentions and 23/23 mappings.
+Layout questions 06–12 grade 4 PASS / 1 PARTIAL / 2 FAIL; source-limit questions
+13–16 grade 0 PASS / 2 PARTIAL / 2 FAIL (3/11 criteria). QA002 passes 01–08, 11;
+09, 14, 16 are partial; 10, 12, 13, 15 fail. Full details stay in the
+[private report](../storage/evidence_v2/a1_qa_repair_003/report.md).
+
+Remaining limits concern broader-category coverage (Q09), false selector residue
+(Q10), comparison scope (Q12), A1-context selection (Q13), omitted positive
+families despite a qualified semantic limit (Q14), generic “Does”/epistemic
+parsing (Q15), and omitted concrete missing fields despite a correct limit (Q16).
+Stop after this pass; no more repairs or replays.
+
+Source graph 99 nodes / 127 edges and SHA-256
+`6476c898439108dbeaf7b92f0be3946a3e0d3538d5c15afb860d1cf0e02cc4d2`
+remain unchanged, as do 168 prior receipt files and six protected sources.
+The thin [routing](../.agents/skills/evidence-graph-routing/SKILL.md) and
+[QA](../.agents/skills/evidence-graph-qa/SKILL.md) skills contain only instructions
+and metadata for existing code, not a wrapper framework or automatic backend
+loader. Keep candidate semantics and private grading separate, A1-only source
+scope, and no extra checks, UI/model/cloud, database/global configuration or Git
+publication.
+
+## Historical bounded A1 result: 15/15 independently graded PASS (2026-10-21)
+
+The owner's 15 Figure A1 questions now have independent grades:
+**15 PASS / 0 FAIL / 0 UNASSESSED**. For the first eight actual answer strings
+and rows, all **90/90 source pairs** were retrieved correctly and are correct
+and supported, with no missing/extra pairs, duplicates, designation mismatches
+or source-binding errors. All 29 indented child qualifications remain candidate.
+The other seven facts are **7/7 correct and supported**; both negative verdicts
+were verified using the complete original chart plus positive foreign-category
+membership, rather than treating a retrieval omission as evidence of absence.
+
+This closes only the bounded first generic graph-QA DEVELOPMENT set on these
+15 exposed questions. It is not unseen validation, corpus-wide acceptance or an
+LLM benchmark. The original baseline **0/15** remains frozen. The new execution
+used model/provider NONE and zero LLM calls. Raw runtime
+`semantic_validation: false` remains unchanged; external PASS grading does not
+upgrade candidate edges to verified graph semantics.
+
+The source graph is unchanged at 99 nodes / 127 edges, full SHA-256
+`6476c898439108dbeaf7b92f0be3946a3e0d3538d5c15afb860d1cf0e02cc4d2`.
+Protected source, database and indices remain unchanged. Only the explicit
+`--graph-qa` capability was added after baseline; v1, default packet mode and
+ordinary v2/extractive remain unchanged. See the
+[final source-safe QA receipt](evidence_v2_a1_qa_001.md).
+
+Stop after this bounded set: no other image, model run, automatic replay or
+comparison. Stay backend-only, preserve prior failures/private grading records,
+and perform no UI, cloud, commit, push or merge work.
+
+## Historical A1 execution result before independent grading (2026-10-21)
+
+The bounded first CLI graph-QA execution produced 15 `graph_answer` outputs for
+the owner's 15 Figure A1 questions, with model/provider NONE and zero LLM calls.
+Independent answer grading is PENDING; no 15/15 pass, correctness, coverage or
+source-support claim is established. The targeted 160 synthetic checks passed
+in 2.01 s and remain software regression evidence only.
+
+The execution measured wall time 374.355 ms and engine time 120.446 ms
+(source projection 89.930 ms, image validation 8.503 ms, graph QA 22.013 ms).
+The [first QA receipt](evidence_v2_a1_qa_001.md) owns aggregate execution/grading
+status; raw answers and full reports remain in ignored storage.
+
+The frozen baseline predates only the generic QA code addition. The source
+graph stayed exactly **99 nodes / 127 edges**, with an identical full SHA-256;
+protected source, database and indices are unchanged. No source-graph update or
+graph semantic repair was made. Keep the original baseline's unanswered
+`V2_READER_REQUIRED` results distinct from the first DEVELOPMENT graph answers.
+
+The new capability is the separate explicit opt-in
+`src/evidence_a1_cli.py --graph-qa`, using `src/evidence_a1_graph_qa.py`
+(`a1-graph-qa-1.0`). Default packet mode, v1 and the ordinary v2/extractive path
+are unchanged; ordinary v2 still requires a reader for these graph questions.
+The current goal remains supported answers, which await independent grading.
+Retain the single-A1/backend-only scope and private grading-data boundary; do
+not advance to another figure or consume an inference allowance. No UI, cloud,
+commit, push or merge is in scope.
+
+## Historical authorization for first owner-CQ graph QA (2026-10-21)
+
+The owner supplied 15 Figure A1 competency questions, IDs `A1-CQ-001` through
+`A1-CQ-015`, and requests the bounded first QA/harness run. The previous empty
+owner-pending dataset and setup-only stop are historical. The immediate goal is
+to exercise generic deterministic graph QA on this one image and report its
+actual evidence/answer behavior, with no UI, cloud or other-figure work.
+
+The frozen baseline at ignored `storage/evidence_v2/a1_qa_run_001` predates the QA code addition; the source graph
+remained unchanged. All 15 actual v2 queries returned `V2_READER_REQUIRED`
+without answers; list requests 1–8 had only the root plus eight category nodes
+and zero process rows. The baseline made no LLM calls. Preserve its results as
+original failures/limitations and keep all later first-QA output DEVELOPMENT.
+
+Generic deterministic graph selection/traversal and answer composition may now
+be added after the baseline without changing the source graph. Do not hardcode answers to owner question IDs/text
+or repair graph semantics to match grading expectations. The last two trailing
+“No” values are private grading metadata, never execution prompts or graph
+updates. Await actual result metrics before claiming pass, coverage or support.
+
+Full raw output, answers and reports remain in ignored storage; the
+[source-safe QA summary](evidence_v2_a1_qa_001.md) owns the aggregate result.
+When graph answers need no inference, model/provider is NONE: this is not an
+LLM evaluation. Stay on Figure A1's single image, preserve frozen rubrics and
+older failures, and perform no commit, push or merge.
+
+## Historical setup goal before owner questions (2026-10-21)
+
+The owner will supply the competency questions. The current deliverable is a
+usable Figure A1 backend setup, not a new answer-accuracy or model-comparison
+result. All DeepSeek/local inference evaluations are stopped. None of the newly
+approved five DeepSeek cases or the one installed `qwen2.5vl:7b` trial started.
+Do not generate substitute questions, resume inference or spend that allowance.
+
+Prepare the canonical Figure A1 single image and edition binding; source-bound
+labels/designations and qualified graph hierarchy; manifest plus read-only
+SQLite bindings; actual graph-traversal retrieval and complete evidence packet;
+and a v2 CLI/harness that accepts the owner's future questions. Figure A1 is
+Master Chart of Welding and Joining Processes at
+`parsed/figures/Figure_A1_p88.png` (PDF index 87 / viewer 88 / printed 75).
+Table A1, A2, B6 and other images are outside this setup unit.
+
+The competency-question dataset is **EMPTY — owner pending**. The agent-authored
+private A1 rubric remains DEFERRED, not an accepted competency-question set.
+Readiness checks cover IDs, joins, graph paths, source editions/fingerprints,
+image bindings, evidence closure and input validation only. Structural success
+does not establish semantic answer accuracy or independent answer support.
+
+The stopping state is `READY_FOR_OWNER_COMPETENCY_QUESTIONS` only when the setup
+is usable; otherwise retain a precise setup blocker. Record the actual state
+and structural evidence in [the A1 setup receipt](evidence_v2_a1_setup.md).
+Do not advance to A2/B6. Retain backend-only scope, no UI/new database or graph
+framework, unchanged existing stores and no commit/push/merge. Earlier semantic
+failures, frozen questions/rubrics and evaluation plans below remain historical.
+
+## Historical Figure A1 evaluation goal (2026-10-21)
+
+The selected object is **Figure A1 — Master Chart of Welding and Joining
+Processes**, a single image at `parsed/figures/Figure_A1_p88.png` (PDF index 87,
+viewer page 88, printed page 75). Identity is resolved. Table A1 is a different
+two-page object on printed pages 69–70 and is outside this single-image scope.
+The previous identity-pending wording below remains a historical checkpoint.
+
+The acceptance goal is complete correct Figure A1 graph evidence and pixels
+entering the reader, followed by independent grading of answer correctness and
+source support. The source auditor confirmed eight category boxes. Incorrect
+AB/CAB expansions in legacy merged candidate
+`annex_a_figures_a1_a2_a3_anatomy` must not become facts in the new projection.
+A versioned A1 source projection is under development; existing SQLite/graph
+stores remain unchanged. Implementation or successful generation alone does not
+close the supported-answer gate.
+
+Stay backend-only and on this one image. Exclude Table A1, B6 and unrelated
+cases; introduce no UI work or new database/graph framework. Do not automatically
+advance while A1's gate is unresolved; preserve a supported pass or exact blocker.
+DeepSeek baseline generation for A1 is NOT covered by the earlier five-case
+budget. The single installed `qwen2.5vl:7b` trial remains UNUSED and pending.
+Prior semantic failures, frozen rubrics and current Git/provider restrictions
+remain intact.
+
+## Historical A1-first identity checkpoint (2026-10-21)
+
+The immediate v2 goal is a supported backend answer for A1, with source/data,
+graph, database/edition joins, retrieval/expansion and final reader input checked
+for the current image. A1's source identity is pending inspection. “Annex A”
+is a section, not proof of an object A1; do not assume a table, figure or file
+identity. Confirm its exact edition, canonical object and source/image locator
+before claiming retrieval completeness or reading correctness.
+
+Do not run B6 or unrelated cases. Defer the original multipage B6 rubric while
+retaining its frozen cases, scores and failures. One image is the work unit:
+do not automatically advance while the current image's supported-answer gate
+is unresolved. Record a supported pass or a precise blocker before considering
+a next image. Backend correctness remains the objective; no UI enhancements,
+redesign or new database/graph framework is in scope.
+
+The five earlier DeepSeek comparison cases and the one installed
+`qwen2.5vl:7b` trial are all UNUSED; none has begun under that approval. The
+single local trial may apply to A1 after identity and packet inspection. The
+previous five-case DeepSeek permission does not authorize sending this new A1
+source. Do not infer a model result, spent allowance or new provider authority.
+Prior pending validation plans below are historical and superseded by A1 first;
+all prior semantic failures and frozen rubrics remain preserved.
+
+## Backend acceptance goal and historical unused approval (2026-10-21)
+
+V2.0 is backend-only. Its objective is correct graph/data facts, database and
+edition joins, graph retrieval and expansion, and complete correct evidence
+reaching the answer reader so answers are correct and supported by that evidence.
+No UI enhancements or redesign are in scope; the existing guarded web API
+version flag serves compatibility only. Software pass counts establish contracts
+and regressions, while the acceptance decision depends on supported answers.
+
+Record each failure separately as **source ingestion**, **graph facts/relations**,
+**database/edition joins**, **retrieval/ranking/expansion**, **packet construction**
+or **reader reasoning**. Diagnose from source to answer: a correct packet with a
+wrong answer is a reader failure; evidence missing before generation requires a
+source, graph, join, retrieval or packet correction. Preserve the source and
+packet trace used for that attribution instead of changing the grading rubric.
+
+Retain the existing SQLite/manifest/graph spine. A new database or graph framework
+requires a measured gap and evidence that a bounded correction to the current
+structure cannot meet the requirement; framework replacement is not the goal.
+
+The owner has now authorized five frozen unchanged-v1 cases through the existing
+DeepSeek provider and one trial of installed `qwen2.5vl:7b`. Results for this
+bounded approval remain pending. It authorizes no additional paid cases, new
+provider, installation, persistent setting, service restart, commit, push,
+publication or merge. All original semantic failures and frozen rubrics remain
+part of the acceptance record. The prior local-only comparison blocker below
+is a historical pre-approval checkpoint, not the present permission boundary.
+
+## Current bounded v2 status after runtime recovery (2026-10-21)
+
+Local implementation and actual complete-packet image answering now run. The
+original source gate remains **4/6 cases**, **11/13 facts correct**, **10/13
+source-supported**; it is not complete semantic acceptance. The deterministic
+negative-control repair passes an exposed development replay, while the
+multipage model replay still fails. Full unchanged v1 live comparison, unseen
+semantic validation and broader source coverage remain open. See
+[runtime recovery and measured evidence](evidence_v2_runtime_recovery.md).
+Baseline/tag/branch and no-commit/no-push scope remain unchanged.
+One identical-input actual v1/v2 reviewed-source pair now ran without providers.
+At that pre-approval checkpoint, five unchanged v1 generation cases were blocked
+by configured DeepSeek cloud under local-only scope; see the
+[comparison decision](evidence_v2_live_comparison_blocker.md). No new model trial had run.
+
+## Current bounded v2 goal (2026-10-21)
+
+Preserve the local v1 baseline and build one complete evidence-to-reader slice
+behind an opt-in versioned interface. Local annotated tag `v1.0` identifies
+`24bac45465bcb5c9ea14663f7a669927d5d2ed00`; work is on
+`v2/evidence-engine`, while `main` remains unchanged. This is an experimental
+local prototype, with no production-readiness claim and no commit, push,
+publication or merge in the active task.
+
+The bounded slice covers six native definition/alias entries (`root face`,
+`root opening`, `root gap`, `bevel angle`, `back weld`, `backing weld`), structured
+Tables A2/A3, and all three full-page Figure B6 continuations plus their required
+applicability note. Other senses and footnote cases use original redistributable
+fixtures; that software coverage does not establish source-wide coverage.
+The present A2/A3 legacy Markdown has no cells. A versioned local three-page
+native extraction supplies 133 A2 rows and 134 A3 rows without overwriting those
+files or reconciling discrepancies by guesswork.
+
+Success requires content-bound edition IDs and locators, typed definition/alias,
+table, visual, comparison and ambiguity routes, and a complete evidence packet
+that reaches the reader with every qualifier, exception, note and continuation.
+Actual pixels must enter visual answering. Generated claims must bind to packet
+evidence IDs and remain semantically unassessed until separately reviewed.
+Exact extraction is a source-binding result, not a complete answer-quality score.
+
+Keep v1 as the default; select `--evidence-version v2` for the new slice and
+`--v2-reader local` only for the existing configured local reader. Return to
+`--evidence-version v1` to roll back behavior. No new database, UI framework,
+private-data destination or credential setup is part of this goal.
+
+The [current implementation receipt](evidence_v2_implementation.md) owns final
+step status, identical-input comparisons, executed tests, latency/cost evidence
+and blockers. [The schema](evidence_v2_schema.md) and
+[dependency contract](dependency_contract.md) define the reproducible software
+boundary. Direct package pins, mocked fixtures and successful builds do not prove
+fresh-environment, installed-model or complete corpus reproducibility. Broader
+semantic/visual/table correctness and production latency remain separate gates;
+all earlier failed fresh results below are preserved.
+
 ## Guarded running-app check and retained acceptance gaps (2026-10-16)
 
 The latest increment was loaded into the local prototype under a provider-free
@@ -76,8 +357,8 @@ The numeric-list compatibility failure is repaired and covered by 44 actual-nati
 
 **Specification Target:** AWS A3.0M/A3.0:2020 (*Standard Welding Terms and Definitions*)  
 **Repository:** `kaiello/aws-a30-prototype`  
-**Current Milestone:** Card 07 Completed (Dual-Layer Epistemic Graph Projection & 100% Gold Benchmark Verification)  
-**Status:** Active Production Prototype  
+**Current Milestone:** Bounded opt-in v2 evidence-engine slice; final status in the current receipt
+**Status:** Experimental local prototype; broader semantic acceptance remains unmet or unassessed
 
 **2026-10-15 evidence qualification:** Card 07's historical scores below are not a fresh demonstration of full multimodal NLQ. The [manifest implementation](declarative_manifest_implementation.md) verifies source locations for 190 pages, 62 figures and 11 tables and preserves injected retrieval behavior. It does not establish table-cell/footnote fidelity, diagram understanding, claim entailment, multi-hop completeness or live answer accuracy. Clause 4 occupies PDF indices 17-80, printed pp. 5-68; Annex B's normative/informative status conflicts between the contents and its opening page and is retained as conflicting. Existing stores and gold receipts were not regenerated.
 

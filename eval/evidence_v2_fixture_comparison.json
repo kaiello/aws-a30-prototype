@@ -1,0 +1,288 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "same_input_software_evidence_comparison",
+  "lane_modes": {
+    "v1": "software_mocked",
+    "v2": "software_mocked"
+  },
+  "semantic_validation": "unassessed; separate source/model grading required",
+  "cost_note": "null means unobserved; fixture reader has no provider call",
+  "cases": [
+    {
+      "case_id": "definition_alias",
+      "query": "Define retaining ring",
+      "category": "definition_alias",
+      "v1": {
+        "execution": "completed",
+        "latency_ms": 0.316,
+        "answer_outcome": "generated",
+        "assessment_status": "UNASSESSED",
+        "assessment_validated": false,
+        "selected_evidence_count": 8,
+        "required_evidence_count": 1,
+        "required_evidence_recall": 1.0,
+        "all_required_evidence": true,
+        "observed_model_image_count": 0,
+        "usage": {
+          "mocked": true
+        },
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "mocked synthesis; no provider call"
+        },
+        "semantic_correctness": null
+      },
+      "v2": {
+        "execution": "completed",
+        "latency_ms": 0.938,
+        "answer_outcome": "composed",
+        "assessment_status": "SOURCE_BOUND_EXTRACT",
+        "assessment_validated": true,
+        "selected_evidence_count": 1,
+        "required_evidence_count": 1,
+        "required_evidence_recall": 1.0,
+        "all_required_evidence": true,
+        "observed_model_image_count": 0,
+        "usage": {},
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "no provider call"
+        },
+        "semantic_correctness": null
+      }
+    },
+    {
+      "case_id": "definition_senses",
+      "query": "Define nozzle",
+      "category": "sense_ambiguity",
+      "v1": {
+        "execution": "completed",
+        "latency_ms": 0.251,
+        "answer_outcome": "generated",
+        "assessment_status": "UNASSESSED",
+        "assessment_validated": false,
+        "selected_evidence_count": 8,
+        "required_evidence_count": 0,
+        "required_evidence_recall": null,
+        "all_required_evidence": null,
+        "observed_model_image_count": 0,
+        "usage": {
+          "mocked": true
+        },
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "mocked synthesis; no provider call"
+        },
+        "semantic_correctness": null
+      },
+      "v2": {
+        "execution": "completed",
+        "latency_ms": 0.367,
+        "answer_outcome": "clarification_required",
+        "assessment_status": "CLARIFICATION_REQUIRED",
+        "assessment_validated": false,
+        "selected_evidence_count": 2,
+        "required_evidence_count": 0,
+        "required_evidence_recall": null,
+        "all_required_evidence": null,
+        "observed_model_image_count": 0,
+        "usage": {},
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "no provider call"
+        },
+        "semantic_correctness": null
+      }
+    },
+    {
+      "case_id": "table",
+      "query": "Table X1 copper",
+      "category": "structured_table",
+      "v1": {
+        "execution": "completed",
+        "latency_ms": 0.225,
+        "answer_outcome": "generated",
+        "assessment_status": "UNASSESSED",
+        "assessment_validated": false,
+        "selected_evidence_count": 8,
+        "required_evidence_count": 1,
+        "required_evidence_recall": 1.0,
+        "all_required_evidence": true,
+        "observed_model_image_count": 0,
+        "usage": {
+          "mocked": true
+        },
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "mocked synthesis; no provider call"
+        },
+        "semantic_correctness": null
+      },
+      "v2": {
+        "execution": "completed",
+        "latency_ms": 0.489,
+        "answer_outcome": "composed",
+        "assessment_status": "SOURCE_BOUND_EXTRACT",
+        "assessment_validated": true,
+        "selected_evidence_count": 1,
+        "required_evidence_count": 1,
+        "required_evidence_recall": 1.0,
+        "all_required_evidence": true,
+        "observed_model_image_count": 0,
+        "usage": {},
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "no provider call"
+        },
+        "semantic_correctness": null
+      }
+    },
+    {
+      "case_id": "multipage_figure",
+      "query": "Figure X1",
+      "category": "multipage_figure",
+      "v1": {
+        "execution": "completed",
+        "latency_ms": 0.23,
+        "answer_outcome": "generated",
+        "assessment_status": "UNASSESSED",
+        "assessment_validated": false,
+        "selected_evidence_count": 8,
+        "required_evidence_count": 3,
+        "required_evidence_recall": 1.0,
+        "all_required_evidence": true,
+        "observed_model_image_count": 0,
+        "usage": {
+          "mocked": true
+        },
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "mocked synthesis; no provider call"
+        },
+        "semantic_correctness": null
+      },
+      "v2": {
+        "execution": "completed",
+        "latency_ms": 6.897,
+        "answer_outcome": "generated",
+        "assessment_status": "UNASSESSED",
+        "assessment_validated": false,
+        "selected_evidence_count": 3,
+        "required_evidence_count": 3,
+        "required_evidence_recall": 1.0,
+        "all_required_evidence": true,
+        "observed_model_image_count": 2,
+        "usage": {
+          "mocked": true
+        },
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "no provider call"
+        },
+        "semantic_correctness": null
+      }
+    },
+    {
+      "case_id": "crossmodal",
+      "query": "Compare collar and sleeve in Figure X1",
+      "category": "crossmodal_comparison",
+      "v1": {
+        "execution": "completed",
+        "latency_ms": 0.252,
+        "answer_outcome": "generated",
+        "assessment_status": "UNASSESSED",
+        "assessment_validated": false,
+        "selected_evidence_count": 8,
+        "required_evidence_count": 5,
+        "required_evidence_recall": 1.0,
+        "all_required_evidence": true,
+        "observed_model_image_count": 0,
+        "usage": {
+          "mocked": true
+        },
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "mocked synthesis; no provider call"
+        },
+        "semantic_correctness": null
+      },
+      "v2": {
+        "execution": "completed",
+        "latency_ms": 2.163,
+        "answer_outcome": "generated",
+        "assessment_status": "UNASSESSED",
+        "assessment_validated": false,
+        "selected_evidence_count": 5,
+        "required_evidence_count": 5,
+        "required_evidence_recall": 1.0,
+        "all_required_evidence": true,
+        "observed_model_image_count": 2,
+        "usage": {
+          "mocked": true
+        },
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "no provider call"
+        },
+        "semantic_correctness": null
+      }
+    },
+    {
+      "case_id": "missing",
+      "query": "Table X9 copper",
+      "category": "missing_evidence",
+      "v1": {
+        "execution": "completed",
+        "latency_ms": 0.236,
+        "answer_outcome": "generated",
+        "assessment_status": "UNASSESSED",
+        "assessment_validated": false,
+        "selected_evidence_count": 8,
+        "required_evidence_count": 0,
+        "required_evidence_recall": null,
+        "all_required_evidence": null,
+        "observed_model_image_count": 0,
+        "usage": {
+          "mocked": true
+        },
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "mocked synthesis; no provider call"
+        },
+        "semantic_correctness": null
+      },
+      "v2": {
+        "execution": "completed",
+        "latency_ms": 0.142,
+        "answer_outcome": "insufficient_evidence",
+        "assessment_status": "INSUFFICIENT_EVIDENCE",
+        "assessment_validated": false,
+        "selected_evidence_count": 0,
+        "required_evidence_count": 0,
+        "required_evidence_recall": null,
+        "all_required_evidence": null,
+        "observed_model_image_count": 0,
+        "usage": {},
+        "cost": {
+          "amount": 0,
+          "currency": "USD",
+          "basis": "no provider call"
+        },
+        "semantic_correctness": null
+      }
+    }
+  ],
+  "v1_orchestration_source_sha256": "68f7d598487bae000fb6272e8e382114e71dedee0e00bd6334dff9cacb4b48e1",
+  "injection_limits": "Actual v1 query methods; complete shared synthetic retrieval pool; mocked synthesis and diagnostic boundaries. No actual index ranking or provider/semantic score."
+}

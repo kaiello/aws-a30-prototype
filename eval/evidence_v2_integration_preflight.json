@@ -1,0 +1,219 @@
+{
+  "kind": "source_safe_unchanged_v1_integration_status",
+  "rubric_sha256": "073820aeaff0ffead75638a00af168d569e292bf3923de160ad8998a794f36dc",
+  "provider_configuration_changed": false,
+  "generation_calls": 0,
+  "default_provider": {
+    "default_engine": "deepseek",
+    "default_base_url": "https://api.deepseek.com",
+    "default_model": "deepseek-chat",
+    "default_key_configured": true,
+    "custom_base_url": "https://api.openai.com/v1",
+    "custom_key_configured": false,
+    "gemini_base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "gemini_key_configured": false
+  },
+  "local_custom_override": "rejected_by_existing_server_endpoint_allowlist",
+  "source_dependencies": {
+    "storage\\vdb_chunks_contextual.json": {
+      "exists": true,
+      "bytes": 6655056
+    },
+    "storage\\dual_layer_registry.db": {
+      "exists": true,
+      "bytes": 4075520
+    },
+    "config\\aws_a30_2020_manifest.json": {
+      "exists": true,
+      "bytes": 190945
+    }
+  },
+  "cases": [
+    {
+      "case_id": "SRC01_definition",
+      "identical_input": true,
+      "v1": {
+        "scope_gate": false,
+        "reviewed_bundle": false,
+        "reviewed_composition": false,
+        "generation_required": true,
+        "live_generation": "NOT_RUN_LOCAL_ONLY_BOUNDARY"
+      },
+      "v2": {
+        "route": "definition",
+        "packet_status": "complete",
+        "evidence_count": 1,
+        "outcome": "composed",
+        "claims": 1,
+        "execution": "actual_source_bound_no_provider"
+      }
+    },
+    {
+      "case_id": "SRC02_alias",
+      "identical_input": true,
+      "v1": {
+        "scope_gate": false,
+        "reviewed_bundle": true,
+        "reviewed_composition": true,
+        "generation_required": false,
+        "live_generation": "NOT_REQUIRED_PROVIDER_FREE"
+      },
+      "v2": {
+        "route": "definition",
+        "packet_status": "complete",
+        "evidence_count": 2,
+        "outcome": "composed",
+        "claims": 2,
+        "execution": "actual_source_bound_no_provider"
+      }
+    },
+    {
+      "case_id": "SRC03_table",
+      "identical_input": true,
+      "v1": {
+        "scope_gate": false,
+        "reviewed_bundle": false,
+        "reviewed_composition": false,
+        "generation_required": true,
+        "live_generation": "NOT_RUN_LOCAL_ONLY_BOUNDARY"
+      },
+      "v2": {
+        "route": "table",
+        "packet_status": "complete",
+        "evidence_count": 2,
+        "outcome": "composed",
+        "claims": 2,
+        "execution": "actual_source_bound_no_provider"
+      }
+    },
+    {
+      "case_id": "SRC04_multipage_figure",
+      "identical_input": true,
+      "v1": {
+        "scope_gate": false,
+        "reviewed_bundle": false,
+        "reviewed_composition": false,
+        "generation_required": true,
+        "live_generation": "NOT_RUN_LOCAL_ONLY_BOUNDARY"
+      },
+      "v2": {
+        "route": "visual",
+        "packet_status": "complete",
+        "evidence_count": 6,
+        "execution": "existing_independently_graded_reader_receipts; no new inference"
+      }
+    },
+    {
+      "case_id": "SRC05_crossmodal_comparison",
+      "identical_input": true,
+      "v1": {
+        "scope_gate": false,
+        "reviewed_bundle": false,
+        "reviewed_composition": false,
+        "generation_required": true,
+        "live_generation": "NOT_RUN_LOCAL_ONLY_BOUNDARY"
+      },
+      "v2": {
+        "route": "comparison",
+        "packet_status": "complete",
+        "evidence_count": 7,
+        "execution": "existing_independently_graded_reader_receipts; no new inference"
+      }
+    },
+    {
+      "case_id": "SRC06_missing_evidence",
+      "identical_input": true,
+      "v1": {
+        "scope_gate": false,
+        "reviewed_bundle": false,
+        "reviewed_composition": false,
+        "generation_required": true,
+        "live_generation": "NOT_RUN_LOCAL_ONLY_BOUNDARY"
+      },
+      "v2": {
+        "route": "missing",
+        "packet_status": "insufficient_evidence",
+        "evidence_count": 0,
+        "outcome": "insufficient_evidence",
+        "claims": 0,
+        "execution": "actual_source_bound_no_provider"
+      }
+    }
+  ],
+  "executed_provider_free_pair": {
+    "case_id": "SRC02_alias",
+    "provider_attempts": 0,
+    "observations": [
+      {
+        "version": "v1",
+        "outcome": "extractive",
+        "origin": "composed",
+        "claims": 2,
+        "wall_ms": 125.485
+      },
+      {
+        "version": "v2",
+        "outcome": "composed",
+        "origin": "extractive",
+        "claims": 2,
+        "wall_ms": 536.326
+      }
+    ]
+  },
+  "blocked_live_generation_cases": 5,
+  "blocker": "Default unchanged v1 generation uses configured DeepSeek cloud endpoint. Local-only scope forbids that request; redirecting to Ollama would change its provider configuration.",
+  "status": "five cloud actions not attempted under local-only scope; no provider/tool denial and nothing pending",
+  "semantic_grade": {
+    "kind": "source_safe_actual_provider_free_integration_pair_no_answer_text",
+    "rubric_sha256": "073820aeaff0ffead75638a00af168d569e292bf3923de160ad8998a794f36dc",
+    "frozen_paired_case_count": 1,
+    "identical_input": true,
+    "v1": {
+      "passed_cases": 1,
+      "total_cases": 1,
+      "required_facts_correct": 2,
+      "required_facts_source_supported": 2,
+      "required_fact_total": 2,
+      "source_binding_errors": 0,
+      "unsupported_material_extra_claims": 0,
+      "contradictions": 0,
+      "wall_latency_ms": 125.485
+    },
+    "v2": {
+      "passed_cases": 1,
+      "total_cases": 1,
+      "required_facts_correct": 2,
+      "required_facts_source_supported": 2,
+      "required_fact_total": 2,
+      "source_binding_errors": 0,
+      "unsupported_material_extra_claims": 0,
+      "contradictions": 0,
+      "wall_latency_ms": 536.326
+    },
+    "active_retrieval_or_synthesis_fakes": false,
+    "provider_attempt_count": 0,
+    "model_inference_calls": 0,
+    "provider_configuration_changed": false,
+    "semantic_superiority_demonstrated": false,
+    "conclusion": "Actual provider-free query-path parity on one frozen source case with complete fact/source bindings.",
+    "other_frozen_unchanged_v1_cases_not_run": 5,
+    "remaining_status": "NOT_ATTEMPTED_DUE_TO_LOCAL_ONLY_SCOPE",
+    "remaining_reason": "Other frozen cases require the existing configured cloud generation path. No request was attempted; changing its endpoint would alter the unchanged-v1 experiment.",
+    "retrieval_index_missing": false,
+    "limits": [
+      "This pair exercises source composition, not live model reasoning, pixel reading or full hybrid generation.",
+      "One sequential timing observation per lane does not establish a performance SLA or causal speed comparison.",
+      "Original reader-component grades and semantic failures remain unchanged.",
+      "No provider or model inference calls were made."
+    ]
+  },
+  "historical_record": true,
+  "active_stop_point": {
+    "scope": "Figure A1 setup only; owner competency questions pending",
+    "prior_five_DeepSeek_cases_started": 0,
+    "prior_qwen2_5vl_trial_started": false,
+    "calls_pending": false,
+    "comparison_evaluation": "stopped by latest owner instruction",
+    "current_receipt": "docs/evidence_v2_a1_setup.md"
+  }
+}

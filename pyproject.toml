@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools==80.9.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aws-a30-prototype"
+version = "2.0.0a1"
+description = "Local AWS A3.0 evidence-engine prototype; bring your own authorized source corpus"
+requires-python = ">=3.11"
+# The bounded v2 evidence model, routing and packet contract use the standard library.
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest==9.0.2"]
+# Source-only A1 structural CLI; no LightRAG, credentials or model required.
+a1 = ["PyMuPDF==1.26.5"]
+# Observed direct v1 imports pinned to the existing tested Python 3.12 environment.
+# These pins do not lock transitive packages, GPU wheels, models or private data.
+v1 = [
+  "lightrag-hku==1.5.7",
+  "nano-vectordb==0.0.4.3",
+  "numpy==2.2.6",
+  "networkx==3.5",
+  "sentence-transformers==5.1.2",
+  "python-dotenv==1.2.2",
+  "openai==2.31.0",
+  "httpx==0.28.1",
+  "requests==2.33.1",
+  "PyMuPDF==1.26.5",
+]
+
+[tool.setuptools]
+# Local checkout/editable workflow. No PDFs, source extracts, stores or credentials
+# are part of this source package. Runtime config/assets remain checkout-relative.
+packages = ["src", "eval"]
+include-package-data = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

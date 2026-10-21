@@ -1,0 +1,396 @@
+{
+  "protocol": "owner-a1-first-qa-1.0",
+  "phase": "DEVELOPMENT_GENERIC_HARNESS_ADDITION_AFTER_PRESERVED_BASELINE",
+  "harness": {
+    "entrypoint": "src.evidence_a1_cli --graph-qa",
+    "module": "src.evidence_a1_graph_qa",
+    "version": "a1-graph-qa-1.0",
+    "implementation_sha256": {
+      "src/evidence_a1_graph_qa.py": "9de8be895341e05157d2ff9ed0a800d733dbe8eea92086577017d54b9841ffd7",
+      "src/evidence_a1_cli.py": "9796d6ca1797e8e1c17bf24ad2e2a2c2692d56272d87cc39bc23425483db1492",
+      "src/evidence_a1.py": "d4780d226e8eaafbd39c4b09ddb30cdecf39bfa710df8c94903b00ccc9cb94ee",
+      "src/evidence_v2.py": "333c6903b1761ca74c716ffdf944d8303cbad225b287a41169360d6965209aab",
+      "src/evidence_a1_registry.py": "bfb89005a3b14a57d40f3ed86a69cf14354428d02c8e77aee3ab233aab57407d"
+    }
+  },
+  "model": "NONE",
+  "provider": "NONE",
+  "model_invocation_count": 0,
+  "external_call_count": 0,
+  "generation_config": null,
+  "evaluation_kind": "deterministic_graph_retrieval_QA_not_end_to_end_LLM",
+  "questions": 15,
+  "baseline_completed": 0,
+  "development_pass": 15,
+  "development_fail": 0,
+  "development_unassessed": 0,
+  "family_list_row_pairs": {
+    "required": 90,
+    "retrieved": 90,
+    "correct_in_actual_answer_strings": 90,
+    "source_supported": 90,
+    "missing": 0,
+    "extra": 0,
+    "duplicate": 0,
+    "code_mismatch": 0
+  },
+  "lookup_membership_facts": {
+    "required": 7,
+    "correct": 7,
+    "source_supported": 7,
+    "negative_cases": 2
+  },
+  "indentation": {
+    "children_preserved": 29,
+    "verification": "candidate_layout_not_reviewed_semantic_subtype"
+  },
+  "source": {
+    "element": "Figure A1",
+    "pdf_index": 87,
+    "printed_page": "75",
+    "source_identity_id": "source2:106f7a480d00ced054c58bede817a6055f8f6f165c195eb219a89f31b7dfcc68",
+    "edition_id": "doc:aws_a30_2020@205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+    "graph_sha256": "6476c898439108dbeaf7b92f0be3946a3e0d3538d5c15afb860d1cf0e02cc4d2",
+    "nodes": 99,
+    "edges": 127,
+    "image_count": 1,
+    "unchanged_from_pre_fix_freeze": true
+  },
+  "protected_files_unchanged": true,
+  "timings_ms": {
+    "command_wall": 374.355,
+    "engine": {
+      "source_projection": 89.93,
+      "image_validation": 8.503,
+      "qa_operations": 22.013,
+      "total": 120.446
+    },
+    "per_question_min": 0.495,
+    "per_question_max": 5.923,
+    "per_question_median": 0.82
+  },
+  "per_question": [
+    {
+      "id": "A1-CQ-001",
+      "grade": "PASS",
+      "route": "descendants",
+      "returned_rows": 21,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 2.041,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "retrieval/graph_operation"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-002",
+      "grade": "PASS",
+      "route": "descendants",
+      "returned_rows": 9,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 0.62,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "retrieval/graph_operation"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-003",
+      "grade": "PASS",
+      "route": "descendants",
+      "returned_rows": 4,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 0.495,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "retrieval/graph_operation"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-004",
+      "grade": "PASS",
+      "route": "descendants",
+      "returned_rows": 11,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 0.547,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "retrieval/graph_operation"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-005",
+      "grade": "PASS",
+      "route": "descendants",
+      "returned_rows": 14,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 0.554,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "retrieval/graph_operation"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-006",
+      "grade": "PASS",
+      "route": "descendants",
+      "returned_rows": 5,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 0.521,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "retrieval/graph_operation"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-007",
+      "grade": "PASS",
+      "route": "descendants",
+      "returned_rows": 13,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 0.578,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "retrieval/graph_operation"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-008",
+      "grade": "PASS",
+      "route": "descendants",
+      "returned_rows": 13,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 0.832,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "retrieval/graph_operation"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-009",
+      "grade": "PASS",
+      "route": "abbreviation",
+      "returned_rows": 1,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 5.923,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "answer_construction_capability"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-010",
+      "grade": "PASS",
+      "route": "parent_family",
+      "returned_rows": 1,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 1.241,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "answer_construction_capability"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-011",
+      "grade": "PASS",
+      "route": "parent_family",
+      "returned_rows": 1,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 0.908,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "answer_construction_capability"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-012",
+      "grade": "PASS",
+      "route": "acronym_expansion",
+      "returned_rows": 1,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 3.812,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "answer_construction_capability"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-013",
+      "grade": "PASS",
+      "route": "acronym_expansion",
+      "returned_rows": 1,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 0.5,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "answer_construction_capability"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-014",
+      "grade": "PASS",
+      "route": "membership",
+      "returned_rows": 1,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 0.82,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "answer_construction_capability"
+      },
+      "remaining_failure_layer": null
+    },
+    {
+      "id": "A1-CQ-015",
+      "grade": "PASS",
+      "route": "membership",
+      "returned_rows": 1,
+      "retrieval_complete_for_requested_operation": true,
+      "answer_source_supported": true,
+      "raw_runtime_support_state": "SOURCE_BOUND_CHART_LAYOUT",
+      "raw_runtime_semantic_validation": false,
+      "latency_ms": 1.01,
+      "baseline": {
+        "outcome": "insufficient_evidence",
+        "error_code": "V2_READER_REQUIRED",
+        "claims": 0,
+        "completed": false,
+        "first_failure_layer": "answer_construction_capability"
+      },
+      "remaining_failure_layer": null
+    }
+  ],
+  "input_sha256": "65fe99c9856e10a20f2582154acf353ecd3ab2c07e01b98595a17af9968f231b",
+  "raw_output_sha256": "1c9a33e9dc1d7910df1bb168a1c0d74263f71a4648bb99303b64186f8131ba83",
+  "frozen_gold_sha256": {
+    "a1_owner_cq_list_gold_private.json": "5a277a452c32c7b37935b1fad17ddcfd92ee95581d118c38d71026f27eb2843a",
+    "a1_owner_cq_lookup_gold_private.json": "92d752ee7b4ac4eefb5872c0faa4f5f0669fa428ee0170312be010015a1493fb"
+  },
+  "limitations": [
+    "Indentation relationships remain candidate layout, not reviewed semantic subtypes.",
+    "Category-subsequence resolution is qualified query interpretation, not an asserted source alias.",
+    "Negatives are limited to explicit membership in this complete chart.",
+    "The existing packet scope guard is used; arbitrary future canonical range/panel requests require separate qualification.",
+    "Exposed development questions after generic harness addition; not held-out generalization.",
+    "Per-batch shared source preparation differs from original per-query baseline; no matched latency speedup claim.",
+    "Ordinary v2/extractive query still requires visual reader; graph QA is explicit CLI mode.",
+    "No semantic corrections were made to source or graph; no other question set, figure or model run."
+  ],
+  "full_private_report": "storage/evidence_v2/a1_qa_run_001/report.md",
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "src.evidence_a1_cli",
+    "--input",
+    "eval/evidence_v2_a1_owner_cqs.json",
+    "--graph-qa",
+    "--output",
+    "storage/evidence_v2/a1_qa_run_001/graph_qa_raw.json"
+  ],
+  "no_commit_push_merge": true,
+  "known_generic_defects": [
+    {
+      "scope": "outside the frozen 15 owner questions",
+      "component": "src/evidence_a1_graph_qa.py::_resolve_processes",
+      "issue": "Global longest-name choice can discard a shorter independent process in a multi-process lookup. Distinguish independent spans from nested overlapping names.",
+      "status": "diagnosed; no semantic/code repair or owner rerun after bounded QA"
+    }
+  ]
+}

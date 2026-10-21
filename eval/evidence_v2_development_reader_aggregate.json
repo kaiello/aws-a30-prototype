@@ -1,0 +1,29 @@
+{
+  "kind": "source_safe_development_aggregate_no_answer_text",
+  "classification": "DEVELOPMENT replay of one exposed original case; never replaces original results",
+  "rubric_sha256": "073820aeaff0ffead75638a00af168d569e292bf3923de160ad8998a794f36dc",
+  "case_count": 1,
+  "passed": 0,
+  "required_fact_correct_count": 2,
+  "required_fact_source_supported_count": 1,
+  "required_fact_count": 4,
+  "source_binding_errors": 1,
+  "unsupported_material_visual_detail_count": 1,
+  "contradiction_count": 1,
+  "all_targeted_observed_errors_fixed": false,
+  "model_image_count": 3,
+  "prompt_eval_count": 13270,
+  "eval_count": 353,
+  "service_latency_ms": 30187.8053,
+  "wall_latency_ms": 32329.21,
+  "local_incremental_api_cost_usd": 0,
+  "hardware_and_energy_cost_included": false,
+  "original_aggregate_replaced": false,
+  "recommendation": "Preserve the original failed acceptance evidence and report the persisting coverage, source-binding and visual-detail errors. No further inference is recommended for this bounded task.",
+  "limits": [
+    "One exposed development question with a changed prompt; no fresh unseen validation or same-prompt paired superiority claim.",
+    "Complete image transport and successful generation do not establish semantic correctness.",
+    "Latency includes model loading and different prompt token counts; no causal performance comparison or SLA is established.",
+    "Original rubric, raw observations and aggregate grades are unchanged."
+  ]
+}

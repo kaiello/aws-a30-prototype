@@ -1,0 +1,66 @@
+{
+  "schema_version": "a1-owner-cq-1.0",
+  "source_element": "Figure A1",
+  "questions": [
+    {
+      "id": "A1-CQ-001",
+      "query": "Provide all processes under arc welding (aw)- include the process and the acronym."
+    },
+    {
+      "id": "A1-CQ-002",
+      "query": "Provide all processes soldering (s)- include the process and the acronym."
+    },
+    {
+      "id": "A1-CQ-003",
+      "query": "Provide all processes in oxyfuel gas welding (ofw) - include the process and the acronym."
+    },
+    {
+      "id": "A1-CQ-004",
+      "query": "Provide all processes in resistance welding- include the process and the acronym"
+    },
+    {
+      "id": "A1-CQ-005",
+      "query": "Provide all processes in brazing (b) - include the process and acronym"
+    },
+    {
+      "id": "A1-CQ-006",
+      "query": "Provide all processes in high energy beam welding (hebw) include the process and the acronym"
+    },
+    {
+      "id": "A1-CQ-007",
+      "query": "Provide all processes in solid state welding (ssw)-"
+    },
+    {
+      "id": "A1-CQ-008",
+      "query": "Provide all the processes in other welding and joining"
+    },
+    {
+      "id": "A1-CQ-009",
+      "query": "What is the abbreviation for dip soldering?"
+    },
+    {
+      "id": "A1-CQ-010",
+      "query": "What process is atomic hydrogen welding a part of?"
+    },
+    {
+      "id": "A1-CQ-011",
+      "query": "What process is induction welding in?"
+    },
+    {
+      "id": "A1-CQ-012",
+      "query": "What is CEW stand for?"
+    },
+    {
+      "id": "A1-CQ-013",
+      "query": "What does CABW stand for?"
+    },
+    {
+      "id": "A1-CQ-014",
+      "query": "Is electron beam welding a type of arc welding?"
+    },
+    {
+      "id": "A1-CQ-015",
+      "query": "Is electrogas welding a type of oxyfuel welding?"
+    }
+  ]
+}

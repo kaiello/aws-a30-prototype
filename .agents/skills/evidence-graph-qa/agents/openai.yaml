@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evidence Graph QA"
+  short_description: "Run owner graph questions through the A1 CLI"
+  default_prompt: "Use $evidence-graph-qa to run the supplied owner questions through the canonical A1 CLI and report results and remaining failures."

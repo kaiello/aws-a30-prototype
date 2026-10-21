@@ -1,0 +1,215 @@
+{
+  "schema_version": "a1-qa002-aggregate-1.0",
+  "scope": "Figure A1 single original image; unchanged deterministic graph QA",
+  "phase": "FIRST_FROZEN_CURRENT_HARNESS_NO_REPAIRS",
+  "results": {
+    "FAIL": 15,
+    "PARTIAL": 1,
+    "PASS": 0,
+    "UNASSESSED": 0
+  },
+  "raw_outcomes": {
+    "capability_gap": 10,
+    "insufficient_evidence": 5,
+    "graph_answer": 1
+  },
+  "harness_version": "a1-graph-qa-1.0",
+  "harness_sha256": "9de8be895341e05157d2ff9ed0a800d733dbe8eea92086577017d54b9841ffd7",
+  "input_sha256": "f462ba11a21f776617abfbd05b93c0716ded133f748c94d65ede279c243c7dfc",
+  "graph_sha256": "6476c898439108dbeaf7b92f0be3946a3e0d3538d5c15afb860d1cf0e02cc4d2",
+  "raw_output_sha256": "b21c4781365597d35f468686ec286fd49e16e32f71438373b38cc1d6cb210562",
+  "source_identity_id": "source2:106f7a480d00ced054c58bede817a6055f8f6f165c195eb219a89f31b7dfcc68",
+  "edition_id": "doc:aws_a30_2020@205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+  "source_image_sha256": "252c885b609a0855ce557416e6b4bf18d30e18b43a33b586903460e08fd4f83d",
+  "source_image_count": 1,
+  "source_graph_nodes": 99,
+  "source_graph_edges": {
+    "ENCLOSES_ROW": 90,
+    "CHART_CONNECTOR": 8,
+    "INDENTED_UNDER": 29
+  },
+  "semantic_IS_A_validation": false,
+  "model": "NONE",
+  "provider": "NONE",
+  "model_invocations": 0,
+  "external_calls": 0,
+  "cli_batches": 1,
+  "question_executions": 16,
+  "timings_ms": {
+    "source_projection": 83.106,
+    "image_validation": 6.567,
+    "qa_operations": 13.629,
+    "total": 103.302
+  },
+  "wall_ms": 220.864,
+  "unchanged_frozen_files": {
+    "code_inputs_instructions_locks": 45,
+    "source_store": 6,
+    "QA001": 102
+  },
+  "code_unchanged": true,
+  "source_unchanged": true,
+  "QA001_unchanged": true,
+  "requested_multiname_coverage": {
+    "resolved_distinct_mentions": 0,
+    "requested_mentions": 13,
+    "answered_acronyms": 0,
+    "requested_acronyms": 10,
+    "answered_categories": 0,
+    "requested_categories": 13
+  },
+  "known_shorter_name_drop_reproduced_in_QA002": false,
+  "cases": [
+    {
+      "id": "A1-QA002-01",
+      "grade": "FAIL",
+      "cause": "Plural acronym/category and combined multi-name operation is unsupported; no entity resolution was attempted.",
+      "actual_outcome": "capability_gap",
+      "route": "unsupported",
+      "packet_status": "complete",
+      "latency_ms": 1.121
+    },
+    {
+      "id": "A1-QA002-02",
+      "grade": "FAIL",
+      "cause": "Plural acronym/category and combined multi-name operation is unsupported; no entity resolution was attempted.",
+      "actual_outcome": "capability_gap",
+      "route": "unsupported",
+      "packet_status": "complete",
+      "latency_ms": 0.312
+    },
+    {
+      "id": "A1-QA002-03",
+      "grade": "FAIL",
+      "cause": "False comparison gate: the packet counts one figure instead of the multiple process subjects inside it.",
+      "actual_outcome": "insufficient_evidence",
+      "route": "missing",
+      "packet_status": "insufficient_evidence",
+      "latency_ms": 0.103
+    },
+    {
+      "id": "A1-QA002-04",
+      "grade": "FAIL",
+      "cause": "False comparison gate: the packet counts one figure instead of the multiple process subjects inside it.",
+      "actual_outcome": "insufficient_evidence",
+      "route": "missing",
+      "packet_status": "insufficient_evidence",
+      "latency_ms": 0.081
+    },
+    {
+      "id": "A1-QA002-05",
+      "grade": "FAIL",
+      "cause": "Plural categories/contain operation is unsupported; no entity resolution was attempted.",
+      "actual_outcome": "capability_gap",
+      "route": "unsupported",
+      "packet_status": "complete",
+      "latency_ms": 0.289
+    },
+    {
+      "id": "A1-QA002-06",
+      "grade": "FAIL",
+      "cause": "Direct layout-child enumeration is unsupported, despite the required source rows and indentation links being available.",
+      "actual_outcome": "capability_gap",
+      "route": "unsupported",
+      "packet_status": "complete",
+      "latency_ms": 0.274
+    },
+    {
+      "id": "A1-QA002-07",
+      "grade": "FAIL",
+      "cause": "Process-to-process layout/evidence request is misrouted to process/category membership; entity resolution fails. No source explanation is supplied.",
+      "actual_outcome": "insufficient_evidence",
+      "route": "membership",
+      "packet_status": "complete",
+      "latency_ms": 5.787
+    },
+    {
+      "id": "A1-QA002-08",
+      "grade": "FAIL",
+      "cause": "Ordered layout/hierarchy path operation is unsupported; no nodes or edges are traversed.",
+      "actual_outcome": "capability_gap",
+      "route": "unsupported",
+      "packet_status": "complete",
+      "latency_ms": 0.386
+    },
+    {
+      "id": "A1-QA002-09",
+      "grade": "FAIL",
+      "cause": "Combined direct-child and broader-category request is unsupported before traversal.",
+      "actual_outcome": "capability_gap",
+      "route": "unsupported",
+      "packet_status": "complete",
+      "latency_ms": 0.305
+    },
+    {
+      "id": "A1-QA002-10",
+      "grade": "PARTIAL",
+      "cause": "The enclosing category is correct, but the answer omits the intermediate printed parent and direct-versus-nested distinction, although both required links were retrieved.",
+      "actual_outcome": "graph_answer",
+      "route": "membership",
+      "packet_status": "complete",
+      "latency_ms": 0.924
+    },
+    {
+      "id": "A1-QA002-11",
+      "grade": "FAIL",
+      "cause": "Ordered layout/hierarchy path operation is unsupported; no intermediate row or ordered path is returned.",
+      "actual_outcome": "capability_gap",
+      "route": "unsupported",
+      "packet_status": "complete",
+      "latency_ms": 0.564
+    },
+    {
+      "id": "A1-QA002-12",
+      "grade": "FAIL",
+      "cause": "The word difference triggers a comparison gate requiring two subjects; this blocks two requested views of one category.",
+      "actual_outcome": "insufficient_evidence",
+      "route": "missing",
+      "packet_status": "insufficient_evidence",
+      "latency_ms": 0.106
+    },
+    {
+      "id": "A1-QA002-13",
+      "grade": "FAIL",
+      "cause": "Unsupported operation; no explanation distinguishes shared words from source-supported relationships or reports the observed separate placements.",
+      "actual_outcome": "capability_gap",
+      "route": "unsupported",
+      "packet_status": "complete",
+      "latency_ms": 0.319
+    },
+    {
+      "id": "A1-QA002-14",
+      "grade": "FAIL",
+      "cause": "Membership entity resolution fails despite both exact source labels being present; this is not a justified source-level negative or abstention.",
+      "actual_outcome": "insufficient_evidence",
+      "route": "membership",
+      "packet_status": "complete",
+      "latency_ms": 0.915
+    },
+    {
+      "id": "A1-QA002-15",
+      "grade": "FAIL",
+      "cause": "Unsupported epistemic explanation; no distinction between observed indentation and reviewed semantic subtype authority is returned.",
+      "actual_outcome": "capability_gap",
+      "route": "unsupported",
+      "packet_status": "complete",
+      "latency_ms": 0.325
+    },
+    {
+      "id": "A1-QA002-16",
+      "grade": "FAIL",
+      "cause": "Unsupported source-limit explanation; no answer identifies the missing operating/procedure information.",
+      "actual_outcome": "capability_gap",
+      "route": "unsupported",
+      "packet_status": "complete",
+      "latency_ms": 0.305
+    }
+  ],
+  "limits": [
+    "Graph retrieval QA only; no LLM evaluation.",
+    "Different challenge questions do not establish a regression on QA001.",
+    "Full pixels/source packets and citations alone do not establish correct retrieval or answer support.",
+    "Candidate indentation edges are not reviewed semantic subtype facts.",
+    "No repairs or changed-implementation replays in this round."
+  ]
+}

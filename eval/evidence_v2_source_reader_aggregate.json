@@ -1,0 +1,58 @@
+{
+  "kind": "source_safe_aggregate_no_answer_text",
+  "rubric_sha256": "073820aeaff0ffead75638a00af168d569e292bf3923de160ad8998a794f36dc",
+  "unique_observation_count": 8,
+  "original_v2_source_cases": {
+    "passed": 4,
+    "total": 6,
+    "required_facts_correct": 11,
+    "required_facts_source_supported": 10,
+    "required_fact_total": 13,
+    "negative_control_passed": 0,
+    "negative_control_total": 1
+  },
+  "paired_visual_reader_cases": {
+    "text_only": {
+      "passed": 0,
+      "total": 2,
+      "required_facts_correct": 3,
+      "required_facts_source_supported": 2,
+      "required_fact_total": 8,
+      "unsupported_material_extra_claims": 2,
+      "contradictions": 1,
+      "source_binding_errors": 1
+    },
+    "with_pixels": {
+      "passed": 1,
+      "total": 2,
+      "required_facts_correct": 6,
+      "required_facts_source_supported": 5,
+      "required_fact_total": 8,
+      "unsupported_material_extra_claims": 1,
+      "contradictions": 1,
+      "source_binding_errors": 1
+    }
+  },
+  "development_negative_replay": {
+    "passed": 1,
+    "total": 1,
+    "new_model_calls": 0,
+    "replaces_original": false
+  },
+  "successful_provider_response_count": 4,
+  "provider_json_object_valid_count": 4,
+  "provider_empty_claims_response_count": 1,
+  "full_unchanged_v1_live_comparison_completed": false,
+  "step3_recommendation": "Local evidence/routes/pixel transport and bounded comparisons are concretely implemented and reviewable. Do not call the original semantic acceptance gate complete: the multi-page generated answer still fails and the original missing-evidence case failed. The latter is now repaired only as an exposed development replay. Report the unchanged-v1 live integration comparison as a separate remaining gap.",
+  "limits": [
+    "Controlled reader-component comparison only; actual unchanged v1 hybrid/LightRAG retrieval and generation were not compared live.",
+    "The two paired visual cases use identical source text, query, model name and per-request options; only original image payloads differ. This isolates a reader modality effect, not retrieval improvement.",
+    "The local model digest is corroborated by saved installed/loaded metadata after the run; per-call resolved digest snapshots were not captured. No network packet capture or internal model-attention proof is claimed.",
+    "Small frozen development slice, no statistical generalization or unseen holdout claim. Native production multi-sense coverage remains unassessed.",
+    "Original failed negative control and incomplete visual output remain failures. The repaired negative control is separately labeled DEVELOPMENT replay, not a replacement original or new holdout.",
+    "One valid empty-claims response was reprocessed after a wrapper state fix without a new provider call. Its original error receipt and its zero semantic answer coverage remain preserved.",
+    "The first successful crossmodal pixels response was reused exactly. Latency comparisons mix cold/warm model conditions and token counts; they are observations, not a causal performance SLA.",
+    "Automatic generated-answer status correctly remains unassessed; these private independent grades do not grant application-wide semantic verification.",
+    "All local incremental API charges are zero; hardware, energy and engineering time are excluded."
+  ]
+}
