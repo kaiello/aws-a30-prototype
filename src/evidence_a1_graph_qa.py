@@ -17,7 +17,7 @@ from src.evidence_v2 import EvidenceStore, EvidencePacket, RoutePlan
 from src.evidence_a1_planner import plan_graph_query
 from src.evidence_a1 import a1_source_identity_id
 
-HARNESS_VERSION = "a1-graph-qa-1.1.0"
+HARNESS_VERSION = "a1-graph-qa-1.2.0"
 RELATIONS = {"CHART_CONNECTOR", "ENCLOSES_ROW", "INDENTED_UNDER"}
 
 
@@ -182,6 +182,8 @@ def _operation(view, operation, complete_chart):
     nodes = view.nodes
     visited, traversed = view.ancestors(subjects)
     result = {"kind": kind, "subject_ids": subjects, "answer_outcome": "graph_answer",
+              "subject_scope": operation.get("subject_scope", "selectors"),
+              "selector_subject_ids": operation.get("selector_subject_ids", subjects),
               "answer": "", "rows": [], "paths": [], "verdict": "not_established",
               "trace": {"seed_ids": subjects, "visited_node_ids": sorted(visited), "selected_edges": traversed,
                         "method": kind + ":typed_graph_operation", "direction": "inbound", "diagnostics": []}}
@@ -194,11 +196,28 @@ def _operation(view, operation, complete_chart):
 
     if kind == "operating_information":
         stop("classification_and_layout_are_not_verified_operating_control_information")
-        result["answer"] = "The supplied Figure A1 graph contains process names, printed designations and chart-layout relationships. It has no verified operating procedure, parameter values, conditions or control evidence for this request. Those details cannot be inferred from category membership or candidate indentation; additional authorized operating evidence is required."
+        result["missing_information"] = {
+            "role": "information_requirements_not_source_facts",
+            "fields": ["applicable qualified procedure/specification", "workpiece material and thickness",
+                       "joint and tool configuration", "rotation speed", "travel speed",
+                       "applied force or pressure", "temperature/control limits"],
+            "qualification": "Examples of information an applicable operating procedure must resolve; this chart establishes neither their values nor their process-specific applicability.",
+        }
+        result["answer"] = (
+            "Figure A1 supplies process names, designations and chart layout, not verified operating conditions. "
+            "Missing operating information includes an applicable qualified procedure/specification, workpiece material "
+            "and thickness, joint and tool configuration, and applicable settings such as rotation speed, travel speed, "
+            "applied force/pressure and temperature/control limits. A separate authorized process-specific procedure "
+            "must establish which fields and values apply. These are absent information requirements/examples, not "
+            "operating values or universally applicable requirements asserted by A1. Classification and candidate "
+            "indentation cannot supply them."
+        )
         return result
     if kind == "epistemic_limits":
         result["rows"] = [view.row(identifier) for identifier in subjects if nodes[identifier]["kind"] == "process"]
-        result["answer"] = "The graph supplies printed labels/designations, source-box enclosure and candidate indentation relationships. Indentation is layout evidence only; it does not establish reviewed semantic IS_A, equivalence, normative hierarchy or operating information."
+        result["answer"] = "The graph supplies printed labels/designations, source-box enclosure and candidate indentation relationships. Indentation is layout evidence only; it does not establish reviewed semantic IS_A, equivalence, normative hierarchy or operating information. Additional explicitly reviewed evidence defining the relationship is needed before treating indentation as semantic subtype authority."
+        if operation.get("lexical_overlap"):
+            result["answer"] = "Sharing words in process labels does not establish a subtype relationship. " + result["answer"]
         for row in result["rows"]:
             if row["indent_parent_ids"]:
                 result["answer"] += " " + row["label"] + " has candidate layout parent(s): " + "; ".join(nodes[parent]["label"] for parent in row["indent_parent_ids"]) + "."
@@ -228,7 +247,14 @@ def _operation(view, operation, complete_chart):
         result["groups"] = groups
         result["rows"] = [view.row(identifier) for identifier in sorted(all_ids, key=lambda item: _source_order(nodes[item]))
                           if nodes[identifier]["kind"] == "process"]
-        result["trace"].update(visited_node_ids=sorted(all_ids | set(subjects)), selected_edges=edges,
+        # Returned row objects expose their positive family bindings. Retain the
+        # enclosure edges supporting those bindings as well as the layout path.
+        proof_ids = all_ids | set(subjects)
+        enclosure_edges = [edge for identifier in proof_ids for edge in view.incoming.get(identifier, [])
+                           if edge["type"] == "ENCLOSES_ROW"]
+        proof_ids.update(edge["from"] for edge in enclosure_edges)
+        proof_edges = [edge for edge in view.graph["edges"] if edge in edges or edge in enclosure_edges]
+        result["trace"].update(visited_node_ids=sorted(proof_ids), selected_edges=proof_edges,
                                direction="outbound", method="effective_layout_" + kind + ":enclosure_roots_then_candidate_indentation")
         lines = ["Direct layout children" if kind == "direct_children" else "All recursive layout descendants"]
         for group in groups:
@@ -268,19 +294,42 @@ def _operation(view, operation, complete_chart):
             return stop("membership_subject_must_be_a_process_row")
         result["rows"] = [view.row(child)]
         if kind == "layout_relation":
+            process_ids = list(dict.fromkeys(identifier for identifier in subjects if nodes[identifier]["kind"] == "process"))
+            placements = []
+            for identifier in process_ids:
+                families = view.families(identifier)
+                if len(families) != 1:
+                    return stop("unique_positive_source_enclosure_required")
+                placements.append({"process_id": identifier, "category_id": families[0],
+                                   "qualification": "Explicit positive source-box enclosure, not semantic subtype."})
+            result["rows"] = [view.row(identifier) for identifier in process_ids]
+            result["source_placements"] = placements
             alternatives, texts = [], []
             for parent in right:
                 matches = [path for path in view.paths(child) if parent in path["node_ids"]]
                 if not matches and not complete_chart:
                     return stop("complete_chart_required_for_absent_layout_relation")
                 relation = "yes" if matches else "no"
+                direct_edges = [edge for edge in view.layout_parents(child) if edge["from"] == parent]
                 alternatives.append({"target_id": parent, "candidate_layout_relation": relation, "paths": matches,
+                    "immediate_layout_parent": bool(direct_edges),
+                    "source_box_enclosure": parent in view.families(child),
                     "qualification": "Alternative chart placement; distinct hierarchy levels may both be present. No exclusive semantic parent is inferred."})
                 texts.append(nodes[child]["label"] + (" has a shown chart path through " if matches else " has no shown chart path through ") + nodes[parent]["label"] + ".")
                 result["paths"].extend(matches)
             result["alternatives"] = alternatives
             result["candidate_layout_relation"] = alternatives[0]["candidate_layout_relation"] if len(alternatives) == 1 else "alternatives_reported"
             result["answer"] = " ".join(texts) + " All shown paths retain candidate indentation; reviewed semantic subtype is not established. Alternative targets can describe different levels of one path and are not forced into an exclusive choice."
+            for placement in placements:
+                process, family = nodes[placement["process_id"]], nodes[placement["category_id"]]
+                result["answer"] += " Positive source placement: " + process["label"] + " (" + process["code"] + ") is enclosed by " + family["label"] + "."
+            if operation.get("directness"):
+                immediate = view.layout_parents(child)
+                result["answer"] += " Immediate chart-layout parent: " + "; ".join(nodes[edge["from"]]["label"] for edge in immediate) + "."
+                if any(edge["type"] == "INDENTED_UNDER" for edge in immediate):
+                    result["answer"] += " This is the immediately indented candidate process parent; the enclosing category is the broader source box, not that immediate process row."
+            if any(item["candidate_layout_relation"] == "no" for item in alternatives):
+                result["trace"]["negative_proof"] = "explicit_positive_source_enclosures_plus_complete_chart_layout"
             for path in result["paths"]:
                 result["answer"] += " Path: " + " -> ".join(nodes[identifier]["label"] for identifier in path["node_ids"]) + "."
             return result
@@ -343,12 +392,39 @@ def answer_graph(graph, query, *, complete_chart=False):
     if plan["status"] != "ready":
         result["answer"] = "The requested query is not completely resolved: " + "; ".join(plan["diagnostics"] + plan["unresolved_selectors"]) + "."
         return result
-    operations = [_operation(view, operation, complete_chart) for operation in plan["operations"]]
+    operations = []
+    # Child-category follow-ups consume the enumerated rows, not the original
+    # selector. Execute those follow-ups after the requested list operations.
+    requested_operations = [operation for operation in plan["operations"] if not operation.get("use_returned_children")]
+    requested_operations += [operation for operation in plan["operations"] if operation.get("use_returned_children")]
+    for requested in requested_operations:
+        operation = dict(requested)
+        if operation.get("use_returned_children"):
+            after = operation.get("after_operations", ["direct_children", "descendants"])
+            operation["subject_ids"] = list(dict.fromkeys(row["id"] for previous in operations
+                if previous["kind"] in after for row in previous["rows"]))
+            operation["selector_subject_ids"] = requested["subject_ids"]
+        operations.append(_operation(view, operation, complete_chart))
     result["operations"] = operations
     succeeded = sum(operation["answer_outcome"] == "graph_answer" for operation in operations)
     result["answer_outcome"] = "graph_answer" if succeeded == len(operations) else "insufficient_evidence"
     result["partial_completion"] = 0 < succeeded < len(operations)
     result["answer"] = "\n\n".join(operation["answer"] for operation in operations)
+    direct_groups = {group["subject_id"]: group["node_ids"] for operation in operations
+                     if operation["kind"] == "direct_children" for group in operation.get("groups", [])}
+    recursive_groups = {group["subject_id"]: group["node_ids"] for operation in operations
+                        if operation["kind"] == "descendants" for group in operation.get("groups", [])}
+    result["list_comparisons"] = []
+    for identifier in direct_groups.keys() & recursive_groups.keys():
+        direct, recursive = set(direct_groups[identifier]), set(recursive_groups[identifier])
+        result["list_comparisons"].append({"subject_id": identifier,
+            "direct_count": len(direct), "descendant_count": len(recursive),
+            "deeper_node_ids": [node for node in recursive_groups[identifier] if node not in direct],
+            "qualification": "Effective chart layout; indentation remains candidate, not reviewed semantic subtype."})
+        result["answer"] += ("\n\nFor " + view.nodes[identifier]["label"] + ": " + str(len(direct))
+            + " direct layout children versus " + str(len(recursive)) + " recursive descendants. "
+            "The direct list contains immediate layout rows; the recursive list retains those rows and all deeper "
+            "indented rows, including intermediate groups, each once. This compares chart layout, not reviewed semantic IS_A.")
     selected_rows = {row["id"]: row for operation in operations for row in operation["rows"]}
     result["rows"] = list(selected_rows.values())
     result["paths"] = [path for operation in operations for path in operation["paths"]]
@@ -419,8 +495,9 @@ def run_graph_qa(root, payload):
             answer = answer_graph(graph, query, complete_chart=True)
         else:
             answer = {"query": query, "answer": "The complete single-image scope cannot answer this request.",
-                      "answer_outcome": packet.status, "route": packet.route.kind, "resolved_entities": [],
-                      "rows": [], "trace": {"seed_ids": [], "visited_node_ids": [], "selected_edges": [],
+                      "answer_outcome": packet.status, "route": packet.route.kind, "resolved_entities": plan["resolved_entities"],
+                      "plan": plan,
+                      "rows": [], "trace": {"seed_ids": plan["resolved_entities"], "visited_node_ids": [], "selected_edges": [],
                           "method": "single_image_packet_scope_gate", "direction": "none", "diagnostics": list(packet.missing)},
                       "verdict": "not_established", "support_state": "INSUFFICIENT_EVIDENCE", "semantic_validation": False}
         answer.update(id=question["id"], evidence_ids=[item.evidence_id for item in packet.evidence],

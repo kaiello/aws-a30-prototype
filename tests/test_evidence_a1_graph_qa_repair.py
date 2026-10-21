@@ -116,11 +116,16 @@ def test_genuinely_missing_requested_subject_is_not_silently_dropped(graph, quer
 
 
 def test_direct_children_and_recursive_descendants_have_distinct_results(graph):
-    direct = answer(graph, "List direct children of Ribbon fold.", complete_chart=True)
+    direct = answer(graph, "Which entries are directly beneath Ribbon fold, and which broader category contains them?", complete_chart=True)
     recursive = answer(graph, "List all descendants of Ribbon fold.", complete_chart=True)
     assert direct["answer_outcome"] == recursive["answer_outcome"] == "graph_answer"
     assert rows(direct) == {"toy:pulsed"}
     assert rows(recursive) == {"toy:pulsed", "toy:deep"}
+    category = next(operation for operation in direct["operations"] if operation["kind"] == "category")
+    assert category["subject_ids"] == ["toy:pulsed"]
+    assert "ALPHA FAMILY" in direct["answer"]
+    assert any(edge["from"] == "toy:alpha" and edge["to"] == "toy:pulsed"
+               for edge in direct["trace"]["selected_edges"])
     assert all(edge["type"] != "IS_A" for result in (direct, recursive)
                for edge in result["trace"]["selected_edges"])
     assert "candidate" in json.dumps(recursive).lower()
@@ -136,19 +141,23 @@ def test_process_category_membership_uses_enclosure_not_candidate_parentage(grap
 
 
 def test_process_process_membership_remains_candidate_layout(graph):
-    result = answer(graph, "Is Ribbon fold pulsed under Ribbon fold?", complete_chart=True)
+    result = answer(graph, "Is Ribbon fold pulsed directly under ALPHA FAMILY, or under Ribbon fold within that category in A1?", complete_chart=True)
     assert result["answer_outcome"] == "graph_answer"
     assert "candidate" in json.dumps(result).lower()
     assert any(edge["from"] == "toy:ribbon" and edge["to"] == "toy:pulsed"
                and edge["type"] == "INDENTED_UNDER" for edge in result["trace"]["selected_edges"])
     assert result["semantic_validation"] is False
     assert result["verdict"] == "not_established"
-    assert result["candidate_layout_relation"] == "yes"
+    operation = next(item for item in result["operations"] if item["kind"] == "layout_relation")
+    by_target = {item["target_id"]: item for item in operation["alternatives"]}
+    assert by_target["toy:ribbon"]["immediate_layout_parent"] is True
+    assert by_target["toy:alpha"]["immediate_layout_parent"] is False
+    assert by_target["toy:alpha"]["source_box_enclosure"] is True
     assert "IS_A" not in [edge["type"] for edge in result["trace"]["selected_edges"]]
 
 
 def test_epistemic_query_reports_layout_support_without_semantic_upgrade(graph):
-    result = answer(graph, "What evidence supports the parent relationship of Ribbon fold pulsed?")
+    result = answer(graph, "Does A1 establish that every indented entry means subtype, or is additional evidence needed to interpret indentation?")
     assert result["answer_outcome"] == "graph_answer"
     assert "candidate" in json.dumps(result).lower()
     assert result["semantic_validation"] is False
@@ -226,11 +235,17 @@ def test_ordered_paths_keep_root_category_process_chain_and_qualifications(graph
 
 
 def test_category_direct_children_exclude_indented_rows_while_descendants_include_them(graph):
-    direct = answer(graph, "List direct children of ALPHA FAMILY.", complete_chart=True)
-    recursive = answer(graph, "List all descendants of ALPHA FAMILY.", complete_chart=True)
-    assert direct["answer_outcome"] == recursive["answer_outcome"] == "graph_answer"
-    assert rows(direct) == {"toy:ribbon", "toy:foil"}
-    assert rows(recursive) == {"toy:ribbon", "toy:pulsed", "toy:deep", "toy:foil"}
+    result = answer(graph, "List the direct children of ALPHA FAMILY separately from all descendants. Explain the difference in the two lists.", complete_chart=True)
+    assert result["answer_outcome"] == "graph_answer"
+    by_kind = {operation["kind"]: operation for operation in result["operations"]}
+    assert rows(by_kind["direct_children"]) == {"toy:ribbon", "toy:foil"}
+    assert rows(by_kind["descendants"]) == {"toy:ribbon", "toy:pulsed", "toy:deep", "toy:foil"}
+    comparison = result["list_comparisons"][0]
+    assert comparison["direct_count"] == 2 and comparison["descendant_count"] == 4
+    assert set(comparison["deeper_node_ids"]) == {"toy:pulsed", "toy:deep"}
+    assert {tuple(edge[key] for key in ("from", "to", "type")) for edge in result["trace"]["selected_edges"]} == {
+        ("toy:alpha", process, "ENCLOSES_ROW") for process in ("toy:ribbon", "toy:pulsed", "toy:deep", "toy:foil")
+    } | {("toy:ribbon", "toy:pulsed", "INDENTED_UNDER"), ("toy:pulsed", "toy:deep", "INDENTED_UNDER")}
 
 
 def test_partial_chart_does_not_establish_exhaustive_descendants(graph):

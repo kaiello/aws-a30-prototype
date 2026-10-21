@@ -1,10 +1,37 @@
 # System Architecture: AWS A3.0 Multimodal Prototype
 
-Publication note (2026-10-21): the current prototype is authorized for merge.
-The v1 default and explicit v2/graph-QA opt-ins remain unchanged. The existing
-source-support qualifications and documented QA002 failures remain applicable.
+## Current local A1 query-completeness pass 004 (2026-10-21)
 
-## Final generic repair and thin-skill boundary (2026-10-21)
+Branch `fix/a1-query-completeness`, base main `799112f`, preserves the source
+adapter, graph, database, v1 default and opt-in CLI. Harness
+`a1-graph-qa-1.2.0` / planner `1.2.0` repairs generic source-context/relation
+grammar, direct/recursive view planning and answer composition. Child-result
+category follow-ups retain their enclosure links; layout comparisons include
+positive family placements; source-limit answers identify absent information
+without asserting operating values or universal field applicability.
+
+The one existing 31-question replay independently grades **QA001 15 PASS** and **QA002
+16 PASS**, no failures, partials or regressions; model/provider NONE, zero calls.
+Focused checks passed 33/33 in 0.77 s; no full suite. Q09 retrieves 5/5 required
+nodes and 4/4 links; Q10 3/3 and 2/2; Q12 22/22 and 30/30, separating 12 direct
+layout children from 21 recursive descendants. Q16 correctly returns
+`insufficient_evidence`. See the [private report](../storage/evidence_v2/a1_qa_repair_004/report.md).
+
+The two existing routing/QA skills were reused unchanged; no loader or framework
+was added. Candidate indentation and runtime `semantic_validation:false` remain.
+Known non-failing limits are bounded exposed grammar, a duplicate shared path
+in Q10, and Q12's direct-first combined row union; its separate visible lists
+retain source order. Prior raw runs/gold remain unchanged. Stop after this
+DEVELOPMENT pass. The owner subsequently authorized Git/PR closeout and
+local/online synchronization (2026-10-21), preserving these qualification limits.
+
+Historical pass 003 publication note (2026-10-21): that prototype was authorized
+for merge.
+The v1 default and explicit v2/graph-QA opt-ins remain unchanged. The existing
+source-support qualifications remain applicable; the QA002 failures below
+describe that historical pass, superseded by the current replay above.
+
+## Historical pass 003 repair and thin-skill boundary (2026-10-21)
 
 Harness `1.1.0` adds span-aware literal subject resolution, typed multi-subject
 planning and qualified direct/recursive traversal over the unchanged source
