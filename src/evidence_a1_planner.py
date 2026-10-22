@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 
-PLANNER_VERSION = "a1-graph-planner-1.3.0"
+PLANNER_VERSION = "a1-graph-planner-1.6.1"
 
 
 def _words(value):
@@ -23,49 +23,9 @@ def _source_context_spans(query):
 
 
 def resolve_mentions(graph, query):
-    """Keep every occurrence; suppress only a shorter overlapping occurrence.
-
-    Equal-span competing identities stay ambiguous. Code matching never uses
-    a prefix and process codes remain case-sensitive. Offsets refer to the
-    original query, including punctuation and repeated independent mentions.
-    """
-    grouped = {}
-    context = _source_context_spans(query)
-
-    def add_match(match, identifier, method, kind):
-        if any(span["start"] < match.end() and match.start() < span["end"] for span in context):
-            return
-        grouped.setdefault((match.start(), match.end()), []).append((identifier, method, kind))
-
-    for node in graph["nodes"]:
-        if node["kind"] not in {"category", "process"}:
-            continue
-        label, code = _category_parts(node) if node["kind"] == "category" else (node["label"], node.get("code"))
-        words = _words(label)
-        if words:
-            pattern = r"(?<!\w)" + r"[\W_]+".join(map(re.escape, words)) + r"(?!\w)"
-            for match in re.finditer(pattern, query, re.I):
-                add_match(match, node["id"], "literal_label", node["kind"])
-        if code:
-            flags = re.I if node["kind"] == "category" else 0
-            for match in re.finditer(r"(?<![\w-])" + re.escape(code) + r"(?![\w-])", query, flags):
-                if node["kind"] == "category" and len(code) == 1 and match[0] != code:
-                    before, after = query[:match.start()].rstrip(), query[match.end():].lstrip()
-                    if not before.endswith("(") or not after.startswith(")"):
-                        continue
-                add_match(match, node["id"], "exact_heading_code" if node["kind"] == "category" else "exact_process_code", node["kind"])
-    mentions = []
-    for (start, end), candidates in sorted(grouped.items()):
-        if any(other_start <= start and end <= other_end and (other_start < start or end < other_end)
-               and any(method == "literal_label" for _, method, _ in other)
-               for (other_start, other_end), other in grouped.items()):
-            continue
-        identifiers = list(dict.fromkeys(identifier for identifier, _, _ in candidates))
-        mentions.append({"start": start, "end": end, "text": query[start:end],
-                         "candidate_ids": identifiers, "status": "resolved" if len(identifiers) == 1 else "ambiguous",
-                         "methods": list(dict.fromkeys(method for _, method, _ in candidates)),
-                         "kinds": list(dict.fromkeys(kind for _, _, kind in candidates))})
-    return mentions
+    """Source-derived literal identity linking; no relationships are admitted."""
+    from src.evidence_a1_lexicon import link_entities
+    return link_entities(graph, query, _source_context_spans(query))
 
 
 def _masked(query, mentions):
@@ -193,7 +153,7 @@ def _subsequence_category(graph, fragment):
     return matches
 
 
-def plan_graph_query(graph, query):
+def _legacy_plan_graph_query(graph, query):
     if not isinstance(query, str) or not query.strip() or len(query) > 16360:
         raise ValueError("GRAPH_QA_QUERY_INVALID")
     mentions = resolve_mentions(graph, query)
@@ -334,3 +294,12 @@ def plan_graph_query(graph, query):
             "limits": ["Literal labels and exact codes; span-local overlap suppression.",
                        "Qualified category token-subsequence is query interpretation, not a reviewed source alias.",
                        "Unsupported grammar and unresolved explicitly requested selectors remain explicit failures."]}
+
+
+def plan_graph_query(graph, query, *, concept_bindings=None):
+    """Plan each source-linked request and retain explicit uncovered parts."""
+    if not isinstance(query, str) or not query.strip() or len(query) > 16360:
+        raise ValueError("GRAPH_QA_QUERY_INVALID")
+    from src.evidence_a1_intents import compose_plan
+    return compose_plan(graph, query, _legacy_plan_graph_query, resolve_mentions,
+                        _source_context_spans, concept_bindings=concept_bindings)

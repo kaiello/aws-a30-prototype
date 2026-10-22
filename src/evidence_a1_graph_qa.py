@@ -17,7 +17,7 @@ from src.evidence_v2 import EvidenceStore, EvidencePacket, RoutePlan
 from src.evidence_a1_planner import plan_graph_query
 from src.evidence_a1 import a1_source_identity_id
 
-HARNESS_VERSION = "a1-graph-qa-1.4.0"
+HARNESS_VERSION = "a1-graph-qa-1.7.1"
 RELATIONS = {"CHART_CONNECTOR", "ENCLOSES_ROW", "INDENTED_UNDER"}
 
 
@@ -254,7 +254,7 @@ def _operation(view, operation, complete_chart):
         return stop("literal_subject_required_for_operation")
     if kind == "parents":
         parent_ids, selected_edges = set(), []
-        result["parent_groups"], result["source_placements"] = [], []
+        result["parent_groups"], result["source_placements"], result["process_parent_details"] = [], [], []
         lines = []
         for identifier in subjects:
             parents = view.layout_parents(identifier)
@@ -273,6 +273,22 @@ def _operation(view, operation, complete_chart):
                 selected_edges.extend(edge for edge in view.incoming.get(identifier, []) if edge["type"] == "ENCLOSES_ROW")
                 if families:
                     lines.append("Positive enclosing source category: " + "; ".join(nodes[family]["label"] for family in families) + ".")
+                process_parents = [edge["from"] for edge in view.incoming.get(identifier, [])
+                                   if edge["type"] == "INDENTED_UNDER"]
+                parent_detail = {"subject_id": identifier, "process_parent_ids": process_parents}
+                result["process_parent_details"].append(parent_detail)
+                if not process_parents:
+                    if len(families) != 1:
+                        return stop("unique_positive_source_enclosure_required_for_parent_absence")
+                    if not complete_chart:
+                        return stop("complete_chart_required_for_process_parent_absence")
+                    parent_detail["process_parent_status"] = "none_shown_in_complete_chart"
+                    result["trace"]["negative_proof"] = "complete_supplied_layout_plus_positive_unique_enclosure"
+                    lines.append("No directly indented process parent is shown for " + nodes[identifier]["label"]
+                        + " in this complete supplied chart. It is an unindented process row in "
+                        + nodes[families[0]]["label"] + "; this does not establish a universal semantic negative.")
+                else:
+                    parent_detail["process_parent_status"] = "candidate_layout_parent_shown"
             if any(edge["type"] == "INDENTED_UNDER" for edge in ordered):
                 lines.append("The immediately indented process parent remains candidate layout, not reviewed semantic subtype.")
         result["rows"] = [view.row(identifier) for identifier in sorted(parent_ids, key=lambda item: _source_order(nodes[item]))]
@@ -280,6 +296,38 @@ def _operation(view, operation, complete_chart):
             visited_node_ids=sorted(set(subjects) | parent_ids | {edge["from"] for edge in selected_edges}),
             method="immediate_effective_layout_parents_with_separate_enclosure", direction="inbound")
         result["answer"] = "\n".join(lines) + "\nEnclosure and physical chart connection are layout observations; neither supplies reviewed semantic IS_A."
+        return result
+    if kind == "row_partition":
+        if not subjects or any(nodes[identifier]["kind"] != "category" for identifier in subjects):
+            return stop("row_partition_requires_source_category_boxes")
+        direct = _operation(view, {"kind": "direct_children", "subject_ids": subjects}, complete_chart)
+        recursive = _operation(view, {"kind": "descendants", "subject_ids": subjects}, complete_chart)
+        if any(item["answer_outcome"] != "graph_answer" for item in (direct, recursive)):
+            return stop("complete_unambiguous_source_box_layout_required_for_partition")
+        direct_groups = {group["subject_id"]: group["node_ids"] for group in direct["groups"]}
+        result["rows"], result["groups"] = recursive["rows"], []
+        lines = ["Source-box row partition:"]
+        for group in recursive["groups"]:
+            ordered = group["node_ids"]
+            unindented = direct_groups[group["subject_id"]]
+            if set(unindented) != {identifier for identifier in ordered if not view.row(identifier)["indent_parent_ids"]}:
+                return stop("direct_layout_and_indentation_partition_disagree")
+            indented = [identifier for identifier in ordered if identifier not in set(unindented)]
+            result["groups"].append(dict(group, unindented_node_ids=unindented, indented_node_ids=indented))
+            lines.append(nodes[group["subject_id"]]["label"] + ":")
+            for heading, identifiers in (("Unindented process rows", unindented), ("Indented process rows", indented)):
+                lines.append(heading + ":")
+                if not identifiers:
+                    lines.append("- None shown within this complete source box.")
+                for identifier in identifiers:
+                    node, parents = nodes[identifier], view.row(identifier)["indent_parent_ids"]
+                    qualification = (" [candidate layout parent: " + "; ".join(nodes[parent]["label"] for parent in parents) + "]") if parents else ""
+                    lines.append("- " + node["label"] + " (" + node["code"] + ")" + qualification)
+        result["trace"] = dict(recursive["trace"], method="complete_source_box_unindented_indented_partition")
+        result["expansion"] = dict(recursive["expansion"], operation=kind, groups=result["groups"],
+            checks=recursive["expansion"]["checks"] + ["unindented_and_indented_disjoint_union_equals_all_enclosed_rows"])
+        lines.append("Every enclosed process row occurs once in its source box; indentation remains candidate layout, not reviewed semantic subtype.")
+        result["answer"] = "\n".join(lines)
         return result
     if kind in {"direct_children", "descendants"}:
         if not complete_chart:
@@ -513,6 +561,13 @@ def _attach_claim_bindings(view, result, *, source_authenticated=False):
                 all_claims[claim["claim_id"]] = dict(claim, operation_indices=[])
             if index not in all_claims[claim["claim_id"]]["operation_indices"]:
                 all_claims[claim["claim_id"]]["operation_indices"].append(index)
+    for identifier in result["trace"].get("clarification_candidate_ids", []):
+        node = view.nodes[identifier]
+        text = node["label"] + (" (" + node["code"] + ")" if "code" in node else "")
+        claim = observation("clarification_candidate_label", [identifier], [], text,
+            "Source-visible identity alternative only; no relationship is admitted.",
+            node.get("evidence", {}).get("verification", "unbound"))
+        all_claims[claim["claim_id"]] = dict(claim, operation_indices=[])
     result["claims"] = list(all_claims.values())
     selected = {identifier for claim in result["claims"] for identifier in claim["evidence_ids"]}
     result["record_evidence_catalog"] = [record["evidence"] for record in view.graph["nodes"] + view.graph["edges"]
@@ -527,11 +582,14 @@ def _epistemic_operation(store, requested, complete_chart, query_layer):
     use accepted source-scoped assertions, never candidate subtype authority.
     """
     kind = requested["kind"]
-    layer = ("knowledge" if kind in {"designation", "category", "membership"} else "evidence") if query_layer == "auto" else query_layer
+    default_layer = "knowledge" if kind in {"designation", "category", "membership"} else "evidence"
+    layer = requested.get("query_layer", default_layer) if query_layer == "auto" else query_layer
+    if layer not in {"evidence", "knowledge"}:
+        raise ValueError("GRAPH_QA_OPERATION_LAYER_INVALID")
     graph = store.graph(layer=layer)
     view = _GraphView(graph)
     unsupported = layer == "knowledge" and kind in {
-        "direct_children", "descendants", "parents", "layout_relation", "epistemic_limits", "operating_information"}
+        "direct_children", "descendants", "row_partition", "parents", "layout_relation", "epistemic_limits", "operating_information"}
     if unsupported:
         result = {"kind": kind, "subject_ids": requested["subject_ids"],
             "answer_outcome": "insufficient_evidence", "rows": [], "paths": [],
@@ -543,6 +601,13 @@ def _epistemic_operation(store, requested, complete_chart, query_layer):
                 "diagnostics": ["requested_relation_not_admitted_to_knowledge"]}}
     else:
         result = _operation(view, requested, complete_chart)
+    # A rejected operation still represents its typed request. Coverage needs
+    # selector and dependency identity to abstain for the right requested rows.
+    result.setdefault("subject_scope", requested.get("subject_scope", "selectors"))
+    result.setdefault("selector_subject_ids", list(requested.get("selector_subject_ids", requested["subject_ids"])))
+    for field in ("dependency_operation_ids", "after_operation_ids", "after_operations"):
+        if field in requested:
+            result[field] = list(requested[field])
     result["query_layer"] = layer
     result["knowledge_paths"] = []
     if layer == "knowledge":
@@ -595,6 +660,106 @@ def _epistemic_operation(store, requested, complete_chart, query_layer):
     return result
 
 
+def _answer_coverage(view, result):
+    """Account for planner-captured requests, without grading semantic accuracy."""
+    plan = result["plan"]
+    parts = plan.get("requested_parts")
+    if not parts:
+        parts = [{"id": "intent:" + str(index + 1).zfill(3), "text": plan["query"],
+                  "kind": operation["kind"], "subject_ids": operation["subject_ids"],
+                  "operation_ids": [operation.get("operation_id", "op:" + str(index + 1).zfill(3))],
+                  "status": "planned"} for index, operation in enumerate(plan["operations"])]
+        if plan["status"] != "ready" or not parts:
+            parts.append({"id": "intent:unresolved", "text": plan["query"],
+                          "kind": "unresolved", "subject_ids": [], "operation_ids": [],
+                          "status": "ambiguous" if plan["status"] == "clarification_required" else "unsupported",
+                          "reason": "; ".join(plan["diagnostics"] + plan["unresolved_selectors"])})
+    operations = {operation["operation_id"]: operation for operation in result["operations"]}
+    covered, unresolved_text, clarification_ids = [], [], set()
+    for part in parts:
+        identifiers = part.get("operation_ids", [])
+        selected = [operations[identifier] for identifier in identifiers if identifier in operations]
+        status = part["status"]
+        reason = part.get("reason", "")
+        coverage_failure = False
+        if status == "planned":
+            if (not identifiers or len(selected) != len(identifiers)
+                    or any(operation["answer_outcome"] != "graph_answer" for operation in selected)):
+                status = "unsupported"
+                reason = "; ".join(code for operation in selected for code in operation["trace"]["diagnostics"])
+                reason = reason or "; ".join(result["trace"]["diagnostics"]) or "requested_operation_not_completed"
+            else:
+                status = "answered"
+        selectors = list(part.get("selector_subject_ids", part.get("subject_ids", [])))
+        targets = list(part.get("subject_ids", []))
+        if part.get("subject_scope") == "returned_children":
+            producers = [operation for operation in selected if (part["kind"] == "designation" and operation["kind"] in {
+                "direct_children", "descendants", "row_partition"}) or (operation["kind"] == part["kind"]
+                and operation.get("subject_scope") == "returned_children")]
+            produced_ids = set()
+            for operation in producers:
+                groups = operation.get("produced_groups", operation.get("groups", []))
+                group_ids = {identifier for group in groups if group["subject_id"] in selectors for identifier in group["node_ids"]}
+                produced_ids.update(row["id"] for row in operation["rows"] if row["kind"] == "process"
+                                    and (not selectors or not groups or row["id"] in group_ids))
+                if selectors and not groups and set(selectors) != set(operation["selector_subject_ids"]):
+                    coverage_failure = True
+            targets = sorted(produced_ids, key=lambda identifier: _source_order(view.nodes[identifier]))
+            actual_selectors = {identifier for operation in producers for identifier in operation["selector_subject_ids"]}
+            if status == "answered" and (coverage_failure or len(producers) != len(selected) or not set(selectors) <= actual_selectors):
+                status, reason, coverage_failure = "unsupported", "requested_child_scope_not_executed", True
+            if status == "answered" and part["kind"] in {"designation", "category"} and not targets:
+                status, reason, coverage_failure = "unsupported", "no_produced_process_rows_for_requested_lookup", True
+            if status == "answered" and part["kind"] == "designation" and any(not view.nodes[identifier]["code"].strip() for identifier in targets):
+                status, reason, coverage_failure = "unsupported", "not_all_produced_rows_have_printed_designations", True
+        if status not in {"answered", "unsupported", "ambiguous"}:
+            status, reason = "unsupported", "requested_part_status_not_supported"
+        evidence = {identifier for operation in selected for claim in operation.get("claims", [])
+                    for identifier in claim["evidence_ids"]}
+        evidence.update(observation["proof"]["evidence_id"] for operation in selected
+                        for observation in operation.get("knowledge_support", {}).get("observations", []))
+        candidates = [identifier for identifier in part.get("candidate_ids", []) if identifier in view.nodes]
+        clarification_ids.update(candidates)
+        evidence.update(view.nodes[identifier]["evidence"]["evidence_id"] for identifier in candidates
+                        if "evidence" in view.nodes[identifier])
+        source_limit = status == "unsupported" and bool(selected) and all(
+            operation["kind"] == "operating_information" or operation["trace"]["method"] == "accepted_assertion_gate"
+            for operation in selected)
+        covered.append({**part, "status": status, "reason": reason,
+                        "selector_subject_ids": selectors, "subject_ids": targets, "target_node_ids": targets,
+                        "resolution_kind": "answered" if status == "answered" else "ambiguity" if status == "ambiguous"
+                            else "source_or_admission_limit" if source_limit else "execution_incomplete" if part["status"] == "planned" else "planning_unsupported",
+                        "limitation_explained": source_limit and all(bool(operation["answer"].strip()) for operation in selected),
+                        "operation_ids": identifiers, "evidence_ids": sorted(evidence),
+                        "accepted_assertion_ids": sorted({identifier for operation in selected
+                            for identifier in operation.get("accepted_assertion_ids", [])})})
+        if status != "answered" and (part["status"] != "planned" or len(selected) != len(identifiers) or coverage_failure):
+            choices = [view.nodes[identifier]["label"] + (" (" + view.nodes[identifier]["code"] + ")"
+                       if "code" in view.nodes[identifier] else "") for identifier in candidates if identifier in view.nodes]
+            text = ("Clarification required" if status == "ambiguous" else "Unsupported requested part")
+            text += " [" + part["id"] + "]: " + part["text"] + ". " + reason + "."
+            if choices:
+                text += " Source-visible candidates: " + "; ".join(choices) + "."
+            unresolved_text.append(text)
+    answered = sum(part["status"] == "answered" for part in covered)
+    complete = bool(covered) and answered == len(covered)
+    result["coverage"] = {"status": "complete" if complete else "partial" if answered else "unanswered",
+        "scope": "Planner-captured request accounting; not semantic grading or proof of general language understanding.",
+        "requested_count": len(covered), "answered_count": answered,
+        "all_parts_answered": complete, "every_part_accounted_for": True, "parts": covered}
+    if unresolved_text:
+        result["answer"] = "\n\n".join(filter(None, [result["answer"], *unresolved_text]))
+    if not complete:
+        result["answer_outcome"] = "clarification_required" if any(part["status"] == "ambiguous" for part in covered) else "insufficient_evidence"
+    result["partial_completion"] = 0 < answered < len(covered)
+    if clarification_ids:
+        result["trace"]["clarification_candidate_ids"] = sorted(clarification_ids)
+        result["trace"]["visited_node_ids"] = sorted(set(result["trace"]["visited_node_ids"]) | clarification_ids)
+        _attach_claim_bindings(view, result,
+            source_authenticated=result["source_binding_status"] == "canonical_source_and_image_validated")
+    return result
+
+
 def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, query_layer="auto"):
     """Execute a typed, span-aware plan without changing any graph fact."""
     if query_layer not in {"auto", "evidence", "knowledge"}:
@@ -604,7 +769,9 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
     if knowledge_store is not None:
         graph = knowledge_store.graph(layer="evidence")
     view = _GraphView(graph)
-    plan = plan_graph_query(graph, query)
+    concept_bindings = (knowledge_store.graph(layer="knowledge")["concept_bindings"]
+                        if knowledge_store is not None else None)
+    plan = plan_graph_query(graph, query, concept_bindings=concept_bindings)
     result = {"query": query, "answer": "", "answer_outcome": plan["status"],
               "route": "compound" if len(plan["operations"]) > 1 else (plan["operations"][0]["kind"] if plan["operations"] else "unsupported"),
               "plan": plan, "operations": [], "rows": [], "paths": [], "resolved_entities": plan["resolved_entities"],
@@ -612,23 +779,52 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
               "trace": {"seed_ids": plan["resolved_entities"], "visited_node_ids": [], "selected_edges": [],
                         "method": "typed_span_aware_plan", "direction": "mixed", "diagnostics": list(plan["diagnostics"]),
                         "edge_qualifications": graph["edge_qualifications"], "complete_chart_supplied": bool(complete_chart)}}
-    if plan["status"] != "ready":
+    if plan["status"] != "ready" and not (plan.get("requested_parts") and plan["operations"]):
         result["answer"] = "The requested query is not completely resolved: " + "; ".join(plan["diagnostics"] + plan["unresolved_selectors"]) + "."
-        return _attach_claim_bindings(view, result)
+        return _answer_coverage(view, _attach_claim_bindings(view, result))
     operations = []
     # Child-category follow-ups consume the enumerated rows, not the original
     # selector. Execute those follow-ups after the requested list operations.
-    requested_operations = [operation for operation in plan["operations"] if not operation.get("use_returned_children")]
-    requested_operations += [operation for operation in plan["operations"] if operation.get("use_returned_children")]
-    for requested in requested_operations:
+    planned_operations = [dict(operation, operation_id=operation.get("operation_id", "op:" + str(index + 1).zfill(3)))
+                          for index, operation in enumerate(plan["operations"])]
+    requested_operations = [operation for operation in planned_operations if not operation.get("use_returned_children")]
+    requested_operations += [operation for operation in planned_operations if operation.get("use_returned_children")]
+    for index, requested in enumerate(requested_operations):
         operation = dict(requested)
         if operation.get("use_returned_children"):
             after = operation.get("after_operations", ["direct_children", "descendants"])
-            operation["subject_ids"] = list(dict.fromkeys(row["id"] for previous in operations
-                if previous["kind"] in after for row in previous["rows"]))
+            dependency_ids = operation.get("after_operation_ids", operation.get("dependency_operation_ids"))
+            selectors = set(requested["subject_ids"])
+            selected_rows, produced_groups = [], []
+            for previous in operations:
+                if previous["answer_outcome"] != "graph_answer":
+                    continue
+                if dependency_ids is not None:
+                    matches = previous["operation_id"] in dependency_ids
+                else:
+                    matches = previous["kind"] in after and bool(selectors.intersection(previous["selector_subject_ids"]))
+                if matches:
+                    produced_groups.extend(group for group in previous.get("groups", []) if group["subject_id"] in selectors)
+                    group_ids = {identifier for group in previous.get("groups", [])
+                                 if group["subject_id"] in selectors for identifier in group["node_ids"]}
+                    selected_rows.extend(row["id"] for row in previous["rows"]
+                                         if not previous.get("groups") or row["id"] in group_ids)
+            operation["subject_ids"] = list(dict.fromkeys(selected_rows))
             operation["selector_subject_ids"] = requested["subject_ids"]
-        operations.append(_epistemic_operation(knowledge_store, operation, complete_chart, query_layer)
+            operation["produced_groups"] = produced_groups
+        executed = (_epistemic_operation(knowledge_store, operation, complete_chart, query_layer)
             if knowledge_store is not None else _operation(view, operation, complete_chart))
+        if operation["kind"] in {"designation", "category"} and executed["answer_outcome"] == "graph_answer":
+            expected = set(operation["subject_ids"])
+            if not expected or not expected <= {row["id"] for row in executed["rows"]} or not executed["answer"].strip():
+                executed["answer_outcome"] = "insufficient_evidence"
+                executed["trace"]["diagnostics"].append("not_all_requested_subjects_answered")
+                executed["answer"] += " The requested lookup does not return every requested subject."
+        executed.update(operation_id=requested.get("operation_id", "op:" + str(index + 1).zfill(3)),
+                        request_ids=list(requested.get("request_ids", [])))
+        if "produced_groups" in operation:
+            executed["produced_groups"] = operation["produced_groups"]
+        operations.append(executed)
     result["operations"] = operations
     succeeded = sum(operation["answer_outcome"] == "graph_answer" for operation in operations)
     result["answer_outcome"] = "graph_answer" if succeeded == len(operations) else "insufficient_evidence"
@@ -663,7 +859,7 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
                 result["trace"]["negative_proof"] = operation["trace"]["negative_proof"]
         if "candidate_layout_relation" in operation:
             result["candidate_layout_relation"] = operation["candidate_layout_relation"]
-    return _attach_claim_bindings(view, result)
+    return _answer_coverage(view, _attach_claim_bindings(view, result))
 
 
 def run_graph_qa(root, payload, *, query_layer="auto"):
@@ -703,6 +899,7 @@ def run_graph_qa(root, payload, *, query_layer="auto"):
         "asset_sha256": figure.content["asset_sha256"], "locator": figure.locator}, require_complete=True)
     from src.evidence_a1_knowledge import prepare_a1_knowledge
     knowledge_store = prepare_a1_knowledge(Path(root), graph)
+    concept_bindings = knowledge_store.graph(layer="knowledge")["concept_bindings"]
     authenticated_view = _GraphView(graph)
     validated = time.perf_counter()
     record_graph_hash = hashlib.sha256(json.dumps(graph, ensure_ascii=False, sort_keys=True,
@@ -714,15 +911,17 @@ def run_graph_qa(root, payload, *, query_layer="auto"):
         query = question["query"]
         contextual = query if re.search(r"\bfigure\s+a1\b", query, re.I) else "Figure A1. " + query
         packet = store.packet(contextual)
-        plan = plan_graph_query(graph, query)
+        plan = plan_graph_query(graph, query, concept_bindings=concept_bindings)
         # Source count and comparison subject count are different contracts.
-        # Remove only this obsolete diagnostic, and only after a complete typed
-        # plan resolves independent same-image subjects. Foreign-source/page
+        # Remove only this obsolete diagnostic after typed same-image requests
+        # resolve runnable subjects. Unresolved parts remain in coverage; they
+        # must not suppress an independent answer. Foreign-source/page
         # diagnostics and incomplete source closure are never bypassed.
         if (packet.status == "insufficient_evidence"
                 and set(packet.missing) == {"comparison_requires_two_subjects"}
-                and plan["status"] == "ready" and (len(plan["resolved_entities"]) >= 2
-                    or (plan.get("comparison_kind") == "operation_views" and plan["resolved_entities"]))
+                and ((plan["status"] == "ready" and (len(plan["resolved_entities"]) >= 2
+                    or (plan.get("comparison_kind") == "operation_views" and plan["resolved_entities"])))
+                    or (plan.get("requested_parts") and plan["operations"] and plan["resolved_entities"]))
                 and inventory.status == "complete" and packet.evidence == inventory.evidence):
             packet = EvidencePacket(contextual, RoutePlan("comparison", inventory.route.evidence_ids), inventory.evidence)
         if packet.status == "complete":
@@ -731,11 +930,13 @@ def run_graph_qa(root, payload, *, query_layer="auto"):
         else:
             answer = {"query": query, "answer": "The complete single-image scope cannot answer this request.",
                       "answer_outcome": packet.status, "route": packet.route.kind, "resolved_entities": plan["resolved_entities"],
-                      "plan": plan,
+                      "plan": plan, "operations": [],
                       "rows": [], "trace": {"seed_ids": plan["resolved_entities"], "visited_node_ids": [], "selected_edges": [],
                           "method": "single_image_packet_scope_gate", "direction": "none", "diagnostics": list(packet.missing)},
                       "verdict": "not_established", "support_state": "INSUFFICIENT_EVIDENCE", "semantic_validation": False}
         _attach_claim_bindings(authenticated_view, answer, source_authenticated=True)
+        if "coverage" not in answer:
+            _answer_coverage(authenticated_view, answer)
         for operation in answer.get("operations", []):
             operation["knowledge_support"]["source_authentication"] = "canonical_source_and_image_validated"
         answer.update(id=question["id"], evidence_ids=[item.evidence_id for item in packet.evidence],
@@ -748,6 +949,9 @@ def run_graph_qa(root, payload, *, query_layer="auto"):
                       latency_ms=round((time.perf_counter() - question_started) * 1000, 3),
                       model="NONE", provider="NONE", model_invocation_count=0,
                       answer_support="Chart-layout extraction; semantic accuracy requires independent source grading.")
+        if "coverage" in answer:
+            answer["coverage"].update(packet_evidence_ids=answer["evidence_ids"],
+                                      source_identity_id=answer["source_identity_id"])
         answers.append(answer)
     return {"harness_version": HARNESS_VERSION, "model": "NONE", "provider": "NONE",
             "model_invocation_count": 0, "external_call_count": 0,
