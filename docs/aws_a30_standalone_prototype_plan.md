@@ -1,5 +1,16 @@
 # Implementation Plan: Standalone AWS A3.0 Multimodal NLQ Prototype
 
+## A1 bakeoff documentation closeout (2026-10-22)
+
+Use the [canonical bakeoff summary](a1_bakeoff_results.md) as the record of
+bounded A1 backend findings and comparison limits. Keep the next plan vendor-neutral;
+no vendor or framework adoption is approved by this closeout.
+`GR` is optional, team-reported and unbenchmarked here, not a mandatory foundation.
+The next relationship and multihop phase is **PLANNED**, not implemented.
+The present step is docs-only closeout and preparation of a new branch.
+No extended implementation, UI work or additional evaluation is part of this step.
+Preserve prior milestones, results and their historical authorization boundaries below.
+
 ## Current local A1 pass 004 complete: stop after one replay (2026-10-21)
 
 1. Created `fix/a1-query-completeness` from clean synced main `799112f`.

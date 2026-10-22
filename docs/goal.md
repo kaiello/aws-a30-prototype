@@ -1,5 +1,16 @@
 # Project Goal: AWS A3.0 Multimodal NLQ & Epistemic Knowledge System
 
+## A1 bakeoff closeout and planned backend direction (2026-10-22)
+
+The [canonical bakeoff summary](a1_bakeoff_results.md) records the bounded A1
+backend findings and limits; they do not establish a vendor or framework choice.
+Keep the direction vendor-neutral, centered on evidence completeness and supported answers.
+`GR` is optional, team-reported and unbenchmarked here, not a mandatory foundation.
+The next relationship and multihop phase is **PLANNED** and not implemented.
+Current authorization covers documentation closeout and new-branch preparation only;
+no extended implementation, UI changes or additional evaluation has begun.
+Earlier milestones and permissions below retain their stated historical scope.
+
 ## Current local A1 pass 004: requested answers complete (2026-10-21)
 
 Branch `fix/a1-query-completeness`, base main `799112f`, completes the seven
