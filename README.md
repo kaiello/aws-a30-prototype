@@ -9,6 +9,10 @@ with complete source proof, candidate exclusion and missing-authority abstention
 No exposed MCP tool provides this route; the CLI/API is the verified interface.
 The 13 focused admission/route/wrapper checks passed in 1.89 s; independent review
 found no material blockers. Model/provider NONE, zero inference calls.
+The subsequent PR review found a first-initialization recovery defect. Atomic
+publication after staging validation fixes it; one regression reproduced the
+failure and eight store checks passed in 1.39 s. Windows was exercised; the
+non-overwriting POSIX publication branch received static review only.
 This closes the bounded A1 epistemic foundation, not general natural-language QA.
 The original 31 PASS and exposed/fresh failures below remain unchanged. Source,
 gold, full raw evidence and runtime databases stay local and outside publication.

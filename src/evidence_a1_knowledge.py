@@ -8,8 +8,10 @@ from copy import deepcopy
 from contextlib import contextmanager
 import hashlib
 import json
+import os
 from pathlib import Path
 import sqlite3
+import tempfile
 
 from src.evidence_a1 import validate_a1_graph_evidence
 
@@ -336,35 +338,46 @@ def prepare_a1_knowledge(root, graph):
         return store
     target.parent.mkdir(parents=True, exist_ok=True)
     _safe_path(root, target)
-    with target.open("xb"):
-        pass
-    with _connect(source) as original, _connect(target, write=True) as connection:
-        original.backup(connection)
-        if connection.execute("SELECT name FROM sqlite_master WHERE name LIKE 'a1k_%'").fetchone():
-            _error("NAMESPACE_ALREADY_PRESENT")
-        connection.executescript("""
-            CREATE TABLE a1k_source_meta(key TEXT PRIMARY KEY,value_json TEXT NOT NULL);
-            CREATE TABLE a1k_source_observations(record_id TEXT PRIMARY KEY,evidence_id TEXT UNIQUE NOT NULL,
-                record_kind TEXT NOT NULL CHECK(record_kind IN ('node','edge')),ordinal INTEGER NOT NULL,payload_json TEXT NOT NULL);
-            CREATE TABLE a1k_domain_concepts(concept_id TEXT PRIMARY KEY,payload_json TEXT NOT NULL);
-            CREATE TABLE a1k_typed_assertions(assertion_id TEXT PRIMARY KEY,payload_json TEXT NOT NULL);
-            CREATE TABLE a1k_assertion_evidence(assertion_id TEXT NOT NULL REFERENCES a1k_typed_assertions(assertion_id),
-                evidence_id TEXT NOT NULL REFERENCES a1k_source_observations(evidence_id),
-                role TEXT NOT NULL CHECK(role IN ('support','counter')),PRIMARY KEY(assertion_id,evidence_id,role));
-        """)
-        template = deepcopy(graph)
-        template["nodes"], template["edges"] = [], []
-        concepts, node_concepts, assertions = _admit(graph)
-        metadata = {"schema_version": SCHEMA_VERSION, "source_graph_sha256": fingerprint,
-            "registry_source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
-            "graph_template": template, "node_concepts": node_concepts, "admission_rules": RULES}
-        connection.executemany("INSERT INTO a1k_source_meta VALUES (?,?)", [(key, _json(value)) for key, value in metadata.items()])
-        for kind, records in (("node", graph["nodes"]), ("edge", graph["edges"])):
-            connection.executemany("INSERT INTO a1k_source_observations VALUES (?,?,?,?,?)",
-                [(record["id"], record["evidence"]["evidence_id"], kind, ordinal, _json(record)) for ordinal, record in enumerate(records)])
-        connection.executemany("INSERT INTO a1k_domain_concepts VALUES (?,?)", [(key, _json(value)) for key, value in concepts.items()])
-        for assertion in assertions:
-            _insert_assertion(connection, assertion)
-        _seal(connection)
+    descriptor, temporary_name = tempfile.mkstemp(prefix=".registry-init-", suffix=".db", dir=target.parent)
+    os.close(descriptor)
+    temporary = Path(temporary_name)
+    try:
+        with _connect(source) as original, _connect(temporary, write=True) as connection:
+            original.backup(connection)
+            if connection.execute("SELECT name FROM sqlite_master WHERE name LIKE 'a1k_%'").fetchone():
+                _error("NAMESPACE_ALREADY_PRESENT")
+            connection.executescript("""
+                CREATE TABLE a1k_source_meta(key TEXT PRIMARY KEY,value_json TEXT NOT NULL);
+                CREATE TABLE a1k_source_observations(record_id TEXT PRIMARY KEY,evidence_id TEXT UNIQUE NOT NULL,
+                    record_kind TEXT NOT NULL CHECK(record_kind IN ('node','edge')),ordinal INTEGER NOT NULL,payload_json TEXT NOT NULL);
+                CREATE TABLE a1k_domain_concepts(concept_id TEXT PRIMARY KEY,payload_json TEXT NOT NULL);
+                CREATE TABLE a1k_typed_assertions(assertion_id TEXT PRIMARY KEY,payload_json TEXT NOT NULL);
+                CREATE TABLE a1k_assertion_evidence(assertion_id TEXT NOT NULL REFERENCES a1k_typed_assertions(assertion_id),
+                    evidence_id TEXT NOT NULL REFERENCES a1k_source_observations(evidence_id),
+                    role TEXT NOT NULL CHECK(role IN ('support','counter')),PRIMARY KEY(assertion_id,evidence_id,role));
+            """)
+            template = deepcopy(graph)
+            template["nodes"], template["edges"] = [], []
+            concepts, node_concepts, assertions = _admit(graph)
+            metadata = {"schema_version": SCHEMA_VERSION, "source_graph_sha256": fingerprint,
+                "registry_source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+                "graph_template": template, "node_concepts": node_concepts, "admission_rules": RULES}
+            connection.executemany("INSERT INTO a1k_source_meta VALUES (?,?)", [(key, _json(value)) for key, value in metadata.items()])
+            for kind, records in (("node", graph["nodes"]), ("edge", graph["edges"])):
+                connection.executemany("INSERT INTO a1k_source_observations VALUES (?,?,?,?,?)",
+                    [(record["id"], record["evidence"]["evidence_id"], kind, ordinal, _json(record)) for ordinal, record in enumerate(records)])
+            connection.executemany("INSERT INTO a1k_domain_concepts VALUES (?,?)", [(key, _json(value)) for key, value in concepts.items()])
+            for assertion in assertions:
+                _insert_assertion(connection, assertion)
+            _seal(connection)
+        A1KnowledgeStore(root, temporary, fingerprint)._read()
+        # Windows rename and POSIX hardlink publication both fail if another
+        # initializer already published a target; never replace live state.
+        if os.name == "nt":
+            os.rename(temporary, target)
+        else:
+            os.link(temporary, target)
+    finally:
+        temporary.unlink(missing_ok=True)
     store._read()
     return store

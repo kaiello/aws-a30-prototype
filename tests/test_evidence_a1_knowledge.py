@@ -140,3 +140,18 @@ def test_resealed_forged_admission_is_rejected(tmp_path, graph):
         _seal(connection)
     with pytest.raises(ValueError, match="A1_KNOWLEDGE_ADMISSION_INVALID"):
         store.graph("knowledge")
+
+
+def test_failed_initialization_does_not_poison_live_store_and_can_retry(tmp_path, graph):
+    from src.evidence_a1_knowledge import prepare_a1_knowledge, RUNTIME_RELPATH
+    root_with_registry(tmp_path)
+    source = tmp_path / "storage/dual_layer_registry.db"
+    original = source.read_bytes()
+    source.write_bytes(b"temporarily invalid SQLite registry")
+    with pytest.raises(sqlite3.DatabaseError):
+        prepare_a1_knowledge(tmp_path, bound(graph))
+    assert not (tmp_path / RUNTIME_RELPATH).exists()
+    source.write_bytes(original)
+    store = prepare_a1_knowledge(tmp_path, bound(graph))
+    assert store.graph("evidence") == bound(graph)
+    assert source.read_bytes() == original
