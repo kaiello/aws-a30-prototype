@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 
-PLANNER_VERSION = "a1-graph-planner-1.2.1"
+PLANNER_VERSION = "a1-graph-planner-1.3.0"
 
 
 def _words(value):
@@ -110,7 +110,7 @@ def _selector_bodies(query):
         r"\b(?:abbreviations?|acronyms?|designations?|codes?|families|categories)\s+(?:for|of)\s+",
         r"\bWhat\s+(?:do|does|is|are)\s+(?=.+?\bstand(?:s)?\s+for\b)",
         r"\b(?:Which|What)\s+(?:families|family|categories|category|process)\s+(?:do|does|is|are)\s+",
-        r"\b(?:children|descendants)\s+(?:of|under)\s+",
+        r"\b(?:children|descendants|parents?)\s+(?:of|under|for)\s+",
         r"\bdirectly\s+(?:under|beneath)\s+",
         r"\bpaths?\b[^:;?]*?\bto\s+",
     ]
@@ -258,6 +258,8 @@ def plan_graph_query(graph, query):
     if re.search(r"\b(?:famil(?:y|ies)|categor(?:y|ies))\b", outside) or (
             re.search(r"\b(?:what|which)\s+process(?:es)?\b", outside) and re.search(r"\b(?:in|under|part\s+of)\b", outside)):
         add("category", processes)
+    if re.search(r"\b(?:immediate\s+|direct\s+|layout\s+)?parents?\s+(?:of|for)\b", outside):
+        add("parents")
     direct_list = bool(re.search(r"\bdirect\s+(?:children|subprocesses|processes)\b|\bimmediate\s+(?:children|subprocesses)\b", outside))
     direct_relation = bool(re.search(r"\bdirectly\s+(?:under|beneath)\b", outside))
     direct = direct_list or direct_relation

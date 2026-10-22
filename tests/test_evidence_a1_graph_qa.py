@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import re
 import socket
+import sqlite3
 import sys
 
 import pytest
@@ -15,7 +16,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).parent))
 
 from src.evidence_v2 import Evidence, evidence_id
-from src.evidence_a1 import a1_source_identity_id
+from src.evidence_a1 import a1_source_identity_id, bind_a1_graph_evidence
 from evidence_v2_fixture import png_bytes
 
 
@@ -163,6 +164,10 @@ def test_invalid_graph_structure_fails_closed(toy_graph, mutation):
 
 
 def test_wrapper_preserves_one_image_edition_and_source_binding_without_models(toy_graph, tmp_path, monkeypatch):
+    registry = tmp_path / "storage/dual_layer_registry.db"
+    registry.parent.mkdir()
+    with sqlite3.connect(registry) as connection:
+        connection.execute("CREATE TABLE synthetic_legacy_registry (id TEXT PRIMARY KEY)")
     engine = importlib.import_module("src.evidence_a1_graph_qa")
     edition = "fixture:graph-qa:1@" + hashlib.sha256(b"Original toy graph QA edition").hexdigest()
     raw = png_bytes((147, 72, 184))
@@ -182,7 +187,8 @@ def test_wrapper_preserves_one_image_edition_and_source_binding_without_models(t
                "region": None, "region_scope": "full_page"}
     content = {"caption": "Original toy chart", "asset_relpath": "assets/toy-a1.png",
                "asset_sha256": asset_hash, "source_identity_id": source_id, "media_type": "image/png",
-               "single_image_scope": True, "continuation_orders": [0], "chart_graph": toy_graph,
+               "single_image_scope": True, "continuation_orders": [0],
+               "chart_graph": bind_a1_graph_evidence(toy_graph, edition, source_id, locator, asset_hash),
                "required_evidence_ids": [note.evidence_id], "notes": [], "qualifiers": [], "exceptions": []}
     figure = Evidence(evidence_id(edition, "figure_region", locator, content), edition,
                       "figure_region", locator, content, "synthetic", required_ids=(note.evidence_id,))

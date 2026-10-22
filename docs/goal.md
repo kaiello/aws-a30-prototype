@@ -1,15 +1,67 @@
 # Project Goal: AWS A3.0 Multimodal NLQ & Epistemic Knowledge System
 
-## A1 bakeoff closeout and planned backend direction (2026-10-22)
+## Bounded foundation publication closeout (2026-10-22)
 
-The [canonical bakeoff summary](a1_bakeoff_results.md) records the bounded A1
-backend findings and limits; they do not establish a vendor or framework choice.
-Keep the direction vendor-neutral, centered on evidence completeness and supported answers.
-`GR` is optional, team-reported and unbenchmarked here, not a mandatory foundation.
-The next relationship and multihop phase is **PLANNED** and not implemented.
-Current authorization covers documentation closeout and new-branch preparation only;
-no extended implementation, UI changes or additional evaluation has begun.
-Earlier milestones and permissions below retain their stated historical scope.
+The owner authorized publication after a focused existing-interface check and
+independent review. The canonical backend CLI/API passed five boundary probes:
+separate evidence observations and accepted assertions, a two-hop knowledge path
+with complete source proof, candidate exclusion and missing-authority abstention.
+No exposed MCP tool provides this route; the CLI/API is the verified interface.
+The 13 focused admission/route/wrapper checks passed in 1.89 s; independent review
+found no material blockers. Model/provider NONE, zero inference calls.
+This closes the bounded A1 epistemic foundation, not general natural-language QA.
+The original 31 PASS and exposed/fresh failures below remain unchanged. Source,
+gold, full raw evidence and runtime databases stay local and outside publication.
+Prepare language planning/completeness on a separate branch; no new implementation
+or automatic QA/model campaign is authorized by this closeout.
+
+## Bounded A1 epistemic outcome and remaining scope (2026-10-22)
+
+**BOUNDED_A1_EPISTEMIC_BOUNDARY_IMPLEMENTED_WITH_NLQ_GAPS.** The intended two
+logical layers now operate for A1 through a versioned SQLite copy and actual CLI
+routes, rather than a geometry-only substitute. Separate concepts/assertions,
+support and admission states link knowledge back to authenticated source observations.
+There are 226 observations/99 lexical concepts/316 assertions: 287 ACCEPTED,
+29 CANDIDATE,0 DISPUTED; no accepted semantic `IS_A` or human semantic approval.
+Accepted source-scoped literal facts differ from general semantic typing.
+Original 31 remain31 PASS. Exposed old 8 remain2 PASS/3 PARTIAL/3 FAIL and are
+DEVELOPMENT; new untuned fresh 6 grade2 PASS/2 PARTIAL/2 FAIL. Each set and one
+ungraded integration ran once:46 questions, model/provider NONE, zero calls.
+Full evidence/assertion closure passed structural audit, but the new fresh results
+retain NLQ gaps: this is not full general KG completion or general NL acceptance.
+Preserve original registry/graph/freeze and all old results. Keep backend A1 only,
+vendor-neutral harness/optional unbenchmarked GR; no UI, new models,
+new framework or corpus visual-retrieval claim. **Stop without automatic repair/replay.**
+Report finalized: `Figure_A1_Epistemic_Layers_002_Report.md` is in the parent workspace;
+Library delivered (version 0). Prior first-slice results below retain their own scope.
+
+Canonical integration is the A1 CLI `--graph-qa` route (auto or explicit
+`--query-layer evidence|knowledge`). The general `query.async_query` v1/v2
+model-reader pipeline remains unchanged. Pure `answer_graph` without a store is
+an observation compatibility helper, not an accepted-KG path; no universal
+production integration is claimed.
+
+## Historical first-slice A1 outcome and remaining gaps (2026-10-22)
+
+**DONE_WITH_FRESH_QA_GAPS; not general natural-language acceptance.** Stable
+node/edge source evidence, authenticated canonical loading, complete qualified
+expansion, ordered multihop operations and atomic claim traces are implemented.
+The accepted 99-node/127-edge graph and 226 evidence bindings remain intact;
+candidate indentation does not become reviewed semantic subtype authority.
+Focused checks passed 42/42 (0.91 s) and 99/99 (1.09 s); independent review found
+no material findings or required fixes. Actual CLI runs occurred once per set:
+original 31 PASS; fresh eight 2 PASS / 3 PARTIAL / 3 FAIL. Original questions were
+already passing; 30 answer strings are unchanged, so this is not a new accuracy gain.
+Most fresh gaps concern unsupported wording and planning/composition: missing
+broader/parent groups, lost direct/indented partition, or safe but unexplained
+ambiguity despite useful retrieved evidence. No source/OCR defect was established.
+Existing ordered multihop was source-validated; new sibling/common-ancestor
+operations have synthetic coverage only, not fresh end-to-end acceptance.
+Model/provider NONE, zero calls; backend A1 only, GR optional/unbenchmarked,
+vendor-neutral harness, no UI/Git publication or corpus visual-retrieval claim.
+Stop without automatic repair/replay. The [local report](../../Figure_A1_Faithful_Relationships_Multihop_001_Report.md)
+and private frozen grades retain results; The report is delivered in Library (version 0); local evidence remains retained.
+
 
 ## Current local A1 pass 004: requested answers complete (2026-10-21)
 

@@ -1,15 +1,72 @@
 # Multi-Agent System (MAS) Operating Guidelines: AWS A3.0 Prototype
 
-### A1 bakeoff documentation closeout (2026-10-22)
+## Bounded foundation publication closeout (2026-10-22)
 
-Use the [canonical bakeoff summary](a1_bakeoff_results.md) for the bounded A1
-backend findings and comparison limits. Keep the next direction vendor-neutral;
-this closeout approves no vendor or framework adoption.
-`GR` remains optional, team-reported and unbenchmarked here, not a required foundation.
-Relationship and multihop work is **PLANNED**, not implemented.
-The active work is docs-only closeout and preparation of a new branch;
-do not extend implementation, UI work or evaluation under this scope.
-Apply active owner Git publication authorization; older scopes below are historical.
+The owner authorized publication after a focused existing-interface check and
+independent review. The canonical backend CLI/API passed five boundary probes:
+separate evidence observations and accepted assertions, a two-hop knowledge path
+with complete source proof, candidate exclusion and missing-authority abstention.
+No exposed MCP tool provides this route; the CLI/API is the verified interface.
+The 13 focused admission/route/wrapper checks passed in 1.89 s; independent review
+found no material blockers. Model/provider NONE, zero inference calls.
+This closes the bounded A1 epistemic foundation, not general natural-language QA.
+The original 31 PASS and exposed/fresh failures below remain unchanged. Source,
+gold, full raw evidence and runtime databases stay local and outside publication.
+Prepare language planning/completeness on a separate branch; no new implementation
+or automatic QA/model campaign is authorized by this closeout.
+
+### Final bounded A1 epistemic boundary and stop (2026-10-22)
+
+**BOUNDED_A1_EPISTEMIC_BOUNDARY_IMPLEMENTED_WITH_NLQ_GAPS.** Harness 1.4.0 /
+planner 1.3.0 implements the A1 SQL/assertion/query boundary; it is not a full
+general KG or general NLQ acceptance. Preserve prior registry/native graph,
+source evidence, frozen questions/gold/raw results and first-slice history below.
+The versioned working SQLite copy has five namespaced tables, 226 observations,
+99 concepts and 316 assertions: 287 ACCEPTED/29 CANDIDATE/0 DISPUTED. Accept only
+source-bound scoped literal facts under recomputed rules/proof closure, never
+metadata hashes as approval or invented human semantic review. No accepted `IS_A`;
+candidate indentation remains candidate. Direct evidence remains accessible.
+Actual auto/explicit knowledge/evidence routes use persisted assertions; unsupported
+knowledge hierarchy requests must remain insufficient without admitted authority.
+Original 31 PASS; exposed old 8 2 PASS/3 PARTIAL/3 FAIL are DEVELOPMENT, while new
+untuned fresh 6 are 2 PASS/2 PARTIAL/2 FAIL. Four CLI executions ran once each,
+46 questions including one declared ungraded knowledge integration. Model NONE/0 calls.
+Three material review issues were fixed before freeze, then targeted checks and
+independent review approved the freeze; do not claim a full post-fix suite.
+The structural audit matched persisted accepted assertions/full proof closure,
+with zero issues; semantic/request-completeness gaps remain. Backend A1 only,
+GR optional, no UI or models; no corpus visual recall. **No automatic repair/replay.**
+Freeze: `storage/evidence_v2/a1_epistemic_freeze_002.json`; report finalized:
+`Figure_A1_Epistemic_Layers_002_Report.md` in parent workspace, Library delivered (version 0).
+
+Canonical integration is the A1 CLI `--graph-qa` route (auto or explicit
+`--query-layer evidence|knowledge`). The general `query.async_query` v1/v2
+model-reader pipeline remains unchanged. Pure `answer_graph` without a store is
+an observation compatibility helper, not an accepted-KG path; no universal
+production integration is claimed.
+
+### Historical first-slice bounded A1 result and stop (2026-10-22)
+
+**DONE_WITH_FRESH_QA_GAPS; not general natural-language acceptance.** Base remains
+`1b4e04e5017acf018b48482cb784486d18544309`; backend A1 only, no UI, models or Git publication.
+Canonical source authentication, stable node/edge evidence bindings, parents,
+complete direct/recursive expansion, ordered common-ancestor operations and atomic
+claim/evidence traces are implemented. Declared caller graphs cannot authenticate
+source. Preserve native graph `6476c898439108dbeaf7b92f0be3946a3e0d3538d5c15afb860d1cf0e02cc4d2`
+(99 nodes/127 edges), all 226 bindings, and candidate indentation's unreviewed status.
+Software checks passed 42/42 in 0.91 s and 99/99 in 1.09 s; independent review
+found no material findings or required fixes. Model/provider NONE, zero calls.
+Original 31 actual CLI cases: 31 PASS; fresh held-out eight: 2 PASS / 3 PARTIAL /
+3 FAIL. The original set already passed; 30 strings are unchanged. Existing ordered
+multihop cases are source-validated, but new sibling/common-ancestor behavior is
+synthetic-only, without fresh end-to-end QA coverage. Most remaining gaps concern
+planning/composition despite evidence being present; no source/OCR defect established.
+Keep GR optional/unbenchmarked, the harness vendor-neutral, and all frozen
+questions/gold/raw outputs unchanged. **Stop: no automatic repair, replay or model run.**
+See the [local report](../../Figure_A1_Faithful_Relationships_Multihop_001_Report.md),
+[freeze receipt](../storage/evidence_v2/faithful_a1_freeze_001.json) and private grades;
+The report is delivered in Library (version 0); local evidence remains retained. No corpus visual-retrieval claim follows from this image.
+
 
 ### Current local A1 pass 004 result and stop (2026-10-21)
 
@@ -576,9 +633,9 @@ At the completion of any milestone, card, or substantial refactor, the active ag
 4. **Apply the active owner Git/publication authorization**:
    Follow the active owner's authorized Git and publication actions and limits.
    Historical local-only bans and one-time approvals retain their original scope;
-   neither substitutes for current authorization. For this docs-only closeout and
-   new-branch preparation, publish only the approved documentation; no extended
-   implementation or evaluation follows from publication authority.
+   neither substitutes for current authorization. The current A1 implementation
+   is local: no commit, push, merge or model inference is authorized. The earlier
+   docs-only closeout approval remains historical; no further work follows from it.
 
 ## Local security boundary maintenance (2026-10-15)
 

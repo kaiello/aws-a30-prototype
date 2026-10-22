@@ -13,7 +13,7 @@ import json
 from pathlib import Path
 import re
 
-from src.evidence_a1 import load_a1_evidence
+from src.evidence_a1 import load_a1_evidence, validate_a1_graph_evidence
 from src.evidence_a1_registry import a1_registry_binding
 from src.evidence_reader import build_messages
 from src.evidence_sources import load_query_evidence
@@ -51,6 +51,9 @@ def structural_status(root):
         raise ValueError("A1_SINGLE_IMAGE_CONTRACT_FAILED")
     figure = figures[0]
     graph = figure.content["chart_graph"]
+    record_binding = validate_a1_graph_evidence(graph, expected_source={
+        "edition_id": figure.edition_id, "source_identity_id": figure.content["source_identity_id"],
+        "asset_sha256": figure.content["asset_sha256"], "locator": figure.locator})
     binding = a1_registry_binding(root)
     return {
         "status": "READY_FOR_OWNER_COMPETENCY_QUESTIONS", "evidence_schema_version": SCHEMA_VERSION,
@@ -64,10 +67,15 @@ def structural_status(root):
                   "edge_counts": {kind: sum(e["type"] == kind for e in graph["edges"])
                                   for kind in graph["edge_qualifications"]},
                   "source_bound_extraction": True, "semantic_validation": False},
+        "record_binding": record_binding,
         "registry": binding,
         "retrieval_implemented": ["literal_full_process_name_or_case_sensitive_code",
             "all_inbound_enclosure_and_candidate_parent_ancestors", "root_and_all_category_context",
-            "complete_single_original_image_and_annex_note"],
+            "complete_single_original_image_and_annex_note",
+            "typed_immediate_parents_with_separate_category_enclosure",
+            "complete_direct_children_and_recursive_descendants",
+            "ordered_common_ancestor_layout_paths_with_explicit_reverse_hops",
+            "atomic_observation_record_evidence_bindings"],
         "retrieval_deferred": ["semantic_vector_ranking_for_A1", "synonym_inference",
             "reviewed_semantic_subtype_edges", "other_images_or_figures", "cross_edition_comparison"],
         "owner_cq_count": 0, "answer_accuracy": "PENDING_OWNER_QUESTIONS",
@@ -130,7 +138,11 @@ def main(argv=None):
     parser.add_argument("--output", type=Path, help="New private receipt under root/storage/evidence_v2")
     parser.add_argument("--graph-qa", action="store_true",
                         help="Explicit deterministic graph QA; no language model or external provider")
+    parser.add_argument("--query-layer", choices=("auto", "evidence", "knowledge"), default="auto",
+                        help="Graph QA: accepted knowledge, direct evidence, or typed automatic selection")
     args = parser.parse_args(argv)
+    if args.query_layer != "auto" and not args.graph_qa:
+        parser.error("--query-layer requires --graph-qa")
     try:
         status = structural_status(args.root)
         result = {"setup": status}
@@ -140,11 +152,13 @@ def main(argv=None):
                 raise ValueError("Nonempty owner questions require a private --output for packets")
             if args.graph_qa:
                 from src.evidence_a1_graph_qa import run_graph_qa
-                result["owner_cqs"] = run_graph_qa(args.root, payload)
+                result["owner_cqs"] = run_graph_qa(args.root, payload, query_layer=args.query_layer)
                 status["status"] = "OWNER_CQ_GRAPH_QA_EXECUTED"
                 status["answer_accuracy"] = "UNASSESSED_GRAPH_QA"
                 status["generation_model"] = "NONE"
                 status["qa_harness_version"] = result["owner_cqs"]["harness_version"]
+                status["epistemic_store"] = result["owner_cqs"]["epistemic_store"]
+                status["query_layer"] = args.query_layer
             else:
                 result["owner_cqs"] = prepare_packets(args.root, payload)
             status["owner_cq_count"] = len(payload["questions"])

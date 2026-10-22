@@ -1,15 +1,68 @@
 # AWS A3.0 Standalone Multimodal Prototype
 
-## A1 bakeoff documentation closeout (2026-10-22)
+## Bounded foundation publication closeout (2026-10-22)
 
-The [canonical A1 bakeoff summary](docs/a1_bakeoff_results.md) records bounded
-backend findings and comparison limits. No vendor or framework adoption is
-approved by this closeout; the direction remains vendor-neutral.
-`GR` is optional, team-reported and unbenchmarked here, not a mandatory foundation.
-The next relationship and multihop phase is **PLANNED**, not implemented.
-Current work is documentation closeout and preparation of a new branch only;
-no extended implementation, UI work or additional evaluation is included.
-Earlier results and permissions below retain their historical scope.
+The owner authorized publication after a focused existing-interface check and
+independent review. The canonical backend CLI/API passed five boundary probes:
+separate evidence observations and accepted assertions, a two-hop knowledge path
+with complete source proof, candidate exclusion and missing-authority abstention.
+No exposed MCP tool provides this route; the CLI/API is the verified interface.
+The 13 focused admission/route/wrapper checks passed in 1.89 s; independent review
+found no material blockers. Model/provider NONE, zero inference calls.
+This closes the bounded A1 epistemic foundation, not general natural-language QA.
+The original 31 PASS and exposed/fresh failures below remain unchanged. Source,
+gold, full raw evidence and runtime databases stay local and outside publication.
+Prepare language planning/completeness on a separate branch; no new implementation
+or automatic QA/model campaign is authorized by this closeout.
+
+## Implemented A1 evidence-to-knowledge boundary (2026-10-22)
+
+**BOUNDED_A1_EPISTEMIC_BOUNDARY_IMPLEMENTED_WITH_NLQ_GAPS.** Harness 1.4.0 /
+planner 1.3.0 now uses a versioned SQLite copy with two logical layers: 226 source
+observations, 99 lexical concepts and 316 typed assertions (287 ACCEPTED,
+29 CANDIDATE, 0 DISPUTED). The prior registry and native graph remain unchanged.
+Accepted source-bound literal labels/designations/membership/connections are not
+human-reviewed semantic types; no `IS_A` is accepted and indentation remains candidate.
+Admission is recomputed from source observations, scope/rules and proof references;
+metadata hashes are not approval. Stale/tampered material fails closed.
+Actual `--graph-qa` uses the store: automatic designation/category/membership uses
+knowledge; layout and other operations use evidence. `--query-layer knowledge|evidence`
+selects explicitly; unsupported knowledge hierarchy requests retain insufficient evidence.
+Four actual CLI executions ran once each: original 31 **31 PASS**, exposed old 8
+**2 PASS / 3 PARTIAL / 3 FAIL** (DEVELOPMENT), untuned fresh 6 **2 PASS / 2 PARTIAL /
+2 FAIL**, plus one declared ungraded knowledge-path integration: 46 questions total.
+The evidence/assertion audit found zero structural closure issues; this is neither
+a full general KG nor general natural-language acceptance. Model/provider NONE, zero calls.
+Backend A1 only, vendor-neutral harness, GR optional/unbenchmarked; no UI or new models; no corpus visual-retrieval claim. **Stop: no automatic repair/replay.**
+Freeze: `storage/evidence_v2/a1_epistemic_freeze_002.json`. Report finalized:
+`Figure_A1_Epistemic_Layers_002_Report.md` in the parent workspace; Library delivered (version 0).
+
+Canonical integration is the A1 CLI `--graph-qa` route (auto or explicit
+`--query-layer evidence|knowledge`). The general `query.async_query` v1/v2
+model-reader pipeline remains unchanged. Pure `answer_graph` without a store is
+an observation compatibility helper, not an accepted-KG path; no universal
+production integration is claimed.
+
+## Historical first-slice A1 relationships and multihop result (2026-10-22)
+
+**DONE_WITH_FRESH_QA_GAPS; not general natural-language acceptance.** The local
+backend-only A1 slice implements authenticated canonical source loading, stable
+node/edge evidence IDs, parents, complete direct/recursive expansion, ordered
+common-ancestor operations and atomic claim/evidence traces. Declared caller
+graphs cannot authenticate source; candidate indentation remains unreviewed.
+The accepted graph remains 99 nodes/127 edges with 226 evidence bindings.
+Software checks passed 42/42 (0.91 s) and 99/99 (1.09 s); independent code/source
+review found no material findings or required fixes. Model/provider NONE, zero calls.
+One actual CLI pass each: original 31 **31 PASS**; fresh held-out eight **2 PASS /
+3 PARTIAL / 3 FAIL**. The original 31 already passed before this slice; 30 answer
+strings are unchanged. Existing ordered multihop cases were source-validated;
+new sibling/common-ancestor behavior has synthetic coverage only, not fresh end-to-end QA.
+Remaining fresh gaps mostly concern planning/composition despite relevant evidence
+being present; no source/OCR defect was established. No automatic repair or replay.
+Keep GR optional/unbenchmarked and the harness vendor-neutral: no UI, models,
+Git publication or corpus visual-retrieval claim. The [local report](../Figure_A1_Faithful_Relationships_Multihop_001_Report.md)
+and private freeze/grades retain the evidence; The report is delivered in Library (version 0); local evidence remains retained.
+
 
 **Current local A1 pass 004 complete (2026-10-21):** branch
 `fix/a1-query-completeness`, base main `799112f`. Harness

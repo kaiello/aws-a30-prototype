@@ -1,5 +1,136 @@
 # Implementation Plan: Standalone AWS A3.0 Multimodal NLQ Prototype
 
+## Bounded foundation publication closeout (2026-10-22)
+
+The owner authorized publication after a focused existing-interface check and
+independent review. The canonical backend CLI/API passed five boundary probes:
+separate evidence observations and accepted assertions, a two-hop knowledge path
+with complete source proof, candidate exclusion and missing-authority abstention.
+No exposed MCP tool provides this route; the CLI/API is the verified interface.
+The 13 focused admission/route/wrapper checks passed in 1.89 s; independent review
+found no material blockers. Model/provider NONE, zero inference calls.
+This closes the bounded A1 epistemic foundation, not general natural-language QA.
+The original 31 PASS and exposed/fresh failures below remain unchanged. Source,
+gold, full raw evidence and runtime databases stay local and outside publication.
+Prepare language planning/completeness on a separate branch; no new implementation
+or automatic QA/model campaign is authorized by this closeout.
+
+## Final bounded EG -> KG checkpoint (2026-10-22)
+
+**BOUNDED_A1_EPISTEMIC_BOUNDARY_IMPLEMENTED_WITH_NLQ_GAPS.** The bounded A1
+assertion/admission/query boundary now works in actual SQL and CLI routes;
+this is not full general KG or general natural-language acceptance.
+Versioned SQLite runtime: 226 observations, 99 concepts, 316 assertions,
+287 ACCEPTED/29 CANDIDATE/0 DISPUTED,570 support links / 0 real counterrefs.
+Accepted source-scoped literal facts do not imply human-reviewed semantic types;
+no accepted `IS_A`, and candidate indentation stays candidate. Admission is
+recomputed from observations/scope/rule/proof refs; metadata hashes are not approval.
+Accepted-only knowledge routes and direct evidence routes are available, including
+one actual ungraded two-step knowledge-path integration with full proof closure.
+Four CLI executions ran once each: original 31 PASS, exposed old 8 DEVELOPMENT
+2 PASS/3 PARTIAL/3 FAIL, new untuned fresh 6 2 PASS/2 PARTIAL/2 FAIL, plus that
+one ungraded integration (46 questions total). Model/provider NONE, zero calls.
+The audit matched accepted assertions/full proof closure without structural issues;
+original 90 pairs / 29 candidate qualifications and all frozen identities were preserved.
+Initial 149 checks passed in 2.76 s; 3 material review issues were fixed before freeze,
+then 7 store tests in 1.09 s,6 route/wrapper checks in 1.07 s and 2 invalid-input smokes passed.
+Independent review approved the freeze; no full post-fix suite or new generalization claim.
+Original 31 backend time 6.879 s vs first-slice 0.721 s illustrates validation overhead;
+no optimization/repair followed freeze. Source registry/native graph remain unchanged.
+Keep backend A1 only, GR optional, harness independent: no new framework/DB product,
+UI, models or corpus visual recall. **Stop: no automatic repair/replay.**
+Freeze `storage/evidence_v2/a1_epistemic_freeze_002.json`; report finalized:
+`Figure_A1_Epistemic_Layers_002_Report.md` in parent workspace, Library delivered (version 0).
+The original preparation plan and first-slice record below remain preserved.
+
+Canonical integration is the A1 CLI `--graph-qa` route (auto or explicit
+`--query-layer evidence|knowledge`). The general `query.async_query` v1/v2
+model-reader pipeline remains unchanged. Pure `answer_graph` without a store is
+an observation compatibility helper, not an accepted-KG path; no universal
+production integration is claimed.
+
+## Historical first-slice implementation checkpoint (2026-10-22)
+
+**DONE_WITH_FRESH_QA_GAPS; not general natural-language acceptance.** The original
+uncommitted preparation plan below is retained unchanged as the planning baseline.
+The A1-only backend slice implemented authenticated source loading, stable node/
+edge evidence IDs, complete qualified expansion, ordered common-ancestor operations
+and atomic traces. Native graph 99 nodes/127 edges and 226 bindings remain intact;
+candidate indentation stays unreviewed and caller graphs cannot authenticate source.
+Focused checks: 42/42 in 0.91 s plus 99/99 in 1.09 s; independent code/source review
+found no material findings or required fixes. Actual CLI ran once per set:
+original 31 PASS (QA001 15 / QA002 16), fresh eight 2 PASS / 3 PARTIAL / 3 FAIL.
+The original set already passed; 30 strings are unchanged. Existing ordered paths
+are source-validated, while new sibling/common-ancestor paths are synthetic-only,
+without fresh end-to-end QA acceptance. The audit found zero structural inconsistencies
+across 506 claims/1,058 references/226 records and six paths/17 hops/two reverse steps.
+Fresh gaps are mainly planning/composition despite evidence being present, not an
+established source/OCR defect. Preserve the freeze, original questions/gold/raw runs
+and private grades. Model/provider NONE, zero calls; no UI, models, Git publication,
+new framework or corpus visual-retrieval claim. Keep GR optional/unbenchmarked.
+**Stop: no automatic repair or replay.** The [local report](../../Figure_A1_Faithful_Relationships_Multihop_001_Report.md),
+[freeze receipt](../storage/evidence_v2/faithful_a1_freeze_001.json) and private
+[grades](../storage/evidence_v2/faithful_a1_eval_001/grades.json) retain the evidence;
+The report is delivered in Library (version 0); local evidence remains retained.
+
+## Historical preparation: A1 relationships and multihop plan (2026-10-22)
+
+**Readiness: plan prepared; implementation and new evaluations have not started.**
+Branch `feat/a1-faithful-relationships-multihop` starts from verified main
+`1b4e04e5017acf018b48482cb784486d18544309` after the documentation-only bakeoff closeout.
+Keep the existing backend and source/store baseline usable. Work on Figure A1 only,
+one image at a time, with backend correctness as the goal and no UI work.
+
+### One bounded implementation slice
+
+1. **Establish the actual baseline.** Inspect A1's accepted canonical graph, source
+   image/locator, edition bindings and existing retrieval operations. The canonical
+   graph and the experimental fused graph are different artifacts: bakeoff fusion
+   failures do not establish defects in the accepted graph. Preserve source facts,
+   identifiers and earlier outputs; do not copy the failed vendor graph or re-run OCR.
+2. **Keep relationships faithful to the figure.** Carry the supporting region and
+   source/edition identity for enclosure, visible connectors and observed indentation.
+   Preserve order and intermediate groups. Distinguish observed layout, candidate
+   parentage and reviewed semantic relations; indentation alone must not become a
+   verified subtype assertion. Report ambiguous or missing source support explicitly.
+3. **Retrieve complete qualified paths.** Reuse existing typed operations and the
+   manifest/SQLite spine for direct children, descendants, parents and ordered paths.
+   Scope every hop to the selected source/edition and relation status. Include every
+   required intermediate node and edge, detect incomplete expansion and preserve
+   all requested entities/intents. Do not infer a source-level negative from a missing
+   edge or a top-k subset. No new database, graph framework or generated SQL.
+4. **Deliver evidence to the answer stage.** Build a complete single-image packet
+   with relationship evidence, locators, qualifications and unresolved parts. Bind
+   claims to evidence identifiers and inspect the actual reader input. Citations,
+   node counts and successful generation are not substitutes for support. Distinguish
+   source/ingestion, relation, join, retrieval, packet and reader failures.
+5. **Keep adapters optional.** The evaluation harness stays vendor-neutral and
+   separate from production orchestration. GR, visual and graph retrieval remain
+   interchangeable possibilities; GR was not benchmarked here. Do not import the
+   separate unexecuted LightRAG layout repair, adopt a bakeoff stack, or automatically
+   promote the earlier dirty LLM-planner work. Reuse existing code where it fits.
+
+### Verification and stopping point
+
+- Run only focused existing checks needed for the changed backend code, then the
+  original 31 A1 regression questions once after the bounded slice. Preserve the
+  original questions, grading and raw baselines; do not patch answers to fit them.
+- Keep fresh questions untuned and separate from development replays. Freeze their
+  wording and source-grounded expectations before viewing outputs, with gold outside
+  retrieval, graph updates and generation. Fresh questions are pending; do not invent
+  acceptance results or claim generalization from the exposed 31.
+- Inspect correct/complete evidence entering the reader separately from final answer
+  correctness and support. Preserve raw answers, paths, evidence identifiers and
+  unresolved parts. Any future inference needs a declared local configuration and
+  call budget; disclose actual context limits, avoid artificial output-token quotas
+  and stop nonproductive repetition. No inference is authorized by plan preparation.
+- Stop after this slice and its single evaluation pass. Report remaining failures or
+  source ambiguities before another repair loop. Competing-figure visual recall,
+  additional figures, OCR work, service deployments and framework bakeoffs are deferred.
+
+The prepared branch is ready for focused implementation review. This planning change
+is local and uncommitted; no substantial implementation, model call or new QA has run.
+
 ## A1 bakeoff documentation closeout (2026-10-22)
 
 Use the [canonical bakeoff summary](a1_bakeoff_results.md) as the record of
