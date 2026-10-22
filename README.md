@@ -1,5 +1,16 @@
 # AWS A3.0 Standalone Multimodal Prototype
 
+## A1 bakeoff documentation closeout (2026-10-22)
+
+The [canonical A1 bakeoff summary](docs/a1_bakeoff_results.md) records bounded
+backend findings and comparison limits. No vendor or framework adoption is
+approved by this closeout; the direction remains vendor-neutral.
+`GR` is optional, team-reported and unbenchmarked here, not a mandatory foundation.
+The next relationship and multihop phase is **PLANNED**, not implemented.
+Current work is documentation closeout and preparation of a new branch only;
+no extended implementation, UI work or additional evaluation is included.
+Earlier results and permissions below retain their historical scope.
+
 **Current local A1 pass 004 complete (2026-10-21):** branch
 `fix/a1-query-completeness`, base main `799112f`. Harness
 `a1-graph-qa-1.2.0` / planner `1.2.0` independently grades **QA001 15 PASS** and

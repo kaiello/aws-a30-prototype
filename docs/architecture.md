@@ -1,5 +1,16 @@
 # System Architecture: AWS A3.0 Multimodal Prototype
 
+## A1 bakeoff closeout and architecture boundary (2026-10-22)
+
+The [canonical bakeoff summary](a1_bakeoff_results.md) captures bounded A1
+backend findings, comparison limits and the vendor-neutral direction.
+No vendor or framework adoption follows from this documentation closeout.
+`GR` remains an optional, team-reported and unbenchmarked capability here;
+it is not a mandatory foundation for the next architecture phase.
+Relationship and multihop work is **PLANNED**, not implemented.
+Current work is docs-only closeout and new-branch preparation, with no extended
+implementation, UI change or further evaluation. Earlier architecture history remains.
+
 ## Current local A1 query-completeness pass 004 (2026-10-21)
 
 Post-review correction: planner `1.2.1` retains literal chart-relation operations

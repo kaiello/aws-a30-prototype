@@ -1,5 +1,16 @@
 # Multi-Agent System (MAS) Operating Guidelines: AWS A3.0 Prototype
 
+### A1 bakeoff documentation closeout (2026-10-22)
+
+Use the [canonical bakeoff summary](a1_bakeoff_results.md) for the bounded A1
+backend findings and comparison limits. Keep the next direction vendor-neutral;
+this closeout approves no vendor or framework adoption.
+`GR` remains optional, team-reported and unbenchmarked here, not a required foundation.
+Relationship and multihop work is **PLANNED**, not implemented.
+The active work is docs-only closeout and preparation of a new branch;
+do not extend implementation, UI work or evaluation under this scope.
+Apply active owner Git publication authorization; older scopes below are historical.
+
 ### Current local A1 pass 004 result and stop (2026-10-21)
 
 The owner authorized one focused A1 backend repair on
@@ -562,11 +573,12 @@ At the completion of any milestone, card, or substantial refactor, the active ag
    - `docs/agents.md` (Role or protocol updates)
    - `README.md` (Quickstart or status changes)
 
-4. **Apply the active owner Git/publication scope**:
-   The current local v2 task prohibits commit, push, publication, merge, branch
-   deletion and moving existing tags. Finish local verification and report the
-   exact uncommitted changes. Any future commit/push workflow requires applicable
-   owner authorization; historical examples do not grant it.
+4. **Apply the active owner Git/publication authorization**:
+   Follow the active owner's authorized Git and publication actions and limits.
+   Historical local-only bans and one-time approvals retain their original scope;
+   neither substitutes for current authorization. For this docs-only closeout and
+   new-branch preparation, publish only the approved documentation; no extended
+   implementation or evaluation follows from publication authority.
 
 ## Local security boundary maintenance (2026-10-15)
 
