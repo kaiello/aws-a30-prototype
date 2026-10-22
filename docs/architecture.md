@@ -1,15 +1,97 @@
 # System Architecture: AWS A3.0 Multimodal Prototype
 
-## A1 bakeoff closeout and architecture boundary (2026-10-22)
+## Bounded foundation publication closeout (2026-10-22)
 
-The [canonical bakeoff summary](a1_bakeoff_results.md) captures bounded A1
-backend findings, comparison limits and the vendor-neutral direction.
-No vendor or framework adoption follows from this documentation closeout.
-`GR` remains an optional, team-reported and unbenchmarked capability here;
-it is not a mandatory foundation for the next architecture phase.
-Relationship and multihop work is **PLANNED**, not implemented.
-Current work is docs-only closeout and new-branch preparation, with no extended
-implementation, UI change or further evaluation. Earlier architecture history remains.
+The owner authorized publication after a focused existing-interface check and
+independent review. The canonical backend CLI/API passed five boundary probes:
+separate evidence observations and accepted assertions, a two-hop knowledge path
+with complete source proof, candidate exclusion and missing-authority abstention.
+No exposed MCP tool provides this route; the CLI/API is the verified interface.
+The 13 focused admission/route/wrapper checks passed in 1.89 s; independent review
+found no material blockers. Model/provider NONE, zero inference calls.
+The subsequent PR review found a first-initialization recovery defect. Atomic
+publication after staging validation fixes it; one regression reproduced the
+failure and eight store checks passed in 1.39 s. Windows was exercised; the
+non-overwriting POSIX publication branch received static review only.
+This closes the bounded A1 epistemic foundation, not general natural-language QA.
+The original 31 PASS and exposed/fresh failures below remain unchanged. Source,
+gold, full raw evidence and runtime databases stay local and outside publication.
+Prepare language planning/completeness on a separate branch; no new implementation
+or automatic QA/model campaign is authorized by this closeout.
+
+## Implemented bounded A1 EG -> KG contract (2026-10-22)
+
+**BOUNDED_A1_EPISTEMIC_BOUNDARY_IMPLEMENTED_WITH_NLQ_GAPS.** Harness 1.4.0 /
+planner 1.3.0 now uses two logical layers in a versioned SQLite working copy, with
+five namespaced tables; prior registry bytes and native graph `6476c898439108dbeaf7b92f0be3946a3e0d3538d5c15afb860d1cf0e02cc4d2` (99 nodes/127 edges) remain unchanged.
+The runtime has 226 source observations, 99 lexical concepts and 316 typed assertions:
+287 ACCEPTED (99 PRINTED_LABEL,90 PRINTED_DESIGNATION,90 CHART_MEMBER_OF,
+8 CHART_CONNECTED),29 CANDIDATE and 0 DISPUTED, with 570 support links / 0 real-A1
+counterevidence references. No accepted `IS_A`; CANDIDATE_LAYOUT_PARENT stays candidate.
+Accepted literal chart facts are source-scoped, not human-reviewed semantic types.
+Read-time admission recomputes exact scope/rules/proof references from observations;
+metadata hashes do not grant approval, and stale/tampered state fails closed.
+Contrary functional values becoming disputed were tested only with invented fixtures;
+there is no observed A1 dispute. This is the actual bounded A1 SQL/query boundary,
+not a new DB product/framework, a full general KG or general NLQ acceptance.
+Actual `--graph-qa` uses the store: auto designation/category/membership uses
+knowledge, layout/other operations use evidence; `--query-layer knowledge|evidence`
+is explicit. Knowledge hierarchy requests without admitted authority remain insufficient,
+while direct evidence stays accessible. Knowledge paths traverse accepted CHART_CONNECTED/
+CHART_MEMBER_OF with logical direction and complete proof closure, not an indentation subtype chain.
+Across 55 operations (24 knowledge / 31 evidence), 232 KG assertion refs/93 unique
+all matched persisted ACCEPTED records; 844 returned assertion occurrences and 636
+proof observations matched full store closure with zero issues. One declared ungraded
+actual KG integration traversed two logical steps (connection forward, membership
+reverse) with five-record proof closure, excluding candidate-only nesting and `IS_A`.
+Original 31 retained all 90 pairs / 29 candidate qualifications and31 PASS. Exposed
+old 8 are DEVELOPMENT 2 PASS/3 PARTIAL/3 FAIL; new untuned fresh 6 are 2 PASS/2 PARTIAL/
+2 FAIL. Four actual CLI executions occurred once each:46 questions including the
+ungraded integration. Model/provider NONE, zero calls; no answer repair after freeze.
+Initial 149 software checks passed in 2.76 s. Three material admission/completeness review
+issues were corrected before freeze; post-fix 7 store tests passed in 1.09 s,6 affected
+route/wrapper checks in 1.07 s and 2 invalid-input smokes passed. Independent review
+approved the freeze; no full post-fix suite is claimed. Original 31 backend time
+was 6.879 s versus first-slice 0.721 s, an illustrative validation-overhead measurement,
+not an optimized production SLA. Code/source/old-result/runtime hashes stayed unchanged.
+Keep backend A1 only, independent harness and GR optional/unbenchmarked: no UI,
+models or corpus visual-retrieval claim. **Stop: no automatic repair/replay.**
+Freeze: `storage/evidence_v2/a1_epistemic_freeze_002.json`; report finalized:
+`Figure_A1_Epistemic_Layers_002_Report.md` in parent workspace; Library delivered (version 0).
+
+Canonical integration is the A1 CLI `--graph-qa` route (auto or explicit
+`--query-layer evidence|knowledge`). The general `query.async_query` v1/v2
+model-reader pipeline remains unchanged. Pure `answer_graph` without a store is
+an observation compatibility helper, not an accepted-KG path; no universal
+production integration is claimed.
+
+## Historical first-slice A1 evidence/path contract and limits (2026-10-22)
+
+**DONE_WITH_FRESH_QA_GAPS; not general natural-language acceptance.** Canonical
+loading authenticates source/edition/image/page/region bindings; caller-declared
+graphs cannot establish authentication. Stable node/edge IDs, parents, complete
+direct/recursive expansion, ordered common-ancestor operations and atomic
+claim/evidence traces are implemented without changing the accepted graph:
+`6476c898439108dbeaf7b92f0be3946a3e0d3538d5c15afb860d1cf0e02cc4d2`, 99 nodes/127 edges, 226 evidence bindings.
+Candidate indentation remains unreviewed; citations or valid IDs alone are not support.
+The source-binding audit covered 506 atomic claims and 1,058 references across
+226 unique records, plus six path entries/17 hops/two reverse steps, with zero
+structural inconsistencies. Original 90/90 pairs and 29 candidate qualifications
+were retained. Actual ordered paths in the existing cases were source-validated;
+new sibling/common-ancestor behavior has only synthetic, not fresh end-to-end QA coverage.
+Focused core checks passed 42/42 (0.91 s); loader/CLI/scope checks passed 99/99
+(1.09 s). Independent code/source review found no material findings or required fixes.
+Each set ran once through the actual CLI: original 31 PASS, fresh eight 2 PASS /
+3 PARTIAL / 3 FAIL. The original set already passed and 30 strings are unchanged.
+Fresh gaps mainly concern planning/composition despite relevant evidence being
+present; no source/OCR defect was established. Frozen code/source/input/gold/raw
+identities remained unchanged during evaluation. Model/provider NONE, zero calls.
+Keep this backend A1-only, vendor-neutral and GR optional/unbenchmarked: no UI,
+new framework, Git publication or corpus visual-retrieval claim. No automatic repair/replay.
+See the [local report](../../Figure_A1_Faithful_Relationships_Multihop_001_Report.md),
+[freeze](../storage/evidence_v2/faithful_a1_freeze_001.json) and private
+[grades](../storage/evidence_v2/faithful_a1_eval_001/grades.json); The report is delivered in Library (version 0); local evidence remains retained.
+
 
 ## Current local A1 query-completeness pass 004 (2026-10-21)
 
@@ -472,7 +554,7 @@ flowchart TB
 
     subgraph DualGraphStorage ["2. Dual-Layer Epistemic Knowledge Graph"]
         direction TB
-        subgraph OntologyLayer ["Domain Ontology Layer (2,522 Nodes, 3,254 Edges)"]
+        subgraph OntologyLayer ["Historical Domain Ontology Layer (2,522 Nodes, 3,254 Edges)"]
             C_Concept[":Concept (e.g., CJP, Root Face)"]
             C_Proc[":Process (e.g., GMAW-P, GTAW)"]
             C_Geom[":JointGeometry (e.g., Bevel Angle)"]
@@ -481,7 +563,7 @@ flowchart TB
             C_Proc -->|":IS_A"| C_Concept
         end
 
-        subgraph Bridges ["5,854 Epistemic Grounding Bridges"]
+        subgraph Bridges ["Historical 5,854 Epistemic Grounding Bridges"]
             B1["[:DEFINED_IN]"]
             B2["[:ILLUSTRATED_BY]"]
             B3["[:TABULATED_IN]"]
@@ -489,7 +571,7 @@ flowchart TB
             B5["[:HISTORICALLY_RECORDED_IN]"]
         end
 
-        subgraph EvidenceLayer ["Normative Evidence Layer (471 Nodes, 512 Edges)"]
+        subgraph EvidenceLayer ["Normative Evidence Layer (historical: 471 Nodes, 512 Edges)"]
             E_Doc[":Document (AWS A3.0:2020)"]
             E_Clause[":Clause (Clause 4, Annexes A–F)"]
             E_Fig[":Figure (60 Standard Figures)"]
@@ -535,7 +617,9 @@ flowchart TB
 
 ## 2. The Dual-Layer Epistemic Graph Architecture
 
-A core innovation in this prototype (completed in Card 07) is the complete structural separation of **what concepts mean** (the domain ontology) from **where and how they are proven** (the normative evidence).
+The intended architecture logically separates domain concepts/assertions from source observations, evidence and grounding links. Legacy logical tables exist; their presence does not establish a complete A1 assertion/admission/query boundary. The first A1 slice implemented the evidence foundation and traversal; the bounded A1 assertion/admission/query boundary is now implemented under the active owner scope. This does not complete a general ontology or semantic typing layer.
+
+Read-only audit of the existing legacy SQLite registry found **2,480 ontology rows, 513 evidence rows and 5,826 bridge rows**. These are inventory counts, not reviewed semantic acceptance or counts for the new A1 assertion layer. The older diagram/GraphML figures below are historical snapshots of different artifacts.
 
 ### Layer 1: Domain Ontology Layer
 Represents abstract welding domain knowledge independently of the document typography:
@@ -579,7 +663,7 @@ Represents the physical, structural hierarchy of **AWS A3.0M/A3.0:2020**:
   - `[:HAS_CALLOUT]`: `:Figure` $\to$ `:Callout`
 
 ### Inter-Layer Epistemic Grounding Bridges
-These directed, typed edges cross the boundary between Layer 1 and Layer 2, providing verifiable mathematical proof that a technical claim is tethered to standard text or diagrams:
+These directed, typed edges record machine-checkable source/provenance links between Layer 1 and Layer 2. A valid link can establish identity/locator consistency; it is not mathematical proof of a claim or sufficient semantic support by itself. Admission also needs explicit scoped rules, supporting evidence and counterevidence handling:
 - `[:DEFINED_IN]`: `:Concept` $\to$ `:TextChunk` (cites exact clause, printed page, and quote).
 - `[:ILLUSTRATED_BY]`: `:Concept` / `:JointGeometry` $\to$ `:Figure` or `:Callout` (links concept to exact visual callout chip).
 - `[:TABULATED_IN]`: `:Process` $\to$ `:Table` (links letter code to process master table row).
@@ -623,8 +707,8 @@ classDiagram
 ```
 
 1. **GraphML Substrate** ([`storage/dual_layer_knowledge_graph.graphml`](file:///C:/Users/kenai/aws-a30-prototype/storage/dual_layer_knowledge_graph.graphml)):
-   - Total Nodes: **2,993** (2,522 Ontology + 471 Evidence).
-   - Total Edges: **9,579** (3,254 Semantic + 512 Structural + 5,854 Epistemic Bridges).
+   - Historical snapshot total nodes: **2,993** (2,522 Ontology + 471 Evidence).
+   - Historical snapshot total edges: **9,579** (3,254 Semantic + 512 Structural + 5,854 Epistemic Bridges).
    - Standard format loadable by Gephi, Cytoscape, NetworkX, and iGraph.
 2. **SQLite Registry & FTS5** ([`storage/dual_layer_registry.db`](file:///C:/Users/kenai/aws-a30-prototype/storage/dual_layer_registry.db)):
    - Implements native SQLite `FTS5` full-text search index (`ontology_fts`) for sub-millisecond keyword lookup.

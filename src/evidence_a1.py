@@ -9,6 +9,8 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from copy import deepcopy
+import math
 from dataclasses import replace
 
 from src.evidence_sources import _make, _section_note, _source
@@ -16,11 +18,146 @@ from src.evidence_a1_registry import a1_registry_binding
 from src.standard_manifest import extract_reference_records
 
 ELEMENT = "Figure A1"
+RECORD_EVIDENCE_SCHEMA = "a1-record-evidence-1.0"
 
 
 def _require(ok, code):
     if not ok:
         raise ValueError("A1_" + code)
+
+
+def _graph_digest(value):
+    return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True,
+        allow_nan=False, separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
+def _native_graph(graph):
+    """Remove only this module's additive provenance, preserving native facts."""
+    raw = deepcopy(graph)
+    for key in ("source_binding", "record_evidence_schema_version", "native_graph_sha256"):
+        raw.pop(key, None)
+    for node in raw["nodes"]:
+        node.pop("evidence", None)
+    for edge in raw["edges"]:
+        edge.pop("id", None)
+        edge.pop("evidence", None)
+    return raw
+
+
+def _record_region(record):
+    region = record.get("region")
+    _require(isinstance(region, list) and len(region) == 4 and all(
+        isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+        for v in region), "RECORD_REGION_INVALID")
+    ymin, xmin, ymax, xmax = region
+    _require(0 <= ymin < ymax <= 1 and 0 <= xmin < xmax <= 1, "RECORD_REGION_INVALID")
+    return region
+
+
+def _validate_source_binding(binding):
+    _require(isinstance(binding, dict) and set(binding) == {
+        "edition_id", "source_identity_id", "locator", "asset_sha256"}, "RECORD_SOURCE_INVALID")
+    _require(all(isinstance(binding[k], str) and binding[k] for k in
+        ("edition_id", "source_identity_id")), "RECORD_SOURCE_INVALID")
+    _require(isinstance(binding["asset_sha256"], str) and re.fullmatch(
+        r"[0-9a-f]{64}", binding["asset_sha256"]), "RECORD_ASSET_INVALID")
+    locator = binding["locator"]
+    _require(isinstance(locator, dict) and locator.get("element_id") == ELEMENT
+        and locator.get("canonical_element_id") == "figure:figure_a1"
+        and locator.get("source_identity_id") == binding["source_identity_id"]
+        and isinstance(locator.get("pdf_index"), int) and not isinstance(locator["pdf_index"], bool)
+        and locator["pdf_index"] >= 0 and bool(str(locator.get("printed_page", "")))
+        and locator.get("order") == 0 and locator.get("region_scope") == "full_page"
+        and locator.get("region") is None, "RECORD_LOCATOR_INVALID")
+
+
+def _record_proof(record, kind, graph, binding, native_hash):
+    region = _record_region(record)
+    if kind == "edge":
+        qualification = graph["edge_qualifications"].get(record.get("type"))
+        _require(isinstance(qualification, dict) and qualification.get("verification") in
+            {"source_bound", "candidate"} and bool(qualification.get("qualification")),
+            "RECORD_RELATION_UNQUALIFIED")
+        _require(record.get("type") != "INDENTED_UNDER" or
+            qualification["verification"] == "candidate", "INDENTATION_MUST_REMAIN_CANDIDATE")
+        record_id = "a1edge:" + _graph_digest([binding, native_hash, record])
+    else:
+        _require(isinstance(record.get("id"), str) and bool(record["id"]), "RECORD_ID_INVALID")
+        record_id = record["id"]
+        qualification = {"verification": "source_bound", "qualification":
+            "Literal native chart label/acronym and geometry; not reviewed semantic entailment."}
+    locator = dict(binding["locator"], region=region, region_scope="record_region",
+        region_space=graph["region_space"])
+    proof = {"record_id": record_id, "record_kind": kind, **deepcopy(binding),
+        "locator": locator, "native_graph_sha256": native_hash, **qualification}
+    proof["evidence_id"] = "record2:" + _graph_digest([proof, record])
+    return record_id, proof
+
+
+def bind_a1_graph_evidence(graph, edition_id, source_identity_id, locator, asset_sha256):
+    """Bind immutable native records to a declared source, without authenticating it.
+
+    The canonical loader authenticates PDF/manifest/image bytes separately. These
+    hashes detect inconsistent records; caller-declared metadata is not proof
+    that a supplied graph came from that source.
+    """
+    _require(not any(k in graph for k in ("selection", "source_binding")), "FULL_NATIVE_GRAPH_REQUIRED")
+    _require(graph.get("schema_version") == "a1-geometry-1.0" and
+        graph.get("region_space") == "normalized_pdf_page_ymin_xmin_ymax_xmax", "GRAPH_SCHEMA_INVALID")
+    binding = deepcopy(dict(edition_id=edition_id, source_identity_id=source_identity_id,
+        locator=locator, asset_sha256=asset_sha256))
+    _validate_source_binding(binding)
+    bound = deepcopy(graph)
+    native_hash = _graph_digest(graph)
+    bound.update(source_binding=binding, record_evidence_schema_version=RECORD_EVIDENCE_SCHEMA,
+        native_graph_sha256=native_hash)
+    identifiers = {n["id"] for n in bound["nodes"]}
+    _require(len(identifiers) == len(bound["nodes"]) and bound["root_id"] in identifiers,
+        "GRAPH_IDENTITY_INVALID")
+    for node in bound["nodes"]:
+        _, node["evidence"] = _record_proof(node, "node", graph, binding, native_hash)
+    for edge in bound["edges"]:
+        _require(edge["from"] in identifiers and edge["to"] in identifiers, "GRAPH_ENDPOINT_MISSING")
+        identifier, proof = _record_proof(edge, "edge", graph, binding, native_hash)
+        edge.update(id=identifier, evidence=proof)
+    validate_a1_graph_evidence(bound)
+    return bound
+
+
+def validate_a1_graph_evidence(graph, expected_source=None, require_complete=True):
+    """Check record consistency and declared source scope, not caller authenticity."""
+    _require(graph.get("record_evidence_schema_version") == RECORD_EVIDENCE_SCHEMA,
+        "RECORD_EVIDENCE_SCHEMA_INVALID")
+    binding = graph.get("source_binding")
+    _validate_source_binding(binding)
+    if expected_source is not None:
+        _require(binding == expected_source, "RECORD_SOURCE_MISMATCH")
+    native_hash = graph.get("native_graph_sha256")
+    _require(isinstance(native_hash, str) and re.fullmatch(r"[0-9a-f]{64}", native_hash),
+        "NATIVE_GRAPH_HASH_INVALID")
+    raw = _native_graph(graph)
+    if require_complete:
+        _require("selection" not in graph and _graph_digest(raw) == native_hash,
+            "NATIVE_GRAPH_INCOMPLETE_OR_CHANGED")
+    identifiers = {n["id"] for n in raw["nodes"]}
+    _require(len(identifiers) == len(raw["nodes"]) and raw["root_id"] in identifiers,
+        "GRAPH_IDENTITY_INVALID")
+    evidence_ids = set()
+    for kind, records, originals in (("node", graph["nodes"], raw["nodes"]),
+                                      ("edge", graph["edges"], raw["edges"])):
+        for record, original in zip(records, originals):
+            if kind == "edge":
+                _require(original["from"] in identifiers and original["to"] in identifiers,
+                    "GRAPH_ENDPOINT_MISSING")
+            identifier, proof = _record_proof(original, kind, raw, binding, native_hash)
+            _require(record.get("evidence") == proof and (kind != "edge" or
+                record.get("id") == identifier), "RECORD_EVIDENCE_MISMATCH")
+            _require(proof["evidence_id"] not in evidence_ids, "RECORD_EVIDENCE_COLLISION")
+            evidence_ids.add(proof["evidence_id"])
+    return {"status": "source_binding_validated", "native_graph_sha256": native_hash,
+        "node_count": len(graph["nodes"]), "edge_count": len(graph["edges"]),
+        "record_evidence_count": len(evidence_ids),
+        "qualification": "Declared record consistency only; source authenticity requires canonical loader and asset verification."}
 
 
 def _bbox(value):
@@ -248,7 +385,7 @@ def retrieve_a1_graph(graph, query):
     edges = [e for e in graph["edges"] if e["from"] in selected and e["to"] in selected]
     source_hash = hashlib.sha256(json.dumps(graph, ensure_ascii=False, sort_keys=True,
                                            allow_nan=False, separators=(",", ":")).encode()).hexdigest()
-    return {"schema_version": graph["schema_version"], "root_id": graph["root_id"],
+    return {**graph, "schema_version": graph["schema_version"], "root_id": graph["root_id"],
             "nodes": nodes, "edges": edges, "edge_qualifications": graph["edge_qualifications"],
             "region_space": graph["region_space"],
             "native_text": "\n".join(n["label"] + (" " + n["code"] if "code" in n else "") for n in nodes),
@@ -347,14 +484,15 @@ def load_a1_evidence(root: Path, query=None):
         graph = extract_a1_chart(page, edition)
         # The canonical source caption must be on the same selected native page.
         _require(re.search(r"\bFigure\s+A1\b", page.get_text()) is not None, "NATIVE_CAPTION_MISSING")
-    if query is not None:
-        graph = retrieve_a1_graph(graph, query)
     note = _section_note(manifest, edition, "Annex A")
     source_identity = a1_source_identity_id(edition, record["id"], anchor, asset["sha256"])
     locator = {"element_id": ELEMENT, "canonical_element_id": record["id"],
                "source_identity_id": source_identity, "pdf_index": anchor["pdf_index"],
                "printed_page": anchor["printed_label"], "order": 0,
                "region": anchor["region"], "region_scope": "full_page"}
+    graph = bind_a1_graph_evidence(graph, edition, source_identity, locator, asset["sha256"])
+    if query is not None:
+        graph = retrieve_a1_graph(graph, query)
     content = {"caption": record["title"], "asset_relpath": asset["relpath"],
                "source_identity_id": source_identity,
                "asset_sha256": asset["sha256"], "media_type": "image/png",

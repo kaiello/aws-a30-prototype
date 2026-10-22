@@ -5,6 +5,7 @@ import importlib
 import json
 from pathlib import Path
 import socket
+import sqlite3
 import sys
 
 import pytest
@@ -272,7 +273,11 @@ def test_partial_chart_does_not_establish_exhaustive_descendants(graph):
 
 
 def test_synthetic_wrapper_preserves_source_identity_image_and_graph_across_operations(graph, tmp_path, monkeypatch):
-    from src.evidence_a1 import a1_source_identity_id
+    registry = tmp_path / "storage/dual_layer_registry.db"
+    registry.parent.mkdir()
+    with sqlite3.connect(registry) as connection:
+        connection.execute("CREATE TABLE synthetic_legacy_registry (id TEXT PRIMARY KEY)")
+    from src.evidence_a1 import a1_source_identity_id, bind_a1_graph_evidence
     from src.evidence_v2 import Evidence, evidence_id
     sys.path.insert(0, str(Path(__file__).parent))
     # This helper is already an original redistributable image fixture.
@@ -295,7 +300,9 @@ def test_synthetic_wrapper_preserves_source_identity_image_and_graph_across_oper
                "pdf_index": 0, "printed_page": "1", "order": 0, "region": None, "region_scope": "full_page"}
     content = {"caption": "Original repair toy", "asset_relpath": "assets/toy.png", "asset_sha256": asset_hash,
                "source_identity_id": identity, "media_type": "image/png", "single_image_scope": True,
-               "continuation_orders": [0], "chart_graph": graph, "required_evidence_ids": [note.evidence_id],
+               "continuation_orders": [0],
+               "chart_graph": bind_a1_graph_evidence(graph, edition, identity, locator, asset_hash),
+               "required_evidence_ids": [note.evidence_id],
                "notes": [], "qualifiers": [], "exceptions": []}
     figure = Evidence(evidence_id(edition, "figure_region", locator, content), edition,
                       "figure_region", locator, content, "synthetic", required_ids=(note.evidence_id,))
