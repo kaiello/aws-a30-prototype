@@ -1,6 +1,145 @@
 # System Architecture: AWS A3.0 Multimodal Prototype
 
-## Bounded foundation publication closeout (2026-10-22)
+**Current priority / pre-publication validation 007 (2026-10-22):** Make the AWS
+backend correct one bounded slice at a time; Navy Weld integration and Utopia
+evaluation remain deferred. Targeted repair is complete in harness 1.7.1 /
+planner 1.6.1 / lexicon 1.0: all 179 A1 software checks passed and independent
+code/publication review approved. The forced-knowledge child-list/codes request
+now safely abstains and legacy `parent_groups` compatibility is restored.
+Four canonical CLI calls executed the same 51 questions once; all verbatim
+answers match 005, unchanged gold gives 51 content PASS, and capture is unchanged.
+All 51 are exposed development regressions, not unseen/general QA acceptance.
+Native coverage remains 44 complete / 2 partial / 5 unanswered, with the documented
+shielding-gas reason-label limitation; model/provider NONE, zero inference calls.
+Source, dictionary, admission and prior results are unchanged. Commit/push, draft
+PR, merge and local/online sync are authorized next; Git completion is not yet
+claimed. Keep source/schema/ingest changes outside this closeout. No next slice
+starts automatically.
+
+## Historical pre-publication A1 completeness repair 005 result (2026-10-22)
+
+**BOUNDED_EXPOSED_REGRESSION_PASS.** Local/uncommitted branch
+`feat/a1-nlq-planning-completeness`, base/main
+`7e6e80450dbdbc5ad8910462c8707b383eeae6ff`; ready for the owner's Git review/
+closeout decision with the labeling limitation below; no publication is currently
+authorized. Frozen harness 1.7.0 /
+planner 1.6.0 / lexicon 1.0 correct generic follow-up/coverage binding and false
+clarification/unsupported markers; source facts, the 196-entry dictionary,
+aliases and evidence-to-knowledge admission remain unchanged.
+One frozen execution of all 51 questions used four canonical CLI calls against
+actual A1 source, model/provider NONE and zero inference/external calls.
+Independent content/capture inspection grades original 31 **31 PASS**, exposed
+eight **8 PASS**, exposed six **6 PASS**, and prior fresh six **6 PASS**:
+**51 PASS / 0 PARTIAL / 0 FAIL**, versus 004's 50 PASS / 1 PARTIAL. Every actual
+requested subpart was captured in this set. HO003-06 now includes its requested
+designation/group follow-up alongside a legitimate source-limit abstention;
+the false `state`, possessive-`s` and identification-marker warnings are gone.
+HO001-07 keeps both requested lookups explicitly ambiguous with source choices.
+The named spurious markers are gone; 46 answer strings are unchanged and five
+changed. Runtime coverage remains a separate measure: 44 complete,
+2 partial, 5 unanswered, reflecting three true ambiguity questions and four
+source-limit questions (two composite partials), not failed content grades.
+Native metadata is not perfect: HO003-06's legitimately unavailable shielding-gas
+part is still labeled `planning_unsupported` /
+`requested_information_field_not_supported`, rather than source-limit. Its
+abstention and SMAW/AW follow-up answer are correct; the reason classification
+remains a documented limitation, not an automatic new repair/replay.
+All 51 are exposed development regressions, not unseen/general NLQ acceptance.
+Twenty-four focused synthetic checks passed in 2.21 s; the known non-failing
+pyreadline shutdown warning remains. Independent code review approved the freeze.
+The original questions/rubrics/gold and prior raw artifacts remain immutable,
+gold stayed outside execution, and frozen code/source identities are unchanged.
+Internal trace audit checked 81 operations (39 knowledge / 42 evidence), 381
+accepted-assertion references (143 unique), all SQL ACCEPTED, and 844 support
+observations with full source scope/closure. All 71 candidate occurrences stayed
+evidence-only; no accepted `IS_A`. Ten evidence paths contain 26 hops / 11 reverse
+steps; no accepted-KG paths were returned in this auto run. Zero internal join,
+source or structural issues were found and source/DB hashes stayed unchanged.
+Twelve internal child-target bindings and all seven ambiguity parts were checked;
+actual natural-language capture/content/support were independently graded above.
+The full 51-answer report `Figure_A1_NLQ_Repair_005_Report.md` is finalized in
+the parent task workspace and delivered to Library (version 0). Preserve 004/003
+history below. Backend A1 only, GR optional; no UI, new models/NER/framework, external
+inference, automatic experiments/repair loops, Git publication or deletion work.
+
+## Historical A1 composition repair 004 result (2026-10-22)
+
+**BOUNDED_REPAIR_EVALUATED_WITH_LANGUAGE_GAPS.** Local/uncommitted branch
+`feat/a1-nlq-planning-completeness`, base/main
+`7e6e80450dbdbc5ad8910462c8707b383eeae6ff`; no publication is authorized.
+Frozen harness 1.6.0 / planner 1.5.0 / lexicon 1.0 repair generic child targets,
+follow-ups, path direction, grouped row partitioning and coverage accounting.
+Source facts, aliases and the evidence-to-knowledge admission boundary remain
+unchanged; recognizing a name does not promote candidate layout to knowledge.
+Four canonical CLI calls executed all 51 unchanged questions once against actual
+A1 source, model/provider NONE and zero inference/external calls. Independent
+content grades: original 31 **31 PASS**; exposed eight **8 PASS**; exposed six
+**6 PASS**; prior fresh six **5 PASS / 1 PARTIAL**. Total **50 PASS / 1 PARTIAL /
+0 FAIL**, versus 003's 45 PASS / 5 PARTIAL / 1 FAIL. All 51 are now exposed
+development regressions; this is not fresh generalization or general QA acceptance.
+Runtime coverage is complete for 43/51 versus 30/51 previously; runtime status is
+not a semantic grade. HO003-06 still omits the requested SMAW designation/AW-group
+follow-up and emits a false possessive-`s` warning. HO003-04 has full content but
+a false `state`-to-SSW clarification; HO001-07 returns useful ambiguity choices
+while retaining an unsupported identification clause. Hold readiness/publication
+for the remaining language and coverage limits; do not automatically repair/replay.
+Internal trace audit matched 79 operations (37 knowledge / 42 evidence) and 369
+accepted-assertion references (140 unique) to SQLite; 71 candidate occurrences
+stayed evidence-only. Ten evidence paths contain 26 hops / 11 reverse steps;
+the auto run returned no accepted-KG paths. No internal proof, join, source-scope,
+accepted-status, candidate-promotion or path-direction issue was found; source/DB
+hashes stayed unchanged. Child-target checks validate executed plans, not whether
+every requested natural-language part was captured.
+Focused synthetic checks passed nine coverage cases in 1.60 s before two review
+fixes, then 21 combined cases in 3.36 s before the final narrow delta; the single
+affected list-scope check passed in 0.63 s after that delta. No full post-delta
+21-case run is claimed. The actual CLI content grades above are separate evidence.
+Preserve the 003 snapshot/raw/report baseline in
+`storage/evidence_v2/a1_nlq_repair_baseline_004` and its historical record below.
+Gold stayed outside execution and all earlier results remain immutable.
+The full-answer report `Figure_A1_NLQ_Repair_004_Report.md` is finalized in the
+parent task workspace; Library delivered (version 0). Backend A1 only; no UI, NER,
+new models/framework, external inference, Git publication or deletion work.
+
+## Historical A1 language-planning result 003 (2026-10-22)
+
+**BOUNDED_SLICE_IMPLEMENTED_WITH_NLQ_GAPS.** Local/uncommitted branch
+`feat/a1-nlq-planning-completeness`, base
+`7e6e80450dbdbc5ad8910462c8707b383eeae6ff`; no commit, push or merge is authorized.
+Harness 1.5.0 / planner 1.4.0 / lexicon 1.0 implement source-backed identity
+linking, compositional intent planning, typed evidence-versus-knowledge operations
+and per-part answer/unsupported/ambiguity receipts. The dictionary has 196 entries:
+99 literal labels, 7 heading codes and 90 process codes; actual verified aliases
+remain zero. Normalization is matching, not a source alias. Identity recognition
+never admits a relationship; candidate indentation retains its evidence-only
+qualification and knowledge still requires accepted assertions with source proof.
+The frozen canonical backend ran each of 51 questions once, model/provider NONE,
+zero model/external inference calls. Independent content grades, separate from
+runtime statuses: original 31 **31 PASS**; exposed eight **6 PASS / 1 PARTIAL /
+1 FAIL**; exposed six **4 PASS / 2 PARTIAL / 0 FAIL**; independently frozen fresh
+six **4 PASS / 2 PARTIAL / 0 FAIL**. The first 45 are development regressions;
+the last six were untuned for this pass and are now exposed, not general acceptance.
+Trace audit covered 75 operations (36 knowledge / 39 evidence), 226 record
+bindings and 336 accepted-assertion references (119 unique), with no join,
+identity or candidate-authority issue. This auto run returned nine evidence-layer
+paths / 23 hops and no accepted-KG `knowledge_paths`; the earlier explicit KG
+integration remains a separate historical check, not a new result here.
+Focused checks initially passed 12 and failed 2; direction-separator and scope
+contract defects were fixed, then the two affected checks passed. Independent
+review approved the freeze; no full post-fix suite is claimed. Code/source/runtime
+identities stayed unchanged after freeze. Original questions/gold/raw results remain
+immutable and grading stayed outside execution.
+Remaining gaps include spurious unsupported tails/over-abstention in runtime
+coverage, missing child sets or wrong parent targets, omitted follow-ups, path
+direction and unsupported row partitioning. Coverage receipts are not proof that
+every natural-language intent was understood or answered. **Stop after this pass;
+no automatic repair/replay.** Backend A1 only, no UI, models, NER or new framework;
+GR remains optional/unbenchmarked. General natural-language QA is not solved.
+Final report: `Figure_A1_NLQ_Completeness_003_Report.md` in the parent workspace,
+including all 51 exact backend answers. Library delivered (version 0).
+Earlier records below are history.
+
+## Historical bounded foundation publication closeout (2026-10-22)
 
 The owner authorized publication after a focused existing-interface check and
 independent review. The canonical backend CLI/API passed five boundary probes:
