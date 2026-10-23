@@ -1,6 +1,134 @@
 # Project Goal: AWS A3.0 Multimodal NLQ & Epistemic Knowledge System
 
-**Current priority / pre-publication validation 007 (2026-10-22):** Make the AWS
+**Current Git closeout (2026-10-23): AUTHORIZED; FINAL REVIEW/CHECKS PENDING.**
+The owner authorized the scoped commit/push, draft PR and merge after applicable
+checks and independent review, followed by exact local main/origin/GitHub SHA,
+clean-worktree and 0/0 synchronization verification. Publication, merge and final
+sync are not yet claimed. Preserve the bounded dictionary-assisted A1 scope,
+private source/evaluation artifacts and unrelated work; no next slice is started.
+The 003 result below is the historical pre-publication record.
+
+**Historical pre-publication raster integration 003 (2026-10-23): BOUNDED_A1_INTEGRATION_READY_FOR_OWNER_REVIEW.**
+Local/uncommitted `feat/a1-source-aware-ingest`, based on unchanged main
+`039087d06d55860bda19c1c8ea3b55b678cb8e4a`; no commit/push/merge is authorized.
+The actual retained-raster pipeline executed the existing 51 questions once:
+**51 content PASS in auto and 51 content PASS in candidate-evidence view**,
+with **51 native content PASS** unchanged. Auto answers match native after only
+removing the explicit raster-provenance prefix; evidence answers add qualified
+parent-layout details in 14 cases without changing facts. All 51 are exposed
+regressions, not unseen/general QA or cross-figure acceptance. Runtime coverage
+is separately 44 complete/2 partial/5 unanswered because ambiguity and source
+limits remain explicit; this does not mean 51 complete factual answers.
+The known native `HO003-06` shielding-gas reason-label caveat is preserved.
+003 reused unchanged 002 OCR/model artifacts with **zero new OCR/model calls**.
+Typed per-predicate automatic pixel/OCR checks admitted 287 assertions (189
+literal facts, 90 row enclosures and eight physical connectors). The 29
+indentation assertions remain candidate; no `IS_A` was accepted. All 226 raw
+observations/proofs remain candidate. The 586 support joins include source-local
+glyph corroboration for four low-confidence/corrected codes; dictionary matching
+alone grants no admission. All eight measured connector stroke regions and box
+contacts were independently checked against pixels; these are undirected
+physical links, with no arrow direction or semantic subtype inferred.
+Scoped completeness accounts for observed rows/pixel bands, measured borders,
+fresh rectangle inventory, orphan ink/words and required projection edges.
+Applicable scopes passed without native reference totals or expected QA answers.
+The KG recomputes retained seed/pixels/graph and checks file hashes before
+admission. These are automatic source checks, not human approval, mathematical
+proof or authority from a receipt flag/hash alone.
+The full 270 A1 software checks passed in 7.67 s; independent code/source/proof
+and actual-answer review found no material blocker. Software counts support the
+answer/evidence results, not substitute for them. Frozen runtime/source files
+and all 72 prior artifacts remain unchanged; native/001/002 inputs, gold,
+outputs and private source evidence are preserved. No post-output repair/replay,
+extra benchmark/framework, tuning loop or automatic model retry occurred.
+Ready for owner review of this bounded A1 integration only. AWS backend one
+figure at a time; GR optional, Navy Weld/Utopia deferred, no UI/new models/services
+or automatic Git publication. Final report delivered to Library, version 0
+(`libfile_24260fa7fb7c8191bfd0d5fcce255cbf`).
+
+**Historical dictionary-assisted ingest 002 (2026-10-23): NOT_READY_FOR_ACCEPTED_RASTER_QA; HOLD UNMERGED.**
+Local/uncommitted `feat/a1-source-aware-ingest`, based on unchanged main
+`039087d06d55860bda19c1c8ea3b55b678cb8e4a`; no commit/push/merge is authorized.
+This bounded pass used the source-backed dictionary's 99 labels and 97 printed
+codes to normalize observed OCR, preserving raw text, provenance and uncertainty.
+It supplied no reference regions, boxes, relationships, unseen entities, gold
+answers or accepted status. This is **dictionary-assisted ingestion**, unlike
+independent attempt 001 retained below. Source comparison found all 99 nodes
+(90 processes/eight categories/root) and 127 physical relations (90 enclosures,
+29 indentation links/eight root connectors), with no missing/extra identities or
+endpoint relations. Two connectors came from CV and six from VLM. The six VLM
+relationship regions identify endpoint boxes rather than connecting strokes;
+this is an unresolved evidence-localization gap, not fully verified anchors.
+The only local `qwen3-vl:8b-instruct` / Ollama 0.40.4 call used six unresolved
+tasks/seven referenced nodes plus pixels, naturally completing in 42.656 s with
+8980 input/645 output tokens. Actual context was 32768, `num_predict=-1`,
+temperature 0, seed 42; metadata supports 262144, not allocated for this run.
+One end-to-end pass executed the existing 51 exposed questions in both raster
+views. Unchanged content rubrics grade candidate-evidence answers **32 PASS /
+2 PARTIAL / 17 FAIL**, and mixed auto-policy answers **16 PASS / 4 PARTIAL /
+31 FAIL**. Auto includes evidence operations; these are not accepted-KG accuracy
+scores. All 226 record proofs and 316 assertions remain candidate, with zero
+accepted assertions and 570 valid support joins. Valid joins do not establish
+correct stroke localization or answer completeness. `complete_chart=False`
+blocks exhaustive lists even in evidence view; auto knowledge operations abstain
+where identities/relations have not been admitted. No candidate was promoted to
+raise scores. Native answers remain exact: **51 content PASS**, coverage
+44 complete/2 partial/5 unanswered and the existing reason-label caveat.
+The 254 software checks passed in 7.27 s; answer quality and evidence limitations
+above determine readiness. Original inputs/gold, native/001 results, frozen code
+and private source artifacts are preserved; no post-output repair/replay occurred.
+Recommended next decision: address completeness/admission handling and connector
+stroke anchors in a bounded follow-up. No further model call, automatic repair
+cycle or new benchmark/framework starts from this result. AWS/A1 backend first,
+one figure; GR optional, Navy Weld/Utopia deferred, no UI/new models/services.
+Report `Figure_A1_Dictionary_Assisted_Ingest_002_Report.md` is delivered to
+Library, version 0 (`libfile_508fed85d1d48191a9158ead2c695363`).
+
+**Historical independent source-aware ingest 001 (2026-10-22):
+NOT_READY_FOR_RASTER_QA; HOLD UNMERGED.** Local/uncommitted
+`feat/a1-source-aware-ingest`, unchanged main
+`039087d06d55860bda19c1c8ea3b55b678cb8e4a`; no publication is authorized.
+The reviewed source-aware implementation passed 231 software checks in 6.56 s.
+Native PDF text/vector ingest and one canonical 51-question pass preserve exact
+007 answers: 51 content PASS, native coverage 44/2/5 with the existing reason-label
+caveat, reader model NONE/zero calls. These are exposed regression controls.
+The image-only PDF has zero native characters/vectors; its 300-DPI PNG is
+2540 x 3287. One Tesseract 5.5 / OpenCV 4.12 extraction produced 410 words and
+eight rectangles, but no resolved root/usable graph: original setup used zero
+model calls and ran no raster QA. A separately recorded, reviewed generic
+cached-observation continuation reused that OCR without threshold/gold changes.
+Its only local vision call used `qwen3-vl:8b-instruct` / Ollama 0.40.4, context
+32768, `num_predict=-1`, temperature 0, seed 42. After 315.156 s it ended
+`done_reason=length`: input 21799 + output 10969 filled the configured window
+(model metadata declares 262144; this is not that native ceiling). Incomplete
+JSON was labeled `invalid_output` by the wrapper; context exhaustion is not an
+answer-quality grade. No usable raster graph or accepted proposal resulted.
+All 51 raster questions are **NOT_RUN**, semantic grades null, not 51 failures.
+Source inspection found 73/90 correct name/code pairs, 7/8 true headings plus
+one false root-fragment category, and 99 correct physical edges/no extras;
+17 enclosures, 3 indentation links and 8 connectors are missing. Root words
+exist in OCR but were misassigned and excluded from allowed bootstrap IDs, so
+the current contract cannot express the correct root; larger context alone
+cannot fix it. Partial model output also contains invalid IDs/link types;
+these are diagnostics, not a complete model grade or salvageable QA result.
+The main gaps are row/layout assignment and the input/output contract, not
+established generic OCR/model inability. No post-model repair/retry occurred.
+Native records and candidate-binding paths retain method/version/anchors/provenance/
+uncertainty; the incomplete actual raster run remains raw observations/model
+diagnostics, with no raster KG store created.
+Raster extraction receives pixels/identity metadata, never reused native facts.
+OCR/VLM observations remain candidates, not automatic accepted-KG admissions.
+Further compact unresolved-only vision/contract/layout work needs the next bounded
+decision. AWS/A1 one figure first; Navy Weld/Utopia deferred, GR optional; no UI,
+new framework/install/cloud or automatic extra experiments. Report `Figure_A1_Source_Aware_Ingest_001_Report.md` is delivered to Library, version 0 (`libfile_d8ad457a723c8191a513ea866d462d33`).
+
+## Historical validation 007 and PR #10 closeout (2026-10-22)
+
+PR #10 merged at `039087d06d55860bda19c1c8ea3b55b678cb8e4a`; clean local/main
+and online synchronization (0/0) were verified before this branch was prepared.
+The following validation record predates that completed publication.
+
+**Historical pre-publication validation 007 (2026-10-22):** Make the AWS
 backend correct one bounded slice at a time; Navy Weld integration and Utopia
 evaluation remain deferred. Targeted repair is complete in harness 1.7.1 /
 planner 1.6.1 / lexicon 1.0: all 179 A1 software checks passed and independent
