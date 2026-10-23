@@ -71,6 +71,32 @@ def _validate_source_binding(binding):
         and locator.get("region") is None, "RECORD_LOCATOR_INVALID")
 
 
+def _extraction_provenance(graph, binding, record=None):
+    """Validate declared raster lineage; it does not verify extracted facts."""
+    override = record is not None and "extraction_provenance" in record
+    if "extraction_provenance" not in graph:
+        _require(not override, "RECORD_EXTRACTION_REQUIRES_GRAPH_PROVENANCE")
+        return None
+    default = _extraction_provenance(graph, binding) if override else None
+    provenance = record["extraction_provenance"] if override else graph["extraction_provenance"]
+    _require(isinstance(provenance, dict) and set(provenance) == {
+        "method", "engine", "version", "input_asset_sha256", "uncertainty", "parent_source"},
+        "EXTRACTION_PROVENANCE_INVALID")
+    _require(provenance["method"] in {"ocr", "vision"}
+        and all(isinstance(provenance[key], str) and provenance[key].strip() for key in ("engine", "version"))
+        and provenance["input_asset_sha256"] == binding["asset_sha256"]
+        and provenance["uncertainty"] == "unreviewed_model_observation", "EXTRACTION_PROVENANCE_INVALID")
+    parent = provenance["parent_source"]
+    _validate_source_binding(parent)
+    _require(parent["edition_id"] == binding["edition_id"] and all(
+        parent["locator"][key] == binding["locator"][key] for key in
+        ("element_id", "canonical_element_id", "pdf_index", "printed_page", "order", "region", "region_scope")),
+        "EXTRACTION_PARENT_SCOPE_MISMATCH")
+    if override:
+        _require(parent == default["parent_source"], "EXTRACTION_PARENT_SCOPE_MISMATCH")
+    return provenance
+
+
 def _record_proof(record, kind, graph, binding, native_hash):
     region = _record_region(record)
     if kind == "edge":
@@ -86,10 +112,16 @@ def _record_proof(record, kind, graph, binding, native_hash):
         record_id = record["id"]
         qualification = {"verification": "source_bound", "qualification":
             "Literal native chart label/acronym and geometry; not reviewed semantic entailment."}
+    provenance = _extraction_provenance(graph, binding, record)
+    if provenance is not None:
+        qualification = {"verification": "candidate", "qualification":
+            "Unreviewed " + provenance["method"] + " extraction from the bound image; neither literal accuracy nor semantic relations are admitted."}
     locator = dict(binding["locator"], region=region, region_scope="record_region",
         region_space=graph["region_space"])
     proof = {"record_id": record_id, "record_kind": kind, **deepcopy(binding),
         "locator": locator, "native_graph_sha256": native_hash, **qualification}
+    if provenance is not None:
+        proof["extraction_provenance"] = deepcopy(provenance)
     proof["evidence_id"] = "record2:" + _graph_digest([proof, record])
     return record_id, proof
 
@@ -107,18 +139,23 @@ def bind_a1_graph_evidence(graph, edition_id, source_identity_id, locator, asset
     binding = deepcopy(dict(edition_id=edition_id, source_identity_id=source_identity_id,
         locator=locator, asset_sha256=asset_sha256))
     _validate_source_binding(binding)
+    provenance = _extraction_provenance(graph, binding)
     bound = deepcopy(graph)
-    native_hash = _graph_digest(graph)
+    if provenance is not None:
+        for qualification in bound["edge_qualifications"].values():
+            qualification.update(verification="candidate", qualification=
+                "Unreviewed " + provenance["method"] + " chart-layout extraction; no verified source relation or semantic subtype is established.")
+    native_hash = _graph_digest(bound)
     bound.update(source_binding=binding, record_evidence_schema_version=RECORD_EVIDENCE_SCHEMA,
         native_graph_sha256=native_hash)
     identifiers = {n["id"] for n in bound["nodes"]}
     _require(len(identifiers) == len(bound["nodes"]) and bound["root_id"] in identifiers,
         "GRAPH_IDENTITY_INVALID")
     for node in bound["nodes"]:
-        _, node["evidence"] = _record_proof(node, "node", graph, binding, native_hash)
+        _, node["evidence"] = _record_proof(node, "node", bound, binding, native_hash)
     for edge in bound["edges"]:
         _require(edge["from"] in identifiers and edge["to"] in identifiers, "GRAPH_ENDPOINT_MISSING")
-        identifier, proof = _record_proof(edge, "edge", graph, binding, native_hash)
+        identifier, proof = _record_proof(edge, "edge", bound, binding, native_hash)
         edge.update(id=identifier, evidence=proof)
     validate_a1_graph_evidence(bound)
     return bound
