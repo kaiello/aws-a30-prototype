@@ -32,6 +32,47 @@ TABLES = ("a1k_source_meta", "a1k_source_observations", "a1k_domain_concepts",
           "a1k_typed_assertions", "a1k_assertion_evidence")
 
 
+def _admission_rules(graph):
+    # Leave existing native runtime metadata and assertion payloads unchanged.
+    if "extraction_provenance" not in graph:
+        return RULES
+    rules = {**RULES, "candidate-extraction-record-1":
+        "Unreviewed OCR/vision literal observations remain candidate; binding image bytes does not verify recognition."}
+    if "raster_verification" in graph:
+        rules.update({
+            "raster-literal-pixels-1": "Accept only the individually verified literal field from retained OCR anchors, image ink and source-local recognition checks; vocabulary agreement alone is insufficient.",
+            "raster-enclosure-pixels-1": "Accept only a verified printed rectangle enclosing the observed row, with admitted endpoint labels; no semantic subtype is asserted.",
+            "raster-connector-pixels-1": "Accept only an independently localized continuous image stroke contacting both observed boxes, with admitted endpoint labels; the physical connection is undirected.",
+        })
+    return rules
+
+
+def _raster_decisions(graph):
+    """Read decisions only after source recomputation at the store boundary.
+
+    This projection is not an authenticity check. The public prepare/read paths
+    verify the retained artifacts and recompute these decisions before admission.
+    """
+    metadata = graph.get("raster_verification")
+    if metadata is None:
+        return {}, {}, {}
+    if ("extraction_provenance" not in graph or not isinstance(metadata, dict)
+            or metadata.get("schema_version") != "a1-raster-integration-1.0"):
+        _error("RASTER_VERIFICATION_INVALID")
+    receipt = metadata.get("receipt", {})
+    if not isinstance(receipt, dict) or receipt.get("schema_version") != "a1-raster-record-verification-1.0":
+        _error("RASTER_VERIFICATION_INVALID")
+    nodes, enclosures = receipt.get("nodes", {}), receipt.get("enclosures", {})
+    connector_records = metadata.get("connector_receipt", {}).get("records", [])
+    if (not isinstance(nodes, dict) or not isinstance(enclosures, dict)
+            or not isinstance(connector_records, list)
+            or any(not isinstance(record, dict) for record in connector_records)):
+        _error("RASTER_VERIFICATION_INVALID")
+    connectors = {_json([record.get("from_id"), record.get("to_id"), "CHART_CONNECTOR"]): record
+                  for record in connector_records}
+    return nodes, enclosures, connectors
+
+
 def _json(value):
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
 
@@ -114,10 +155,12 @@ def _insert_assertion(connection, record):
 
 def _admit(graph):
     binding = graph["source_binding"]
+    rules = _admission_rules(graph)
     family = binding["edition_id"].split("@", 1)[0]
     scope = {**binding, "native_graph_sha256": graph["native_graph_sha256"]}
     concepts, node_concepts, assertions = {}, {}, {}
     records = {record["id"]: record for record in graph["nodes"] + graph["edges"]}
+    raster_nodes, raster_enclosures, raster_connectors = _raster_decisions(graph)
     for node in graph["nodes"]:
         label_key = " ".join(node["label"].casefold().split())
         concept = "a1concept:" + _digest([family, node["kind"], label_key])
@@ -129,21 +172,44 @@ def _admit(graph):
         if node.get("code") and node["code"] not in concepts[concept]["codes"]:
             concepts[concept]["codes"].append(node["code"])
 
-    def add(subject, predicate, value, origin, supports, status, rule):
+    def add(subject, predicate, value, origin, supports, status, rule, raster_basis=None):
         identifier = "a1assertion:" + _digest([subject, predicate, value, scope])
         assertion = assertions.setdefault(identifier, {"assertion_id": identifier, "predicate": predicate,
             "subject_id": subject, "object_value": value, "status": status, "rule_id": rule,
-            "admission_reason": RULES[rule], "scope": scope, "origin_record_ids": [],
+            "admission_reason": rules[rule], "scope": scope, "origin_record_ids": [],
             "support_evidence_ids": [], "counter_evidence_ids": []})
         assertion["origin_record_ids"] = sorted(set(assertion["origin_record_ids"]) | {origin})
         assertion["support_evidence_ids"] = sorted(set(assertion["support_evidence_ids"]) |
             {records[record]["evidence"]["evidence_id"] for record in supports})
+        if raster_basis is not None:
+            verification = graph["raster_verification"]
+            assertion["admission_evidence"] = {
+                "schema_version": verification["receipt"]["schema_version"],
+                "image_sha256": verification["receipt"]["image_sha256"],
+                "predicate": predicate, "verification": deepcopy(raster_basis)}
 
     for node in graph["nodes"]:
         concept = node_concepts[node["id"]]
-        add(concept, "PRINTED_LABEL", node["label"], node["id"], [node["id"]], "ACCEPTED", "literal-record-1")
+        literal_status, literal_rule = (("ACCEPTED", "literal-record-1")
+            if node["evidence"]["verification"] == "source_bound" else
+            ("CANDIDATE", "candidate-extraction-record-1"))
+        decision = raster_nodes.get(node["id"], {})
+        label_status, label_rule = (("ACCEPTED", "raster-literal-pixels-1")
+            if decision.get("label_supported") is True else (literal_status, literal_rule))
+        add(concept, "PRINTED_LABEL", node["label"], node["id"], [node["id"]], label_status, label_rule,
+            decision if label_rule == "raster-literal-pixels-1" else None)
         if node.get("code"):
-            add(concept, "PRINTED_DESIGNATION", node["code"], node["id"], [node["id"]], "ACCEPTED", "literal-record-1")
+            designation_status, designation_rule = (("ACCEPTED", "raster-literal-pixels-1")
+                if decision.get("designation_supported") is True else (literal_status, literal_rule))
+            supports = [node["id"]]
+            if designation_rule == "raster-literal-pixels-1":
+                supporting_nodes = decision.get("support_node_ids", [])
+                if (not isinstance(supporting_nodes, list)
+                        or any(identifier not in node_concepts for identifier in supporting_nodes)):
+                    _error("RASTER_VERIFICATION_SUPPORT_UNKNOWN")
+                supports.extend(supporting_nodes)
+            add(concept, "PRINTED_DESIGNATION", node["code"], node["id"], supports, designation_status, designation_rule,
+                decision if designation_rule == "raster-literal-pixels-1" else None)
     for edge in graph["edges"]:
         parent, child = node_concepts[edge["from"]], node_concepts[edge["to"]]
         if edge["type"] == "ENCLOSES_ROW":
@@ -152,9 +218,22 @@ def _admit(graph):
             subject, predicate, value, status, rule = parent, "CHART_CONNECTED", child, "ACCEPTED", "source-layout-1"
         else:
             subject, predicate, value, status, rule = child, "CANDIDATE_LAYOUT_PARENT", parent, "CANDIDATE", "candidate-layout-1"
-        if edge["type"] in {"ENCLOSES_ROW", "CHART_CONNECTOR"} and edge["evidence"]["verification"] != "source_bound":
+        if edge["type"] in {"ENCLOSES_ROW", "CHART_CONNECTOR"} and any(
+                records[identifier]["evidence"]["verification"] != "source_bound"
+                for identifier in (edge["id"], edge["from"], edge["to"])):
             status, rule = "CANDIDATE", "candidate-source-relation-1"
-        add(subject, predicate, value, edge["id"], [edge["id"], edge["from"], edge["to"]], status, rule)
+        raster_basis = None
+        if edge["type"] in {"ENCLOSES_ROW", "CHART_CONNECTOR"} and all(
+                raster_nodes.get(identifier, {}).get("label_supported") is True
+                for identifier in (edge["from"], edge["to"])):
+            decisions = raster_enclosures if edge["type"] == "ENCLOSES_ROW" else raster_connectors
+            key = _json([edge["from"], edge["to"], edge["type"]])
+            if decisions.get(key, {}).get("verified") is True:
+                status = "ACCEPTED"
+                rule = ("raster-enclosure-pixels-1" if edge["type"] == "ENCLOSES_ROW"
+                        else "raster-connector-pixels-1")
+                raster_basis = decisions[key]
+        add(subject, predicate, value, edge["id"], [edge["id"], edge["from"], edge["to"]], status, rule, raster_basis)
     groups = {}
     for assertion in assertions.values():
         if assertion["predicate"] in FUNCTIONAL:
@@ -200,7 +279,7 @@ def _validate_admission(connection, metadata, graph, assertions, concepts):
     """Recompute admission, rather than treating a resealable hash as authority."""
     expected_concepts, expected_bindings, baseline = _admit(graph)
     actual = {item["assertion_id"]: item for item in assertions}
-    if (metadata.get("admission_rules") != RULES or metadata.get("node_concepts") != expected_bindings
+    if (metadata.get("admission_rules") != _admission_rules(graph) or metadata.get("node_concepts") != expected_bindings
             or {item["concept_id"]: item for item in concepts} != expected_concepts
             or len(actual) != len(assertions)):
         _error("ADMISSION_INVALID")
@@ -229,6 +308,42 @@ def _validate_admission(connection, metadata, graph, assertions, concepts):
 class A1KnowledgeStore:
     def __init__(self, root, path, fingerprint):
         self.root, self.path, self.fingerprint = root, path, fingerprint
+        self._raster_source_signature = None
+
+    def _validate_raster_source(self, graph):
+        metadata = graph.get("raster_verification")
+        if metadata is None:
+            return
+        if not isinstance(metadata, dict) or "extraction_provenance" not in graph:
+            _error("RASTER_VERIFICATION_INVALID")
+        artifacts = metadata.get("artifacts")
+        if not isinstance(artifacts, dict) or set(artifacts) != {"ingest_result", "image"}:
+            _error("RASTER_ARTIFACTS_INVALID")
+        signature = []
+        for name in sorted(artifacts):
+            artifact = artifacts[name]
+            if (not isinstance(artifact, dict) or set(artifact) != {"path", "sha256"}
+                    or not isinstance(artifact["path"], str)):
+                _error("RASTER_ARTIFACTS_INVALID")
+            relative = Path(artifact["path"])
+            if relative.is_absolute() or relative.drive or relative.parts[:2] != ("storage", "evidence_v2"):
+                _error("RASTER_ARTIFACTS_INVALID")
+            path = self.root / relative
+            _safe_path(self.root, path)
+            try:
+                actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            except OSError:
+                _error("RASTER_SOURCE_CHANGED")
+            if actual != artifact["sha256"]:
+                _error("RASTER_SOURCE_CHANGED")
+            signature.append((name, relative.as_posix(), actual))
+        # Source bytes are checked on every read. Pixel/record verification is
+        # recomputed once for this immutable graph/receipt in each store object.
+        key = (_digest(metadata), tuple(signature))
+        if key != self._raster_source_signature:
+            from src.evidence_a1_ingest import validate_raster_integration
+            validate_raster_integration(self.root, graph)
+            self._raster_source_signature = key
 
     def _read(self):
         _safe_path(self.root, self.path)
@@ -243,6 +358,7 @@ class A1KnowledgeStore:
                 validate_a1_graph_evidence(graph, require_complete=True)
                 if _digest(graph) != self.fingerprint:
                     _error("STORE_TAMPERED")
+                self._validate_raster_source(graph)
                 assertions = _assertions(connection)
                 concepts = [json.loads(row[0]) for row in connection.execute("SELECT payload_json FROM a1k_domain_concepts ORDER BY concept_id")]
                 _validate_admission(connection, metadata, graph, assertions, concepts)
@@ -270,14 +386,16 @@ class A1KnowledgeStore:
 
     def describe(self):
         metadata, graph, assertions, concepts = self._read()
-        return {"schema_version": SCHEMA_VERSION, "runtime_relpath": RUNTIME_RELPATH,
+        return {"schema_version": SCHEMA_VERSION, "runtime_relpath": self.path.relative_to(self.root).as_posix(),
             "source_binding": graph["source_binding"], "native_graph_sha256": graph["native_graph_sha256"],
             "source_graph_sha256": self.fingerprint, "source_observation_count": len(graph["nodes"]) + len(graph["edges"]),
             "concept_count": len(concepts), "assertion_count": len(assertions),
             "assertion_status_counts": {status: sum(item["status"] == status for item in assertions)
                                         for status in ("ACCEPTED", "CANDIDATE", "DISPUTED")},
-            "registry_source_sha256": metadata["registry_source_sha256"], "admission_rules": RULES,
-            "source_authentication": "caller_must_authenticate_canonical_source", "semantic_validation": False}
+            "registry_source_sha256": metadata["registry_source_sha256"], "admission_rules": metadata["admission_rules"],
+            "source_authentication": ("retained_raster_artifacts_and_scoped_pixel_criteria_verified"
+                if "raster_verification" in graph else "caller_must_authenticate_canonical_source"),
+            "semantic_validation": False}
 
     def support_for(self, record_ids=(), evidence_ids=(), assertion_ids=()):
         _, graph, assertions, _ = self._read()
@@ -299,7 +417,9 @@ class A1KnowledgeStore:
         observations = [{"record_id": record["id"], "observation": record, "proof": record["evidence"]}
                         for record in records.values() if record["evidence"]["evidence_id"] in closure]
         return {"assertions": selected, "observations": observations, "missing_evidence_ids": [],
-                "source_authentication": "caller_must_authenticate_canonical_source", "semantic_validation": False}
+                "source_authentication": ("retained_raster_artifacts_and_scoped_pixel_criteria_verified"
+                    if "raster_verification" in graph else "caller_must_authenticate_canonical_source"),
+                "semantic_validation": False}
 
     def propose(self, subject_id, predicate, object_value, *, support_evidence_ids=(), counter_evidence_ids=()):
         _, graph, assertions, _ = self._read()
@@ -318,19 +438,25 @@ class A1KnowledgeStore:
         return record
 
 
-def prepare_a1_knowledge(root, graph):
+def prepare_a1_knowledge(root, graph, *, runtime_relpath=RUNTIME_RELPATH):
     """Create once, or validate the existing versioned runtime without rebuilding."""
     validate_a1_graph_evidence(graph, require_complete=True)
     from src.evidence_a1_graph_qa import _graph_index
     _graph_index(graph)
     root = Path(root).resolve(strict=True)
-    source, target = root / "storage/dual_layer_registry.db", root / RUNTIME_RELPATH
+    runtime = Path(runtime_relpath)
+    if runtime.is_absolute() or runtime.parts[:2] != ("storage", "evidence_v2") or runtime.suffix != ".db":
+        _error("RUNTIME_PATH_INVALID")
+    source, target = root / "storage/dual_layer_registry.db", root / runtime
+    if not target.resolve().is_relative_to((root / "storage/evidence_v2").resolve()):
+        _error("RUNTIME_PATH_INVALID")
     _safe_path(root, source)
     _safe_path(root, target)
     if not source.is_file():
         _error("SOURCE_REGISTRY_MISSING")
     fingerprint = _digest(graph)
     store = A1KnowledgeStore(root, target, fingerprint)
+    store._validate_raster_source(graph)
     if target.exists():
         metadata, _, _, _ = store._read()
         if metadata["registry_source_sha256"] != hashlib.sha256(source.read_bytes()).hexdigest():
@@ -361,7 +487,7 @@ def prepare_a1_knowledge(root, graph):
             concepts, node_concepts, assertions = _admit(graph)
             metadata = {"schema_version": SCHEMA_VERSION, "source_graph_sha256": fingerprint,
                 "registry_source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
-                "graph_template": template, "node_concepts": node_concepts, "admission_rules": RULES}
+                "graph_template": template, "node_concepts": node_concepts, "admission_rules": _admission_rules(graph)}
             connection.executemany("INSERT INTO a1k_source_meta VALUES (?,?)", [(key, _json(value)) for key, value in metadata.items()])
             for kind, records in (("node", graph["nodes"]), ("edge", graph["edges"])):
                 connection.executemany("INSERT INTO a1k_source_observations VALUES (?,?,?,?,?)",

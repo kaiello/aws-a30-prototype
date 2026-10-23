@@ -14,6 +14,15 @@ dependencies = []
 test = ["pytest==9.0.2"]
 # Source-only A1 structural CLI; no LightRAG, credentials or model required.
 a1 = ["PyMuPDF==1.26.5"]
+# Optional image-only ingest: tested installed versions, not auto-installed.
+# Requires separately installed Tesseract 5.5.0 + local eng data; vision is an
+# explicit opt-in to the already-installed local Ollama/model, never a download.
+a1-ingest = [
+  "PyMuPDF==1.26.5",
+  "opencv-python==4.12.0.88",
+  "numpy==2.2.6",
+  "Pillow==11.3.0",
+]
 # Observed direct v1 imports pinned to the existing tested Python 3.12 environment.
 # These pins do not lock transitive packages, GPU wheels, models or private data.
 v1 = [

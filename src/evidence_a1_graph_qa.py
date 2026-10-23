@@ -520,6 +520,11 @@ def _attach_claim_bindings(view, result, *, source_authenticated=False):
         "declared_record_identities_validated_source_unverified" if declared else "unbound_caller_graph")
     if result.get("support_state") != "INSUFFICIENT_EVIDENCE":
         result["support_state"] = "SOURCE_BOUND_CHART_LAYOUT" if source_authenticated else "UNAUTHENTICATED_CALLER_GRAPH"
+    if result.get("raster_source_verification") and declared:
+        support = "retained_raster_pixels_and_scoped_criteria_verified"
+        result["source_binding_status"] = support
+        if result.get("support_state") != "INSUFFICIENT_EVIDENCE":
+            result["support_state"] = "RASTER_OBSERVATIONS_WITH_PER_PREDICATE_ADMISSION"
     result["answer_binding_scope"] = "Atomic source observations only; full prose completeness and semantic support remain unassessed."
     result["semantic_validation"] = False
     all_claims = {}
@@ -551,9 +556,12 @@ def _attach_claim_bindings(view, result, *, source_authenticated=False):
                 view.nodes[edge["from"]]["label"] + " --" + edge["type"] + "--> " + view.nodes[edge["to"]]["label"],
                 qualification["qualification"], qualification["verification"]))
         for path in operation["paths"]:
+            unreviewed_path = ("INDENTED_UNDER" in path["edge_types"] or any(
+                record.get("evidence", {}).get("verification") == "candidate"
+                for record in [view.nodes[identifier] for identifier in path["node_ids"]] + path["edges"]))
             claims.append(observation("ordered_chart_path", path["node_ids"], path["edges"],
                 " -> ".join(view.nodes[identifier]["label"] for identifier in path["node_ids"]),
-                path["qualification"], "candidate" if "INDENTED_UNDER" in path["edge_types"] else "source_bound"))
+                path["qualification"], "candidate" if unreviewed_path else "source_bound"))
         operation["claims"] = claims
         operation["answer_binding_scope"] = result["answer_binding_scope"]
         for claim in claims:
@@ -588,9 +596,18 @@ def _epistemic_operation(store, requested, complete_chart, query_layer):
         raise ValueError("GRAPH_QA_OPERATION_LAYER_INVALID")
     graph = store.graph(layer=layer)
     view = _GraphView(graph)
+    identity_missing = []
+    if layer == "knowledge":
+        accepted = {item["assertion_id"]: item for item in graph["accepted_assertions"]}
+        bindings = graph["assertion_bindings"]
+        for identifier in requested["subject_ids"]:
+            required = {"PRINTED_LABEL"} | ({"PRINTED_DESIGNATION"} if view.nodes[identifier]["kind"] == "process" else set())
+            predicates = {accepted[item]["predicate"] for item in bindings.get(identifier, []) if item in accepted}
+            if not required <= predicates:
+                identity_missing.append(identifier)
     unsupported = layer == "knowledge" and kind in {
         "direct_children", "descendants", "row_partition", "parents", "layout_relation", "epistemic_limits", "operating_information"}
-    if unsupported:
+    if unsupported or identity_missing:
         result = {"kind": kind, "subject_ids": requested["subject_ids"],
             "answer_outcome": "insufficient_evidence", "rows": [], "paths": [],
             "verdict": "not_established", "answer":
@@ -598,7 +615,8 @@ def _epistemic_operation(store, requested, complete_chart, query_layer):
             "Candidate relationships remain separately queryable in the evidence layer.",
             "trace": {"seed_ids": requested["subject_ids"], "visited_node_ids": [],
                 "selected_edges": [], "method": "accepted_assertion_gate", "direction": "none",
-                "diagnostics": ["requested_relation_not_admitted_to_knowledge"]}}
+                "diagnostics": (["requested_relation_not_admitted_to_knowledge"] if unsupported else [])
+                    + (["requested_identity_not_admitted_to_knowledge"] if identity_missing else [])}}
     else:
         result = _operation(view, requested, complete_chart)
     # A rejected operation still represents its typed request. Coverage needs
@@ -656,6 +674,12 @@ def _epistemic_operation(store, requested, complete_chart, query_layer):
         ids = result["trace"]["visited_node_ids"] + [edge["id"] for edge in result["trace"]["selected_edges"]]
         result["knowledge_support"] = store.support_for(record_ids=ids)
         result["accepted_assertion_ids"] = []
+        if "extraction_provenance" in graph and result["answer_outcome"] == "graph_answer":
+            prefix = ("Raster source observations; verified literals and physical relations have separate assertion support. "
+                      "Indentation remains candidate layout, not semantic subtype.\n"
+                      if "raster_verification" in graph else
+                      "Unreviewed image-extraction observations; literal recognition and layout remain candidate, not accepted knowledge.\n")
+            result["answer"] = prefix + result["answer"]
     result["epistemic_scope"] = "Source-scoped accepted facts" if layer == "knowledge" else "Direct observations, including explicitly qualified candidates"
     return result
 
@@ -760,6 +784,36 @@ def _answer_coverage(view, result):
     return result
 
 
+def _verified_raster_scope(graph, requested):
+    """Select verified source coverage for this operation, never a corpus claim."""
+    metadata = graph.get("raster_verification")
+    if metadata is None:
+        return None
+    receipt = metadata["receipt"]
+    nodes = {node["id"]: node for node in graph["nodes"]}
+    subjects = requested.get("selector_subject_ids", requested["subject_ids"])
+    categories = set()
+    for identifier in subjects:
+        node = nodes.get(identifier)
+        if node is None:
+            return {"complete": False, "scope": "unresolved_subject", "category_ids": []}
+        if node["kind"] == "root":
+            status = receipt["chart_coverage"]
+            return {"complete": status["complete"], "scope": status["scope"],
+                    "category_ids": list(receipt["coverage"]), "criteria": status}
+        if node["kind"] == "category":
+            categories.add(identifier)
+        else:
+            categories.update(edge["from"] for edge in graph["edges"]
+                              if edge["type"] == "ENCLOSES_ROW" and edge["to"] == identifier)
+    coverage = receipt["coverage"]
+    complete = bool(categories) and all(coverage.get(identifier, {}).get("complete", False)
+                                        for identifier in categories)
+    return {"complete": complete, "scope": "selected_raster_category_bodies",
+            "category_ids": sorted(categories),
+            "criteria": {identifier: coverage.get(identifier) for identifier in sorted(categories)}}
+
+
 def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, query_layer="auto"):
     """Execute a typed, span-aware plan without changing any graph fact."""
     if query_layer not in {"auto", "evidence", "knowledge"}:
@@ -779,6 +833,13 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
               "trace": {"seed_ids": plan["resolved_entities"], "visited_node_ids": [], "selected_edges": [],
                         "method": "typed_span_aware_plan", "direction": "mixed", "diagnostics": list(plan["diagnostics"]),
                         "edge_qualifications": graph["edge_qualifications"], "complete_chart_supplied": bool(complete_chart)}}
+    if knowledge_store is not None and "raster_verification" in graph:
+        verification = graph["raster_verification"]
+        result["raster_source_verification"] = {
+            "schema_version": verification["schema_version"],
+            "image_sha256": verification["receipt"]["image_sha256"],
+            "scope": verification["receipt"]["chart_coverage"]["scope"],
+            "qualification": "Recomputed pixel/OCR criteria admit individual predicates; not human semantic review."}
     if plan["status"] != "ready" and not (plan.get("requested_parts") and plan["operations"]):
         result["answer"] = "The requested query is not completely resolved: " + "; ".join(plan["diagnostics"] + plan["unresolved_selectors"]) + "."
         return _answer_coverage(view, _attach_claim_bindings(view, result))
@@ -812,8 +873,14 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
             operation["subject_ids"] = list(dict.fromkeys(selected_rows))
             operation["selector_subject_ids"] = requested["subject_ids"]
             operation["produced_groups"] = produced_groups
-        executed = (_epistemic_operation(knowledge_store, operation, complete_chart, query_layer)
+        # Only the persisted, source-revalidated store grants raster coverage.
+        # A caller's raw graph or completeness Boolean grants no new authority.
+        source_coverage = _verified_raster_scope(graph, operation) if knowledge_store is not None else None
+        operation_complete = source_coverage["complete"] if source_coverage is not None else complete_chart
+        executed = (_epistemic_operation(knowledge_store, operation, operation_complete, query_layer)
             if knowledge_store is not None else _operation(view, operation, complete_chart))
+        if source_coverage is not None:
+            executed["trace"]["verified_source_coverage"] = source_coverage
         if operation["kind"] in {"designation", "category"} and executed["answer_outcome"] == "graph_answer":
             expected = set(operation["subject_ids"])
             if not expected or not expected <= {row["id"] for row in executed["rows"]} or not executed["answer"].strip():
