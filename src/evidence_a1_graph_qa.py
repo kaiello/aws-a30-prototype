@@ -17,8 +17,9 @@ from src.evidence_v2 import EvidenceStore, EvidencePacket, RoutePlan
 from src.evidence_a1_planner import plan_graph_query
 from src.evidence_a1 import a1_source_identity_id
 
-HARNESS_VERSION = "a1-graph-qa-1.7.1"
+HARNESS_VERSION = "a1-graph-qa-1.7.4"
 RELATIONS = {"CHART_CONNECTOR", "ENCLOSES_ROW", "INDENTED_UNDER"}
+MAX_RESOLVED_IDS = 512
 
 
 def _graph_index(graph):
@@ -46,10 +47,10 @@ def _graph_index(graph):
                 or qualification.get("verification") not in {"source_bound", "candidate", "synthetic"}
                 or (key[2] == "INDENTED_UNDER" and qualification["verification"] != "candidate")):
             raise ValueError("GRAPH_QA_EDGE_INVALID")
-        expected = {"CHART_CONNECTOR": ("root", "category"),
-                    "ENCLOSES_ROW": ("category", "process"),
-                    "INDENTED_UNDER": ("process", "process")}[key[2]]
-        if (by_id[key[0]]["kind"], by_id[key[1]]["kind"]) != expected:
+        expected = {"CHART_CONNECTOR": {("root", "category"), ("category", "category")},
+                    "ENCLOSES_ROW": {("category", "process")},
+                    "INDENTED_UNDER": {("process", "process")}}[key[2]]
+        if (by_id[key[0]]["kind"], by_id[key[1]]["kind"]) not in expected:
             raise ValueError("GRAPH_QA_EDGE_KINDS_INVALID")
         seen_edges.add(key)
         outgoing.setdefault(key[0], []).append(edge)
@@ -104,12 +105,22 @@ class _GraphView:
                 or any("evidence" in record for record in graph["nodes"] + graph["edges"])):
             # Declared record identity is checked, but does not authenticate the
             # caller's source image. Only the canonical wrapper checks that file.
-            from src.evidence_a1 import validate_a1_graph_evidence
-            self.source_receipt = validate_a1_graph_evidence(graph,
+            from src.evidence_a1 import validate_chart_graph_evidence
+            self.source_receipt = validate_chart_graph_evidence(graph,
                 require_complete=graph.get("derived_layer") != "knowledge")
 
     def families(self, identifier):
         return sorted({edge["from"] for edge in self.incoming.get(identifier, []) if edge["type"] == "ENCLOSES_ROW"})
+
+    def connected_categories(self, identifier):
+        """Physical category descendants, separate from indented process rows."""
+        pending, found = [identifier], set()
+        while pending:
+            for edge in self.outgoing.get(pending.pop(), []):
+                if edge["type"] == "CHART_CONNECTOR" and edge["to"] not in found:
+                    found.add(edge["to"])
+                    pending.append(edge["to"])
+        return found
 
     def row(self, identifier):
         node = self.nodes[identifier]
@@ -208,6 +219,7 @@ class _GraphView:
 def _operation(view, operation, complete_chart):
     kind, subjects = operation["kind"], operation["subject_ids"]
     nodes = view.nodes
+    source_element = view.graph.get("source_binding", {}).get("locator", {}).get("element_id", "Figure A1")
     visited, traversed = view.ancestors(subjects)
     result = {"kind": kind, "subject_ids": subjects, "answer_outcome": "graph_answer",
               "subject_scope": operation.get("subject_scope", "selectors"),
@@ -232,26 +244,91 @@ def _operation(view, operation, complete_chart):
             "qualification": "Examples of information an applicable operating procedure must resolve; this chart establishes neither their values nor their process-specific applicability.",
         }
         result["answer"] = (
-            "Figure A1 supplies process names, designations and chart layout, not verified operating conditions. "
+            source_element + " supplies process names, designations and chart layout, not verified operating conditions. "
             "Missing operating information includes an applicable qualified procedure/specification, workpiece material "
             "and thickness, joint and tool configuration, and applicable settings such as rotation speed, travel speed, "
             "applied force/pressure and temperature/control limits. A separate authorized process-specific procedure "
             "must establish which fields and values apply. These are absent information requirements/examples, not "
-            "operating values or universally applicable requirements asserted by A1. Classification and candidate "
+            "operating values or universally applicable requirements asserted by " + source_element.removeprefix("Figure ") + ". Classification and candidate "
             "indentation cannot supply them."
         )
+        if operation.get("requested_fields"):
+            result["missing_information"]["requested_fields"] = list(operation["requested_fields"])
+            result["answer"] += " Requested fields unavailable from this chart: " + "; ".join(operation["requested_fields"]) + ". No values or process-specific applicability are inferred."
         return result
     if kind == "epistemic_limits":
         result["rows"] = [view.row(identifier) for identifier in subjects if nodes[identifier]["kind"] == "process"]
         result["answer"] = "The graph supplies printed labels/designations, source-box enclosure and candidate indentation relationships. Indentation is layout evidence only; it does not establish reviewed semantic IS_A, equivalence, normative hierarchy or operating information. Additional explicitly reviewed evidence defining the relationship is needed before treating indentation as semantic subtype authority."
         if operation.get("lexical_overlap"):
             result["answer"] = "Sharing words in process labels does not establish a subtype relationship. " + result["answer"]
+        if operation.get("requested_aspects"):
+            result["requested_aspects"] = list(operation["requested_aspects"])
+            # Free-text request context is not a verified missing-fact predicate.
+            result["answer"] += " Requested scope: " + "; ".join(operation["requested_aspects"]) + "."
         for row in result["rows"]:
             if row["indent_parent_ids"]:
                 result["answer"] += " " + row["label"] + " has candidate layout parent(s): " + "; ".join(nodes[parent]["label"] for parent in row["indent_parent_ids"]) + "."
         return result
+    if kind in {"evidence", "chart_layout"}:
+        # Reuse existing record traversal and proof attachment, without turning
+        # a request for observations into either an absence or a semantic claim.
+        if kind == "evidence" and not subjects:
+            return stop("literal_subject_or_explicit_chart_layout_required")
+        if kind == "chart_layout" and (operation.get("scope") != "chart" or subjects):
+            return stop("chart_layout_requires_explicit_chart_scope_without_subjects")
+        scope = "selected_subject_ancestry" if kind == "evidence" else "selected_chart_records"
+        if kind == "chart_layout":
+            visited, traversed = set(nodes), list(view.graph["edges"])
+        selected_edges = [edge for edge in view.graph["edges"] if edge in traversed]
+        ordered = sorted(visited, key=lambda identifier: _source_order(nodes[identifier]))
+        row_ids = subjects if subjects else ordered
+        result["rows"] = [view.row(identifier) for identifier in row_ids
+                          if kind == "chart_layout" or nodes[identifier]["kind"] == "process"]
+        result["evidence_scope"] = {"kind": scope, "subject_ids": list(subjects),
+            "node_ids": ordered, "exhaustive_source_claim": False,
+            "qualification": "Observations retained in the supplied graph; source authentication and semantic authority are separate."}
+        if kind == "chart_layout":
+            result["evidence_scope"]["scope"] = "chart"
+            result["groups"] = [{"subject_id": identifier, "node_ids": sorted(
+                {edge["to"] for edge in selected_edges if edge["from"] == identifier},
+                key=lambda item: _source_order(nodes[item]))} for identifier in ordered
+                if any(edge["from"] == identifier for edge in selected_edges)]
+        result["trace"].update(visited_node_ids=ordered, selected_edges=selected_edges,
+            method="scoped_source_observations", direction="inbound" if subjects else "supplied_graph")
+        if operation.get("requested_aspects"):
+            result["requested_aspects"] = list(operation["requested_aspects"])
+        result["answer"] = _render_evidence_observations(view, result)
+        return result
     if not subjects:
         return stop("literal_subject_required_for_operation")
+    if kind == "physical_neighbors":
+        if not complete_chart:
+            return stop("complete_chart_required_for_exhaustive_physical_neighbors")
+        if any(nodes[identifier]["kind"] not in {"root", "category"} for identifier in subjects):
+            return stop("physical_connector_neighbors_require_chart_box_subjects")
+        groups, selected, walked, lines = [], set(), [], []
+        for identifier in subjects:
+            incident = [edge for edge in view.graph["edges"]
+                        if edge["type"] == "CHART_CONNECTOR" and identifier in {edge["from"], edge["to"]}]
+            neighbors = {edge["to"] if edge["from"] == identifier else edge["from"] for edge in incident}
+            ordered = sorted(neighbors, key=lambda item: _source_order(nodes[item]))
+            groups.append({"subject_id": identifier, "node_ids": ordered})
+            selected.update(neighbors)
+            walked.extend(incident)
+            lines.append(nodes[identifier]["label"] + ": physical chart neighbors:")
+            lines.extend("- " + nodes[neighbor]["label"] for neighbor in ordered)
+            if not ordered:
+                lines.append("- None shown in the complete supplied chart scope.")
+        result["groups"] = groups
+        result["rows"] = [view.row(identifier) for identifier in sorted(selected, key=lambda item: _source_order(nodes[item]))]
+        result["trace"].update(visited_node_ids=sorted(selected | set(subjects)),
+            selected_edges=[edge for edge in view.graph["edges"] if edge in walked],
+            method="physical_connector_incidence", direction="undirected")
+        result["answer"] = "\n".join(lines) + "\nPhysical adjacency includes incoming and outgoing chart connectors. Organizational traversal direction is not arrow direction or semantic subtype."
+        result["expansion"] = {"status": "complete_within_supplied_chart", "operation": kind,
+            "complete_chart_supplied": True, "no_top_k_truncation": True,
+            "returned_node_ids": sorted(selected), "groups": groups, "semantic_validation": False}
+        return result
     if kind == "parents":
         parent_ids, selected_edges = set(), []
         result["parent_groups"], result["source_placements"], result["process_parent_details"] = [], [], []
@@ -335,13 +412,17 @@ def _operation(view, operation, complete_chart):
         groups, all_ids, edges = [], set(), []
         for identifier in subjects:
             if nodes[identifier]["kind"] == "category":
-                enclosed = {edge["to"] for edge in view.outgoing.get(identifier, []) if edge["type"] == "ENCLOSES_ROW"}
-                if any(view.families(child) != [identifier] or any(view.families(parent) != [identifier]
-                    for parent in view.row(child)["indent_parent_ids"]) for child in enclosed):
-                    return stop("candidate_crosses_or_ambiguously_encloses_categories")
+                nested_categories = view.connected_categories(identifier)
+                enclosed = set()
+                for category in {identifier} | nested_categories:
+                    rows = {edge["to"] for edge in view.outgoing.get(category, []) if edge["type"] == "ENCLOSES_ROW"}
+                    if any(view.families(child) != [category] or any(view.families(parent) != [category]
+                        for parent in view.row(child)["indent_parent_ids"]) for child in rows):
+                        return stop("candidate_crosses_or_ambiguously_encloses_categories")
+                    enclosed.update(rows)
             found, walked = view.descendants([identifier], direct=kind == "direct_children")
             selected = found - {identifier}
-            if nodes[identifier]["kind"] == "category" and kind == "descendants" and selected != enclosed:
+            if nodes[identifier]["kind"] == "category" and kind == "descendants" and selected != enclosed | nested_categories:
                 return stop("recursive_layout_does_not_cover_all_enclosed_rows")
             if nodes[identifier]["kind"] == "process" and any(view.families(child) != view.families(identifier)
                     for child in selected if nodes[child]["kind"] == "process"):
@@ -466,11 +547,36 @@ def _operation(view, operation, complete_chart):
         for parent in right:
             if nodes[parent]["kind"] != "category":
                 return stop("enclosure_membership_requires_category_targets")
+            container_paths = []
+            if actual != parent:
+                enclosure = [edge for edge in view.incoming.get(child, [])
+                             if edge["type"] == "ENCLOSES_ROW" and edge["from"] == actual]
+                for path in view.paths(actual):
+                    if parent not in path["node_ids"] or any(edge["type"] != "CHART_CONNECTOR" for edge in path["edges"]):
+                        continue
+                    start = path["node_ids"].index(parent)
+                    edges = path["edges"][start:] + enclosure
+                    container_paths.append({"start_id": parent, "end_id": child, "target_id": child,
+                        "node_ids": path["node_ids"][start:] + [child], "edges": edges,
+                        "edge_types": [edge["type"] for edge in edges], "direction": "ancestor_to_child",
+                        "qualification": "Physical chart-connector path to the direct enclosing source box, then its enclosed row; not direct enclosure by the ancestor or semantic subtype."})
+            if container_paths:
+                alternatives.append({"target_id": parent, "verdict": "not_established",
+                    "direct_source_box_membership": False, "connected_container_relation": "shown",
+                    "paths": container_paths})
+                result["paths"].extend(container_paths)
+                texts.append(nodes[child]["label"] + " (" + nodes[child]["code"] + ") is directly enclosed by "
+                    + nodes[actual]["label"] + ", not directly by " + nodes[parent]["label"] + ". "
+                    + "A physical chart path connects the requested broader box to that enclosure: "
+                    + "; ".join(" -> ".join(nodes[identifier]["label"] for identifier in path["node_ids"])
+                                for path in container_paths)
+                    + ". Direct source-box membership and this broader connected chart path are distinct; no semantic subtype verdict is established.")
+                continue
             if actual != parent and not complete_chart:
                 return stop("complete_chart_required_for_bounded_negative")
             verdict = "yes" if actual == parent else "no"
             alternatives.append({"target_id": parent, "verdict": verdict})
-            texts.append(("Yes" if actual == parent else "No") + ", within Figure A1's chart: " + nodes[child]["label"] + " (" + nodes[child]["code"] + ") is listed inside " + nodes[actual]["label"] + ("." if actual == parent else ", rather than " + nodes[parent]["label"] + "."))
+            texts.append(("Yes" if actual == parent else "No") + ", within " + source_element + "'s chart: " + nodes[child]["label"] + " (" + nodes[child]["code"] + ") is listed inside " + nodes[actual]["label"] + ("." if actual == parent else ", rather than " + nodes[parent]["label"] + "."))
         result["alternatives"] = alternatives
         result["verdict"] = alternatives[0]["verdict"] if len(alternatives) == 1 else "not_established"
         result["trace"]["negative_proof"] = "explicit_positive_foreign_enclosure_plus_complete_chart" if any(item["verdict"] == "no" for item in alternatives) else None
@@ -493,8 +599,9 @@ def _operation(view, operation, complete_chart):
                     if row["indent_parent_ids"]:
                         text += " Candidate layout parent: " + "; ".join(nodes[parent]["label"] + " (" + nodes[parent]["code"] + ")" for parent in row["indent_parent_ids"]) + "; semantic subtype is unreviewed."
                     lines.append(text)
-            elif kind == "designation" and node["kind"] == "category":
-                label, code = _category_name(node)
+            elif kind == "designation" and node["kind"] in {"category", "root"}:
+                label, code = (_category_name(node) if node["kind"] == "category" else
+                               (node["label"], node.get("code")))
                 result["rows"].append(dict(node, code=code, family_id=identifier, indent_parent_ids=[]))
                 lines.append(label + " — " + (code if code else "no overall designation printed in this heading") + ".")
             else:
@@ -502,6 +609,55 @@ def _operation(view, operation, complete_chart):
         result["answer"] = "\n".join(lines)
         return result
     return stop("operation_not_implemented")
+
+
+def _render_evidence_observations(view, result, support=None):
+    """Use admitted predicate status when available, not a raw route label."""
+    nodes = view.nodes
+    lines = ["Evidence observations from the supplied graph" + (
+        " for the selected records and their displayed ancestors:" if result["subject_ids"] else
+        " (explicit selected-chart scope):")]
+    for identifier in result["trace"]["visited_node_ids"]:
+        node = nodes[identifier]
+        lines.append("- Printed record: " + node["label"] + (" (" + node["code"] + ")" if node.get("code") else "") + ".")
+    relation_support = []
+    for edge in result["trace"]["selected_edges"]:
+        marker = " --CHART_CONNECTOR-- " if edge["type"] == "CHART_CONNECTOR" else " --" + edge["type"] + "--> "
+        text = "- Observed relation: " + nodes[edge["from"]]["label"] + marker + nodes[edge["to"]]["label"] + ". "
+        if support is None:
+            text += view.graph["edge_qualifications"][edge["type"]]["qualification"]
+        else:
+            predicate = {"CHART_CONNECTOR": "CHART_CONNECTED", "ENCLOSES_ROW": "CHART_MEMBER_OF",
+                         "INDENTED_UNDER": "CANDIDATE_LAYOUT_PARENT"}[edge["type"]]
+            assertions = [{key: assertion[key] for key in (
+                "assertion_id", "predicate", "status", "rule_id", "admission_reason", "support_evidence_ids", "counter_evidence_ids")}
+                for assertion in support["assertions"] if edge.get("id") in assertion["origin_record_ids"]
+                and assertion["predicate"] == predicate]
+            descriptions = [assertion["status"] + " " + assertion["predicate"] + " under " + assertion["rule_id"]
+                + ": " + assertion["admission_reason"] + " Support: " + "; ".join(assertion["support_evidence_ids"])
+                + (" Counter-evidence: " + "; ".join(assertion["counter_evidence_ids"]) if assertion["counter_evidence_ids"] else "")
+                for assertion in assertions]
+            qualification = ("Physical chart connection; undirected adjacency, not semantic subtype. " if edge["type"] == "CHART_CONNECTOR"
+                else "Source-chart enclosure, not reviewed semantic IS_A. " if edge["type"] == "ENCLOSES_ROW"
+                else "Displayed indentation, not reviewed semantic subtype. ")
+            qualification += " | ".join(descriptions) if descriptions else "No admitted predicate is bound to this observation."
+            statuses = {assertion["status"] for assertion in assertions}
+            verification = ("disputed" if "DISPUTED" in statuses else "candidate" if "CANDIDATE" in statuses
+                            else "source_bound" if statuses == {"ACCEPTED"} else "unreviewed")
+            relation_support.append({"edge_id": edge.get("id"), "type": edge["type"], "assertions": assertions,
+                "qualification": qualification, "verification": verification})
+            text += qualification
+        proof = edge.get("evidence", {}).get("evidence_id")
+        if proof:
+            text += " Evidence binding: " + proof + "."
+        lines.append(text)
+    if support is not None:
+        result["relation_support"] = relation_support
+    if result.get("requested_aspects"):
+        lines.append("Requested scope: " + "; ".join(result["requested_aspects"]) + ".")
+    lines.append("Record proofs and qualifications remain separately reported when present. "
+                 "Candidate indentation is not reviewed semantic IS_A; these observations do not establish operating values.")
+    return "\n".join(lines)
 
 
 def _attach_claim_bindings(view, result, *, source_authenticated=False):
@@ -551,10 +707,14 @@ def _attach_claim_bindings(view, result, *, source_authenticated=False):
                 "Observed printed record; no process semantics or operating values are inferred.",
                 node.get("evidence", {}).get("verification", "unbound")))
         for edge in operation["trace"]["selected_edges"]:
-            qualification = view.graph["edge_qualifications"][edge["type"]]
-            claims.append(observation("observed_chart_relation", [edge["from"], edge["to"]], [edge],
+            actual = next((item for item in operation.get("relation_support", []) if item["edge_id"] == edge.get("id")), None)
+            qualification = actual or view.graph["edge_qualifications"][edge["type"]]
+            claim = observation("observed_chart_relation", [edge["from"], edge["to"]], [edge],
                 view.nodes[edge["from"]]["label"] + " --" + edge["type"] + "--> " + view.nodes[edge["to"]]["label"],
-                qualification["qualification"], qualification["verification"]))
+                qualification["qualification"], qualification["verification"])
+            if actual is not None:
+                claim["assertion_support"] = actual["assertions"]
+            claims.append(claim)
         for path in operation["paths"]:
             unreviewed_path = ("INDENTED_UNDER" in path["edge_types"] or any(
                 record.get("evidence", {}).get("verification") == "candidate"
@@ -583,7 +743,74 @@ def _attach_claim_bindings(view, result, *, source_authenticated=False):
     return result
 
 
-def _epistemic_operation(store, requested, complete_chart, query_layer):
+def _accepted_structural_paths(view, result, support):
+    """Project exact evidence paths only when every displayed literal/hop is admitted.
+
+    This reads the already returned, store-validated support; it never searches
+    for a replacement route or changes the query layer or any assertion status.
+    """
+    if support.get("missing_evidence_ids"):
+        return []
+    evidence_ids = {item["proof"]["evidence_id"] for item in support.get("observations", [])}
+    assertions = support.get("assertions", [])
+
+    def accepted(record, predicate, subject=None, value=None):
+        candidates = [assertion for assertion in assertions if assertion["status"] == "ACCEPTED"
+            and assertion["predicate"] == predicate and record["id"] in assertion["origin_record_ids"]
+            and (subject is None or assertion["subject_id"] == subject)
+            and (value is None or assertion["object_value"] == value)
+            and assertion["support_evidence_ids"]
+            and record.get("evidence", {}).get("evidence_id") in assertion["support_evidence_ids"]
+            and set(assertion["support_evidence_ids"] + assertion["counter_evidence_ids"]) <= evidence_ids]
+        return candidates[0] if len(candidates) == 1 else None
+
+    projected = []
+    for path in result["paths"]:
+        concepts, literals, edges = {}, [], []
+        for identifier in path["node_ids"]:
+            node = view.nodes[identifier]
+            label = accepted(node, "PRINTED_LABEL", value=node["label"])
+            if label is None:
+                break
+            concepts[identifier] = label["subject_id"]
+            literals.append(label)
+            if node.get("code"):
+                code = accepted(node, "PRINTED_DESIGNATION", subject=label["subject_id"], value=node["code"])
+                if code is None:
+                    break
+                literals.append(code)
+        else:
+            for edge in path["edges"]:
+                if edge["type"] not in {"CHART_CONNECTOR", "ENCLOSES_ROW"}:
+                    break
+                parent, child = concepts[edge["from"]], concepts[edge["to"]]
+                predicate, subject, value = (("CHART_CONNECTED", parent, child) if edge["type"] == "CHART_CONNECTOR"
+                                             else ("CHART_MEMBER_OF", child, parent))
+                assertion = accepted(edge, predicate, subject, value)
+                if assertion is None:
+                    break
+                edges.append(assertion)
+            else:
+                all_assertions = {item["assertion_id"]: item for item in literals + edges}
+                steps = [{"from_node_id": first, "to_node_id": last, "source_edge_id": edge["id"],
+                    "source_edge_direction": "forward" if (edge["from"], edge["to"]) == (first, last) else "reverse",
+                    "assertion_id": assertion["assertion_id"], "predicate": assertion["predicate"],
+                    "assertion_direction": "forward" if (assertion["subject_id"], assertion["object_value"])
+                        == (concepts[first], concepts[last]) else "reverse"}
+                    for first, last, edge, assertion in zip(path["node_ids"], path["node_ids"][1:], path["edges"], edges)]
+                projected.append({"node_ids": list(path["node_ids"]),
+                    "concept_ids": [concepts[identifier] for identifier in path["node_ids"]], "steps": steps,
+                    "edge_assertion_ids": [item["assertion_id"] for item in edges],
+                    "literal_assertion_ids": list(dict.fromkeys(item["assertion_id"] for item in literals)),
+                    "assertion_ids": list(all_assertions),
+                    "evidence_ids": sorted({identifier for item in all_assertions.values()
+                        for identifier in item["support_evidence_ids"] + item["counter_evidence_ids"]}),
+                    "source_authentication": support.get("source_authentication"), "semantic_validation": False,
+                    "qualification": "Accepted source-scoped literal and physical-structure assertions for this exact evidence path; no semantic IS_A or transitive subtype claim."})
+    return projected
+
+
+def _epistemic_operation(store, requested, complete_chart, query_layer, *, accepted_structural_projection=False):
     """Execute against the persisted layer, then return its assertion proofs.
 
     Auto keeps layout questions on the evidence graph. Knowledge statements
@@ -606,7 +833,7 @@ def _epistemic_operation(store, requested, complete_chart, query_layer):
             if not required <= predicates:
                 identity_missing.append(identifier)
     unsupported = layer == "knowledge" and kind in {
-        "direct_children", "descendants", "row_partition", "parents", "layout_relation", "epistemic_limits", "operating_information"}
+        "direct_children", "descendants", "row_partition", "parents", "layout_relation", "evidence", "chart_layout", "epistemic_limits", "operating_information"}
     if unsupported or identity_missing:
         result = {"kind": kind, "subject_ids": requested["subject_ids"],
             "answer_outcome": "insufficient_evidence", "rows": [], "paths": [],
@@ -674,6 +901,10 @@ def _epistemic_operation(store, requested, complete_chart, query_layer):
         ids = result["trace"]["visited_node_ids"] + [edge["id"] for edge in result["trace"]["selected_edges"]]
         result["knowledge_support"] = store.support_for(record_ids=ids)
         result["accepted_assertion_ids"] = []
+        if kind in {"evidence", "chart_layout"} and result["answer_outcome"] == "graph_answer":
+            result["answer"] = _render_evidence_observations(view, result, result["knowledge_support"])
+        if accepted_structural_projection and kind == "paths":
+            result["accepted_structural_paths"] = _accepted_structural_paths(view, result, result["knowledge_support"])
         if "extraction_provenance" in graph and result["answer_outcome"] == "graph_answer":
             prefix = ("Raster source observations; verified literals and physical relations have separate assertion support. "
                       "Indentation remains candidate layout, not semantic subtype.\n"
@@ -716,6 +947,9 @@ def _answer_coverage(view, result):
                 status = "answered"
         selectors = list(part.get("selector_subject_ids", part.get("subject_ids", [])))
         targets = list(part.get("subject_ids", []))
+        if part.get("subject_scope") == "operation_results":
+            targets = list(dict.fromkeys(identifier for operation in selected for identifier in operation["subject_ids"]))
+            selectors = list(dict.fromkeys(identifier for operation in selected for identifier in operation["selector_subject_ids"]))
         if part.get("subject_scope") == "returned_children":
             producers = [operation for operation in selected if (part["kind"] == "designation" and operation["kind"] in {
                 "direct_children", "descendants", "row_partition"}) or (operation["kind"] == part["kind"]
@@ -746,9 +980,13 @@ def _answer_coverage(view, result):
         clarification_ids.update(candidates)
         evidence.update(view.nodes[identifier]["evidence"]["evidence_id"] for identifier in candidates
                         if "evidence" in view.nodes[identifier])
-        source_limit = status == "unsupported" and bool(selected) and all(
-            operation["kind"] == "operating_information" or operation["trace"]["method"] == "accepted_assertion_gate"
-            for operation in selected)
+        if plan.get("coverage_authority") == "MODEL_PROPOSED_UNVERIFIED":
+            limited = [operation for operation in selected if operation["answer_outcome"] != "graph_answer"]
+            source_limit = status == "unsupported" and bool(limited) and all(_source_limited(operation) for operation in limited)
+        else:
+            source_limit = status == "unsupported" and bool(selected) and all(
+                operation["kind"] == "operating_information" or operation["trace"]["method"] == "accepted_assertion_gate"
+                for operation in selected)
         covered.append({**part, "status": status, "reason": reason,
                         "selector_subject_ids": selectors, "subject_ids": targets, "target_node_ids": targets,
                         "resolution_kind": "answered" if status == "answered" else "ambiguity" if status == "ambiguous"
@@ -781,7 +1019,41 @@ def _answer_coverage(view, result):
         result["trace"]["visited_node_ids"] = sorted(set(result["trace"]["visited_node_ids"]) | clarification_ids)
         _attach_claim_bindings(view, result,
             source_authenticated=result["source_binding_status"] == "canonical_source_and_image_validated")
+    if plan.get("coverage_authority") == "MODEL_PROPOSED_UNVERIFIED":
+        _model_execution_coverage(result)
     return result
+
+
+def _source_limited(operation):
+    return operation.get("graph_executed") is not False and (
+        operation["kind"] == "operating_information" or operation["trace"]["method"] == "accepted_assertion_gate")
+
+
+def _model_execution_coverage(result):
+    """Expose execution accounting separately from ungraded model intent."""
+    operations = result["operations"]
+    parts = []
+    for part in result["coverage"]["parts"]:
+        selected = [operation for operation in operations if operation["operation_id"] in part["operation_ids"]]
+        state = ("executed" if part["status"] == "answered" else "source_limited"
+                 if part["resolution_kind"] == "source_or_admission_limit" else "blocked"
+                 if any(operation.get("graph_executed") is False for operation in selected) else
+                 "failed" if selected else "unresolved")
+        parts.append({**part, "status": state})
+    executed = sum(operation.get("graph_executed") is True for operation in operations)
+    blocked = sum(operation.get("graph_executed") is False for operation in operations)
+    all_executed = bool(parts) and all(part["status"] in {"executed", "source_limited", "failed"} for part in parts)
+    result["execution_coverage"] = {"status": "complete" if all_executed else "partial" if executed else "unanswered",
+        "scope": "Execution of model-proposed operations and captured parts; original question meaning is unassessed.",
+        "operation_count": len(operations), "executed_operation_count": executed, "blocked_operation_count": blocked,
+        "source_limited_operation_count": sum(operation.get("graph_executed") is True and
+            operation["answer_outcome"] != "graph_answer" and _source_limited(operation) for operation in operations),
+        "all_planned_parts_executed": all_executed, "parts": parts}
+    result["semantic_completeness"] = {"status": "UNASSESSED",
+        "qualification": "No executor result establishes that the model captured or answered every meaning of the original question."}
+    result["coverage"].update(scope="Compatibility execution accounting only; semantic completeness is UNASSESSED.",
+        coverage_authority="MODEL_PROPOSED_UNVERIFIED", all_parts_answered=None,
+        all_planned_parts_executed=all_executed)
 
 
 def _verified_raster_scope(graph, requested):
@@ -793,6 +1065,10 @@ def _verified_raster_scope(graph, requested):
     nodes = {node["id"]: node for node in graph["nodes"]}
     subjects = requested.get("selector_subject_ids", requested["subject_ids"])
     categories = set()
+    if requested.get("kind") == "physical_neighbors":
+        status = receipt["chart_coverage"]
+        return {"complete": status["complete"], "scope": status["scope"],
+                "category_ids": list(receipt["coverage"]), "criteria": status}
     for identifier in subjects:
         node = nodes.get(identifier)
         if node is None:
@@ -803,6 +1079,12 @@ def _verified_raster_scope(graph, requested):
                     "category_ids": list(receipt["coverage"]), "criteria": status}
         if node["kind"] == "category":
             categories.add(identifier)
+            connections = {}
+            for edge in graph["edges"]:
+                if edge["type"] == "CHART_CONNECTOR":
+                    connections.setdefault(edge["from"], []).append(edge)
+            nested, _ = _closure([identifier], connections, "outbound")
+            categories.update(nested)
         else:
             categories.update(edge["from"] for edge in graph["edges"]
                               if edge["type"] == "ENCLOSES_ROW" and edge["to"] == identifier)
@@ -814,8 +1096,129 @@ def _verified_raster_scope(graph, requested):
             "criteria": {identifier: coverage.get(identifier) for identifier in sorted(categories)}}
 
 
-def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, query_layer="auto"):
-    """Execute a typed, span-aware plan without changing any graph fact."""
+def _result_reference_ids(previous, selection):
+    """Select only records actually returned by an earlier successful operation."""
+    if selection == "rows":
+        return [row["id"] for row in previous["rows"]]
+    if selection == "parents":
+        return [identifier for group in previous.get("parent_groups", []) for identifier in group["parent_ids"]]
+    if selection == "groups":
+        return [identifier for group in previous.get("groups", []) for identifier in group["node_ids"]]
+    if selection == "categories":
+        selected = []
+        edges = previous["trace"]["selected_edges"]
+        for row in previous["rows"]:
+            if row["kind"] == "category":
+                selected.append(row["id"])
+            for identifier in row.get("family_ids", []):
+                if any(edge["type"] == "ENCLOSES_ROW" and edge["from"] == identifier
+                       and edge["to"] == row["id"] for edge in edges):
+                    selected.append(identifier)
+        for placement in previous.get("source_placements", []):
+            for identifier in placement.get("category_ids", [placement.get("category_id")]):
+                if identifier and any(edge["type"] == "ENCLOSES_ROW" and edge["from"] == identifier
+                        and edge["to"] == placement["process_id"] for edge in edges):
+                    selected.append(identifier)
+        return selected
+    raise ValueError("GRAPH_QA_RESULT_REFERENCE_SELECTION_INVALID")
+
+
+def _resolve_result_references(requested, previous, nodes):
+    operation = dict(requested)
+    references = operation.get("result_refs", {})
+    if not isinstance(references, dict) or set(references) - {"subject_ids", "start_ids", "end_ids", "left_ids", "right_ids", "waypoint_ids"}:
+        raise ValueError("GRAPH_QA_RESULT_REFERENCE_FIELDS_INVALID")
+    resolved, errors = [], []
+    for field, sources in references.items():
+        if not isinstance(sources, list) or not sources:
+            raise ValueError("GRAPH_QA_RESULT_REFERENCE_INVALID")
+        identifiers = list(operation.get(field, []))
+        for source in sources:
+            if not isinstance(source, dict) or set(source) != {"operation_id", "select"}:
+                raise ValueError("GRAPH_QA_RESULT_REFERENCE_INVALID")
+            prior = previous.get(source["operation_id"])
+            if prior is None or prior["answer_outcome"] != "graph_answer":
+                errors.append("result_reference_prior_operation_unavailable")
+                continue
+            selected = list(dict.fromkeys(_result_reference_ids(prior, source["select"])))
+            if not selected:
+                errors.append("result_reference_empty")
+            if any(identifier not in nodes for identifier in selected):
+                errors.append("result_reference_unknown_record")
+            identifiers.extend(selected)
+            resolved.append({"field": field, **source, "node_ids": selected})
+        operation[field] = list(dict.fromkeys(identifiers))
+    if references:
+        operation["subject_ids"] = list(dict.fromkeys(operation.get("subject_ids", []) + [identifier
+            for field in ("start_ids", "end_ids", "left_ids", "right_ids", "waypoint_ids")
+            for identifier in operation.get(field, [])]))
+        if sum(len(operation.get(field, [])) for field in ("subject_ids", "start_ids", "end_ids", "left_ids", "right_ids", "waypoint_ids")) > MAX_RESOLVED_IDS:
+            errors.append("result_reference_combined_id_budget_exceeded")
+    for field, constraint in operation.get("result_constraints", {}).items():
+        identifiers = operation.get(field, [])
+        if not constraint["minimum"] <= len(identifiers) <= constraint["maximum"]:
+            errors.append("result_reference_cardinality_invalid:" + field)
+        if any(identifier not in nodes or nodes[identifier]["kind"] not in constraint["kinds"] for identifier in identifiers):
+            errors.append("result_reference_kind_invalid:" + field)
+    return operation, resolved, list(dict.fromkeys(errors))
+
+
+def _dependency_failure(operation, errors, query_layer, knowledge_store):
+    layer = (operation.get("query_layer", "knowledge" if operation["kind"] in {"designation", "category", "membership"} else "evidence")
+             if query_layer == "auto" else query_layer)
+    result = {"kind": operation["kind"], "subject_ids": operation["subject_ids"],
+        "selector_subject_ids": operation.get("selector_subject_ids", operation["subject_ids"]),
+        "subject_scope": operation.get("subject_scope", "selectors"), "answer_outcome": "insufficient_evidence",
+        "answer": "The requested follow-up cannot be completed: " + "; ".join(errors) + ". No replacement subjects were inferred.",
+        "rows": [], "paths": [], "verdict": "not_established",
+        "trace": {"seed_ids": operation["subject_ids"], "visited_node_ids": [], "selected_edges": [],
+                  "method": "result_reference_gate", "direction": "none", "diagnostics": errors}}
+    if knowledge_store is not None:
+        result.update(query_layer=layer, knowledge_paths=[], accepted_assertion_ids=[],
+            epistemic_scope="Unresolved operation dependency; no assertion executed",
+            knowledge_support=knowledge_store.support_for())
+    return result
+
+
+def _blocked_operation(operation, errors, query_layer, *, compilation=False, persisted=False):
+    """Record an unexecuted request without reading the graph/store for it."""
+    result = _dependency_failure(operation, errors, query_layer, None)
+    result.update(graph_executed=False, execution_status="blocked",
+        dependency_operation_ids=list(operation.get("dependency_operation_ids", [])))
+    if compilation:
+        result["compilation_errors"] = list(errors)
+        result["answer"] = "The requested operation was not executed because compilation failed: " + "; ".join(errors) + "."
+        result["trace"]["method"] = "compilation_gate"
+    if persisted:
+        layer = (operation.get("query_layer", "knowledge" if operation["kind"] in {"designation", "category", "membership"}
+                               else "evidence") if query_layer == "auto" else query_layer)
+        result.update(query_layer=layer, knowledge_paths=[], accepted_assertion_ids=[],
+            knowledge_support={"assertions": [], "observations": [], "missing_evidence_ids": [], "semantic_validation": False},
+            epistemic_scope="Blocked before graph/assertion execution")
+    return result
+
+
+def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, query_layer="auto", question_planner=None):
+    """Default to deterministic planning; optionally inject a validated planner."""
+    if query_layer not in {"auto", "evidence", "knowledge"}:
+        raise ValueError("GRAPH_QA_QUERY_LAYER_INVALID")
+    if query_layer != "auto" and knowledge_store is None:
+        raise ValueError("GRAPH_QA_PERSISTED_LAYER_REQUIRED")
+    if knowledge_store is not None:
+        graph = knowledge_store.graph(layer="evidence")
+    _GraphView(graph)
+    concept_bindings = (knowledge_store.graph(layer="knowledge")["concept_bindings"]
+                        if knowledge_store is not None else None)
+    planner = question_planner or plan_graph_query
+    plan = planner(graph, query, concept_bindings=concept_bindings)
+    if plan.get("query") != query:
+        raise ValueError("GRAPH_QA_PLAN_QUERY_MISMATCH")
+    return execute_graph_plan(graph, plan, complete_chart=complete_chart,
+                              knowledge_store=knowledge_store, query_layer=query_layer)
+
+
+def execute_graph_plan(graph, validated_plan, *, complete_chart=False, knowledge_store=None, query_layer="auto"):
+    """Execute a prevalidated typed plan through the existing evidence gates."""
     if query_layer not in {"auto", "evidence", "knowledge"}:
         raise ValueError("GRAPH_QA_QUERY_LAYER_INVALID")
     if query_layer != "auto" and knowledge_store is None:
@@ -823,9 +1226,8 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
     if knowledge_store is not None:
         graph = knowledge_store.graph(layer="evidence")
     view = _GraphView(graph)
-    concept_bindings = (knowledge_store.graph(layer="knowledge")["concept_bindings"]
-                        if knowledge_store is not None else None)
-    plan = plan_graph_query(graph, query, concept_bindings=concept_bindings)
+    plan = validated_plan
+    query = plan["query"]
     result = {"query": query, "answer": "", "answer_outcome": plan["status"],
               "route": "compound" if len(plan["operations"]) > 1 else (plan["operations"][0]["kind"] if plan["operations"] else "unsupported"),
               "plan": plan, "operations": [], "rows": [], "paths": [], "resolved_entities": plan["resolved_entities"],
@@ -851,7 +1253,18 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
     requested_operations = [operation for operation in planned_operations if not operation.get("use_returned_children")]
     requested_operations += [operation for operation in planned_operations if operation.get("use_returned_children")]
     for index, requested in enumerate(requested_operations):
-        operation = dict(requested)
+        if requested.get("compilation_errors"):
+            executed = _blocked_operation(requested, requested["compilation_errors"], query_layer,
+                compilation=True, persisted=knowledge_store is not None)
+            executed.update(operation_id=requested["operation_id"], request_ids=list(requested.get("request_ids", [])))
+            operations.append(executed)
+            continue
+        previous_by_id = {previous["operation_id"]: previous for previous in operations}
+        operation, resolved_references, reference_errors = _resolve_result_references(requested,
+            previous_by_id, view.nodes)
+        reference_errors.extend("dependency_operation_unavailable:" + identifier
+            for identifier in operation.get("dependency_operation_ids", [])
+            if identifier not in previous_by_id or previous_by_id[identifier]["answer_outcome"] != "graph_answer")
         if operation.get("use_returned_children"):
             after = operation.get("after_operations", ["direct_children", "descendants"])
             dependency_ids = operation.get("after_operation_ids", operation.get("dependency_operation_ids"))
@@ -875,10 +1288,20 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
             operation["produced_groups"] = produced_groups
         # Only the persisted, source-revalidated store grants raster coverage.
         # A caller's raw graph or completeness Boolean grants no new authority.
-        source_coverage = _verified_raster_scope(graph, operation) if knowledge_store is not None else None
+        source_coverage = _verified_raster_scope(graph, operation) if knowledge_store is not None and not reference_errors else None
         operation_complete = source_coverage["complete"] if source_coverage is not None else complete_chart
-        executed = (_epistemic_operation(knowledge_store, operation, operation_complete, query_layer)
+        executed = (_blocked_operation(operation, list(dict.fromkeys(reference_errors)), query_layer,
+                    persisted=knowledge_store is not None) if reference_errors else
+            _epistemic_operation(knowledge_store, operation, operation_complete, query_layer,
+                accepted_structural_projection=plan.get("coverage_authority") == "MODEL_PROPOSED_UNVERIFIED")
             if knowledge_store is not None else _operation(view, operation, complete_chart))
+        if not reference_errors:
+            executed.update(graph_executed=True, execution_status=("executed" if executed["answer_outcome"] == "graph_answer"
+                else "source_limited" if _source_limited(executed) else "failed"))
+        if "dependency_operation_ids" in requested:
+            executed["dependency_operation_ids"] = list(requested["dependency_operation_ids"])
+        if resolved_references or operation.get("result_refs"):
+            executed["resolved_result_refs"] = resolved_references
         if source_coverage is not None:
             executed["trace"]["verified_source_coverage"] = source_coverage
         if operation["kind"] in {"designation", "category"} and executed["answer_outcome"] == "graph_answer":
@@ -887,6 +1310,9 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
                 executed["answer_outcome"] = "insufficient_evidence"
                 executed["trace"]["diagnostics"].append("not_all_requested_subjects_answered")
                 executed["answer"] += " The requested lookup does not return every requested subject."
+        if executed.get("graph_executed") is True:
+            executed["execution_status"] = ("executed" if executed["answer_outcome"] == "graph_answer"
+                else "source_limited" if _source_limited(executed) else "failed")
         executed.update(operation_id=requested.get("operation_id", "op:" + str(index + 1).zfill(3)),
                         request_ids=list(requested.get("request_ids", [])))
         if "produced_groups" in operation:
@@ -915,6 +1341,8 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
     selected_rows = {row["id"]: row for operation in operations for row in operation["rows"]}
     result["rows"] = list(selected_rows.values())
     result["paths"] = [path for operation in operations for path in operation["paths"]]
+    if plan.get("coverage_authority") == "MODEL_PROPOSED_UNVERIFIED":
+        result["accepted_structural_paths"] = [path for operation in operations for path in operation.get("accepted_structural_paths", [])]
     visited = {identifier for operation in operations for identifier in operation["trace"]["visited_node_ids"]}
     edges = [edge for operation in operations for edge in operation["trace"]["selected_edges"]]
     result["trace"].update(visited_node_ids=sorted(visited), selected_edges=[edge for edge in graph["edges"] if edge in edges])
@@ -929,7 +1357,7 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
     return _answer_coverage(view, _attach_claim_bindings(view, result))
 
 
-def run_graph_qa(root, payload, *, query_layer="auto"):
+def run_graph_qa(root, payload, *, query_layer="auto", question_planner=None):
     """Load one unchanged full graph, validate pixels, execute no model calls."""
     if query_layer not in {"auto", "evidence", "knowledge"}:
         raise ValueError("GRAPH_QA_QUERY_LAYER_INVALID")
@@ -978,7 +1406,9 @@ def run_graph_qa(root, payload, *, query_layer="auto"):
         query = question["query"]
         contextual = query if re.search(r"\bfigure\s+a1\b", query, re.I) else "Figure A1. " + query
         packet = store.packet(contextual)
-        plan = plan_graph_query(graph, query, concept_bindings=concept_bindings)
+        plan = (question_planner or plan_graph_query)(graph, query, concept_bindings=concept_bindings)
+        if plan.get("query") != query:
+            raise ValueError("GRAPH_QA_PLAN_QUERY_MISMATCH")
         # Source count and comparison subject count are different contracts.
         # Remove only this obsolete diagnostic after typed same-image requests
         # resolve runnable subjects. Unresolved parts remain in coverage; they
@@ -992,7 +1422,7 @@ def run_graph_qa(root, payload, *, query_layer="auto"):
                 and inventory.status == "complete" and packet.evidence == inventory.evidence):
             packet = EvidencePacket(contextual, RoutePlan("comparison", inventory.route.evidence_ids), inventory.evidence)
         if packet.status == "complete":
-            answer = answer_graph(graph, query, complete_chart=True,
+            answer = execute_graph_plan(graph, plan, complete_chart=True,
                 knowledge_store=knowledge_store, query_layer=query_layer)
         else:
             answer = {"query": query, "answer": "The complete single-image scope cannot answer this request.",
@@ -1015,14 +1445,36 @@ def run_graph_qa(root, payload, *, query_layer="auto"):
                       selected_nodes=[node for node in graph["nodes"] if node["id"] in answer["trace"]["visited_node_ids"]],
                       latency_ms=round((time.perf_counter() - question_started) * 1000, 3),
                       model="NONE", provider="NONE", model_invocation_count=0,
+                      generation_model="NONE", generation_model_invocation_count=0,
                       answer_support="Chart-layout extraction; semantic accuracy requires independent source grading.")
         if "coverage" in answer:
             answer["coverage"].update(packet_evidence_ids=answer["evidence_ids"],
                                       source_identity_id=answer["source_identity_id"])
+        if question_planner is not None:
+            planning = plan.get("model_planning", {})
+            answer.update(planning_model_invocation_count=planning.get("model_invocation_count", 0),
+                planning_provider=planning.get("provider", "NONE"), planning_model=planning.get("model", "NONE"),
+                model_invocation_count=planning.get("model_invocation_count", 0),
+                external_call_count=planning.get("external_call_count", 0),
+                provider=planning.get("provider", "NONE"), model=planning.get("model", "NONE"),
+                evaluation_kind="LLM_planned_deterministic_retrieval")
         answers.append(answer)
+        record_result = getattr(question_planner, "record_result", None)
+        if callable(record_result):
+            record_result(answer)
     return {"harness_version": HARNESS_VERSION, "model": "NONE", "provider": "NONE",
             "model_invocation_count": 0, "external_call_count": 0,
-            "evaluation_kind": "deterministic_graph_retrieval_QA_not_end_to_end_LLM",
+            "generation_model": "NONE", "generation_model_invocation_count": 0,
+            **({"planning_model_invocation_count": sum(answer["planning_model_invocation_count"] for answer in answers),
+                "model_invocation_count": sum(answer["planning_model_invocation_count"] for answer in answers),
+                "external_call_count": sum(answer.get("external_call_count",0) for answer in answers),
+                "provider": getattr(question_planner, "metadata", {}).get("provider", answers[0]["planning_provider"] if answers else "NONE"),
+                "model": getattr(question_planner, "metadata", {}).get("model", answers[0]["planning_model"] if answers else "NONE"),
+                "planning_provider": getattr(question_planner, "metadata", {}).get("provider", "NONE"),
+                "planning_model": getattr(question_planner, "metadata", {}).get("model", "NONE")}
+               if question_planner is not None else {}),
+            "evaluation_kind": ("LLM_planned_deterministic_retrieval" if question_planner is not None
+                                else "deterministic_graph_retrieval_QA_not_end_to_end_LLM"),
             "answers": answers, "source_identity_id": figure.content["source_identity_id"],
             "edition_id": figure.edition_id, "graph_sha256": graph_hash,
             "native_graph_sha256": graph_hash, "record_graph_sha256": record_graph_hash,

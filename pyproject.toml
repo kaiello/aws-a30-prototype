@@ -44,6 +44,10 @@ v1 = [
 packages = ["src", "eval"]
 include-package-data = false
 
+[tool.setuptools.package-data]
+# Developer-controlled runtime contract only; no source corpus or stores.
+src = ["evidence_chart_contract.json"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]

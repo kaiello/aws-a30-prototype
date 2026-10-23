@@ -74,3 +74,94 @@ def test_unadmitted_process_descendants_do_not_become_a_complete_empty_answer(pr
     assert "not_admitted" in " ".join(result["trace"]["diagnostics"])
     assert not any(op.get("expansion", {}).get("status") == "complete_within_supplied_chart"
                    for op in result["operations"])
+
+
+def model_plan(kind, subject_ids, **changes):
+    operation = {"operation_id": "model:synthetic", "kind": kind, "subject_ids": subject_ids,
+                 "query_layer": "evidence", **changes}
+    return {"query": "Synthetic model operation.", "status": "ready", "diagnostics": [],
+        "unresolved_selectors": [], "resolved_entities": subject_ids, "operations": [operation],
+        "coverage_authority": "MODEL_PROPOSED_UNVERIFIED", "requested_parts": [{"id": "synthetic:part",
+            "text": "Synthetic operation.", "kind": kind, "subject_ids": subject_ids,
+            "operation_ids": [operation["operation_id"]], "status": "planned"}]}
+
+
+def test_evidence_relations_render_bound_store_assertion_status_and_rules(prepared):
+    from src.evidence_a1_graph_qa import execute_graph_plan
+    graph, store = prepared
+    result = execute_graph_plan(graph, model_plan("evidence", ["toy:child"]), complete_chart=True, knowledge_store=store)
+    operation = result["operations"][0]
+    support = operation["relation_support"]
+    accepted = [item for item in support if item["type"] == "ENCLOSES_ROW"]
+    candidate = [item for item in support if item["type"] == "INDENTED_UNDER"]
+    assert accepted and all(item["assertions"][0]["status"] == "ACCEPTED" for item in accepted)
+    assert candidate and candidate[0]["assertions"][0]["status"] == "CANDIDATE"
+    assert all(assertion["support_evidence_ids"] and assertion["rule_id"]
+               for item in support for assertion in item["assertions"])
+    assert "ACCEPTED CHART_MEMBER_OF" in result["answer"]
+    assert "CANDIDATE CANDIDATE_LAYOUT_PARENT" in result["answer"]
+    assert "source-layout-1" in result["answer"]
+    assert operation["query_layer"] == "evidence"
+    assert operation["accepted_assertion_ids"] == []
+
+
+def test_exact_accepted_structural_path_is_separate_from_evidence_query_layer(prepared):
+    from src.evidence_a1_graph_qa import execute_graph_plan
+    graph, store = prepared
+    result = execute_graph_plan(graph, model_plan("paths", ["toy:parent", "toy:root"],
+        requested_direction="from_to", start_ids=["toy:parent"], end_ids=["toy:root"], waypoint_ids=[]),
+        complete_chart=True, knowledge_store=store)
+    operation = result["operations"][0]
+    assert operation["query_layer"] == "evidence"
+    assert operation["knowledge_paths"] == []
+    assert len(operation["accepted_structural_paths"]) == 1
+    path = operation["accepted_structural_paths"][0]
+    assert path["node_ids"] == ["toy:parent", "toy:family", "toy:root"]
+    assert len(path["edge_assertion_ids"]) == 2
+    assert path["literal_assertion_ids"] and path["semantic_validation"] is False
+    assert set(path["evidence_ids"]) <= {item["proof"]["evidence_id"]
+        for item in operation["knowledge_support"]["observations"]}
+    assert result["accepted_structural_paths"] == operation["accepted_structural_paths"]
+
+
+def test_candidate_path_never_gets_an_alternate_accepted_projection(prepared):
+    from src.evidence_a1_graph_qa import execute_graph_plan
+    graph, store = prepared
+    result = execute_graph_plan(graph, model_plan("paths", ["toy:child", "toy:root"],
+        requested_direction="from_to", start_ids=["toy:child"], end_ids=["toy:root"], waypoint_ids=[]),
+        complete_chart=True, knowledge_store=store)
+    operation = result["operations"][0]
+    assert any("INDENTED_UNDER" in path["edge_types"] for path in operation["paths"])
+    assert operation["accepted_structural_paths"] == []
+    assert operation["query_layer"] == "evidence"
+
+
+def test_accepted_projection_requires_every_literal_and_actual_support(prepared):
+    from src.evidence_a1_graph_qa import _GraphView, _accepted_structural_paths, _operation
+    graph, store = prepared
+    view = _GraphView(graph)
+    result = _operation(view, {"kind": "paths", "subject_ids": ["toy:parent", "toy:root"],
+        "requested_direction": "from_to", "start_ids": ["toy:parent"], "end_ids": ["toy:root"], "waypoint_ids": []}, True)
+    records = result["trace"]["visited_node_ids"] + [edge["id"] for edge in result["trace"]["selected_edges"]]
+    support = store.support_for(record_ids=records)
+    assert _accepted_structural_paths(view, result, support)
+    disputed = deepcopy(support)
+    next(item for item in disputed["assertions"] if item["predicate"] == "PRINTED_DESIGNATION")["status"] = "DISPUTED"
+    assert _accepted_structural_paths(view, result, disputed) == []
+    missing = deepcopy(support)
+    missing["observations"] = []
+    assert _accepted_structural_paths(view, result, missing) == []
+
+
+def test_compilation_block_does_not_read_operation_assertion_support(prepared, monkeypatch):
+    from src.evidence_a1_graph_qa import execute_graph_plan
+    graph, store = prepared
+    def forbidden(*args, **kwargs):
+        pytest.fail("Blocked operation must not query assertion support")
+    monkeypatch.setattr(store, "support_for", forbidden)
+    result = execute_graph_plan(graph, model_plan("unsupported", [], compilation_errors=["UNKNOWN_OPERATION"]),
+        complete_chart=True, knowledge_store=store)
+    operation = result["operations"][0]
+    assert operation["graph_executed"] is False
+    assert operation["execution_status"] == "blocked"
+    assert operation["knowledge_support"]["assertions"] == []

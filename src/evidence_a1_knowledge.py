@@ -13,7 +13,7 @@ from pathlib import Path
 import sqlite3
 import tempfile
 
-from src.evidence_a1 import validate_a1_graph_evidence
+from src.evidence_a1 import validate_chart_graph_evidence
 
 SCHEMA_VERSION = "a1-epistemic-1.0"
 RUNTIME_RELPATH = "storage/evidence_v2/a1_epistemic_002/registry.db"
@@ -56,11 +56,14 @@ def _raster_decisions(graph):
     metadata = graph.get("raster_verification")
     if metadata is None:
         return {}, {}, {}
+    a2 = graph["source_binding"]["locator"]["element_id"] == "Figure A2"
+    schema = "chart-source-integration-1.0" if a2 else "a1-raster-integration-1.0"
+    record_schema = "chart-source-record-verification-1.0" if a2 else "a1-raster-record-verification-1.0"
     if ("extraction_provenance" not in graph or not isinstance(metadata, dict)
-            or metadata.get("schema_version") != "a1-raster-integration-1.0"):
+            or metadata.get("schema_version") != schema):
         _error("RASTER_VERIFICATION_INVALID")
     receipt = metadata.get("receipt", {})
-    if not isinstance(receipt, dict) or receipt.get("schema_version") != "a1-raster-record-verification-1.0":
+    if not isinstance(receipt, dict) or receipt.get("schema_version") != record_schema:
         _error("RASTER_VERIFICATION_INVALID")
     nodes, enclosures = receipt.get("nodes", {}), receipt.get("enclosures", {})
     connector_records = metadata.get("connector_receipt", {}).get("records", [])
@@ -340,9 +343,16 @@ class A1KnowledgeStore:
         # Source bytes are checked on every read. Pixel/record verification is
         # recomputed once for this immutable graph/receipt in each store object.
         key = (_digest(metadata), tuple(signature))
-        if key != self._raster_source_signature:
-            from src.evidence_a1_ingest import validate_raster_integration
-            validate_raster_integration(self.root, graph)
+        a2 = graph["source_binding"]["locator"]["element_id"] == "Figure A2"
+        if a2 or key != self._raster_source_signature:
+            if a2:
+                # The A2 adapter also authenticates the canonical PDF/manifest;
+                # their bytes are outside the two retained raster artifacts.
+                from src.evidence_a2 import validate_a2_integration
+                validate_a2_integration(self.root, graph)
+            else:
+                from src.evidence_a1_ingest import validate_raster_integration
+                validate_raster_integration(self.root, graph)
             self._raster_source_signature = key
 
     def _read(self):
@@ -355,7 +365,7 @@ class A1KnowledgeStore:
                 if metadata.get("source_graph_sha256") != self.fingerprint:
                     _error("SOURCE_CHANGED")
                 graph = _source_graph(connection)
-                validate_a1_graph_evidence(graph, require_complete=True)
+                validate_chart_graph_evidence(graph, require_complete=True)
                 if _digest(graph) != self.fingerprint:
                     _error("STORE_TAMPERED")
                 self._validate_raster_source(graph)
@@ -381,7 +391,7 @@ class A1KnowledgeStore:
                 for record in graph["nodes"] + graph["edges"]},
             selection={"method": "persisted_accepted_assertions_only", "status": "derived_knowledge_projection",
                 "qualification": "Source records remain unchanged; predicates are admitted chart facts, not reviewed semantic taxonomy."})
-        validate_a1_graph_evidence(graph, require_complete=False)
+        validate_chart_graph_evidence(graph, require_complete=False)
         return graph
 
     def describe(self):
@@ -440,7 +450,7 @@ class A1KnowledgeStore:
 
 def prepare_a1_knowledge(root, graph, *, runtime_relpath=RUNTIME_RELPATH):
     """Create once, or validate the existing versioned runtime without rebuilding."""
-    validate_a1_graph_evidence(graph, require_complete=True)
+    validate_chart_graph_evidence(graph, require_complete=True)
     from src.evidence_a1_graph_qa import _graph_index
     _graph_index(graph)
     root = Path(root).resolve(strict=True)
@@ -507,3 +517,13 @@ def prepare_a1_knowledge(root, graph, *, runtime_relpath=RUNTIME_RELPATH):
         temporary.unlink(missing_ok=True)
     store._read()
     return store
+
+
+def prepare_chart_knowledge(root, graph, *, runtime_relpath):
+    """Reuse the existing SQLite spine for an explicitly scoped chart adapter.
+
+    Require an explicit runtime path so a second figure cannot accidentally
+    reuse the established A1 runtime. Canonical source authentication remains
+    the adapter's responsibility; retained raster admission is revalidated.
+    """
+    return prepare_a1_knowledge(root, graph, runtime_relpath=runtime_relpath)

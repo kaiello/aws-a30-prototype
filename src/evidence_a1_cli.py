@@ -140,9 +140,14 @@ def main(argv=None):
                         help="Explicit deterministic graph QA; no language model or external provider")
     parser.add_argument("--query-layer", choices=("auto", "evidence", "knowledge"), default="auto",
                         help="Graph QA: accepted knowledge, direct evidence, or typed automatic selection")
+    parser.add_argument("--planner-directory", "--local-planner-directory", dest="local_planner_directory", type=Path,
+                        help="Opt-in planner; new private request/response directory")
+    parser.add_argument("--planner-provider", choices=("ollama", "deepseek"), default="ollama")
     args = parser.parse_args(argv)
     if args.query_layer != "auto" and not args.graph_qa:
         parser.error("--query-layer requires --graph-qa")
+    if args.local_planner_directory and not args.graph_qa:
+        parser.error("--local-planner-directory requires --graph-qa")
     try:
         status = structural_status(args.root)
         result = {"setup": status}
@@ -152,7 +157,20 @@ def main(argv=None):
                 raise ValueError("Nonempty owner questions require a private --output for packets")
             if args.graph_qa:
                 from src.evidence_a1_graph_qa import run_graph_qa
-                result["owner_cqs"] = run_graph_qa(args.root, payload, query_layer=args.query_layer)
+                planner = None
+                if args.local_planner_directory:
+                    from src.evidence_chart_local_planner import create_question_planner
+                    planner = create_question_planner(args.root, args.local_planner_directory, args.planner_provider)
+                result["owner_cqs"] = run_graph_qa(args.root, payload, query_layer=args.query_layer,
+                                                  question_planner=planner)
+                if planner is not None:
+                    result["owner_cqs"]["planner"] = planner.metadata
+                    result["owner_cqs"]["planning_model_invocation_count"] = len(planner.calls)
+                    status["planning_model"] = planner.metadata["model"]
+                    status["planning_model_invocation_count"] = len(planner.calls)
+                    status["model_calls"] = len(planner.calls)
+                    status["generation_model_calls"] = 0
+                    status["external_calls"] = sum(call.get("external_call_count",0) for call in planner.calls)
                 status["status"] = "OWNER_CQ_GRAPH_QA_EXECUTED"
                 status["answer_accuracy"] = "UNASSESSED_GRAPH_QA"
                 status["generation_model"] = "NONE"

@@ -17,6 +17,7 @@ _CUES = {
     "category": {"family", "families", "category", "categories", "group", "groups", "box", "boxes", "enclosure", "enclosures"},
     "paths": {"path", "paths", "route", "routes", "chain", "chains", "hierarchy"},
     "parents": {"parent", "parents"},
+    "physical_neighbors": {"neighbor", "neighbors", "neighbour", "neighbours", "adjacency", "adjacent"},
     "operating_information": {"operating", "conditions", "temperature", "timing", "duration", "voltage", "amperage",
         "settings", "setting", "parameters", "parameter", "controls", "control", "speed", "procedure", "acceptance",
         "strength", "mechanism", "equipment", "current", "pressure"},
@@ -26,7 +27,7 @@ _GRAMMAR = set("""a an the and or for of in on from to with within into through 
     this that those these each both all every any only not no yes what which how why where whether i me us we
     give gives giving provide provides providing return returns returning show shows showing list lists listing
     tell tells include includes including indicate indicates explain explains describe describes identify identifies
-    find finds name names please printed print source figure chart a1 according using about same broader broad
+    find finds name names please printed print source figure chart according using about same broader broad
     direct directly immediate immediately recursive recursively descendant descendants child children subprocess
     subprocesses process processes entry entries row rows separate separately versus vs difference differences
     compare contrast stands stand means mean spells spell spelled out full complete entire everything also
@@ -90,6 +91,8 @@ def _language_roles(graph, text, outside, kinds, previous_kinds, *, lexical_prem
         capture("path_node_fields", r"\bnaming\s+(?:every|each|all)\s+intermediate\s+(?:process|group)(?:\s+or\s+(?:process|group))?\b", ["paths"])
         capture("path_hop_fields", r"\b(?:the\s+)?kind\s+of\s+(?:visible\s+)?connection\s+at\s+each\s+step\b|\bevidence\s+for\s+each\s+link\b", ["paths"])
         capture("root_navigation_frame", r"\bcentral\b|\btop\b", ["paths"])
+    if "physical_neighbors" in kinds:
+        capture("physical_adjacency_qualification", r"\b(?:physical|physically|undirected|incident)\b", ["physical_neighbors"])
     if len(kinds & {"designation","category","parents"}) and re.search(r"\bside\s+by\s+side\b", outside, re.I):
         capture("comparison_frame", r"\bput\b|\bside\s+by\s+side\b", kinds)
     if kinds & {"layout_relation","epistemic_limits","parents"}:

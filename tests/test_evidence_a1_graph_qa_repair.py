@@ -64,6 +64,139 @@ def rows(result):
     return {row["id"] for row in result["rows"]}
 
 
+def test_evidence_operation_returns_scoped_records_and_candidate_relations(graph):
+    qa = importlib.import_module("src.evidence_a1_graph_qa")
+    result = qa._operation(qa._GraphView(graph), {"kind": "evidence", "subject_ids": ["toy:pulsed"],
+        "requested_aspects": ["printed designation and evidence for the displayed links"]}, True)
+    assert result["answer_outcome"] == "graph_answer"
+    assert result["kind"] == "evidence"
+    assert result["evidence_scope"]["kind"] == "selected_subject_ancestry"
+    assert set(result["trace"]["visited_node_ids"]) == {"toy:pulsed", "toy:ribbon", "toy:alpha", "toy:root"}
+    assert rows(result) == {"toy:pulsed"}
+    assert "Toy joining chart" in result["answer"] and "ZZRP" in result["answer"]
+    assert "INDENTED_UNDER" in result["answer"] and "Candidate layout parent" in result["answer"]
+    assert " --CHART_CONNECTOR-- " in result["answer"]
+    assert "--CHART_CONNECTOR-->" not in result["answer"]
+    assert "not established by this chart" not in result["answer"]
+    assert "toy:beta" not in result["trace"]["visited_node_ids"]
+
+
+def test_zero_subject_evidence_does_not_expand_to_the_whole_chart(graph):
+    qa = importlib.import_module("src.evidence_a1_graph_qa")
+    result = qa._operation(qa._GraphView(graph), {"kind": "evidence", "subject_ids": []}, False)
+    assert result["answer_outcome"] == "insufficient_evidence"
+    assert result["subject_ids"] == []
+    assert result["trace"]["visited_node_ids"] == []
+    assert result["trace"]["selected_edges"] == []
+    assert "explicit_chart_layout" in result["answer"]
+
+
+def model_execution_plan(operations, parts=None):
+    return {"query": "Synthetic scoped chart request.", "status": "partial" if any(
+        item.get("compilation_errors") for item in operations) else "ready",
+        "diagnostics": [], "unresolved_selectors": [], "resolved_entities": ["toy:ribbon"],
+        "coverage_authority": "MODEL_PROPOSED_UNVERIFIED", "operations": operations,
+        "requested_parts": parts or [{"id": "synthetic:part:" + str(index), "text": "Synthetic request.",
+            "kind": item["kind"], "subject_ids": item["subject_ids"],
+            "operation_ids": [item["operation_id"]], "status": "planned"}
+            for index, item in enumerate(operations)]}
+
+
+def test_batch_blocks_invalid_and_dependent_operations_but_executes_independent(graph, monkeypatch):
+    qa = importlib.import_module("src.evidence_a1_graph_qa")
+    operations = [
+        {"operation_id": "bad", "kind": "unsupported", "subject_ids": [], "compilation_errors": ["SOURCE_KIND_INVALID"]},
+        {"operation_id": "good", "kind": "designation", "subject_ids": ["toy:ribbon"]},
+        {"operation_id": "dependent", "kind": "designation", "subject_ids": ["toy:ribbon"],
+         "dependency_operation_ids": ["bad"]}]
+    original, called = qa._operation, []
+    def observe(view, operation, complete):
+        called.append(operation["operation_id"])
+        return original(view, operation, complete)
+    monkeypatch.setattr(qa, "_operation", observe)
+    result = qa.execute_graph_plan(graph, model_execution_plan(operations), complete_chart=True)
+    assert called == ["good"]
+    assert [op["graph_executed"] for op in result["operations"]] == [False, True, False]
+    assert [op["execution_status"] for op in result["operations"]] == ["blocked", "executed", "blocked"]
+    assert result["operations"][0]["compilation_errors"] == ["SOURCE_KIND_INVALID"]
+    assert result["operations"][2]["dependency_operation_ids"] == ["bad"]
+    assert "ZZR" in result["answer"]
+    assert result["execution_coverage"]["blocked_operation_count"] == 2
+    assert result["semantic_completeness"]["status"] == "UNASSESSED"
+    assert result["coverage"]["all_parts_answered"] is None
+
+
+def test_model_mixed_source_limit_is_distinct_from_execution_failure(graph):
+    qa = importlib.import_module("src.evidence_a1_graph_qa")
+    operations = [{"operation_id": "literal", "kind": "designation", "subject_ids": ["toy:ribbon"]},
+                  {"operation_id": "missing", "kind": "operating_information", "subject_ids": ["toy:ribbon"]}]
+    part = {"id": "mixed", "text": "Synthetic facts and absent settings.", "kind": "compound",
+            "subject_ids": ["toy:ribbon"], "operation_ids": ["literal", "missing"], "status": "planned"}
+    result = qa.execute_graph_plan(graph, model_execution_plan(operations, [part]), complete_chart=True)
+    assert result["coverage"]["parts"][0]["resolution_kind"] == "source_or_admission_limit"
+    assert result["execution_coverage"]["source_limited_operation_count"] == 1
+    assert result["execution_coverage"]["executed_operation_count"] == 2
+    assert result["semantic_completeness"]["status"] == "UNASSESSED"
+
+
+def test_whole_chart_layout_requires_an_explicit_scope_marker(graph):
+    qa = importlib.import_module("src.evidence_a1_graph_qa")
+    view = qa._GraphView(graph)
+    unscoped = qa._operation(view, {"kind": "chart_layout", "subject_ids": []}, False)
+    assert unscoped["answer_outcome"] == "insufficient_evidence"
+    result = qa._operation(view, {"kind": "chart_layout", "subject_ids": [], "scope": "chart"}, False)
+    assert result["answer_outcome"] == "graph_answer"
+    assert rows(result) == {node["id"] for node in graph["nodes"]}
+    assert result["evidence_scope"]["scope"] == "chart"
+    assert result["evidence_scope"]["exhaustive_source_claim"] is False
+    assert result["trace"]["selected_edges"] == graph["edges"]
+    assert result["groups"]
+
+
+def test_root_designation_is_a_literal_lookup_with_explicit_absent_code(graph):
+    qa = importlib.import_module("src.evidence_a1_graph_qa")
+    result = qa._operation(qa._GraphView(graph), {"kind": "designation", "subject_ids": ["toy:root"]}, True)
+    assert result["answer_outcome"] == "graph_answer"
+    assert rows(result) == {"toy:root"}
+    assert result["rows"][0]["code"] is None
+    assert "no overall designation printed in this heading" in result["answer"]
+    assert result["paths"] == []
+
+
+def test_epistemic_requested_scope_does_not_assert_unchecked_unavailability(graph):
+    qa = importlib.import_module("src.evidence_a1_graph_qa")
+    scope = ["give the printed acronym and category"]
+    result = qa._operation(qa._GraphView(graph), {"kind": "epistemic_limits", "subject_ids": ["toy:ribbon"],
+        "requested_aspects": scope}, True)
+    assert result["requested_aspects"] == scope
+    assert "Requested scope: give the printed acronym and category" in result["answer"]
+    assert "not established by this chart" not in result["answer"]
+    assert "not supplied facts" not in result["answer"]
+    assert "does not establish reviewed semantic IS_A" in result["answer"]
+
+
+def test_evidence_execution_reuses_record_proofs_without_accepting_candidates(graph):
+    qa = importlib.import_module("src.evidence_a1_graph_qa")
+    from src.evidence_a1 import bind_a1_graph_evidence
+    source = bind_a1_graph_evidence(graph, "fixture:joining@" + "0" * 64, "source2:toy", {
+        "element_id": "Figure A1", "canonical_element_id": "figure:figure_a1",
+        "source_identity_id": "source2:toy", "pdf_index": 0, "printed_page": "1",
+        "order": 0, "region_scope": "full_page", "region": None}, "1" * 64)
+    query = "Show the observations for Ribbon fold pulsed."
+    operation = {"operation_id": "synthetic:evidence", "kind": "evidence", "subject_ids": ["toy:pulsed"]}
+    plan = {"query": query, "status": "ready", "diagnostics": [], "unresolved_selectors": [],
+        "resolved_entities": ["toy:pulsed"], "operations": [operation], "requested_parts": [
+            {"id": "synthetic:part", "text": query, "kind": "evidence", "subject_ids": ["toy:pulsed"],
+             "operation_ids": ["synthetic:evidence"], "status": "planned"}]}
+    result = qa.execute_graph_plan(source, plan, complete_chart=True)
+    relations = [claim for claim in result["claims"] if claim["predicate"] == "observed_chart_relation"]
+    assert relations and all(claim["evidence_ids"] for claim in relations)
+    assert any(claim["verification"] == "candidate" for claim in relations)
+    assert result["semantic_validation"] is False
+    assert result["source_binding_status"] == "declared_record_identities_validated_source_unverified"
+    assert result["record_evidence_catalog"]
+
+
 def test_independent_shorter_mention_survives_longer_name_elsewhere(graph):
     result = answer(graph, "Compare Ribbon fold pulsed and Ribbon fold.", complete_chart=True)
     assert result["answer_outcome"] == "graph_answer"

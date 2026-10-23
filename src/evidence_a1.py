@@ -54,7 +54,7 @@ def _record_region(record):
     return region
 
 
-def _validate_source_binding(binding):
+def _validate_chart_source_binding(binding):
     _require(isinstance(binding, dict) and set(binding) == {
         "edition_id", "source_identity_id", "locator", "asset_sha256"}, "RECORD_SOURCE_INVALID")
     _require(all(isinstance(binding[k], str) and binding[k] for k in
@@ -62,13 +62,25 @@ def _validate_source_binding(binding):
     _require(isinstance(binding["asset_sha256"], str) and re.fullmatch(
         r"[0-9a-f]{64}", binding["asset_sha256"]), "RECORD_ASSET_INVALID")
     locator = binding["locator"]
-    _require(isinstance(locator, dict) and locator.get("element_id") == ELEMENT
-        and locator.get("canonical_element_id") == "figure:figure_a1"
+    profiles = {"Figure A1": "figure:figure_a1", "Figure A2": "figure:figure_a2"}
+    _require(isinstance(locator, dict) and locator.get("element_id") in profiles
+        and locator.get("canonical_element_id") == profiles[locator["element_id"]]
         and locator.get("source_identity_id") == binding["source_identity_id"]
         and isinstance(locator.get("pdf_index"), int) and not isinstance(locator["pdf_index"], bool)
         and locator["pdf_index"] >= 0 and bool(str(locator.get("printed_page", "")))
-        and locator.get("order") == 0 and locator.get("region_scope") == "full_page"
-        and locator.get("region") is None, "RECORD_LOCATOR_INVALID")
+        and locator.get("order") == 0, "RECORD_LOCATOR_INVALID")
+    if locator["element_id"] == ELEMENT:
+        _require(locator.get("region_scope") == "full_page" and locator.get("region") is None,
+                 "RECORD_LOCATOR_INVALID")
+    else:
+        _require(locator.get("region_scope") == "figure_region", "RECORD_LOCATOR_INVALID")
+        _record_region(locator)
+
+
+def _validate_source_binding(binding):
+    """Keep the established A1-only interface strict."""
+    _validate_chart_source_binding(binding)
+    _require(binding["locator"]["element_id"] == ELEMENT, "RECORD_LOCATOR_INVALID")
 
 
 def _extraction_provenance(graph, binding, record=None):
@@ -87,7 +99,7 @@ def _extraction_provenance(graph, binding, record=None):
         and provenance["input_asset_sha256"] == binding["asset_sha256"]
         and provenance["uncertainty"] == "unreviewed_model_observation", "EXTRACTION_PROVENANCE_INVALID")
     parent = provenance["parent_source"]
-    _validate_source_binding(parent)
+    _validate_chart_source_binding(parent)
     _require(parent["edition_id"] == binding["edition_id"] and all(
         parent["locator"][key] == binding["locator"][key] for key in
         ("element_id", "canonical_element_id", "pdf_index", "printed_page", "order", "region", "region_scope")),
@@ -99,6 +111,10 @@ def _extraction_provenance(graph, binding, record=None):
 
 def _record_proof(record, kind, graph, binding, native_hash):
     region = _record_region(record)
+    crop = binding["locator"].get("region")
+    if crop is not None:
+        _require(crop[0] <= region[0] < region[2] <= crop[2]
+                 and crop[1] <= region[1] < region[3] <= crop[3], "RECORD_OUTSIDE_FIGURE_REGION")
     if kind == "edge":
         qualification = graph["edge_qualifications"].get(record.get("type"))
         _require(isinstance(qualification, dict) and qualification.get("verification") in
@@ -126,7 +142,7 @@ def _record_proof(record, kind, graph, binding, native_hash):
     return record_id, proof
 
 
-def bind_a1_graph_evidence(graph, edition_id, source_identity_id, locator, asset_sha256):
+def bind_chart_graph_evidence(graph, edition_id, source_identity_id, locator, asset_sha256):
     """Bind immutable native records to a declared source, without authenticating it.
 
     The canonical loader authenticates PDF/manifest/image bytes separately. These
@@ -138,7 +154,7 @@ def bind_a1_graph_evidence(graph, edition_id, source_identity_id, locator, asset
         graph.get("region_space") == "normalized_pdf_page_ymin_xmin_ymax_xmax", "GRAPH_SCHEMA_INVALID")
     binding = deepcopy(dict(edition_id=edition_id, source_identity_id=source_identity_id,
         locator=locator, asset_sha256=asset_sha256))
-    _validate_source_binding(binding)
+    _validate_chart_source_binding(binding)
     provenance = _extraction_provenance(graph, binding)
     bound = deepcopy(graph)
     if provenance is not None:
@@ -157,16 +173,16 @@ def bind_a1_graph_evidence(graph, edition_id, source_identity_id, locator, asset
         _require(edge["from"] in identifiers and edge["to"] in identifiers, "GRAPH_ENDPOINT_MISSING")
         identifier, proof = _record_proof(edge, "edge", bound, binding, native_hash)
         edge.update(id=identifier, evidence=proof)
-    validate_a1_graph_evidence(bound)
+    validate_chart_graph_evidence(bound)
     return bound
 
 
-def validate_a1_graph_evidence(graph, expected_source=None, require_complete=True):
+def validate_chart_graph_evidence(graph, expected_source=None, require_complete=True):
     """Check record consistency and declared source scope, not caller authenticity."""
     _require(graph.get("record_evidence_schema_version") == RECORD_EVIDENCE_SCHEMA,
         "RECORD_EVIDENCE_SCHEMA_INVALID")
     binding = graph.get("source_binding")
-    _validate_source_binding(binding)
+    _validate_chart_source_binding(binding)
     if expected_source is not None:
         _require(binding == expected_source, "RECORD_SOURCE_MISMATCH")
     native_hash = graph.get("native_graph_sha256")
@@ -195,6 +211,20 @@ def validate_a1_graph_evidence(graph, expected_source=None, require_complete=Tru
         "node_count": len(graph["nodes"]), "edge_count": len(graph["edges"]),
         "record_evidence_count": len(evidence_ids),
         "qualification": "Declared record consistency only; source authenticity requires canonical loader and asset verification."}
+
+
+def bind_a1_graph_evidence(graph, edition_id, source_identity_id, locator, asset_sha256):
+    """A1-compatible binding; other figure adapters use the explicit chart API."""
+    bound = bind_chart_graph_evidence(graph, edition_id, source_identity_id, locator, asset_sha256)
+    _validate_source_binding(bound["source_binding"])
+    return bound
+
+
+def validate_a1_graph_evidence(graph, expected_source=None, require_complete=True):
+    """Preserve the original A1-only validation boundary."""
+    receipt = validate_chart_graph_evidence(graph, expected_source, require_complete)
+    _validate_source_binding(graph["source_binding"])
+    return receipt
 
 
 def _bbox(value):
