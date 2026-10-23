@@ -1,6 +1,137 @@
 # Implementation Plan: Standalone AWS A3.0 Multimodal NLQ Prototype
 
-## A2 finishing slice009 verified (2026-10-23)
+## Completed bounded offline contract repair004
+
+- [x] Inspect both interfaces; define shared trace-only rationale mapping with
+  original metadata retained and unresolved explanations forwarded unchanged.
+- [x] Preserve strict action/reference/source/evidence guards;97 focused checks
+  pass and independent code review is CLEAR. Freeze111 runtime/test/config hashes.
+- [x] Replay all67 ORIGINAL003 responses through inherited LocalQuestionPlanner
+  entry point and canonical backend, without replacing actions/entities/intents.
+- [x] Independently grade actual answers: A1 35 PASS/10 PARTIAL/6 UNASSESSED;
+  A2 9 PASS/4 PARTIAL/3 UNASSESSED. Failed delivery is not proper source abstention.
+- [x] Preserve51 deterministic controls,5 source/input/store hashes and1,503 prior
+  artifacts. Returned proofs and candidate isolation are CLEAR; zero KG path queries.
+
+Result: metadata contract fixed, saved model choices still incomplete. No fresh
+model call occurred; instructions1.1 were not consumed by a model. Stop semantic
+repairs and hold merge/adoption rather than tune again to these exposed questions.
+
+Exactly two serial workstreams: (1) completed repair/replay/report, (2) a new local
+`feat/planner-contract-preflight` prevention branch depending on a reviewed local
+checkpoint. Prevention is limited to shared-contract guidance, one real-public-entry
+preflight, one small project planning/release skill and a short branch handoff.
+No push/merge/deletion/inference, new questions/OCR/figures/frameworks or A3.
+
+Historical sections below preserve previous run dispositions.
+
+## Fresh question-interface003: complete; hold closeout
+
+Same branch `feat/a1-a2-relationship-readiness`, main/base `71088ce` unchanged.
+
+- [x] Freeze111 runtime/test/config files, schema/contract, fixed51 A1/16 A2 inputs,
+  source/stores and all001/002 artifacts; preserve the uncommitted implementation.
+- [x] Run one actual DeepSeek pass with source dictionary/revised schema only;
+  retain67 original natural-stop outputs, prompts, plans, usage and actual answers.
+  No PDF/image/gold upload, retries, replacements, runtime edits or extra paid pass.
+- [x] Independently grade all67 actual answers and proof/layer findings by existing
+  text/relationship/multihop tiers. A1 content1 PASS(clarification)/50 UNASSESSED,
+  delivery1 PASS/50 FAIL; A2 content/support16 UNASSESSED, delivery16 FAIL.
+- [x] Diagnose without repair/replay:66 plans reject at PLANNED_PART_INVALID because
+  new schema/guidance allow planned rationale that lowering sends to an empty-reason
+  internal guard. Zero graph operations; no live retrieval/multihop acceptance claim.
+- [x] Preserve all raw failures and report actual answers. Hold Git closeout and
+  live-planner/production adoption. No further inference or implementation authorized
+  by this pass; no automatic A3 or expanded benchmark.
+
+Next smallest decision: align planned-part metadata across the adapter/contract,
+preserve original outputs and inspect saved action choices offline without weakening
+typed IDs/dependencies/evidence guards. Additional unexecuted selection/reference
+errors remain; a gate fix alone cannot be counted as a fresh successful model pass.
+Existing extraction, admission, original questions/gold, deterministic controls and
+old fresh/manual results stay fixed. This is not an OCR or graph rebuild workstream.
+
+## Active bounded offline question-interface simplification002
+
+Preserve relationship-readiness001's fresh67 raw plans/answers and grades unchanged
+(A2 16 PASS; A1 46 PASS/4 PARTIAL/1 UNASSESSED). Work stays on the same local
+`feat/a1-a2-relationship-readiness` branch. No inference or Git publication is
+authorized for this pass; existing source/store/admission and question bytes stay fixed.
+
+- [x] Diagnose the named relationship, OAW identity, operating-information follow-up
+  and empty-ID evidence contract failures using saved plans and existing abstractions.
+- [x] Add four source-dictionary question actions, explicit prior-action references
+  and strict lowering into the existing deterministic executor. Retain original plans,
+  blocked requests and epistemic distinctions; never synthesize omitted model intents.
+- [x] Correct failed-attempt coverage and the advertised empty-evidence mismatch.
+- [x] Run focused changed-code checks and existing controls; independently review
+  actual affected answers/evidence. Label unchanged-plan replay versus manually
+  adapted action checks separately; neither is a fresh model pass.
+- [x] Report limitations and readiness for one separately approved fresh validation.
+
+Disposition: six manual-action answers PASS content/delivery/support,51 deterministic
+controls unchanged. All67 unchanged saved model plans replayed once; A1's actual
+answers remain46 PASS/4 PARTIAL/1 UNASSESSED. Broad checks416 passed; the sole old
+contract-scope assertion was updated to the intended rejection and passed its focused
+recheck. Independent code/source/answer review is clear. All source/input/store hashes
+and001 artifacts match the preserved baseline. No model, OCR or publication calls.
+Minor duplicate rendering remains; do not begin another repair loop. A later fresh
+pass must test whether the model actually selects the simpler actions and captures
+every request. Keep it separate from these manual/cached development results.
+
+Scope/drift check: AWS backend correctness, A1/A2 only, text then relationships then
+multihop; no OCR/admission changes, new questions, framework, UI, A3, Navy Weld or Utopia.
+The runtime loads the versioned JSON action contract; project SKILL.md files guide
+development and are not an automatic backend skill registry.
+
+## Active A1/A2 relationship-readiness slice (2026-10-23)
+
+Branch `feat/a1-a2-relationship-readiness` starts from verified main
+`71088cebc9eb3b2556d7bbe73a23a451e645e3b9`. Preserve the existing extraction,
+source dictionaries, evidence/KG stores, all prior plans/grades and 51 A1/16 A2
+questions. PR12's automatic review remains pending, not passed. No Git publication
+or merge is authorized for this new slice.
+
+- [x] Inspect only unresolved relationships required by these questions. Retain
+  text/citation controls; distinguish geometric enclosure/indentation/connectors,
+  accepted structural relations and semantic subtype. Any admission must satisfy
+  existing source/region/evidence rules; candidate AI observations and absent edges
+  cannot establish accepted semantic facts or transitive IS_A.
+- [x] Freeze the supported runtime contract and exact source/input identities;
+  run one fresh 67-question pass through the existing authenticated DeepSeek proxy
+  with the previously disclosed question/dictionary/schema payload class. Preserve
+  every prompt/plan/output, usage, stop reason and deterministic supplement. No
+  source PDF/image upload, new access, OCR, additional figure or tuning campaign.
+- [x] Independently inspect actual answer content, per-part delivery and evidence
+  by text, relationships and multihop. Keep known regressions separate from unseen
+  or production acceptance. Use only focused checks for concrete changes; diagnose
+  any remaining issue offline and label cached replay. Stop with actual answers,
+  tier readiness and remaining gaps; no automatic A3 or additional paid pass.
+
+Scope/drift check uses this existing plan and planning-and-task-breakdown plus
+scope discipline in using-agent-skills. No separate evaluation framework, skill
+registry or duplicate planning documents are needed. GR stays optional; UI,
+Navy Weld, Utopia and framework bakeoffs remain deferred.
+
+Completed disposition: no source/admission/runtime change was justified. Fresh
+A2 content/delivery16 PASS; A1 content46 PASS/4 PARTIAL/1 UNASSESSED, with the latter
+an answerable lookup/delivery failure; three passes are proper clarifications.
+All original15 owner questions pass. Keep the cached009 16/51 PASS baseline intact.
+All67 calls ended naturally, no retries/truncation/supplement; usage347366 input /
+18293 output tokens, about USD0.0295 estimated at current off-peak rates.
+
+Remaining A1 gaps: QA002-10/13/14 relationship choices; HO002-01 OAW identity/group
+false abstention; HO002-05 source-limit follow-up. A2 Q15 has a redundant failed
+empty-subject evidence operation despite a complete chart_layout/candidate answer;
+contract/executor and attempted-coverage semantics remain explicit. No automatic
+offline repair or further paid pass was launched. Source proof review is clear;
+all156 operations are evidence-layer, with no accepted-KG path query demonstrated.
+Keep text independently usable, hold general planner adoption/A3, and choose a
+bounded generic planning/coverage repair before any new validation approval.
+Report and all actual answers: `Figure_A1_A2_Relationship_Readiness_001_Report.md`.
+Changes remain local/uncommitted; no push/merge/deletion is authorized here.
+
+## Preserved A2 finishing slice009: cached baseline (2026-10-23)
 
 The bounded A2 ingest/evidence slice and opt-in planner finishing pass are verified
 on existing exposed questions. Default deterministic behavior is preserved; fresh

@@ -7,22 +7,28 @@ import pytest
 from src.evidence_chart_contract import (
     CONTRACT, CONTRACT_PATH, CONTRACT_SHA256, CONTRACT_VERSION, ContractError,
     EMPTY_SUBJECT_SCOPES, INSTRUCTION_VERSION, OPERATION_PROFILES, SCHEMA_VERSION,
-    load_contract, planner_instructions,
+    load_contract, planner_instructions, QUESTION_INTERFACE,
 )
 
 
 def test_default_contract_identity_and_explicit_scopes():
     assert CONTRACT_SHA256 == hashlib.sha256(CONTRACT_PATH.read_bytes()).hexdigest()
-    assert CONTRACT_VERSION == "chart-plan-contract-1.0"
+    assert CONTRACT_VERSION == "chart-plan-contract-1.2"
     assert SCHEMA_VERSION == "chart-llm-plan-1.0"
-    assert INSTRUCTION_VERSION == "chart-llm-plan-instructions-1.4"
+    assert INSTRUCTION_VERSION == "chart-llm-plan-instructions-1.5"
+    assert QUESTION_INTERFACE["schema_version"] == "chart-question-actions-1.0"
+    assert QUESTION_INTERFACE["instruction_version"] == "chart-question-actions-instructions-1.1"
+    assert QUESTION_INTERFACE["part_metadata"]["planned_reason"] == "trace_only_map_to_part_rules.planned_reason"
+    assert QUESTION_INTERFACE["kinds"] == ("lookup_term", "list_members", "check_relationship", "explain_path")
     assert len(OPERATION_PROFILES) == 15
     chart = OPERATION_PROFILES["chart_layout"]
     assert chart["subjects"] == chart["targets"] == ()
     assert chart["layers"] == ("evidence",)
     assert EMPTY_SUBJECT_SCOPES["chart_layout"] == "chart"
     assert all(EMPTY_SUBJECT_SCOPES[kind] == "source" for kind in
-        ("evidence", "epistemic_limits", "operating_information"))
+        ("epistemic_limits", "operating_information"))
+    assert "evidence" not in EMPTY_SUBJECT_SCOPES
+    assert OPERATION_PROFILES["evidence"]["minimum"] == 1
     assert OPERATION_PROFILES["designation"]["subjects"] == ("root", "category", "process")
     assert OPERATION_PROFILES["membership"]["subjects"] == ("process",)
     assert "MODEL_PROPOSED_UNVERIFIED" in planner_instructions()
@@ -46,6 +52,9 @@ def test_definitions_are_immutable_and_copies_are_independent():
     lambda d: d["empty_subject_scopes"].update(evidence="chart"),
     lambda d: d["operation_profiles"]["paths"]["produces"].update(sql=["process"]),
     lambda d: d.update(extra="unknown"),
+    lambda d: d["question_interface"]["kinds"].append("sql"),
+    lambda d: d["question_interface"]["modes"]["check_relationship"].append("auto_accept"),
+    lambda d: d["question_interface"]["part_metadata"].update(planned_reason="drop_validation"),
 ])
 def test_unsafe_or_unknown_contract_is_rejected(tmp_path, change):
     value = CONTRACT.as_dict()

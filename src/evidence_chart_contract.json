@@ -1,7 +1,7 @@
 {
-  "contract_version": "chart-plan-contract-1.0",
+  "contract_version": "chart-plan-contract-1.2",
   "wire_schema_version": "chart-llm-plan-1.0",
-  "instruction_version": "chart-llm-plan-instructions-1.4",
+  "instruction_version": "chart-llm-plan-instructions-1.5",
   "coverage_authority": "MODEL_PROPOSED_UNVERIFIED",
   "budgets": {
     "MAX_OPERATIONS": 16,
@@ -54,7 +54,6 @@
   },
   "empty_subject_scopes": {
     "chart_layout": "chart",
-    "evidence": "source",
     "epistemic_limits": "source",
     "operating_information": "source"
   },
@@ -366,7 +365,7 @@
       "meaning": "expand every requested field for every subject"
     },
     "evidence": {
-      "minimum": 0,
+      "minimum": 1,
       "subjects": [
         "root",
         "category",
@@ -388,7 +387,7 @@
           "category"
         ]
       },
-      "meaning": "observations/proofs for selected subjects, or source qualification only when none; keep relation operation separate"
+      "meaning": "observations/proofs for explicitly selected subjects; keep relation operation separate; whole-chart observations require chart_layout"
     },
     "epistemic_limits": {
       "minimum": 0,
@@ -470,12 +469,99 @@
     "Choose list depth explicitly: direct_children means immediate displayed children; descendants means the recursive set including intermediates. Unqualified all processes under a group asks for descendants; direct/immediate wording asks for direct_children. Do not substitute depths.",
     "A follow-up about returned entries must reference their actual rows/groups, not reuse the original parent. Paths preserve requested start/end direction and print intermediate names/codes; paths.rows are process subjects, not intermediate category nodes.",
     "Use exact source labels/codes or verified aliases. A partial name with multiple dictionary matches requires an unresolved part and clarification, not a preferred or subset identity. Recognizing an identity never admits a relationship.",
-    "chart_layout alone explicitly denotes complete observations of the selected source chart: no literal IDs or result references, evidence layer only, scope=chart. Empty IDs in evidence, epistemic_limits or operating_information mean source qualification/limits only; they never mean all graph nodes.",
+    "chart_layout alone explicitly denotes complete observations of the selected source chart: no literal IDs or result references, evidence layer only, scope=chart. evidence requires selected subjects. Empty IDs in epistemic_limits or operating_information mean source qualification/limits only; they never mean all graph nodes.",
     "Layer is explicit: evidence returns qualified source observations; knowledge traverses admitted assertions only. Physical connectors are undirected; indentation is candidate layout, not semantic IS_A. Comparison fields do not replace separately requested relationship or evidence operations.",
     "All operation keys are required; unused arrays are []. requested_fields/requested_aspects are quoted requested operating information or evidence aspects, not output columns or proposed source values.",
     "JSON schema validates structure. Code also enforces allowed operations, argument types, combined budgets, source/query bindings, prior-result dependencies and the evidence-to-knowledge admission boundary. Coverage remains MODEL_PROPOSED_UNVERIFIED; valid structure, a ready plan and joined proofs do not establish semantic completeness.",
     "Answer a relationship question with the appropriate qualified relation/verdict and source placement, not only a common-ancestor path. membership is direct enclosure against a category; layout_relation describes a displayed process relationship; epistemic_limits explains missing semantic authority. A physical path does not establish semantic IS_A. Keep separately requested route evidence as its own operation.",
     "For questions about what indentation or connecting strokes establish, request explicit source limits with evidence. Organizational from/to order and traversal direction are not arrow directions. Do not invent an arrowhead detector or absence observation. Use explicit chart_layout for whole-chart observations; row_partition applies only to boxes containing process rows, not all intermediate categories. Do not enumerate every possible relation pair to ask about source authority.",
     "List and path outputs already include printed names/codes for the records they render. Do not add a duplicate designation merely to repeat fields already supplied. If a requested code is absent from an operation's rendered output, such as a parent lookup, retain an explicit designation follow-up selecting the actual returned records of the needed kind. paths.rows selects process subjects, not intermediate category nodes. Empty or failed refs remain unresolved; never replace them with guessed subjects."
-  ]
+  ],
+  "question_interface": {
+    "schema_version": "chart-question-actions-1.0",
+    "instruction_version": "chart-question-actions-instructions-1.1",
+    "action_keys": [
+      "id",
+      "kind",
+      "query_layer",
+      "subjects",
+      "targets",
+      "subjects_from",
+      "targets_from",
+      "fields",
+      "mode",
+      "information_fields",
+      "scope"
+    ],
+    "envelope_keys": [
+      "schema_version",
+      "source_element",
+      "query",
+      "parts",
+      "actions"
+    ],
+    "part_keys": [
+      "id",
+      "quote",
+      "status",
+      "action_ids",
+      "reason"
+    ],
+    "kinds": [
+      "lookup_term",
+      "list_members",
+      "check_relationship",
+      "explain_path"
+    ],
+    "fields": [
+      "name",
+      "acronym",
+      "group",
+      "evidence",
+      "source_limits"
+    ],
+    "modes": {
+      "lookup_term": [
+        ""
+      ],
+      "list_members": [
+        "direct",
+        "descendants",
+        "parents",
+        "row_partition",
+        "physical_neighbors"
+      ],
+      "check_relationship": [
+        "membership",
+        "layout",
+        "semantic_subtype",
+        "source_limits"
+      ],
+      "explain_path": [
+        "from_to"
+      ]
+    },
+    "scopes": [
+      "selected",
+      "chart"
+    ],
+    "guidance": [
+      "Return only this question-action JSON, not answers, SQL, graph facts or new identities. Copy the query and source_element. Capture every requested subquestion, property, alternative and follow-up in parts/actions. Parts label requests; they are not a character-partition proof. Unresolved parts need a reason; never silently omit them.",
+      "Resolve subjects/targets using catalog IDs or exact printed names, codes or verified aliases. Prelinked mentions are dictionary observations, not answers. A source-present printed name/code must not be declared absent. Ambiguous fragments require clarification; never guess an identity or invent a synonym.",
+      "lookup_term returns identity and the requested fields for every selected term. name/acronym are printed identity; group means the positive enclosing category of a process. information_fields names literal requested operating information; absent values become a source limitation, never invented data.",
+      "list_members modes: direct=immediate displayed children; descendants=recursive set including intermediates; parents=direct displayed parents; row_partition=unindented versus indented process rows; physical_neighbors=incident physical connectors. Choose the requested depth explicitly. List rows already carry printed names/codes; fields adds other requested information for returned records.",
+      "check_relationship requires a subject and explicit targets. membership asks a process's direct category-box enclosure; layout reports qualified displayed process ancestry or enclosure. semantic_subtype requests an endpoint-specific displayed relation plus the source's semantic-authority limit. Neither missing edges nor shared words prove a universal negative. Candidate indentation is not admitted semantic IS_A.",
+      "check_relationship mode source_limits with scope=chart explicitly asks what the selected complete chart observations establish. It alone may use no selectors. evidence/source_limits fields never turn accidental empty selectors into all graph nodes. Actual source visual observations may remain candidate and qualified.",
+      "explain_path mode from_to preserves subject=start and targets=ends, returning intermediate source support. A physical/chart path is not a relationship verdict or semantic subtype proof. When both verdict and route are requested, retain separate actions.",
+      "For follow-ups use subjects_from/targets_from with prior action IDs: lookup returns selected identities; list returns its actual listed entries (parents selects parents; direct/descendants/physical_neighbors select groups; row_partition selects rows). Only prior lookup/list actions are reference producers. Failed or empty results block dependents. Do not reuse the original group when the follow-up asks about returned entries; do not guess a global last entity.",
+      "Each action requires every key; unused arrays are [], mode for lookup_term is an empty string. scope=selected for term/list/endpoint actions; scope=chart only for explicit chart source limits. Literal selectors and prior-action references are mutually exclusive per side. Use fields only for requested projections; evidence does not replace a relation action.",
+      "query_layer=evidence returns qualified source observations; knowledge uses accepted assertions only. Layout/subtype/source-limit actions are evidence-only. Recognizing a dictionary identity never promotes a candidate relationship or supplies an admission decision.",
+      "Use one action for equivalent repeated requests while preserving every part mapping and requested field. Independent valid actions may execute even when another is invalid; failed producers block dependent actions. Validation and execution coverage are separate from semantic answer completeness, which remains MODEL_PROPOSED_UNVERIFIED until independently checked."
+    ],
+    "part_metadata": {
+      "planned_reason": "trace_only_map_to_part_rules.planned_reason",
+      "unresolved_reason": "required_forward_unchanged",
+      "description": "part.reason: for planned parts, an optional bounded rationale (including an empty string) is unverified trace metadata only. The adapter preserves it separately and maps the internal reason to part_rules.planned_reason; it never changes actions, selectors or evidence. Unresolved parts require a nonblank reason and action_ids=[]; that explanation is forwarded unchanged. Planned parts require existing action_ids. Never use a rationale as a source fact, admission decision or proof of answer completeness."
+    }
+  }
 }

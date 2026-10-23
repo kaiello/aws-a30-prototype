@@ -1,6 +1,110 @@
 # Multi-Agent System (MAS) Operating Guidelines: AWS A3.0 Prototype
 
-## A2 finishing slice009 verified (2026-10-23)
+## Current disposition: offline contract repair004 complete
+
+The metadata boundary is repaired: original planned rationale is validated and
+preserved as unverified trace metadata, while the internal planned reason maps to
+the shared contract value. Unresolved explanations and typed/action/source/evidence
+guards remain strict. Contract1.2/question instructions1.1 are runtime-loaded.
+
+All67 ORIGINAL fresh003 responses were replayed through the real public planner
+entry point and canonical compiler/backend, with no action/entity/intent replacement.
+Independent content grades: A1 35 PASS/10 PARTIAL/6 UNASSESSED; A2 9 PASS/4 PARTIAL/
+3 UNASSESSED. Unassessed factual cases are failed deliveries, not good abstentions.
+Three A1 passes are appropriate clarifications. Runtime model/API calls:0. The new
+instructions were not seen by a model; these are cached development results.
+
+All51 deterministic controls, source/stores and1,503 prior artifacts are unchanged.
+Focused software checks97 PASS; independent metadata/code and source/proof review
+CLEAR. Supported physical paths are not semantic IS_A or accepted-KG multihop:
+this replay ran one accepted designation lookup and zero knowledge path queries.
+Hold live-planner adoption/merge; remaining choices omit lists/groups/follow-ups or
+use invalid modes/targets/references. No automatic semantic repair or paid rerun.
+
+Exactly two serial workstreams are authorized: this completed repair/report, then
+a separate local prevention branch for one real-entry preflight, a small project
+planning/release skill and short handoff. A reviewed local checkpoint is permitted;
+no push, merge, deletion, inference, OCR, A3 or extra framework work is authorized.
+Historical sections below describe their recorded runs, not current authorization.
+
+## Current fresh003 disposition: stop; interface blocked
+
+The one authorized fresh pass is complete:67 DeepSeek calls, no retries/fallback,
+runtime changes or manual/deterministic model-plan replacements. All responses pass
+the advertised structural schema and stop naturally;66 reject before graph execution.
+A1: one correct ambiguity clarification/50 failed deliveries; A2:16 failed deliveries.
+Rejected factual answers/support are UNASSESSED. Do not treat compiler abstention as
+correct source limitation or empty paths as proof of candidate-isolation/retrieval.
+
+The question schema permits planned-part reason text; guidance omitted the internal
+empty-reason convention, and lowering forwards it unchanged into the stricter legacy
+part guard. All112 proposed planned parts have nonempty rationales. This is our
+contract mismatch, not established OCR/graph ingestion failure. Additional unexecuted
+action-choice/reference issues remain; correcting the gate alone would not prove
+complete answers. Four rejected A1 outputs also give misleading single-image scope
+warnings; retain them as failures, not evidence of an actual scope limitation.
+
+Preserve all001/002/003 raw outputs, questions/gold, source pixels/stores and111 frozen
+runtime/test/config hashes. No repairs or replay were authorized after this fresh pass;
+do not auto-tune, rerun inference, merge/push or advance to A3. Recommend holding Git
+closeout/adoption and a narrowly scoped metadata-contract alignment plus saved-plan
+inspection only after a next owner decision. Existing deterministic controls remain
+unchanged from002; no new software-suite/model campaign is needed for this report.
+
+## Active offline question-interface simplification002 (2026-10-23)
+
+Stay on local `feat/a1-a2-relationship-readiness`; no inference or Git publication
+is authorized for this bounded pass. Preserve001's fresh67 answers/plans/grades,
+questions, source pixels, extraction, stores and admission decisions unchanged.
+Fix only the demonstrated identity, relation-verdict, follow-up and empty-evidence
+contract/coverage gaps; no wording patches or hardcoded answer dispatch.
+
+The opt-in runtime now uses `src/evidence_chart_question_plan.py`: lookup_term,
+list_members, check_relationship and explain_path lower into the existing typed
+executor. Source dictionary identities and explicit prior lookup/list action IDs
+resolve selectors/follow-ups; no global last-entity guess or omitted-intent repair.
+Preserve original actions and lowered operations. Independent failures stay explicit;
+failed producers block dependents. Empty IDs never request all evidence accidentally.
+Candidate layout, enclosure, physical paths and accepted semantic claims remain distinct.
+
+Use the existing controls and saved plans only. Manually adapted action checks
+verify backend capability, not fresh planner performance. Execution coverage must
+not count failed attempts as fulfilled requests; semantic completeness remains
+independently assessed. Runtime JSON instructions are loaded code dependencies;
+project routing/QA SKILL.md files remain developer guidance, not a runtime registry.
+Stop after offline verification and report what one separately approved live pass
+would validate. No OCR, source admission, A3, UI, model or framework expansion.
+
+002 is now verified: six manual-action answers PASS content/delivery/support,
+51 deterministic controls unchanged, and all67 unchanged saved plans preserved as
+replay evidence. A1 cached answers remain46 PASS/4 PARTIAL/1 UNASSESSED; no model
+improvement is claimed. Independent code/source/answer review is clear; no source,
+store, accepted/candidate status or001 artifact changed. The broad software run
+passed416 checks; its sole old empty-evidence contract expectation was corrected
+and passed on a focused recheck. Do not launch another suite or model pass by default.
+
+## Preserved fresh001 relationship-readiness disposition (2026-10-23)
+
+The authorized single fresh67-question planner pass is complete; no further
+inference, publication/merge or figure expansion is authorized by this workstream.
+Branch `feat/a1-a2-relationship-readiness` stays local, based on main `71088ce`.
+A2 content/delivery16 PASS; A1 content46 PASS/4 PARTIAL/1 UNASSESSED (delivery FAIL
+for a source-present OAW lookup); three passes are appropriate clarifications.
+
+Preserve all original questions, gold, source/store bytes and old plans/results.
+Do not repair model choices with question-specific rules or promote candidate
+indentation/AI arrow absence into accepted semantic knowledge. No admission or
+runtime change was justified. All156 operation records declared evidence; accepted
+physical support is not knowledge-layer path execution or semantic IS_A proof.
+
+Stage text, relationships, then multihop. Report actual requested-part fulfillment
+separately from plan validity/attempt coverage: relation verdicts, identity/source-
+limit choices and one redundant empty-ID evidence contract/executor gap remain.
+Do not call that failed operation successful merely because chart_layout answered
+the question. No new checks/frameworks/OCR or automatic paid rerun is required.
+Actual answers and next decision are in the relationship-readiness001 report.
+
+## Preserved A2 finishing slice009: cached baseline (2026-10-23)
 
 The bounded A2 ingest/evidence slice and opt-in planner finishing pass are verified
 on existing exposed questions. Default deterministic behavior is preserved; fresh

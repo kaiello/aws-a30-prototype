@@ -214,11 +214,9 @@ def operation_contract():
     return "\n".join(lines)
 
 
-def build_prompt(graph, query):
-    nodes, aliases, element = _source_index(graph)
-    if not isinstance(query, str) or not query.strip() or len(query) > MAX_QUERY_LENGTH:
-        _reject("QUERY_INVALID")
-    _scope(graph, query)
+def identity_catalog(graph):
+    """Literal dictionary identities only; no relationships or prior answers."""
+    nodes, aliases, _ = _source_index(graph)
     vocabulary = source_dictionary(graph)
     rows = []
     for alias, identifier in aliases.items():
@@ -227,9 +225,17 @@ def build_prompt(graph, query):
         names = list(dict.fromkeys(item["text"] for item in vocabulary
             if item["node_id"] == identifier and item["method"] == "source_bound_printed_alias"))
         rows.append([alias, node["kind"], label, code or "", names])
+    return rows
+
+
+def build_prompt(graph, query):
+    _, _, element = _source_index(graph)
+    if not isinstance(query, str) or not query.strip() or len(query) > MAX_QUERY_LENGTH:
+        _reject("QUERY_INVALID")
+    _scope(graph, query)
     return operation_contract() + "\nINPUT=" + json.dumps({"query": query, "source_element": element,
         "catalog_columns": ["id", "kind", "printed_label", "printed_code", "verified_aliases"],
-        "catalog": rows}, ensure_ascii=False, separators=(",", ":"))
+        "catalog": identity_catalog(graph)}, ensure_ascii=False, separators=(",", ":"))
 
 
 def _arguments(operation, nodes, aliases, prior, query):
@@ -350,7 +356,7 @@ def _supplement_existing_relation_intent(graph, nodes, plan, concept_bindings):
         "model_selected_supplement": False, "original_model_operations_retained": True}]
 
 
-def compile_plan(graph, query, payload, concept_bindings=None):
+def compile_plan(graph, query, payload, concept_bindings=None, *, supplement_relation_intent=True):
     """Compile one typed batch without granting semantic completeness.
 
     Envelope/source/reference integrity fails closed. An addressable invalid
@@ -556,5 +562,6 @@ def compile_plan(graph, query, payload, concept_bindings=None):
         "identity_ambiguities": ambiguities, "operation_aliases": operation_aliases,
         "deduplications": deduplications, "external_plan": deepcopy(payload),
         "concept_bindings": dict(concept_bindings or {})}
-    _supplement_existing_relation_intent(graph, nodes, result, concept_bindings)
+    if supplement_relation_intent:
+        _supplement_existing_relation_intent(graph, nodes, result, concept_bindings)
     return result

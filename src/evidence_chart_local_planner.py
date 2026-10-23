@@ -15,7 +15,7 @@ from src.evidence_a1_vision import (
     APPROVED_VERSION, _canonical, _json_local, _open_local, _strict_loads,
 )
 
-VERSION = "chart-local-planner-1.1"
+VERSION = "chart-local-planner-1.2"
 APPROVED_MODEL = "qwen2.5:3b"
 APPROVED_DIGEST = "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b"
 OPTIONS = {"num_ctx": 16384, "num_predict": -1, "temperature": 0, "seed": 42}
@@ -150,7 +150,7 @@ class LocalQuestionPlanner:
         return generate(prompt, schema, directory)
 
     def __call__(self, graph, query, *, concept_bindings=None):
-        from src.evidence_chart_llm_plan import build_prompt, output_schema, compile_plan
+        from src.evidence_chart_question_plan import build_prompt, output_schema, compile_plan
         if getattr(self, "structural_block", None):
             raise RuntimeError("PLANNER_SCHEMA_INTEGRATION_BLOCKER: " + self.structural_block)
         self.requests += 1
@@ -179,7 +179,8 @@ class LocalQuestionPlanner:
             plan = _rejected(query, "MODEL_PLAN_REJECTED: " + str(exc))
             if getattr(self, "enforces_structured_schema", True) and (
                     isinstance(exc, json.JSONDecodeError) or any(code in str(exc) for code in (
-                    "TOP_LEVEL_INVALID", "OPERATION_KEYS_INVALID", "PART_KEYS_INVALID"))):
+                    "TOP_LEVEL_INVALID", "OPERATION_KEYS_INVALID", "PART_KEYS_INVALID",
+                    "QUESTION_PLAN_ENVELOPE_INVALID", "QUESTION_PLAN_PART_INVALID"))):
                 # Do not spend a whole cohort repeating a broken transport
                 # shape. Preserve this answer, then stop before another call.
                 self.structural_block = str(exc)

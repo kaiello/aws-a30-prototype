@@ -341,7 +341,9 @@ def test_unresolved_source_name_gets_dictionary_candidates_and_explicit_chart_sc
     assert compiled["operations"][0]["scope"] == "chart"
     query = "Show source evidence."
     compiled = compile_plan(source, query, envelope(query, [operation("evidence", subjects=[])]))
-    assert compiled["operations"][0]["scope"] == "source"
+    assert compiled["status"] == "invalid"
+    assert compiled["operations"][0]["compilation_errors"] == ["CHART_LLM_PLAN_SUBJECT_OR_TARGET_REQUIRED"]
+    assert "scope" not in compiled["operations"][0]
 
 
 @pytest.mark.parametrize("invalid_kind", [[], {}])

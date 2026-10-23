@@ -28,7 +28,16 @@ _WIRE_KEYS = {"operation": ("id", "kind", "query_layer", "subject_ids", "target_
     "envelope": ("schema_version", "source_element", "query", "parts", "operations")}
 _ROOT_KEYS = {"contract_version", "wire_schema_version", "instruction_version",
     "coverage_authority", "budgets", "node_kinds", "id_pattern", "wire_keys",
-    "part_rules", "empty_subject_scopes", "operation_profiles", "static_routing_guidance"}
+    "part_rules", "empty_subject_scopes", "operation_profiles", "static_routing_guidance",
+    "question_interface"}
+_QUESTION_KEYS = {"schema_version", "instruction_version", "action_keys", "envelope_keys",
+    "part_keys", "kinds", "fields", "modes", "scopes", "guidance", "part_metadata"}
+_ACTION_KEYS = ["id", "kind", "query_layer", "subjects", "targets", "subjects_from",
+    "targets_from", "fields", "mode", "information_fields", "scope"]
+_ACTION_MODES = {"lookup_term": [""],
+    "list_members": ["direct", "descendants", "parents", "row_partition", "physical_neighbors"],
+    "check_relationship": ["membership", "layout", "semantic_subtype", "source_limits"],
+    "explain_path": ["from_to"]}
 _PROFILE_KEYS = {"minimum", "subjects", "single", "targets", "fields",
     "requested_fields", "requested_aspects", "layers", "produces", "meaning"}
 # These are executor-supported capability ceilings, not routing substitutions.
@@ -45,7 +54,7 @@ _ROLE_CEILINGS = {
     "operating_information": (_KINDS, ()), "chart_layout": ((), ())}
 _EVIDENCE_ONLY = {"direct_children", "descendants", "parents", "layout_relation",
     "row_partition", "evidence", "epistemic_limits", "operating_information", "chart_layout"}
-_EMPTY_SCOPES = {"chart_layout": "chart", "evidence": "source",
+_EMPTY_SCOPES = {"chart_layout": "chart",
     "epistemic_limits": "source", "operating_information": "source"}
 
 
@@ -75,7 +84,7 @@ def _choices(value: Any, allowed: tuple | set, *, empty: bool = True) -> bool:
 
 def _validate(doc: Any) -> None:
     _keys(doc, _ROOT_KEYS, "ROOT_KEYS_INVALID")
-    _require(doc["contract_version"] == "chart-plan-contract-1.0", "VERSION_UNSUPPORTED")
+    _require(doc["contract_version"] == "chart-plan-contract-1.2", "VERSION_UNSUPPORTED")
     _require(doc["wire_schema_version"] == "chart-llm-plan-1.0", "WIRE_VERSION_UNSUPPORTED")
     _require(isinstance(doc["instruction_version"], str) and re.fullmatch(
         r"chart-llm-plan-instructions-1\.[0-9]+", doc["instruction_version"]), "INSTRUCTION_VERSION_INVALID")
@@ -125,6 +134,26 @@ def _validate(doc: Any) -> None:
     lines = doc["static_routing_guidance"]
     _require(isinstance(lines, list) and 1 <= len(lines) <= 32
         and all(_text(line) for line in lines), "GUIDANCE_INVALID")
+    question = doc["question_interface"]
+    _keys(question, _QUESTION_KEYS, "QUESTION_KEYS_INVALID")
+    _require(question["schema_version"] == "chart-question-actions-1.0"
+        and question["instruction_version"] == "chart-question-actions-instructions-1.1",
+        "QUESTION_VERSION_INVALID")
+    _require(question["action_keys"] == _ACTION_KEYS
+        and question["envelope_keys"] == ["schema_version", "source_element", "query", "parts", "actions"]
+        and question["part_keys"] == ["id", "quote", "status", "action_ids", "reason"],
+        "QUESTION_WIRE_KEYS_INVALID")
+    _require(question["kinds"] == list(_ACTION_MODES) and question["modes"] == _ACTION_MODES,
+        "QUESTION_ACTIONS_INVALID")
+    _require(question["fields"] == ["name", "acronym", "group", "evidence", "source_limits"]
+        and question["scopes"] == ["selected", "chart"], "QUESTION_ARGUMENTS_INVALID")
+    metadata = question["part_metadata"]
+    _keys(metadata, {"planned_reason", "unresolved_reason", "description"}, "QUESTION_PART_METADATA_INVALID")
+    _require(metadata["planned_reason"] == "trace_only_map_to_part_rules.planned_reason"
+        and metadata["unresolved_reason"] == "required_forward_unchanged"
+        and _text(metadata["description"]), "QUESTION_PART_METADATA_INVALID")
+    _require(isinstance(question["guidance"], list) and 1 <= len(question["guidance"]) <= 24
+        and all(_text(line) for line in question["guidance"]), "QUESTION_GUIDANCE_INVALID")
 
 
 def _freeze(value: Any) -> Any:
@@ -206,6 +235,7 @@ PART_OPERATIONS_RULE = CONTRACT.definitions["part_rules"]["operations"]
 OPERATION_PROFILES = CONTRACT.definitions["operation_profiles"]
 EMPTY_SUBJECT_SCOPES = CONTRACT.definitions["empty_subject_scopes"]
 STATIC_ROUTING_GUIDANCE = CONTRACT.definitions["static_routing_guidance"]
+QUESTION_INTERFACE = CONTRACT.definitions["question_interface"]
 
 
 def planner_instructions() -> str:

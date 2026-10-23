@@ -1,6 +1,90 @@
 # Project Goal: AWS A3.0 Multimodal NLQ & Epistemic Knowledge System
 
-## A2 finishing slice009 verified (2026-10-23)
+## Current disposition: offline contract repair004 complete
+
+The metadata boundary is repaired: original planned rationale is validated and
+preserved as unverified trace metadata, while the internal planned reason maps to
+the shared contract value. Unresolved explanations and typed/action/source/evidence
+guards remain strict. Contract1.2/question instructions1.1 are runtime-loaded.
+
+All67 ORIGINAL fresh003 responses were replayed through the real public planner
+entry point and canonical compiler/backend, with no action/entity/intent replacement.
+Independent content grades: A1 35 PASS/10 PARTIAL/6 UNASSESSED; A2 9 PASS/4 PARTIAL/
+3 UNASSESSED. Unassessed factual cases are failed deliveries, not good abstentions.
+Three A1 passes are appropriate clarifications. Runtime model/API calls:0. The new
+instructions were not seen by a model; these are cached development results.
+
+All51 deterministic controls, source/stores and1,503 prior artifacts are unchanged.
+Focused software checks97 PASS; independent metadata/code and source/proof review
+CLEAR. Supported physical paths are not semantic IS_A or accepted-KG multihop:
+this replay ran one accepted designation lookup and zero knowledge path queries.
+Hold live-planner adoption/merge; remaining choices omit lists/groups/follow-ups or
+use invalid modes/targets/references. No automatic semantic repair or paid rerun.
+
+Exactly two serial workstreams are authorized: this completed repair/report, then
+a separate local prevention branch for one real-entry preflight, a small project
+planning/release skill and short handoff. A reviewed local checkpoint is permitted;
+no push, merge, deletion, inference, OCR, A3 or extra framework work is authorized.
+Historical sections below describe their recorded runs, not current authorization.
+
+## Fresh003 outcome: live planner not ready
+
+The goal remains correct, complete source-backed AWS answers one figure/slice at a
+time, text then relationships then multihop. Fresh003 does not meet live-planner
+readiness:66 plans reject at a metadata-contract gate; only one proper ambiguity
+clarification is delivered. All67 schema-valid natural model stops are not answer
+success. No source facts, graph paths or accepted-KG multihop executed.
+
+Keep source extraction/admission and the deterministic baseline. The new schema's
+planned rationale semantics conflict with the internal empty-reason rule; fix the
+boundary under a separate bounded decision, preserving original model output and
+typed/evidence safeguards. Do not infer that OCR or source relationships need rebuilding.
+Old fresh001 and manual/cached002 outcomes remain distinct and unchanged. Hold merge,
+production adoption, A3, Navy Weld, Utopia and UI; no further model calls authorized.
+
+## Active offline interface goal002
+
+Make the existing A1/A2 source data usable through four question-level planner
+actions, deterministic execution and honest per-part coverage. Resolve printed
+identities from the existing dictionary, carry explicit prior-action references,
+and answer a relationship request with a qualified verdict/evidence/source limit,
+not merely a physical route. Candidate observations never become accepted semantic
+knowledge through entity recognition or connectivity.
+
+Preserve fresh001 (A2 16 PASS; A1 46 PASS/4 PARTIAL/1 UNASSESSED) as the live-model
+baseline. This pass is offline implementation/verification only: manually adapted
+plans cannot establish improved model selection. Keep the deterministic default;
+any later fresh pass requires separate approval. AWS text → relationships → multihop,
+A1/A2 only; no ingestion rebuild, new benchmark, A3, Navy Weld, Utopia or UI.
+
+Offline002 meets that bounded interface goal: the five affected A1 answers and
+A2's chart-limit answer are supported and complete with manual actions;51 default
+controls and all source/store/baseline bytes are unchanged. Live-model improvement
+is still untested: old model plans retain the46/4/1 A1 result. Next decision is one
+fresh pass of the same67 questions to measure action selection and full answer
+delivery, without changing extraction, gold, provider or benchmark scope.
+
+## Current A1/A2 staged capability goal (2026-10-23)
+
+Keep AWS backend correctness one slice at a time: text first, relationships next,
+then evidence-backed multihop. Navy Weld, Utopia, A3 and UI remain deferred; GR is
+optional. Source relationships, not desired scores, determine admission and answers.
+
+The one fresh67-question development pass gives A2 content/delivery16 PASS and
+A1 content46 PASS/4 PARTIAL/1 UNASSESSED; the unanswered source-present lookup is
+a capability/delivery failure. Three A1 passes are proper identity clarifications.
+Compared with cached009 (A2 16/A1 51 PASS), fresh choices still omit relationship
+verdicts and text/source-limit follow-ups. This is not unseen/production acceptance.
+
+Text evidence and deterministic controls remain usable. Relationship observations
+and support joins are faithful, but live planning is not uniformly complete.
+Multihop evidence paths with accepted physical certificates are demonstrated;
+accepted-KG route execution and semantic subtype transitivity are not. No candidate
+promotion, new extraction or runtime change was warranted. Hold broader planner
+adoption; close these named planning/coverage gaps without restarting ingestion.
+Results and all actual answers: `Figure_A1_A2_Relationship_Readiness_001_Report.md`.
+
+## Preserved A2 finishing slice009: cached baseline (2026-10-23)
 
 The bounded A2 ingest/evidence slice and opt-in planner finishing pass are verified
 on existing exposed questions. Default deterministic behavior is preserved; fresh

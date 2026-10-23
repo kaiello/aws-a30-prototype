@@ -1,6 +1,124 @@
 # System Architecture: AWS A3.0 Multimodal Prototype
 
-## A2 finishing slice009 verified (2026-10-23)
+## Current disposition: offline contract repair004 complete
+
+The metadata boundary is repaired: original planned rationale is validated and
+preserved as unverified trace metadata, while the internal planned reason maps to
+the shared contract value. Unresolved explanations and typed/action/source/evidence
+guards remain strict. Contract1.2/question instructions1.1 are runtime-loaded.
+
+All67 ORIGINAL fresh003 responses were replayed through the real public planner
+entry point and canonical compiler/backend, with no action/entity/intent replacement.
+Independent content grades: A1 35 PASS/10 PARTIAL/6 UNASSESSED; A2 9 PASS/4 PARTIAL/
+3 UNASSESSED. Unassessed factual cases are failed deliveries, not good abstentions.
+Three A1 passes are appropriate clarifications. Runtime model/API calls:0. The new
+instructions were not seen by a model; these are cached development results.
+
+All51 deterministic controls, source/stores and1,503 prior artifacts are unchanged.
+Focused software checks97 PASS; independent metadata/code and source/proof review
+CLEAR. Supported physical paths are not semantic IS_A or accepted-KG multihop:
+this replay ran one accepted designation lookup and zero knowledge path queries.
+Hold live-planner adoption/merge; remaining choices omit lists/groups/follow-ups or
+use invalid modes/targets/references. No automatic semantic repair or paid rerun.
+
+Exactly two serial workstreams are authorized: this completed repair/report, then
+a separate local prevention branch for one real-entry preflight, a small project
+planning/release skill and short handoff. A reviewed local checkpoint is permitted;
+no push, merge, deletion, inference, OCR, A3 or extra framework work is authorized.
+Historical sections below describe their recorded runs, not current authorization.
+
+## Fresh interface003: actual boundary failure
+
+The first live model pass of the four-action interface completed67 calls with the
+exact002 runtime. All67 outputs satisfy its advertised structural schema. However,
+`evidence_chart_question_plan.output_schema` permits free reason text on planned
+parts (line67), `compile_plan` forwards it unchanged (lines301–303), and internal
+`evidence_chart_llm_plan.compile_plan` rejects planned parts unless reason is empty
+(lines409–411). New action guidance omitted this convention. All112 planned parts
+contain rationale text;66 whole plans reject before any graph execution. One wholly
+unresolved ambiguity request yields a correct dictionary clarification.
+
+This is an adapter/contract mismatch our offline/manual checks missed, not a proven
+retrieval or model-knowledge defect. A shared JSON asset did not prevent the two
+interface sections from disagreeing. Original proposed actions also contain masked
+mode/target/reference problems; no corrected-plan replay or gate bypass was performed.
+
+Source/store/admission/runtime bytes remain unchanged. Zero graph operations, evidence
+paths, accepted structural certificates or KG queries executed; candidate isolation
+and multihop are not newly validated by empty results. No candidate was promoted.
+Automatic semantic completeness and rejected factual answer support remain UNASSESSED.
+Hold live-planner adoption/merge. A future narrow alignment should preserve original
+rationale separately while consistently defining internal planned-part metadata and
+retaining every typed-operation, requirement, dependency and evidence guard.
+
+## Question-action interface002: bounded offline revision
+
+`LocalQuestionPlanner.__call__` (also used by the existing DeepSeek transport) now
+loads the four-action prompt/schema/compiler from `evidence_chart_question_plan.py`.
+The existing JSON contract supplies `question_interface` definitions/guidance:
+contract1.1, question-action wire/instructions1.0. Legacy wire1.0/instructions1.5
+remain the single lower-level typed compiler/executor contract, also used for old
+saved-plan replay. No provider, extraction, source graph/store or admission change.
+
+lookup_term normalizes literal source names/codes/verified printed aliases and
+requested fields. list_members selects explicit direct/recursive/parent/partition/
+physical-neighbor modes. check_relationship separates source-box membership,
+qualified displayed relations, semantic-authority limits and explicit chart scope.
+explain_path preserves ordered endpoints and never substitutes for a verdict.
+Prior lookup/list references resolve actual returned records, including intermediate
+categories, rather than a guessed last entity. Original high-level payload, lowered
+wire, operation mappings and errors are retained. Safe independent operations can
+execute; invalid/empty producers cannot authorize guessed follow-up selectors.
+
+The adapter does not synthesize omitted relationship actions or source facts. Typed
+role/dependency/ID/budget checks and the Evidence Graph → accepted Knowledge Graph
+boundary remain in the existing compiler/executor. Empty `evidence` now requires
+selected IDs; explicit chart source limits use `chart_layout`. Failed graph attempts
+are reported separately from fulfilled/source-limited executions. Automatic semantic
+answer completeness stays UNASSESSED, independently of syntactic plan success.
+
+No model has consumed this new interface. Saved-plan replay and manually adapted
+checks are development evidence only, not fresh planner or production acceptance.
+
+Offline002 exercised six manual question-action batches through canonical A1/A2
+APIs:21 operations (20 executed,1 source-limited), six independently supported
+answers, no failed/blocked actions. The unchanged67-plan replay still has the same
+A1 answer omissions; A2 Q15's redundant empty-evidence call is now explicitly
+blocked by the matching contract rather than attempted. All51 default-control
+answers/coverage/rows/paths/verdicts and source/admission stores are unchanged.
+The runtime path is exercised by a mocked transport integration check; no actual
+model has selected these actions. No accepted-KG multihop or semantic IS_A result
+is added. Exact manual plans, proofs and untouched raw model baselines remain local.
+
+## A1/A2 fresh relationship-readiness001: actual architecture (2026-10-23)
+
+No runtime/schema/admission rebuild was needed. Existing source-bound observations,
+canonical identities, typed assertions/admission policy, SQLite stores and graph
+operations remain unchanged. A1 retains287 accepted/29 candidate assertions; A2
+112 accepted/12 candidate. Indentation and the whole-A2 no-visible-arrowheads AI
+observation stay qualified; no accepted semantic IS_A was introduced.
+
+Runtime instruction1.4/schema1.0 was exercised by67 fresh deepseek-flash planner
+calls over questions, source identity catalog and typed schema only. No PDF/image,
+edges, gold or previous answer entered model context. Compiler/graph execution and
+answer composition remain deterministic; no fallback or relation supplement fired.
+Developer SKILL.md guidance is not automatically loaded by this runtime.
+
+All156 operation records declared the evidence layer;154 graph attempts occurred.
+Twelve chart paths and four accepted
+physical-support certificates (three multiedge) demonstrate supported structural
+paths, not accepted-KG operation execution or semantic IS_A transitivity. Source
+and assertion joins passed independent review; all109 frozen runtime files match.
+
+A2 answers16 PASS; A1 content46 PASS/4 PARTIAL/1 UNASSESSED. Missing intent/identity
+selection remains separate from retrieval/source completeness. A redundant empty-ID
+evidence request is allowed by the contract but fails the backend's literal-ID
+requirement; successful chart_layout independently supplies that answer. Attempted
+operation coverage can overstate success; content/delivery and source support are
+graded separately, with semantic completeness still unassessed automatically.
+No new inference round, ingestion route, framework or adoption claim follows.
+
+## Preserved A2 finishing slice009: cached baseline (2026-10-23)
 
 The bounded A2 ingest/evidence slice and opt-in planner finishing pass are verified
 on existing exposed questions. Default deterministic behavior is preserved; fresh

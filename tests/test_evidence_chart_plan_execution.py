@@ -96,6 +96,53 @@ def test_requested_operating_fields_and_authority_limits_remain_qualified(graph)
     assert "Requested scope: normative authority." in result["operations"][1]["answer"]
 
 
+def test_failed_graph_attempt_does_not_fulfil_model_execution_coverage(graph):
+    request = plan({"kind": "designation", "subject_ids": ["toy:ribbon"]},
+        {"kind": "evidence", "subject_ids": []})
+    request["coverage_authority"] = "MODEL_PROPOSED_UNVERIFIED"
+    result = execute_graph_plan(graph, request, complete_chart=True)
+    coverage = result["execution_coverage"]
+    assert coverage["status"] == "partial"
+    assert coverage["attempted_operation_count"] == 2
+    assert coverage["executed_operation_count"] == 1
+    assert coverage["failed_operation_count"] == 1
+    assert coverage["blocked_operation_count"] == 0
+    assert not coverage["all_planned_parts_executed"]
+    assert [part["status"] for part in coverage["parts"]] == ["executed", "failed"]
+    failure = result["operations"][1]
+    assert failure["graph_executed"] is True and failure["execution_status"] == "failed"
+    assert "literal_subject_or_explicit_chart_layout_required" in failure["trace"]["diagnostics"]
+    assert result["semantic_completeness"]["status"] == "UNASSESSED"
+    assert result["coverage"]["all_parts_answered"] is None
+
+
+def test_only_failed_attempt_is_unanswered_not_complete_execution(graph):
+    request = plan({"kind": "evidence", "subject_ids": []})
+    request["coverage_authority"] = "MODEL_PROPOSED_UNVERIFIED"
+    result = execute_graph_plan(graph, request)
+    coverage = result["execution_coverage"]
+    assert coverage["status"] == "unanswered"
+    assert coverage["attempted_operation_count"] == coverage["failed_operation_count"] == 1
+    assert coverage["executed_operation_count"] == 0
+    assert not coverage["all_planned_parts_executed"]
+
+
+def test_source_limit_fulfils_execution_without_claiming_semantic_completeness(graph):
+    request = plan({"kind": "designation", "subject_ids": ["toy:ribbon"]},
+        {"kind": "operating_information", "subject_ids": ["toy:ribbon"]})
+    request["coverage_authority"] = "MODEL_PROPOSED_UNVERIFIED"
+    result = execute_graph_plan(graph, request)
+    coverage = result["execution_coverage"]
+    assert coverage["status"] == "complete"
+    assert coverage["attempted_operation_count"] == coverage["executed_operation_count"] == 2
+    assert coverage["source_limited_operation_count"] == 1
+    assert coverage["failed_operation_count"] == coverage["blocked_operation_count"] == 0
+    assert [part["status"] for part in coverage["parts"]] == ["executed", "source_limited"]
+    assert result["answer_outcome"] == "insufficient_evidence"
+    assert result["semantic_completeness"]["status"] == "UNASSESSED"
+    assert result["coverage"]["all_parts_answered"] is None
+
+
 def test_reference_cardinality_and_record_kinds_are_enforced(graph):
     result = execute_graph_plan(graph, plan(
         {"kind": "direct_children", "subject_ids": ["toy:root"]},

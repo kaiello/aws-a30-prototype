@@ -17,7 +17,7 @@ from src.evidence_v2 import EvidenceStore, EvidencePacket, RoutePlan
 from src.evidence_a1_planner import plan_graph_query
 from src.evidence_a1 import a1_source_identity_id
 
-HARNESS_VERSION = "a1-graph-qa-1.7.6"
+HARNESS_VERSION = "a1-graph-qa-1.7.7"
 RELATIONS = {"CHART_CONNECTOR", "ENCLOSES_ROW", "INDENTED_UNDER"}
 MAX_RESOLVED_IDS = 512
 
@@ -1046,14 +1046,20 @@ def _model_execution_coverage(result):
                  if any(operation.get("graph_executed") is False for operation in selected) else
                  "failed" if selected else "unresolved")
         parts.append({**part, "status": state})
-    executed = sum(operation.get("graph_executed") is True for operation in operations)
+    attempted = sum(operation.get("graph_executed") is True for operation in operations)
+    executed = sum(operation.get("graph_executed") is True and
+        operation.get("execution_status") in {"executed", "source_limited"} for operation in operations)
+    failed = sum(operation.get("graph_executed") is True and
+        operation.get("execution_status") == "failed" for operation in operations)
     blocked = sum(operation.get("graph_executed") is False for operation in operations)
-    all_executed = bool(parts) and all(part["status"] in {"executed", "source_limited", "failed"} for part in parts)
+    all_executed = bool(parts) and executed == len(operations) and all(
+        part["status"] in {"executed", "source_limited"} for part in parts)
     result["execution_coverage"] = {"status": "complete" if all_executed else "partial" if executed else "unanswered",
-        "scope": "Execution of model-proposed operations and captured parts; original question meaning is unassessed.",
+        "scope": "Successful or source-limited execution of model-proposed operations and captured parts; original question meaning is unassessed.",
         "operation_count": len(operations), "executed_operation_count": executed, "blocked_operation_count": blocked,
+        "attempted_operation_count": attempted, "failed_operation_count": failed,
         "source_limited_operation_count": sum(operation.get("graph_executed") is True and
-            operation["answer_outcome"] != "graph_answer" and _source_limited(operation) for operation in operations),
+            operation.get("execution_status") == "source_limited" for operation in operations),
         "all_planned_parts_executed": all_executed, "parts": parts}
     result["semantic_completeness"] = {"status": "UNASSESSED",
         "qualification": "No executor result establishes that the model captured or answered every meaning of the original question."}
