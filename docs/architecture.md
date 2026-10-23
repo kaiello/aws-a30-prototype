@@ -7,7 +7,7 @@ on existing exposed questions. Default deterministic behavior is preserved; fres
 model selection, production Terra/Luna and unseen generalization remain unvalidated.
 No new OCR/model/provider call, figure, framework or UI was introduced by009.
 
-Optional `run_questions(..., source_observation_path=...)` / `qa --source-observation`
+Optional `run_questions(..., source_observation_path=...)` / `query --source-observation`
 adds source-bound canonical **candidate** figure evidence in the A2 adapter. Source,
 page/crop/region/connector bindings and native PDF-rendered clip pixels are checked.
 This authenticates provenance, not the AI observation's truth. Candidate evidence
