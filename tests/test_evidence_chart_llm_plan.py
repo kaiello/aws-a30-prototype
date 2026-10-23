@@ -355,3 +355,88 @@ def test_invalid_producer_kind_cannot_crash_an_independent_batch(source, invalid
     assert "compilation_errors" not in compiled["operations"][0]
     assert compiled["operations"][1]["compilation_errors"] == ["CHART_LLM_PLAN_UNKNOWN_OPERATION"]
     assert compiled["operations"][2]["compilation_errors"] == ["CHART_LLM_PLAN_RESULT_DEPENDENCY_INVALID"]
+
+
+def relationship_path_payload(query, *, reverse=False, layer="evidence"):
+    start, end = (["n7"], ["n4"]) if reverse else (["n4"], ["n7"])
+    return envelope(query, [operation("designation", "left", ["n4"], query_layer=layer),
+        operation("designation", "right", ["n7"], query_layer=layer),
+        operation("paths", "path", start, end, query_layer=layer)])
+
+
+def test_existing_relation_intent_supplements_wrong_path_without_rewriting_model(source):
+    query = "Is Ribbon folding a subtype of Squeeze joining in Figure A2?"
+    payload = relationship_path_payload(query)
+    original = deepcopy(payload)
+    compiled = compile_plan(source, query, payload)
+    assert [item["kind"] for item in compiled["operations"]] == ["designation", "designation", "paths", "layout_relation"]
+    supplement = compiled["operations"][-1]
+    assert supplement["left_ids"] == ["toy:ribbon"] and supplement["right_ids"] == ["toy:squeeze"]
+    assert supplement["query_layer"] == "evidence"
+    assert supplement["selection_origin"] == "existing_deterministic_intent_supplement"
+    assert supplement["request_ids"] == ["p1"]
+    assert compiled["requested_parts"][0]["operation_ids"] == ["model:left", "model:right", "model:path", supplement["operation_id"]]
+    trace = compiled["deterministic_supplements"][0]
+    assert trace["model_selected_supplement"] is False
+    assert trace["original_model_operations_retained"] is True
+    assert trace["source_path_operation_id"] == "model:path"
+    assert compiled["operation_aliases"]["path"] == ["model:path"]
+    assert compiled["external_plan"] == payload == original
+    assert compiled["coverage_authority"] == COVERAGE and compiled["semantic_validation"] is False
+
+
+@pytest.mark.parametrize("query,reverse,layer", [
+    ("Show the path from Ribbon folding to Squeeze joining in Figure A2.", False, "evidence"),
+    ("Is Ribbon folding a subtype of Squeeze joining in Figure A2?", True, "evidence"),
+    ("Is Ribbon folding a subtype of Squeeze joining in Figure A2?", False, "knowledge"),
+    ("In accepted knowledge, is Ribbon folding a subtype of Squeeze joining in Figure A2?", False, "evidence"),
+])
+def test_relation_supplement_abstains_for_path_direction_mismatch_or_knowledge(source, query, reverse, layer):
+    payload = relationship_path_payload(query, reverse=reverse, layer=layer)
+    compiled = compile_plan(source, query, payload)
+    assert [item["kind"] for item in compiled["operations"]] == ["designation", "designation", "paths"]
+    assert "deterministic_supplements" not in compiled
+    assert compiled["external_plan"] == payload
+
+
+def test_relation_supplement_does_not_guess_ambiguity_or_rewrite_membership(source):
+    query = "What is the acronym for Ribbon?"
+    payload = relationship_path_payload(query)
+    compiled = compile_plan(source, query, payload)
+    assert compiled["status"] == "clarification_required"
+    assert "deterministic_supplements" not in compiled
+    query = "Is Ribbon folding a subtype of Squeeze joining in Figure A2?"
+    payload = envelope(query, [operation("membership", "wrong", ["n4"], ["n7"])])
+    compiled = compile_plan(source, query, payload)
+    assert compiled["operations"][0]["kind"] == "membership"
+    assert compiled["operations"][0]["compilation_errors"]
+    assert "deterministic_supplements" not in compiled
+
+
+def test_relation_supplement_preserves_compound_parts_and_result_dependencies(source):
+    query = "Is Ribbon folding a subtype of Squeeze joining in Figure A2?"
+    payload = relationship_path_payload(query)
+    payload["parts"] = [{"id": "p1", "quote": "Ribbon folding", "status": "planned",
+        "operation_ids": ["left"], "reason": ""}, {"id": "p2", "quote": "Squeeze joining", "status": "planned",
+        "operation_ids": ["right", "path"], "reason": ""}]
+    compiled = compile_plan(source, query, payload)
+    assert "deterministic_supplements" not in compiled
+    assert len(compiled["requested_parts"]) == 2
+    payload = relationship_path_payload(query)
+    payload["operations"][-1]["subject_ids"] = []
+    payload["operations"][-1]["result_refs"]["subjects"] = [{"operation_id": "left", "select": "rows"}]
+    compiled = compile_plan(source, query, payload)
+    assert "deterministic_supplements" not in compiled
+    assert compiled["operations"][-1]["dependency_operation_ids"] == ["model:left"]
+    assert compiled["operations"][-1]["result_refs"]["start_ids"] == [{"operation_id": "model:left", "select": "rows"}]
+
+
+def test_relation_supplement_respects_existing_operation_budget(source, monkeypatch):
+    import src.evidence_chart_llm_plan as compiler
+    query = "Is Ribbon folding a subtype of Squeeze joining in Figure A2?"
+    payload = envelope(query, [operation("designation", "literal", ["n4"]),
+        operation("paths", "path", ["n4"], ["n7"])])
+    monkeypatch.setattr(compiler, "MAX_OPERATIONS", 2)
+    compiled = compiler.compile_plan(source, query, payload)
+    assert len(compiled["operations"]) == 2
+    assert "deterministic_supplements" not in compiled

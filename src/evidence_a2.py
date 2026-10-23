@@ -658,7 +658,178 @@ def reproject(root, graph_path, output):
         "verification":graph["raster_verification"]["receipt"]["chart_coverage"]}
 
 
-def run_questions(root, graph_path, payload, *, query_layer="auto", question_planner=None):
+def load_candidate_source_observation(root, graph, path):
+    """Read an explicitly selected AI observation; never ingest or admit it.
+
+    The caller authenticates the unchanged source graph first. This boundary also
+    checks every supplied source/image/clip binding and projects only candidate
+    observation fields into the existing canonical evidence representation.
+    """
+    from src.evidence_v2 import Evidence, evidence_id
+
+    def require(condition, code):
+        if not condition:
+            raise ValueError("A2_SOURCE_OBSERVATION_" + code)
+
+    def local_file(relative, expected_hash, *, private=False):
+        require(isinstance(relative, str) and not Path(relative).is_absolute()
+                and ".." not in Path(relative).parts, "PATH_INVALID")
+        candidate = _private(root, relative) if private else root / relative
+        for item in (candidate, *candidate.parents):
+            if item == root:
+                break
+            require(not item.is_symlink() and not getattr(item, "is_junction", lambda: False)(),
+                    "PATH_INVALID")
+        resolved = candidate.resolve(strict=True)
+        require(resolved.is_relative_to(root) and resolved.is_file(), "PATH_INVALID")
+        require(_sha(resolved.read_bytes()) == expected_hash, "ARTIFACT_CHANGED")
+        return resolved
+
+    def region(value, enclosing):
+        require(isinstance(value, list) and len(value) == 4 and all(
+            isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+            for v in value), "REGION_INVALID")
+        require(enclosing[0] <= value[0] < value[2] <= enclosing[2]
+                and enclosing[1] <= value[1] < value[3] <= enclosing[3], "REGION_INVALID")
+
+    def source_clip(source_pdf, page_index, item, clip):
+        """Receipt hashes are integrity checks; source pixels authenticate a clip."""
+        import fitz
+        import struct
+        require(item["render_scale"] == 8 and item["render_dpi"] == 576, "CLIP_SCALE_INVALID")
+        points = item["clip_pdf_points_xyxy"]
+        require(isinstance(points, list) and len(points) == 4 and all(
+            isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+            for v in points), "CLIP_REGION_INVALID")
+        with fitz.open(source_pdf) as pdf:
+            page = pdf[page_index]
+            x0, y0, x1, y1 = points
+            normalized = [y0 / page.rect.height, x0 / page.rect.width,
+                          y1 / page.rect.height, x1 / page.rect.width]
+            region(normalized, graph["source_binding"]["locator"]["region"])
+            require(all(abs(a-b) <= 1e-10 for a, b in zip(normalized,
+                item["clip_region_normalized_ymin_xmin_ymax_xmax"])), "CLIP_REGION_MISMATCH")
+            bounds = fitz.Rect(points)
+            size = (bounds * fitz.Matrix(8, 8)).irect
+            expected_size = [size.width, size.height]
+            require(item["render_width_height_pixels"] == expected_size, "CLIP_SIZE_MISMATCH")
+            encoded = clip.read_bytes()
+            require(len(encoded) >= 24 and encoded[:8] == b"\x89PNG\r\n\x1a\n"
+                    and encoded[12:16] == b"IHDR" and list(struct.unpack(">II", encoded[16:24])) == expected_size,
+                    "CLIP_SIZE_MISMATCH")
+            expected = page.get_pixmap(matrix=fitz.Matrix(8, 8), clip=bounds, alpha=False)
+            actual = fitz.Pixmap(encoded)
+            require(actual.width == expected.width and actual.height == expected.height
+                    and actual.n == expected.n and actual.samples == expected.samples, "CLIP_PIXELS_MISMATCH")
+
+    try:
+        root = Path(root).resolve(strict=True)
+        path = _private(root, path, suffix=".json")
+        raw = path.read_bytes()
+        receipt = json.loads(raw)
+        require(receipt["schema_version"] == "a2-whole-figure-connector-source-observation-1.0"
+                and receipt["verification_state"] == "CANDIDATE_AI_VISUAL_OBSERVATION", "STATE_INVALID")
+        for value in (receipt, receipt["source_observations"]):
+            require(not any(key in value for key in
+                ("status", "accepted", "accepted_assertion_ids", "knowledge_eligible")), "STATE_INVALID")
+        method = receipt["inspection_method"]
+        require(method["human_inspection_or_approval"] is False
+                and method["owner_review_decision"] is None, "AUTHORITY_INVALID")
+        binding, source = graph["source_binding"], receipt["source"]
+        locator = binding["locator"]
+        require(source["edition_id"] == binding["edition_id"]
+                and source["source_identity_id"] == binding["source_identity_id"]
+                and all(source[key] == locator[key] for key in
+                    ("element_id", "canonical_element_id", "pdf_index", "printed_page"))
+                and source["figure_region_normalized_ymin_xmin_ymax_xmax"] == locator["region"],
+                "SOURCE_MISMATCH")
+        require("source:" + _digest([binding["edition_id"], source["pdf_sha256"]])
+                == binding["source_identity_id"], "SOURCE_MISMATCH")
+        source_pdf = local_file(source["pdf_relpath"], source["pdf_sha256"])
+        parent = graph["extraction_provenance"]["parent_source"]
+        require(source["full_page_image_sha256"] == parent["asset_sha256"]
+                and source["retained_full_figure_crop_sha256"] == binding["asset_sha256"],
+                "SOURCE_MISMATCH")
+        local_file(source["full_page_image_relpath"], source["full_page_image_sha256"])
+        local_file(source["retained_full_figure_crop_relpath"], binding["asset_sha256"], private=True)
+        connectors = {edge["id"]: edge for edge in graph["edges"] if edge["type"] == "CHART_CONNECTOR"}
+        observations, coverage = receipt["connector_observations"], receipt["coverage"]
+        require(isinstance(observations, list) and len(observations) == len(connectors) > 0
+                and {item["matched_existing_edge_id"] for item in observations} == set(connectors),
+                "CONNECTOR_SCOPE_INVALID")
+        require(coverage["whole_A2_crop_visually_inspected"] is True and all(
+            type(coverage[key]) is int and coverage[key] == count for key, count in (
+                ("visible_connection_count", len(connectors)),
+                ("matched_existing_connector_records", len(connectors)),
+                ("endpoint_contact_count", 2 * len(connectors)),
+                ("endpoint_contacts_visually_inspected", 2 * len(connectors)))), "COVERAGE_INVALID")
+        inventory_relative = receipt["geometry_inventory_relpath"]
+        require(isinstance(inventory_relative, str) and not Path(inventory_relative).is_absolute()
+                and ".." not in Path(inventory_relative).parts, "PATH_INVALID")
+        inventory_path = path.parent / inventory_relative
+        inventory = json.loads(local_file(inventory_path.relative_to(root).as_posix(),
+            receipt["geometry_inventory_sha256"], private=True).read_text(encoding="utf-8"))
+        require(inventory["segments"] == observations, "INVENTORY_MISMATCH")
+        records = []
+        for item in observations:
+            edge = connectors[item["matched_existing_edge_id"]]
+            require(item["existing_evidence_id"] == edge["evidence"]["evidence_id"]
+                    and item["existing_region_normalized_ymin_xmin_ymax_xmax"] == edge["region"]
+                    and item["endpoint_node_ids"] == [edge["from"], edge["to"]], "CONNECTOR_MISMATCH")
+            clip_region = item["clip_region_normalized_ymin_xmin_ymax_xmax"]
+            region(clip_region, locator["region"])
+            region(edge["region"], clip_region)
+            relative = item["render_relpath"]
+            require(not Path(relative).is_absolute() and ".." not in Path(relative).parts, "PATH_INVALID")
+            clip = local_file((path.parent / relative).relative_to(root).as_posix(),
+                              item["render_sha256"], private=True)
+            require(clip.is_relative_to(path.parent), "PATH_INVALID")
+            source_clip(source_pdf, locator["pdf_index"], item, clip)
+            records.append({"edge_id": edge["id"], "evidence_id": edge["evidence"]["evidence_id"],
+                "region": edge["region"], "inspection_region": clip_region,
+                "clip_sha256": item["render_sha256"]})
+        text = receipt["source_observations"]["observation_text"]
+        require(isinstance(text, str) and bool(text.strip()), "TEXT_INVALID")
+        content = {"observation_text": text, "knowledge_eligible": False, "human_reviewed": False,
+            "owner_review_decision": None, "method": "AI_visual_source_inspection",
+            "scope": "whole_selected_figure_connectors", "support_records": records,
+            "receipt_sha256": _sha(raw), "receipt_relpath": path.relative_to(root).as_posix(),
+            "qualification": "Candidate finite-resolution AI visual observation, not human/owner review, "
+                "an absence-proof detector, semantic authority or an accepted knowledge assertion."}
+        return Evidence(evidence_id(binding["edition_id"], "figure_region", locator, content),
+            binding["edition_id"], "figure_region", deepcopy(locator), content, "candidate")
+    except (KeyError, TypeError, OSError, json.JSONDecodeError) as error:
+        raise ValueError("A2_SOURCE_OBSERVATION_INVALID") from error
+
+
+def _attach_candidate_source_observation(answer, evidence, *, query_layer):
+    """Keep optional candidates outside accepted proofs and completeness flags."""
+    if evidence is None or query_layer == "knowledge":
+        return answer
+    evidence.__post_init__()
+    if evidence.verification != "candidate" or evidence.content.get("knowledge_eligible") is not False:
+        raise ValueError("A2_SOURCE_OBSERVATION_STATE_INVALID")
+    operations = [op for op in answer.get("operations", []) if op.get("query_layer") == "evidence"]
+    if not operations:
+        return answer
+    result = deepcopy(answer)
+    result["candidate_source_evidence"] = [evidence.to_dict()]
+    result["candidate_claims"] = []
+    if any(op.get("kind") in {"epistemic_limits", "chart_layout"}
+           and op.get("execution_status") == "executed" and op.get("graph_executed") is True
+           and op.get("answer_outcome") == "graph_answer" for op in operations):
+        text = evidence.content["observation_text"]
+        qualification = evidence.content["qualification"]
+        result["answer"] += ("\n\nCandidate AI source observation [" + evidence.evidence_id + "]: "
+                             + text + " " + qualification)
+        result["candidate_claims"].append({"text": text, "evidence_ids": [evidence.evidence_id],
+            "verification": "candidate", "knowledge_eligible": False, "semantic_validation": False,
+            "qualification": qualification})
+    return result
+
+
+def run_questions(root, graph_path, payload, *, query_layer="auto", question_planner=None,
+                  source_observation_path=None):
     """Execute the existing typed backend; grading data is never accepted here."""
     if (not isinstance(payload,dict) or set(payload)!={"schema_version","source_element","questions"}
             or payload["schema_version"]!="a2-development-cq-1.0" or payload["source_element"]!=ELEMENT
@@ -677,6 +848,8 @@ def run_questions(root, graph_path, payload, *, query_layer="auto", question_pla
     graph_path = _private(root,graph_path,suffix=".json")
     graph = json.loads(graph_path.read_text(encoding="utf-8"))
     validate_a2_integration(root,graph)
+    observation = (load_candidate_source_observation(root, graph, source_observation_path)
+                   if source_observation_path is not None else None)
     runtime = graph_path.with_suffix(".registry.db").relative_to(root).as_posix()
     store = prepare_chart_knowledge(root,graph,runtime_relpath=runtime)
     answers = []
@@ -684,6 +857,8 @@ def run_questions(root, graph_path, payload, *, query_layer="auto", question_pla
         started = time.perf_counter()
         answer = answer_graph(graph,item["query"],knowledge_store=store,query_layer=query_layer,
                               question_planner=question_planner)
+        if observation is not None:
+            answer = _attach_candidate_source_observation(answer, observation, query_layer=query_layer)
         answers.append({"id":item["id"],"owner_query":item["query"],"result":answer,
                         "latency_seconds":time.perf_counter()-started})
         if callable(getattr(question_planner,"record_result",None)):
@@ -716,6 +891,8 @@ def main(argv=None):
     qa.add_argument("--input",required=True,type=Path)
     qa.add_argument("--output",required=True,type=Path)
     qa.add_argument("--layer",choices=["auto","evidence","knowledge"],default="auto")
+    qa.add_argument("--source-observation", type=Path,
+                    help="Optional private candidate AI source-observation receipt; never admitted to knowledge")
     qa.add_argument("--planner-directory","--local-planner-directory",dest="local_planner_directory",type=Path,
                     help="Opt-in planner; retain exact requests in a new private directory")
     qa.add_argument("--planner-provider",choices=["ollama","deepseek"],default="ollama")
@@ -730,7 +907,8 @@ def main(argv=None):
         if args.local_planner_directory:
             from src.evidence_chart_local_planner import create_question_planner
             planner = create_question_planner(args.root,args.local_planner_directory,args.planner_provider)
-        result = run_questions(args.root,args.graph,payload,query_layer=args.layer,question_planner=planner)
+        result = run_questions(args.root,args.graph,payload,query_layer=args.layer,question_planner=planner,
+                               source_observation_path=args.source_observation)
     write_private_output(args.root,args.output,result)
     print(_json({"status":"complete","output":str(args.output),
                  "model_calls":result.get("model_calls",0),"generation_model":"NONE",

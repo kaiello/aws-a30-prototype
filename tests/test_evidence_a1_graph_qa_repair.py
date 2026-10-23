@@ -126,6 +126,24 @@ def test_batch_blocks_invalid_and_dependent_operations_but_executes_independent(
     assert result["coverage"]["all_parts_answered"] is None
 
 
+def test_model_plan_diagnostics_do_not_claim_requested_source_facts_are_missing(graph):
+    qa = importlib.import_module("src.evidence_a1_graph_qa")
+    operations = [
+        {"operation_id": "blocked", "kind": "category", "subject_ids": ["toy:alpha"],
+         "compilation_errors": ["SOURCE_KIND_INVALID"]},
+        {"operation_id": "literal", "kind": "designation", "subject_ids": ["toy:ribbon"]}]
+    result = qa.execute_graph_plan(graph, model_execution_plan(operations), complete_chart=True)
+    assert result["answer"].index("ZZR") < result["answer"].index("Model-plan diagnostics")
+    assert "not evidence that requested source facts are absent" in result["answer"]
+    diagnostic = result["plan_diagnostics"][0]
+    assert diagnostic["operation_id"] == "blocked"
+    assert diagnostic["codes"] == ["SOURCE_KIND_INVALID"]
+    assert diagnostic["source_fact_availability"] == "not_determined"
+    assert result["operations"][0]["compilation_errors"] == ["SOURCE_KIND_INVALID"]
+    assert result["coverage"]["status"] == "partial"
+    assert result["semantic_completeness"]["status"] == "UNASSESSED"
+
+
 def test_model_mixed_source_limit_is_distinct_from_execution_failure(graph):
     qa = importlib.import_module("src.evidence_a1_graph_qa")
     operations = [{"operation_id": "literal", "kind": "designation", "subject_ids": ["toy:ribbon"]},

@@ -1,14 +1,60 @@
 # AWS A3.0 Standalone Multimodal Prototype
 
-## Active A2 WIP checkpoint and bounded repair007
+## A2 finishing slice009 verified (2026-10-23)
 
-The owner authorized a reviewed **WIP feature-branch commit/push**, followed by
-one bounded repair of relationship/source-limit verdicts, redundant follow-ups
-and confusing warnings. This checkpoint is not adoption, release or permission
-to merge. Main remains the accepted A1 baseline. No new model calls, OCR,
-questions, figures or framework work are authorized. Fresh DeepSeek validation
-requires a separate approval; repair results will remain local for review.
-Preserve every006/earlier plan, answer, grade and private source artifact.
+The bounded A2 ingest/evidence slice and opt-in planner finishing pass are verified
+on existing exposed questions. Default deterministic behavior is preserved; fresh
+model selection, production Terra/Luna and unseen generalization remain unvalidated.
+No new OCR/model/provider call, figure, framework or UI was introduced by009.
+
+Optional `run_questions(..., source_observation_path=...)` / `qa --source-observation`
+adds source-bound canonical **candidate** figure evidence in the A2 adapter. Source,
+page/crop/region/connector bindings and native PDF-rendered clip pixels are checked.
+This authenticates provenance, not the AI observation's truth. Candidate evidence
+and claims stay outside accepted proof catalogs/KG admission and completeness flags;
+knowledge-only answers are not augmented. Text is rendered only for successful
+evidence-layer `epistemic_limits`/`chart_layout` operations; otherwise the optional
+candidate packet is separate. Omitting the option preserves prior behavior.
+
+A conservative compiler guard reuses the existing deterministic relation intent
+only for a ready single-part literal evidence path with exactly matching ordered
+endpoints. It supplements, never replaces, original model operations and records
+its origin. Membership, source-layout ancestry, physical common-root reachability
+and semantic subtype remain distinct. Ambiguous/compound/ref-dependent batches are
+not guessed; forced knowledge execution rejects the evidence-only layout operation.
+
+Capability staging remains **text first, relationships second, multihop third**.
+Known-source labels/codes and identity clarification are independently usable;
+compound requests retain every relationship/path part. Qualified relationships
+now include the optional candidate whole-A2 connector observation. Ordered source
+paths and accepted physical support are demonstrated; model-requested accepted-KG
+paths and semantic IS_A transitivity are not established. Candidate indentation and
+AI observations never become accepted semantic facts through recognition or reachability.
+
+One frozen cached005-plan replay: A2 content/delivery **16 PASS**; A1 **51 PASS**,
+including three proper clarifications. This is compiler/executor recovery with
+explicit deterministic supplementation and candidate evidence, not improved model
+performance. Original007/008 plans, grades and artifacts remain unchanged. All51
+deterministic A1 control answers/coverage/rows/paths/verdicts are unchanged, including
+the known planning_unsupported versus source-limit metadata caveat. Runtime execution
+still retains redundant failed/blocked requests; semantic completeness remains
+UNASSESSED automatically. Do not equate content grades with all operations succeeding.
+
+Validation:398 existing applicable software checks passed; independent focused code,
+source and answer review passed. An offline wheel includes the runtime JSON contract
+and excludes source assets/stores; sandbox build failures are retained separately
+from the successful host build. Harness1.7.6, graph adapter1.4, instruction1.4/wire1.0;
+no model has consumed instruction1.4. Source observations are optional read-only
+attachments; existing graph/store admission decisions are unchanged.
+
+Authorized Git closeout is conditional on these checks and a clean publication
+review; its exact commit/PR/merge/sync receipt is kept in the Library report, not
+fabricated here. Private PDFs/images/OCR/vision traces/stores/caches stay outside Git.
+Rollback leaves the observation option unset and deterministic default enabled;
+no reset, branch/worktree deletion or unrelated cleanup is required. AWS backend
+correctness remains one slice at a time; no automatic A3, Navy Weld or Utopia work.
+Report: `Figure_A2_Planner_Integration_002_Report.md`; private actual answers/receipts:
+`storage/evidence_v2/a2_planner_009/`. GR remains optional, not a required harness.
 
 ## Preserved offline planner006 baseline
 

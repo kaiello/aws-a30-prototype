@@ -1,7 +1,7 @@
 {
   "contract_version": "chart-plan-contract-1.0",
   "wire_schema_version": "chart-llm-plan-1.0",
-  "instruction_version": "chart-llm-plan-instructions-1.3",
+  "instruction_version": "chart-llm-plan-instructions-1.4",
   "coverage_authority": "MODEL_PROPOSED_UNVERIFIED",
   "budgets": {
     "MAX_OPERATIONS": 16,
@@ -229,7 +229,7 @@
           "category"
         ]
       },
-      "meaning": "subject=start, targets=ends; preserve requested traversal direction"
+      "meaning": "ordered physical/layout route only; subject=start, targets=ends; print each intermediate name/code; not a semantic relationship verdict"
     },
     "membership": {
       "minimum": 1,
@@ -255,7 +255,7 @@
           "category"
         ]
       },
-      "meaning": "one process direct enclosure against explicit category; distinguish connected ancestor"
+      "meaning": "one process direct source-box enclosure against an explicit category; not semantic subtype or process-to-process layout"
     },
     "layout_relation": {
       "minimum": 1,
@@ -334,7 +334,7 @@
           "process"
         ]
       },
-      "meaning": "unindented versus indented rows in a row box"
+      "meaning": "unindented versus indented process rows in a row-containing box; not an intermediate box that contains only other boxes"
     },
     "comparison": {
       "minimum": 2,
@@ -473,6 +473,9 @@
     "chart_layout alone explicitly denotes complete observations of the selected source chart: no literal IDs or result references, evidence layer only, scope=chart. Empty IDs in evidence, epistemic_limits or operating_information mean source qualification/limits only; they never mean all graph nodes.",
     "Layer is explicit: evidence returns qualified source observations; knowledge traverses admitted assertions only. Physical connectors are undirected; indentation is candidate layout, not semantic IS_A. Comparison fields do not replace separately requested relationship or evidence operations.",
     "All operation keys are required; unused arrays are []. requested_fields/requested_aspects are quoted requested operating information or evidence aspects, not output columns or proposed source values.",
-    "JSON schema validates structure. Code also enforces allowed operations, argument types, combined budgets, source/query bindings, prior-result dependencies and the evidence-to-knowledge admission boundary. Coverage remains MODEL_PROPOSED_UNVERIFIED; valid structure, a ready plan and joined proofs do not establish semantic completeness."
+    "JSON schema validates structure. Code also enforces allowed operations, argument types, combined budgets, source/query bindings, prior-result dependencies and the evidence-to-knowledge admission boundary. Coverage remains MODEL_PROPOSED_UNVERIFIED; valid structure, a ready plan and joined proofs do not establish semantic completeness.",
+    "Answer a relationship question with the appropriate qualified relation/verdict and source placement, not only a common-ancestor path. membership is direct enclosure against a category; layout_relation describes a displayed process relationship; epistemic_limits explains missing semantic authority. A physical path does not establish semantic IS_A. Keep separately requested route evidence as its own operation.",
+    "For questions about what indentation or connecting strokes establish, request explicit source limits with evidence. Organizational from/to order and traversal direction are not arrow directions. Do not invent an arrowhead detector or absence observation. Use explicit chart_layout for whole-chart observations; row_partition applies only to boxes containing process rows, not all intermediate categories. Do not enumerate every possible relation pair to ask about source authority.",
+    "List and path outputs already include printed names/codes for the records they render. Do not add a duplicate designation merely to repeat fields already supplied. If a requested code is absent from an operation's rendered output, such as a parent lookup, retain an explicit designation follow-up selecting the actual returned records of the needed kind. paths.rows selects process subjects, not intermediate category nodes. Empty or failed refs remain unresolved; never replace them with guessed subjects."
   ]
 }

@@ -17,7 +17,7 @@ from src.evidence_v2 import EvidenceStore, EvidencePacket, RoutePlan
 from src.evidence_a1_planner import plan_graph_query
 from src.evidence_a1 import a1_source_identity_id
 
-HARNESS_VERSION = "a1-graph-qa-1.7.4"
+HARNESS_VERSION = "a1-graph-qa-1.7.6"
 RELATIONS = {"CHART_CONNECTOR", "ENCLOSES_ROW", "INDENTED_UNDER"}
 MAX_RESOLVED_IDS = 512
 
@@ -227,6 +227,8 @@ def _operation(view, operation, complete_chart):
               "answer": "", "rows": [], "paths": [], "verdict": "not_established",
               "trace": {"seed_ids": subjects, "visited_node_ids": sorted(visited), "selected_edges": traversed,
                         "method": kind + ":typed_graph_operation", "direction": "inbound", "diagnostics": []}}
+    if operation.get("selection_origin") == "existing_deterministic_intent_supplement":
+        result["selection_origin"] = operation["selection_origin"]
 
     def stop(code):
         result["answer_outcome"] = "insufficient_evidence"
@@ -1021,6 +1023,10 @@ def _answer_coverage(view, result):
             source_authenticated=result["source_binding_status"] == "canonical_source_and_image_validated")
     if plan.get("coverage_authority") == "MODEL_PROPOSED_UNVERIFIED":
         _model_execution_coverage(result)
+        if result.get("plan_diagnostics"):
+            result["answer"] += ("\n\nModel-plan diagnostics: unsuccessful proposed calls are not evidence that requested source facts are absent.\n"
+                + "\n".join("- " + item["operation_id"] + " [" + item["execution_status"] + "]: "
+                    + ("; ".join(item["codes"]) or item["message"]) for item in result["plan_diagnostics"]))
     return result
 
 
@@ -1198,6 +1204,97 @@ def _blocked_operation(operation, errors, query_layer, *, compilation=False, per
     return result
 
 
+def _model_path_judgments(view, operation):
+    """Qualify returned paths; do not search for or assert a semantic relation."""
+    support = operation.get("knowledge_support", {})
+    assertions = support.get("assertions", [])
+    observations = {item["record_id"]: item for item in support.get("observations", [])}
+    judgments, lines = [], []
+    for path in operation["paths"]:
+        first, last = path["node_ids"][0], path["node_ids"][-1]
+        edge_ids = {edge.get("id") for edge in path["edges"]}
+        physical = [item for item in assertions if edge_ids.intersection(item.get("origin_record_ids", []))
+                    and item["predicate"] in {"CHART_CONNECTED", "CHART_MEMBER_OF", "CANDIDATE_LAYOUT_PARENT"}]
+        concepts = {identifier: {item["subject_id"] for item in assertions if item["predicate"] == "PRINTED_LABEL"
+            and identifier in item.get("origin_record_ids", []) and item["object_value"] == view.nodes[identifier]["label"]}
+            for identifier in (first, last)}
+        semantic = [item for item in assertions if item["predicate"] == "IS_A"
+                    and item["subject_id"] in concepts[first] and item["object_value"] in concepts[last]]
+        placements = []
+        for edge in path["edges"]:
+            if edge["type"] != "ENCLOSES_ROW" or edge["to"] not in {first, last} or edge.get("id") not in observations:
+                continue
+            for item in physical:
+                if item["predicate"] == "CHART_MEMBER_OF" and edge["id"] in item["origin_record_ids"]:
+                    placements.append({"process_id": edge["to"], "category_id": edge["from"],
+                        "assertion_id": item["assertion_id"], "status": item["status"],
+                        "evidence_ids": list(item["support_evidence_ids"])})
+        judgments.append({"start_id": first, "end_id": last, "verdict": "not_established_by_this_path",
+            "scope": "Physical/layout path non-entailment only; not a global negative or separate semantic-assertion judgment.",
+            "path_node_ids": list(path["node_ids"]), "positive_placements": placements,
+            "physical_assertion_ids": [item["assertion_id"] for item in physical],
+            "separate_semantic_assertions": [{key: item[key] for key in (
+                "assertion_id", "predicate", "status", "support_evidence_ids", "counter_evidence_ids")} for item in semantic]})
+        lines.append("Semantic relationship verdict for " + view.nodes[first]["label"] + " to " + view.nodes[last]["label"]
+            + ": this returned physical/layout path does not establish a reviewed semantic subtype relation between these endpoints. "
+              "This is not a claim that no such relationship exists outside the returned path evidence.")
+        for placement in placements:
+            lines.append("Returned source placement (" + placement["status"] + " CHART_MEMBER_OF): "
+                + view.nodes[placement["process_id"]]["label"] + " is enclosed by " + view.nodes[placement["category_id"]]["label"] + ".")
+        for item in semantic:
+            lines.append("A separate " + item["status"] + " IS_A assertion is returned: " + item["assertion_id"]
+                         + ". It remains separate from this physical-path judgment.")
+    return judgments, "\n".join(lines)
+
+
+def _model_connector_limit(view, operation):
+    receipt = view.graph.get("raster_verification", {}).get("connector_receipt", {})
+    support = operation.get("knowledge_support", {})
+    returned = {item["proof"]["evidence_id"] for item in support.get("observations", [])}
+    edges = [edge for edge in operation["trace"]["selected_edges"] if edge["type"] == "CHART_CONNECTOR"
+             and edge.get("evidence", {}).get("evidence_id") in returned]
+    if receipt.get("direction") != "undirected" or not edges:
+        return None, ""
+    limit = {"verdict": "not_established_by_retained_connector_evidence", "retained_direction": "undirected",
+        "edge_ids": list(dict.fromkeys(edge["id"] for edge in edges)),
+        "evidence_ids": list(dict.fromkeys(edge["evidence"]["evidence_id"] for edge in edges)),
+        "qualification": "Retained undirected connection evidence only; no arrowhead detector or physical absence proof."}
+    return limit, ("Arrow-direction source limit: the retained connector receipt and returned CHART_CONNECTOR proofs "
+        "record undirected physical connections. These records do not establish arrow direction; "
+        "no admitted arrow-direction assertion is returned. Navigation order is not a printed arrow. "
+        "This judgment is limited to the retained connection evidence.")
+
+
+def _compose_model_answer(view, result):
+    answers, diagnostics, judgments, limits = [], [], [], []
+    for operation in result["operations"]:
+        if operation.get("execution_status") in {"blocked", "failed"}:
+            diagnostics.append({"operation_id": operation["operation_id"], "kind": operation["kind"],
+                "execution_status": operation["execution_status"], "graph_executed": operation["graph_executed"],
+                "codes": list(operation["trace"]["diagnostics"]), "message": operation["answer"],
+                "dependency_operation_ids": list(operation.get("dependency_operation_ids", [])),
+                "request_ids": list(operation.get("request_ids", [])), "source_fact_availability": "not_determined"})
+            continue
+        text = operation["answer"]
+        if (operation["kind"] == "layout_relation" and operation.get("selection_origin")
+                == "existing_deterministic_intent_supplement"):
+            text += ("\nThis source-layout verdict concerns ancestor/parent chains, not all physical "
+                     "reachability through a common chart root or semantic subtype authority.")
+        if operation["kind"] == "paths" and operation["paths"]:
+            values, qualification = _model_path_judgments(view, operation)
+            operation["relationship_judgments"] = values
+            judgments.extend(dict(value, operation_id=operation["operation_id"]) for value in values)
+            text += "\n" + qualification
+        limit, qualification = _model_connector_limit(view, operation)
+        if limit is not None:
+            operation["source_limits"] = {"connector_arrow_direction": limit}
+            limits.append(dict(limit, operation_id=operation["operation_id"]))
+            text += "\n" + qualification
+        answers.append(text)
+    result.update(relationship_judgments=judgments, source_limits={"connector_arrow_direction": limits}, plan_diagnostics=diagnostics)
+    return "\n\n".join(answers)
+
+
 def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, query_layer="auto", question_planner=None):
     """Default to deterministic planning; optionally inject a validated planner."""
     if query_layer not in {"auto", "evidence", "knowledge"}:
@@ -1322,7 +1419,8 @@ def execute_graph_plan(graph, validated_plan, *, complete_chart=False, knowledge
     succeeded = sum(operation["answer_outcome"] == "graph_answer" for operation in operations)
     result["answer_outcome"] = "graph_answer" if succeeded == len(operations) else "insufficient_evidence"
     result["partial_completion"] = 0 < succeeded < len(operations)
-    result["answer"] = "\n\n".join(operation["answer"] for operation in operations)
+    result["answer"] = (_compose_model_answer(view, result) if plan.get("coverage_authority") == "MODEL_PROPOSED_UNVERIFIED"
+                        else "\n\n".join(operation["answer"] for operation in operations))
     direct_groups = {group["subject_id"]: group["node_ids"] for operation in operations
                      if operation["kind"] == "direct_children" for group in operation.get("groups", [])}
     recursive_groups = {group["subject_id"]: group["node_ids"] for operation in operations

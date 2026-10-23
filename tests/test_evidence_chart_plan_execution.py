@@ -22,6 +22,17 @@ def ref(operation, selection):
     return {"operation_id": "op:" + str(operation), "select": selection}
 
 
+def test_relation_supplement_distinguishes_ancestry_from_physical_reachability(graph):
+    request = plan({"kind": "layout_relation", "subject_ids": ["toy:ribbon", "toy:foil"],
+        "left_ids": ["toy:ribbon"], "right_ids": ["toy:foil"], "query_layer": "evidence",
+        "selection_origin": "existing_deterministic_intent_supplement"})
+    request["coverage_authority"] = "MODEL_PROPOSED_UNVERIFIED"
+    result = answer_graph(graph, request["query"], complete_chart=True,
+        question_planner=lambda actual_graph, query, **kwargs: deepcopy(request))
+    assert "ancestor/parent chains, not all physical reachability" in result["answer"]
+    assert "reviewed semantic subtype is not established" in result["answer"]
+
+
 def test_injected_planner_executes_once_without_changing_graph(graph):
     original = deepcopy(graph)
     calls = []

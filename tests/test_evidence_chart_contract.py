@@ -15,7 +15,7 @@ def test_default_contract_identity_and_explicit_scopes():
     assert CONTRACT_SHA256 == hashlib.sha256(CONTRACT_PATH.read_bytes()).hexdigest()
     assert CONTRACT_VERSION == "chart-plan-contract-1.0"
     assert SCHEMA_VERSION == "chart-llm-plan-1.0"
-    assert INSTRUCTION_VERSION == "chart-llm-plan-instructions-1.3"
+    assert INSTRUCTION_VERSION == "chart-llm-plan-instructions-1.4"
     assert len(OPERATION_PROFILES) == 15
     chart = OPERATION_PROFILES["chart_layout"]
     assert chart["subjects"] == chart["targets"] == ()

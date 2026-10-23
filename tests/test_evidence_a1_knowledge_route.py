@@ -165,3 +165,60 @@ def test_compilation_block_does_not_read_operation_assertion_support(prepared, m
     assert operation["graph_executed"] is False
     assert operation["execution_status"] == "blocked"
     assert operation["knowledge_support"]["assertions"] == []
+
+
+def test_model_path_has_named_semantic_nonentailment_and_only_returned_placements(prepared):
+    from src.evidence_a1_graph_qa import execute_graph_plan
+    graph, store = prepared
+    plan = model_plan("paths", ["toy:parent", "toy:root"], requested_direction="from_to",
+                      start_ids=["toy:parent"], end_ids=["toy:root"], waypoint_ids=[])
+    original = deepcopy(plan)
+    result = execute_graph_plan(graph, plan, complete_chart=True, knowledge_store=store)
+    judgment = result["relationship_judgments"][0]
+    assert judgment["verdict"] == "not_established_by_this_path"
+    assert judgment["start_id"] == "toy:parent" and judgment["end_id"] == "toy:root"
+    assert judgment["positive_placements"][0]["process_id"] == "toy:parent"
+    assert judgment["positive_placements"][0]["category_id"] == "toy:family"
+    assert "Ribbon fold" in result["answer"] and "Toy chart" in result["answer"]
+    assert "does not establish a reviewed semantic subtype relation" in result["answer"]
+    assert result["operations"][0]["kind"] == "paths"
+    assert result["operations"][0]["query_layer"] == "evidence"
+    assert plan == original
+
+
+def test_path_judgment_keeps_separate_semantic_assertions_and_avoids_unreturned_enclosures(prepared):
+    from src.evidence_a1_graph_qa import _GraphView, _model_path_judgments, execute_graph_plan
+    graph, store = prepared
+    result = execute_graph_plan(graph, model_plan("paths", ["toy:child", "toy:parent"],
+        requested_direction="from_to", start_ids=["toy:child"], end_ids=["toy:parent"], waypoint_ids=[]),
+        complete_chart=True, knowledge_store=store)
+    operation = deepcopy(result["operations"][0])
+    labels = {item["origin_record_ids"][0]: item["subject_id"] for item in operation["knowledge_support"]["assertions"]
+              if item["predicate"] == "PRINTED_LABEL"}
+    # A synthetic returned-ledger entry tests separation; it is never admitted to the store.
+    operation["knowledge_support"]["assertions"].append({"assertion_id": "synthetic:separate-semantic",
+        "predicate": "IS_A", "status": "ACCEPTED", "subject_id": labels["toy:child"],
+        "object_value": labels["toy:parent"], "support_evidence_ids": [], "counter_evidence_ids": []})
+    judgments, text = _model_path_judgments(_GraphView(graph), operation)
+    assert judgments[0]["positive_placements"] == []
+    assert judgments[0]["separate_semantic_assertions"][0]["assertion_id"] == "synthetic:separate-semantic"
+    assert "separate ACCEPTED IS_A assertion" in text
+    assert judgments[0]["verdict"] == "not_established_by_this_path"
+
+
+def test_arrow_limit_uses_retained_undirected_connector_and_selected_proofs(prepared):
+    from types import SimpleNamespace
+    from src.evidence_a1_graph_qa import _model_connector_limit, execute_graph_plan
+    graph, store = prepared
+    result = execute_graph_plan(graph, model_plan("physical_neighbors", ["toy:root"]),
+        complete_chart=True, knowledge_store=store)
+    operation = result["operations"][0]
+    view = SimpleNamespace(graph={"raster_verification": {"connector_receipt": {"direction": "undirected"}}})
+    limit, text = _model_connector_limit(view, operation)
+    assert limit["retained_direction"] == "undirected"
+    assert limit["evidence_ids"]
+    assert "do not establish arrow direction" in text
+    assert "no arrowheads" not in text and "detected" not in text
+    unsupported = deepcopy(operation)
+    unsupported["knowledge_support"]["observations"] = []
+    assert _model_connector_limit(view, unsupported) == (None, "")

@@ -295,13 +295,69 @@ def _arguments(operation, nodes, aliases, prior, query):
             _reject("INFORMATION_FIELD_NOT_IN_QUERY")
 
 
+def _supplement_existing_relation_intent(graph, nodes, plan, concept_bindings):
+    """Keep a model path, adding only an independently selected literal relation.
+
+    This reuses the existing intent planner rather than interpreting node kinds
+    as a request. Its evidence-layer operation remains source qualified; the
+    original model operations and unverified coverage authority are unchanged.
+    """
+    operations, parts = plan["operations"], plan["requested_parts"]
+    if (plan["status"] != "ready" or len(operations) >= MAX_OPERATIONS
+            or len(parts) != 1 or parts[0]["status"] != "planned"
+            or any(item.get("compilation_errors") or item.get("result_refs")
+                   or item.get("dependency_operation_ids")
+                   or item["query_layer"] != "evidence"
+                   or item["kind"] not in {"designation", "paths"} for item in operations)):
+        return
+    paths = [item for item in operations if item["kind"] == "paths"]
+    if len(paths) != 1:
+        return
+    path = paths[0]
+    left, right = path.get("start_ids", []), path.get("end_ids", [])
+    if (len(left) != 1 or len(right) != 1 or left == right
+            or path.get("waypoint_ids") or path.get("requested_direction") != "from_to"
+            or any(not item["subject_ids"] or not set(item["subject_ids"]) <= set(left + right)
+                   for item in operations)):
+        return
+    from src.evidence_a1_planner import plan_graph_query
+    intent = plan_graph_query(graph, plan["query"], concept_bindings=concept_bindings)
+    intent_parts = intent.get("requested_parts", [])
+    if (intent["status"] != "ready" or intent.get("diagnostics")
+            or intent.get("unresolved_parts") or intent.get("unresolved_selectors")
+            or len(intent["operations"]) != 1 or len(intent_parts) != 1
+            or intent_parts[0]["status"] != "planned"):
+        return
+    relation = intent["operations"][0]
+    profile = OPERATION_PROFILES["layout_relation"]
+    if (relation["kind"] != "layout_relation" or relation.get("query_layer") != "evidence"
+            or relation.get("left_ids") != left or relation.get("right_ids") != right
+            or relation.get("subject_ids") != left + right
+            or relation.get("result_refs") or relation.get("dependency_operation_ids")
+            or nodes[left[0]]["kind"] not in profile["subjects"]
+            or nodes[right[0]]["kind"] not in profile["targets"]):
+        return
+    supplement = deepcopy(relation)
+    supplement.update(operation_id="guard:layout_relation", request_ids=[parts[0]["id"]],
+        dependency_operation_ids=[], selection_origin="existing_deterministic_intent_supplement")
+    operations.append(supplement)
+    parts[0]["operation_ids"].append(supplement["operation_id"])
+    parts[0]["kind"] = "compound"
+    plan["deterministic_supplements"] = [{
+        "operation_id": supplement["operation_id"], "selection_origin": supplement["selection_origin"],
+        "planner_version": intent["planner_version"], "source_operation_id": relation["operation_id"],
+        "source_request_id": intent_parts[0]["id"], "source_path_operation_id": path["operation_id"],
+        "model_selected_supplement": False, "original_model_operations_retained": True}]
+
+
 def compile_plan(graph, query, payload, concept_bindings=None):
     """Compile one typed batch without granting semantic completeness.
 
     Envelope/source/reference integrity fails closed. An addressable invalid
     operation stays in the batch as a nonexecuting placeholder, so independent
     operations can run without hiding the failed request or its dependencies.
-    The exact original model plan is retained; no operation kind is guessed.
+    The exact original model plan is retained. A narrow, explicitly recorded
+    supplement can reuse an existing deterministic literal relationship intent.
     """
     if not isinstance(query, str) or not query.strip() or len(query) > MAX_QUERY_LENGTH:
         _reject("QUERY_INVALID")
@@ -486,7 +542,7 @@ def compile_plan(graph, query, payload, concept_bindings=None):
             "candidate_ids": list(dict.fromkeys(value for choice in omitted for value in choice["candidate_ids"])),
             "coverage_authority": COVERAGE})
     resolved = list(dict.fromkeys(item for operation in compiled for item in operation["subject_ids"]))
-    return {"planner_version": SCHEMA_VERSION, "instruction_revision": INSTRUCTION_VERSION,
+    result = {"planner_version": SCHEMA_VERSION, "instruction_revision": INSTRUCTION_VERSION,
         "contract_version": CONTRACT_VERSION, "contract_sha256": CONTRACT_SHA256,
         "query": query, "status": ("partial" if errors and any(not item.get("compilation_errors") for item in compiled)
             else "clarification_required" if ambiguities else "invalid" if errors
@@ -500,3 +556,5 @@ def compile_plan(graph, query, payload, concept_bindings=None):
         "identity_ambiguities": ambiguities, "operation_aliases": operation_aliases,
         "deduplications": deduplications, "external_plan": deepcopy(payload),
         "concept_bindings": dict(concept_bindings or {})}
+    _supplement_existing_relation_intent(graph, nodes, result, concept_bindings)
+    return result
