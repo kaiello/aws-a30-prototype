@@ -1,5 +1,430 @@
 # Implementation Plan: Standalone AWS A3.0 Multimodal NLQ Prototype
 
+## A2 finishing slice009 verified (2026-10-23)
+
+The bounded A2 ingest/evidence slice and opt-in planner finishing pass are verified
+on existing exposed questions. Default deterministic behavior is preserved; fresh
+model selection, production Terra/Luna and unseen generalization remain unvalidated.
+No new OCR/model/provider call, figure, framework or UI was introduced by009.
+
+Optional `run_questions(..., source_observation_path=...)` / `query --source-observation`
+adds source-bound canonical **candidate** figure evidence in the A2 adapter. Source,
+page/crop/region/connector bindings and native PDF-rendered clip pixels are checked.
+This authenticates provenance, not the AI observation's truth. Candidate evidence
+and claims stay outside accepted proof catalogs/KG admission and completeness flags;
+knowledge-only answers are not augmented. Text is rendered only for successful
+evidence-layer `epistemic_limits`/`chart_layout` operations; otherwise the optional
+candidate packet is separate. Omitting the option preserves prior behavior.
+
+A conservative compiler guard reuses the existing deterministic relation intent
+only for a ready single-part literal evidence path with exactly matching ordered
+endpoints. It supplements, never replaces, original model operations and records
+its origin. Membership, source-layout ancestry, physical common-root reachability
+and semantic subtype remain distinct. Ambiguous/compound/ref-dependent batches are
+not guessed; forced knowledge execution rejects the evidence-only layout operation.
+
+Capability staging remains **text first, relationships second, multihop third**.
+Known-source labels/codes and identity clarification are independently usable;
+compound requests retain every relationship/path part. Qualified relationships
+now include the optional candidate whole-A2 connector observation. Ordered source
+paths and accepted physical support are demonstrated; model-requested accepted-KG
+paths and semantic IS_A transitivity are not established. Candidate indentation and
+AI observations never become accepted semantic facts through recognition or reachability.
+
+One frozen cached005-plan replay: A2 content/delivery **16 PASS**; A1 **51 PASS**,
+including three proper clarifications. This is compiler/executor recovery with
+explicit deterministic supplementation and candidate evidence, not improved model
+performance. Original007/008 plans, grades and artifacts remain unchanged. All51
+deterministic A1 control answers/coverage/rows/paths/verdicts are unchanged, including
+the known planning_unsupported versus source-limit metadata caveat. Runtime execution
+still retains redundant failed/blocked requests; semantic completeness remains
+UNASSESSED automatically. Do not equate content grades with all operations succeeding.
+
+Validation:398 existing applicable software checks passed; independent focused code,
+source and answer review passed. An offline wheel includes the runtime JSON contract
+and excludes source assets/stores; sandbox build failures are retained separately
+from the successful host build. Harness1.7.6, graph adapter1.4, instruction1.4/wire1.0;
+no model has consumed instruction1.4. Source observations are optional read-only
+attachments; existing graph/store admission decisions are unchanged.
+
+Authorized Git closeout is conditional on these checks and a clean publication
+review; its exact commit/PR/merge/sync receipt is kept in the Library report, not
+fabricated here. Private PDFs/images/OCR/vision traces/stores/caches stay outside Git.
+Rollback leaves the observation option unset and deterministic default enabled;
+no reset, branch/worktree deletion or unrelated cleanup is required. AWS backend
+correctness remains one slice at a time; no automatic A3, Navy Weld or Utopia work.
+Report: `Figure_A2_Planner_Integration_002_Report.md`; private actual answers/receipts:
+`storage/evidence_v2/a2_planner_009/`. GR remains optional, not a required harness.
+
+## Preserved offline planner006 baseline
+
+**Bounded offline simplification complete; hold planner adoption/publication.**
+One replay used the unchanged005 saved plans: no model, OCR or external calls.
+A2 content **15 PASS/1 PARTIAL**, delivery **14 PASS/2 PARTIAL**; A1 content
+**50 PASS/1 PARTIAL**, delivery **48 PASS/3 PARTIAL**. A1's50 passes include three
+appropriate identity clarifications, not50 factual answers. These are exposed
+regressions and cached-plan replay, not fresh model or production acceptance.
+All51 deterministic A1 control answers/coverage/rows/paths/verdicts are unchanged.
+
+Runtime1.7.4 loads `src/evidence_chart_contract.json` through its Python loader:
+contract1.0, instruction1.3, wire1.0. Prompt/profile/schema/compiler definitions
+share that asset; explicit safeguards remain code. No model consumed instruction1.3.
+`SKILL.md` routing/QA guidance remains developer/agent guidance, not automatic
+runtime skill loading. Shared definitions reduce drift; they cannot prevent it.
+
+Quote labels no longer require a character partition. Exact source/query bindings,
+typed IDs/roles/budgets and result dependencies remain enforced. One batch retains
+blocked operations, runs safe independent ones, and blocks failed dependents.
+Exact equivalent operations can share execution without losing part/field mappings.
+Explicit `chart_layout` alone requests whole-chart observations; empty IDs never
+mean all nodes. Membership, layout, physical connectivity and semantic subtype
+remain distinct. Dictionary candidates now also bind unresolved identity requests.
+
+Execution coverage is separate from semantic answer completeness (`UNASSESSED`
+until independent grading). Actual bound assertion status/rule/support qualifies
+observations. Five returned paths have complete accepted literal/physical support,
+including the A2 Allied→Thermal Cutting→Arc Cutting route; these are structural
+certifications of evidence paths, not semantic IS_A transitivity or a new KG search.
+No persisted observation/admission decision was changed. Source bytes, gold,67 raw
+plans,109 frozen code files and463 prior005 artifacts passed preservation checks.
+
+Remaining: A2-Q15 omits explicit source judgment about arrow directions and has
+invalid partition/oversized operations; Q16 adds an empty redundant designation
+follow-up. A1-QA002-14 answers a subtype question with a cross-chart path instead
+of its relationship verdict. CQ003/QA002-10 contain the requested facts but retain
+confusing redundant-operation warnings. No automatic repair/evaluation loop follows.
+The known deterministic reason-label caveat is preserved with its unchanged controls.
+
+AWS backend correctness stays slice by slice: A2 only plus A1 regressions, no UI,
+A3, Navy Weld, Utopia, framework or model campaign. GR remains optional. Review
+actual answers before further inference or publication. Source-aware ingest and
+planner are logically separable, but shared API/traversal hunks require a deliberate
+split; no two independently publishable commits or foundation PR were created.
+Report: `Figure_A2_Planner_Integration_002_Report.md`; private receipts and all
+answers: `storage/evidence_v2/a2_planner_006/`. No Git publication is authorized.
+
+## Preserved fresh005 baseline
+
+Fresh005 used67 natural-stop `deepseek-flash` planner calls with instruction1.2:
+A2 content12 PASS/4 UNASSESSED, delivery10 PASS/2 PARTIAL/4 UNASSESSED;
+A1 41 PASS/1 PARTIAL/9 UNASSESSED included two proper clarifications.
+It executed52 graph queries (12 A2+40 A1), plus two zero-operation clarifications:
+**52, not54 executions**. All original receipts/answers remain unchanged. The full
+report is archived as `006/report_v5_before.md` and Library version5 of
+`libfile_467be2fe46b08191be1c7380b658b958`; its raw ZIP remains
+`libfile_a2abf18257b08191a21e3db693d4df18`. Neither005 nor006 establishes production
+or unseen acceptance. The independent review's predicted scores and invented A2
+Solid-State Cutting question were not adopted; actual source/receipts govern.
+
+## Preserved offline004 baseline
+
+004 replayed older saved plans, with zero new model calls: A2 delivery11/3/0/2
+and content14/0/0/2; A1 43/6/0/2 included three appropriate clarifications.
+It did not test instruction1.2 in a model. Its exact full report remains
+`storage/evidence_v2/a2_planner_005/report_v4_before.md` (SHA256
+`f0abc1ae5f14151d898acbaab87b16f8dbe82a178c0479c43c354b3bf9b6ffb0`), with historical checks/proof limits and prior Library version4.
+
+## Preserved planner003 development baseline
+
+The fresh instruction1.1 DeepSeek run completed67 natural-stop calls, with no
+truncation/retry/fallback. A2 clear delivery/content:6 PASS/10 UNASSESSED; A1
+complete-answer30/12/3/6, factual-data35/7/3/6. Plans were6/16 ready in A2 and45/51
+in A1; nine evidence paths and no accepted-KG paths returned. This was a development
+proxy, not production acceptance. Full answers/raw plans/report remain unchanged
+in `storage/evidence_v2/a2_planner_004/report_v3_before.md` and prior003 artifacts;
+archive SHA256 `14da3c37608c51fee0da312d6ef9c667d45782b8aab6d9f10026df337c303308`. Library version 3 retains that earlier report in version history. The replay above is not new model performance.
+
+## Historical A2 planner002 (2026-10-23)
+
+**Offline contract repair reviewed; fresh model validation is not authorized.**
+Instruction revision `chart-llm-plan-instructions-1.1` keeps wire schema `1.0`;
+per-operation restrictions and planned `reason=''` are explicit in prompt and
+schema descriptions. Flat schema remains a structural superset; compiler guards/
+admission are unchanged. Fifty focused checks passed; unchanged saved67-response
+compiler replay confirms0 executable plans and identical first rejections. No
+plan rewrite, new model call or model-improvement claim. Hold Git. Fresh validation
+needs separate approval. The same Library file is now version2 with offline
+findings; the original67-call record and Libraryv1 remain preserved.
+
+**VALIDATION_PASS_COMPLETE_TYPED_PLAN_CONTRACT_NOT_READY.** Work locally on
+`feat/a2-source-aware-ingest`; no publication is authorized. Reuse the cached A2
+source/store, unchanged 16 A2 development questions and 51 exposed A1 regressions.
+The ignored `storage/evidence_v2/a2_planner_002/baseline_freeze.json` preserves
+baseline identities/results. No successful 002 model acceptance is claimed. These
+known questions do not establish unseen or production-model acceptance.
+
+Pre-implementation scope/drift check: fix language-to-operation interpretation,
+generic group/path result references and requested-part coverage only. Preserve
+the deterministic evidence/KG executor, source facts and admission boundary.
+Model input is the question plus source dictionary names/codes/IDs, never graph
+edges, gold or previous answers. No OCR/A3/UI/Navy Weld/production integration,
+new questions, framework or benchmark. This uses `planning-and-task-breakdown`
+and Scope Discipline in `using-agent-skills`, not a dedicated drift skill.
+
+The backend consumes the versioned `build_prompt`, operation contract, JSON
+schema and validator in `src/evidence_chart_llm_plan.py`. Existing `.agents`
+`evidence-graph-routing`/`evidence-graph-qa` skills are developer guidance read by
+agents, not automatically loaded backend prompts. No new skill workstream is planned.
+
+### Historical first local-attempt setup
+
+Cloud target remains blocked: STS succeeded in `us-gov-west-1`, but SageMaker
+`list_endpoints` returned AccessDenied/400 and Bedrock `list_inference_profiles`
+AccessDenied/403. No verified Terra/Luna mapping exists in config and no new
+credentials were introduced. The planned installed-local
+`qwen2.5:3b` text Instruct (3.086B) / Ollama 0.40.4 route was selected by the owner
+before inference; no 8B calls occurred. Digest:
+`357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b`.
+It is a **proxy, not Terra/Luna**: native metadata context 32768, chosen runtime
+16384, `num_predict=-1`, temperature 0, seed 42. Record actual input/output,
+resource limits and stop reasons; do not claim production-model equivalence.
+
+### Historical approval-block/local-attempt record — permission resolved
+
+The following record predates the new explicit approval and final 67-call pass.
+Its zero-DeepSeek-call and no-retry statements describe that earlier denied
+launch only; they are not the current inference totals.
+
+**A2 is not done and is not ready for closeout.** Automatic approval review
+rejected the exact DeepSeek A2 CLI launch before `CreateProcess`: sending the
+questions and private source-derived identity dictionary to `api.deepseek.com`
+lacked explicit private-source-disclosure authorization. The action is known
+**UNEXECUTED**, with zero DeepSeek inference calls; no retry or alternate path
+was attempted. Existing authentication/model-list reads succeeded, but those
+metadata reads did not authorize source-bearing inference.
+
+Before any launch, explicit approval is needed to send the existing 16 A2/51 A1
+questions, source-derived dictionary names/codes/IDs and operation contract/schema
+to the existing `https://api.deepseek.com` endpoint using existing credentials.
+No PDF/image, graph edges, gold or previous answers are part of that proposed
+input. No new credential grant, private-data upload retry or bypass is authorized.
+The pending proxy remains `deepseek-flash` (documented
+`DeepSeek-V4.1-Flash-1017`), thinking disabled, temperature 0, JSON-object output
+and the same strict contract/schema. Its planned explicit provider maximum is
+393216 output tokens rather than the default 8K; native context is 1M. None of
+these inference settings has been executed. `deepseek-v4-pro` was also listed;
+legacy `deepseek-chat` was absent. This is operational failover, not a new bakeoff.
+
+All 32 local request directories/attempts remain preserved, with 30 natural
+completions. A1 request010 contains only `request.json`, no receipt or stream;
+its execution is **UNCERTAIN/prepared-interrupted**, not confirmed generation.
+The initial schema run's 16 A2/nine A1 natural responses lacked required fields;
+The prepared tenth A1 attempt was interrupted during diagnosis; its actual model
+execution cannot be established from the retained artifacts.
+The flat-schema-only correction preserved all 67 prompts byte-for-byte, profiles,
+validator and admission. The flat run's first five A2 backend answers were invalid
+plans (`SINGLE_SUBJECT_REQUIRED`); the sixth repeated query text and was manually
+client-stopped at 83,103 characters: this sixth flat A2 request has confirmed
+repetitive generation. All 30 saved backend answers have zero operations, rows,
+paths and claims; **no new semantic answers were produced**. The five flat plans
+mixed literal IDs with a current-operation self-reference, violating prior-only
+dependency/cardinality rules rather than missing source data. The
+repetition watch now handles arbitrary periods; no local rerun or arbitrary
+output-token ceiling follows from that software correction.
+
+The opt-in runtime/backend integration and versioned `chart-llm-plan-1.0`
+contract are implemented/reviewed, with flat schema encoding. Final applicable
+software checks: **382 PASS in 10.49 s**, five known warnings; independent code
+review CLEAR. These establish implementation checks, not successful model plans
+or answer quality. Source/baseline hashes are unchanged and the deterministic A1
+control's 51 answer strings and coverage are identical (44 complete/2 partial/
+5 unanswered). The 16+51 model acceptance
+run remains blocked/pending, not passed. Report
+`Figure_A2_Planner_Integration_002_Report.md` is delivered to Library version 0
+(`libfile_467be2fe46b08191be1c7380b658b958`); it includes the actual saved responses,
+controls, independent audit and the precise blocked action.
+Stop here: no more local trials, external inference retries, OCR/A3/UI/Navy Weld,
+new questions/framework/skill workstream or Git publication.
+
+### Final authorized validation pass — complete; contract not ready
+
+New explicit private-source-disclosure approval resolved the previous launch
+block. The known-unexecuted A2 launch was retried once and allowed, followed by
+A1. The final pass made **67 DeepSeek calls (16 A2/51 A1)**: all naturally stopped,
+with no API errors, truncation, inference retry or fallback. Every response model
+was `deepseek-flash`. All original prompts, code and gold remained frozen; no
+fixes or tuning occurred during this pass.
+
+Raw JSON/schema validity was **67/67**, but typed executable plans were **0/67**.
+All 67 results were unsupported/unanswered before execution, with zero operations,
+retrieval, rows, paths or claims. A2 rejected plans: 12 `UNUSED_INFORMATION_FIELDS`,
+three `FIELDS_INVALID`, one `SINGLE_SUBJECT_REQUIRED`. A1: 30 `FIELDS_INVALID`,
+18 `UNUSED_INFORMATION_FIELDS`, one `SINGLE_SUBJECT_REQUIRED` and two
+`PLANNED_PART_INVALID`. Source-answer grading is **UNASSESSED/NOT_RUN**, not a
+0/67 semantic-accuracy score; end-to-end pipeline acceptance nevertheless fails.
+
+That frozen live pass showed schema/prose/compiler usability defects and model planning/
+adherence mistakes. The flat structural schema allows field arrays whose
+operation-specific restrictions are implicit in prose and enforced by the
+validator. Raw unexecuted plans also show wrong operation selection, ambiguity
+handling and direct-versus-recursive list-depth choices. Do not blame the contract
+or model capability alone, or call these executed OCR/KG/retrieval failures:
+retrieval never ran. The next decision is generic contract/interface clarification
+and simplification, not OCR changes, more questions or an automatic tuning loop.
+No further implementation or publication is authorized.
+
+Usage was 247737 input/22999 output tokens (270736 total; 136064 cache-hit/
+111673 cache-miss input). Summed API latency was 148.573 s, median 2.204 s,
+maximum 3.530 s. Published-rate billing estimate: USD0.03096–0.06192; invoice
+unavailable. The prior 382 passing software checks remain valid because code is
+unchanged; they do not establish contract usability. The deterministic A1 control
+still has identical 51 answer strings and runtime 44 complete/2 partial/
+5 unanswered; A2 source/QA001's 7 PASS/4 PARTIAL/5 FAIL baseline is unchanged.
+A2 is not done and is not ready for Git closeout. Report
+`Figure_A2_Planner_Integration_002_Report.md` is updated in the same Library file
+`libfile_467be2fe46b08191be1c7380b658b958`, confirmed version1, including all 67 raw
+backend answers and raw plans. Preserve all local attempts and the historical
+approval-block record.
+
+- [x] **1. Implement/review the opt-in typed planner contract — done.** The
+  versioned prompt/schema, source-scoped IDs, operation allowlist, argument limits
+  and strict validator are in the existing runtime. Model output cannot supply
+  facts, arbitrary SQL, hidden edges or gold; code review cleared this boundary.
+- [x] **2. Wire generic result references/coverage — implemented and reviewed.**
+  Group/path dependencies consume actual operation results, preserve admission
+  and fail explicitly on invalid or unsupported parts; no question-ID dispatch.
+  Software support does not prove the attempted model captured every intent.
+- [ ] **3. Model acceptance on the unchanged 16 A2/51 A1 cohort — final pass complete; NOT MET.**
+  The newly authorized DeepSeek pass completed all 67 calls once, with 67/67
+  structurally valid JSON documents but 0/67 executable typed plans. All responses
+  remained unsupported/unanswered before retrieval, so source-answer grades are
+  UNASSESSED/NOT_RUN; no semantic accuracy or retrieval failure is inferred.
+  The approval block is resolved and preserved as history. Keep the original
+  prompts/gold/code and all local attempts; no tuning or automatic additional run.
+- [x] **4. Complete software review/document the bounded stop — done.** Prior
+  applicable checks passed 382/382 in 10.49 s (five known warnings), independent
+  code review cleared, and unchanged code/source retain those implementation
+  checks. A1 answers/coverage and the A2 source baseline are unchanged. Model
+  contract usability/acceptance still fails. The same Library report is confirmed
+  updated to version1 with all 67 raw backend answers and raw plans. Next decision: generic contract/interface
+  clarification, not OCR/more questions or an automatic tuning/publication loop.
+
+## Historical A2 source/QA001 (2026-10-23)
+
+**STOP_AFTER_A2_DEVELOPMENT_PASS — SOURCE_INGEST_READY_NLQ_NOT_READY_FOR_CLOSEOUT.**
+Work remains local/uncommitted on `feat/a2-source-aware-ingest`; main is unchanged
+at `2d7b73813228c1cd6f907ca014a23693a888de81`. Hold publication: the source layer
+works, but the actual A2 answer/completeness results below do not meet acceptance.
+
+Figure A2 is **Master Chart of Allied Processes**, `figure:figure_a2`, PDF index
+88 / viewer page 89 / printed page 76. Its normalized page crop
+`[0.075, 0.10, 0.45, 0.89]` (`ymin,xmin,ymax,xmax`) excludes A3 on the same page.
+Adapter `a2-source-aware-ingest-1.4` (`src/evidence_a2.py`) combines native vector
+boxes/strokes with local OCR for outlined-font labels: eight OCR calls total
+(cached initial PSM11 plus seven per-box PSM6); later derived projections used
+zero OCR calls. This is hybrid source ingest, not independent image-only OCR.
+No LLM/external calls occurred and no VLM was needed for the native geometry.
+A2 vocabulary comes only from A2 observations; no A1 dictionary facts are imported.
+The final graph has 38 nodes (seven boxes/31 printed rows), six undirected
+physical connectors, 112 ACCEPTED/12 CANDIDATE/0 DISPUTED assertions and zero
+accepted `IS_A`. All returned proofs/assertion references joined correctly;
+231 support joins and zero candidate promotions were verified. Lower category
+boxes have multilevel physical connections, not geometric containment inside
+the thermal-cutting box. Indentation remains candidate.
+
+After the code freeze, one fixed 16-question A2 batch and one existing 51-question
+A1 regression ran. A2 independent content review found **7 PASS / 4 PARTIAL /
+5 FAIL**, while runtime coverage was **3 complete / 11 partial / 2 unanswered**;
+only three answers were clean on both content and coverage. Independent delivery/
+coverage grading was **3 PASS / 8 PARTIAL / 5 FAIL**. False clarification/
+unsupported warnings remain even on some content-complete answers. A1's 51 answer
+strings and coverage are verbatim unchanged: 51 content PASS, runtime 44/2/5,
+including the known `HO003-06` reason-label caveat. These are development/exposed
+regressions, not unseen or production-model acceptance.
+
+The initial full 287-check run had one legacy-helper contract failure. A minimal
+post-QA compatibility patch fixed that caller contract; nine focused checks then
+passed, followed by **287 PASS in 7.82 s** with five known warnings. The actual QA
+results remain from the frozen pre-patch code; no QA rerun is claimed. Old/new
+coverage-helper results matched for all 31 typed A2 operations. Source, code and final compatibility
+review cleared; that review is not NLQ answer acceptance.
+Source/image/question hashes and all original/intermediate artifacts are retained.
+The completion drift check remained A2-only, with no new UI/framework/model,
+question/gold mutation or automatic repair loop. Primary gaps are intent
+composition, anaphora/path planning and honest coverage, not missing source OCR.
+Next decision: a bounded language-to-typed-operation repair; do not start another
+OCR change, framework bakeoff or automatic rerun. No commit/push/merge is authorized.
+GR remains optional; Navy Weld/Utopia are deferred. The reported AWS GPT-5.6
+Terra/Luna setup remains unverified; no production endpoint/model acceptance was
+simulated. Preserve the closed A1/private records below. Report `Figure_A2_Source_Aware_Ingest_001_Report.md` is delivered to Library,
+version 0 (`libfile_333e9b8fb2a48191ae37ac99fa0a2633`).
+
+### Four ordered implementation tasks — bounded result
+
+- [x] **1. Authenticate/crop/inspect A2 and freeze development CQs — structurally done.**
+  Dependency: verified main/base and source/crop contract. The selected A2 chart
+  excludes A3; source/image and the 16 execution-only IDs/texts were frozen,
+  with grading separate. Native text is incomplete because labels are outlined;
+  native boxes/strokes plus observed local OCR are the actual routes. Acceptance
+  and verification: source identity, crop, route, hashes and direct source-image
+  inspection are recorded; no expected answer entered ingestion. The questions
+  are development evidence, not an unseen acceptance set.
+
+- [x] **2. Extract/verify/persist source evidence through EG to KG — structurally done.**
+  Dependency: task 1. Source-backed labels/codes, process-row enclosure and
+  multilevel category connections/path coverage are persisted with full page/crop,
+  method and uncertainty proof. Lower category boxes are physically connected,
+  not geometrically nested inside the thermal-cutting box. Final projection:
+  `storage/evidence_v2/a2_ingest_001/final_projection_005/graph.json`, SHA256
+  `a5b82349ce35089bffed5626b5b9e1ad9aa96952c70ba651d4249db1d7524157`.
+  Verification: 38 nodes/seven boxes/31 printed rows, six undirected connectors,
+  112 ACCEPTED/12 CANDIDATE/0 DISPUTED assertions, 231 support joins, zero accepted
+  `IS_A` and no candidate promotions. Source-image/proof review cleared. All raw
+  and derived intermediate artifacts remain; eight OCR calls total, zero LLM or
+  external calls. A2 names/codes derive from A2 observations, not A1 facts.
+
+- [ ] **3. Reuse typed retrieval/run fixed answers — execution done; answer acceptance NOT MET.**
+  Dependency: task 2 and frozen implementation. Harness 1.7.2/planner 1.6.2 ran
+  one A2 batch of 16 and one A1 batch of 51, with no QA rerun. Independent A2
+  content review: 7 PASS/4 PARTIAL/5 FAIL; coverage: 3 complete/11 partial/
+  2 unanswered, with only three clean in both measures. A1 actual answers and
+  coverage stayed verbatim unchanged (51 content PASS; 44/2/5 runtime and the
+  existing HO003-06 reason-label caveat). Acceptance requires every requested
+  part to be answered with sufficient evidence or correctly qualified, not
+  merely a runnable graph or valid IDs. That requirement remains unmet:
+  A2-DEV001-01/02/05 fail group enumeration, 09 physical-neighbor planning and
+  10 the indented-child list. Partials 13/14/15/16 miss group-anaphor/path,
+  explicit operating fields, arrow-limit and reverse-category-path parts.
+  Cases 03/04/08/11 have source content but false unsupported/clarification
+  warnings. General forced-KG children/descendants/parents abstain conservatively;
+  nested `row_partition` remains unsupported. Source/grading review separately
+  corrected an old vacuum/plasma indentation interpretation: the source supports
+  the observed 12 layout links; original gold was retained and case02 still FAILS,
+  so the erratum did not improve the reported score.
+
+- [x] **4. Complete bounded review/software/docs and document the stop — known NLQ blockers remain.**
+  Dependency: task 3 frozen results, not satisfaction of its answer acceptance.
+  Source/code review and actual answer/proof inspection cleared structural scope;
+  final compatibility review cleared and the full-answer Library report is delivered. Initial
+  full software run: 286 PASS/1 legacy-helper contract FAIL. A minimal compatibility
+  patch after the QA freeze restored the minimal legacy caller; the failing case
+  plus eight core checks passed, then all 287 checks passed in 7.82 s (five known
+  warnings). This was not a semantic QA fix. All 31 typed A2 operations have
+  identical old/new coverage-helper results; final-patch QA answers were not
+  regenerated. Frozen QA/code provenance and the patch distinction are explicit.
+  Verification: source/image/question hashes and returned proof/assertion joins
+  remain valid, with no candidate promotion. The pre/post drift check kept A2-only
+  source-aware backend scope, A1 regressions and the existing framework: no UI,
+  other figure, model installation, external endpoint, gold mutation or repeated
+  tuning. Hold publication. Next decision is a bounded intent/composition/coverage
+  repair using the existing source/store, not a new OCR or framework bakeoff.
+
+### Reproduction interface and stopping point
+
+The completed fixed batch used the canonical adapter below. This documents the
+interface; `<NEWignoredpath>` must be unused and does not authorize another run:
+
+```powershell
+python -B -m src.evidence_a2 --root . query --graph storage/evidence_v2/a2_ingest_001/final_projection_005/graph.json --input storage/evidence_v2/a2_ingest_001/evaluation/questions.json --output <NEWignoredpath> --layer auto
+```
+
+No new CQ, automatic repair loop, publication or production-model check follows
+from this pass. The source-aware ingest works; the A2 answer/completeness slice
+is not ready for closeout. `Figure_A2_Source_Aware_Ingest_001_Report.md` is
+delivered to Library, version 0 (`libfile_333e9b8fb2a48191ae37ac99fa0a2633`).
+
+## Preserved A1 records
+
 **Git closeout record (2026-10-23): REVIEWED FEATURE; PR #11.**
 The reviewed implementation is published in [PR #11](https://github.com/kaiello/aws-a30-prototype/pull/11).
 Independent code/publication reviews approved and all 270 local checks passed.

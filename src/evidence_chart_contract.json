@@ -1,0 +1,481 @@
+{
+  "contract_version": "chart-plan-contract-1.0",
+  "wire_schema_version": "chart-llm-plan-1.0",
+  "instruction_version": "chart-llm-plan-instructions-1.4",
+  "coverage_authority": "MODEL_PROPOSED_UNVERIFIED",
+  "budgets": {
+    "MAX_OPERATIONS": 16,
+    "MAX_PARTS": 16,
+    "MAX_RESULT_REFS": 16,
+    "MAX_LITERAL_IDS": 32,
+    "MAX_RESOLVED_IDS": 512,
+    "MAX_INFORMATION_FIELDS": 16,
+    "MAX_QUERY_LENGTH": 16360,
+    "MAX_STRING_LENGTH": 256,
+    "MAX_REASON_LENGTH": 1024
+  },
+  "node_kinds": [
+    "root",
+    "category",
+    "process"
+  ],
+  "id_pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$",
+  "wire_keys": {
+    "operation": [
+      "id",
+      "kind",
+      "query_layer",
+      "subject_ids",
+      "target_ids",
+      "result_refs",
+      "fields",
+      "requested_fields",
+      "requested_aspects"
+    ],
+    "part": [
+      "id",
+      "quote",
+      "status",
+      "operation_ids",
+      "reason"
+    ],
+    "envelope": [
+      "schema_version",
+      "source_element",
+      "query",
+      "parts",
+      "operations"
+    ]
+  },
+  "part_rules": {
+    "planned_reason": "",
+    "reason": "Planned parts require reason=\"\" exactly; no planning rationale. Unresolved parts require a nonblank reason explaining the unresolved request.",
+    "operations": "Planned parts require at least one existing operation_id. Unresolved parts require operation_ids=[]. Every operation must be referenced."
+  },
+  "empty_subject_scopes": {
+    "chart_layout": "chart",
+    "evidence": "source",
+    "epistemic_limits": "source",
+    "operating_information": "source"
+  },
+  "operation_profiles": {
+    "designation": {
+      "minimum": 1,
+      "subjects": [
+        "root",
+        "category",
+        "process"
+      ],
+      "single": false,
+      "targets": [],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence",
+        "knowledge"
+      ],
+      "produces": {
+        "rows": [
+          "root",
+          "category",
+          "process"
+        ],
+        "categories": [
+          "category"
+        ]
+      },
+      "meaning": "printed name/code or no-code root heading for each subject; literal identity only"
+    },
+    "category": {
+      "minimum": 1,
+      "subjects": [
+        "process"
+      ],
+      "single": false,
+      "targets": [],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence",
+        "knowledge"
+      ],
+      "produces": {
+        "rows": [
+          "process"
+        ],
+        "categories": [
+          "category"
+        ]
+      },
+      "meaning": "positive enclosing box of each process row; not a category-to-category path"
+    },
+    "direct_children": {
+      "minimum": 1,
+      "subjects": [
+        "root",
+        "category",
+        "process"
+      ],
+      "single": false,
+      "targets": [],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence"
+      ],
+      "produces": {
+        "rows": [
+          "process"
+        ],
+        "categories": [
+          "category"
+        ],
+        "groups": [
+          "category",
+          "process"
+        ]
+      },
+      "meaning": "immediate effective-layout children"
+    },
+    "descendants": {
+      "minimum": 1,
+      "subjects": [
+        "root",
+        "category",
+        "process"
+      ],
+      "single": false,
+      "targets": [],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence"
+      ],
+      "produces": {
+        "rows": [
+          "process"
+        ],
+        "categories": [
+          "category"
+        ],
+        "groups": [
+          "category",
+          "process"
+        ]
+      },
+      "meaning": "all recursive layout descendants; keep intermediate entries"
+    },
+    "parents": {
+      "minimum": 1,
+      "subjects": [
+        "root",
+        "category",
+        "process"
+      ],
+      "single": false,
+      "targets": [],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence"
+      ],
+      "produces": {
+        "rows": [
+          "root",
+          "category",
+          "process"
+        ],
+        "parents": [
+          "root",
+          "category",
+          "process"
+        ],
+        "categories": [
+          "category"
+        ]
+      },
+      "meaning": "direct displayed parents, separate broader enclosure"
+    },
+    "paths": {
+      "minimum": 1,
+      "subjects": [
+        "root",
+        "category",
+        "process"
+      ],
+      "single": true,
+      "targets": [
+        "root",
+        "category",
+        "process"
+      ],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence",
+        "knowledge"
+      ],
+      "produces": {
+        "rows": [
+          "process"
+        ],
+        "categories": [
+          "category"
+        ]
+      },
+      "meaning": "ordered physical/layout route only; subject=start, targets=ends; print each intermediate name/code; not a semantic relationship verdict"
+    },
+    "membership": {
+      "minimum": 1,
+      "subjects": [
+        "process"
+      ],
+      "single": true,
+      "targets": [
+        "category"
+      ],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence",
+        "knowledge"
+      ],
+      "produces": {
+        "rows": [
+          "process"
+        ],
+        "categories": [
+          "category"
+        ]
+      },
+      "meaning": "one process direct source-box enclosure against an explicit category; not semantic subtype or process-to-process layout"
+    },
+    "layout_relation": {
+      "minimum": 1,
+      "subjects": [
+        "process"
+      ],
+      "single": true,
+      "targets": [
+        "category",
+        "process"
+      ],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence"
+      ],
+      "produces": {
+        "rows": [
+          "process"
+        ],
+        "categories": [
+          "category"
+        ]
+      },
+      "meaning": "qualified displayed relationship, not semantic subtype"
+    },
+    "physical_neighbors": {
+      "minimum": 1,
+      "subjects": [
+        "root",
+        "category"
+      ],
+      "single": false,
+      "targets": [],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence",
+        "knowledge"
+      ],
+      "produces": {
+        "rows": [
+          "root",
+          "category"
+        ],
+        "groups": [
+          "root",
+          "category"
+        ]
+      },
+      "meaning": "incident physical connectors in both directions; no source arrow semantics"
+    },
+    "row_partition": {
+      "minimum": 1,
+      "subjects": [
+        "category"
+      ],
+      "single": false,
+      "targets": [],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence"
+      ],
+      "produces": {
+        "rows": [
+          "process"
+        ],
+        "categories": [
+          "category"
+        ],
+        "groups": [
+          "process"
+        ]
+      },
+      "meaning": "unindented versus indented process rows in a row-containing box; not an intermediate box that contains only other boxes"
+    },
+    "comparison": {
+      "minimum": 2,
+      "subjects": [
+        "category",
+        "process"
+      ],
+      "single": false,
+      "targets": [],
+      "fields": [
+        "designation",
+        "category"
+      ],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence",
+        "knowledge"
+      ],
+      "produces": {
+        "rows": [
+          "category",
+          "process"
+        ],
+        "categories": [
+          "category"
+        ]
+      },
+      "meaning": "expand every requested field for every subject"
+    },
+    "evidence": {
+      "minimum": 0,
+      "subjects": [
+        "root",
+        "category",
+        "process"
+      ],
+      "single": false,
+      "targets": [],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": true,
+      "layers": [
+        "evidence"
+      ],
+      "produces": {
+        "rows": [
+          "process"
+        ],
+        "categories": [
+          "category"
+        ]
+      },
+      "meaning": "observations/proofs for selected subjects, or source qualification only when none; keep relation operation separate"
+    },
+    "epistemic_limits": {
+      "minimum": 0,
+      "subjects": [
+        "root",
+        "category",
+        "process"
+      ],
+      "single": false,
+      "targets": [],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": true,
+      "layers": [
+        "evidence"
+      ],
+      "produces": {
+        "rows": [
+          "process"
+        ],
+        "categories": [
+          "category"
+        ]
+      },
+      "meaning": "what selected subjects/chart can establish; empty subjects do not enumerate chart"
+    },
+    "operating_information": {
+      "minimum": 0,
+      "subjects": [
+        "root",
+        "category",
+        "process"
+      ],
+      "single": false,
+      "targets": [],
+      "fields": [],
+      "requested_fields": true,
+      "requested_aspects": false,
+      "layers": [
+        "evidence"
+      ],
+      "produces": {},
+      "meaning": "requested information absent from chart; invent no values and do not enumerate chart"
+    },
+    "chart_layout": {
+      "minimum": 0,
+      "subjects": [],
+      "single": false,
+      "targets": [],
+      "fields": [],
+      "requested_fields": false,
+      "requested_aspects": false,
+      "layers": [
+        "evidence"
+      ],
+      "produces": {
+        "rows": [
+          "root",
+          "category",
+          "process"
+        ],
+        "categories": [
+          "category"
+        ],
+        "groups": [
+          "category",
+          "process"
+        ]
+      },
+      "meaning": "explicit complete selected-chart observations, groups and qualified layout; scope=chart; not accepted semantic hierarchy"
+    }
+  },
+  "static_routing_guidance": [
+    "Return only the typed plan JSON. Copy query/source_element. Do not provide answers, SQL, invented IDs, edges or source facts.",
+    "Capture every substantive intent/subquestion and requested follow-up. Preserve all quantifiers, negation, alternatives, direction and requested properties. Prefer a verbatim question clause for each part quote; it labels a request, not a character-partition proof. The whole question is allowed. If an intent cannot be represented, mark it unresolved with a reason instead of silently omitting it.",
+    "result_refs select ACTUAL prior operation results only: rows=returned rows; categories=positive enclosing categories with source edges; parents=returned direct parents; groups=union of returned group.node_ids, not group subjects. Failed or empty references do not authorize guessed targets.",
+    "designation intrinsically returns a printed name/code; a root heading may have no code. Do not request those columns through requested_fields. List operations enumerate rows; use a separate designation operation on prior rows when needed.",
+    "category accepts process subjects and returns their positive enclosing category; targets must be empty. membership tests one process against an explicit category. Category-to-category physical paths and process-to-process layout relations require their own typed operations. Never normalize an invalid target kind into another operation.",
+    "Choose list depth explicitly: direct_children means immediate displayed children; descendants means the recursive set including intermediates. Unqualified all processes under a group asks for descendants; direct/immediate wording asks for direct_children. Do not substitute depths.",
+    "A follow-up about returned entries must reference their actual rows/groups, not reuse the original parent. Paths preserve requested start/end direction and print intermediate names/codes; paths.rows are process subjects, not intermediate category nodes.",
+    "Use exact source labels/codes or verified aliases. A partial name with multiple dictionary matches requires an unresolved part and clarification, not a preferred or subset identity. Recognizing an identity never admits a relationship.",
+    "chart_layout alone explicitly denotes complete observations of the selected source chart: no literal IDs or result references, evidence layer only, scope=chart. Empty IDs in evidence, epistemic_limits or operating_information mean source qualification/limits only; they never mean all graph nodes.",
+    "Layer is explicit: evidence returns qualified source observations; knowledge traverses admitted assertions only. Physical connectors are undirected; indentation is candidate layout, not semantic IS_A. Comparison fields do not replace separately requested relationship or evidence operations.",
+    "All operation keys are required; unused arrays are []. requested_fields/requested_aspects are quoted requested operating information or evidence aspects, not output columns or proposed source values.",
+    "JSON schema validates structure. Code also enforces allowed operations, argument types, combined budgets, source/query bindings, prior-result dependencies and the evidence-to-knowledge admission boundary. Coverage remains MODEL_PROPOSED_UNVERIFIED; valid structure, a ready plan and joined proofs do not establish semantic completeness.",
+    "Answer a relationship question with the appropriate qualified relation/verdict and source placement, not only a common-ancestor path. membership is direct enclosure against a category; layout_relation describes a displayed process relationship; epistemic_limits explains missing semantic authority. A physical path does not establish semantic IS_A. Keep separately requested route evidence as its own operation.",
+    "For questions about what indentation or connecting strokes establish, request explicit source limits with evidence. Organizational from/to order and traversal direction are not arrow directions. Do not invent an arrowhead detector or absence observation. Use explicit chart_layout for whole-chart observations; row_partition applies only to boxes containing process rows, not all intermediate categories. Do not enumerate every possible relation pair to ask about source authority.",
+    "List and path outputs already include printed names/codes for the records they render. Do not add a duplicate designation merely to repeat fields already supplied. If a requested code is absent from an operation's rendered output, such as a parent lookup, retain an explicit designation follow-up selecting the actual returned records of the needed kind. paths.rows selects process subjects, not intermediate category nodes. Empty or failed refs remain unresolved; never replace them with guessed subjects."
+  ]
+}

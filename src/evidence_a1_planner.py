@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 
-PLANNER_VERSION = "a1-graph-planner-1.6.1"
+PLANNER_VERSION = "a1-graph-planner-1.6.2"
 
 
 def _words(value):
@@ -15,30 +15,41 @@ def _category_parts(node):
     return (found[1].strip(), found[2]) if found else (node["label"], None)
 
 
-def _source_context_spans(query):
+def _source_element(graph=None):
+    graph = graph or {}
+    element = graph.get("source_binding", {}).get("locator", {}).get("element_id",
+        graph.get("source_element", "Figure A1"))
+    if element not in {"Figure A1", "Figure A2"}:
+        raise ValueError("GRAPH_QA_SOURCE_CONTEXT_UNSUPPORTED")
+    return element
+
+
+def _source_context_spans(query, graph=None):
     """Identify the supported chart reference without changing query offsets."""
+    element = _source_element(graph)
+    reference = re.escape(element.removeprefix("Figure "))
     return [{"start": found.start(), "end": found.end(), "text": found[0],
-             "source_element": "Figure A1", "kind": "source_context"}
-            for found in re.finditer(r"(?<![\w.])(?:Figure\s+)?A1(?!\w|\.\w)", query, re.I)]
+             "source_element": element, "kind": "source_context"}
+            for found in re.finditer(r"(?<![\w.])(?:Figure\s+)?" + reference + r"(?!\w|\.\w)", query, re.I)]
 
 
 def resolve_mentions(graph, query):
     """Source-derived literal identity linking; no relationships are admitted."""
     from src.evidence_a1_lexicon import link_entities
-    return link_entities(graph, query, _source_context_spans(query))
+    return link_entities(graph, query, _source_context_spans(query, graph))
 
 
-def _masked(query, mentions):
+def _masked(query, mentions, graph=None):
     characters = list(query)
-    for mention in [*mentions, *_source_context_spans(query)]:
+    for mention in [*mentions, *_source_context_spans(query, graph)]:
         characters[mention["start"]:mention["end"]] = " " * (mention["end"] - mention["start"])
     return "".join(characters)
 
 
-def _relation_text(query):
+def _relation_text(query, graph=None):
     """Keep offsets while excluding source framing and later statements."""
     characters = list(query)
-    for span in _source_context_spans(query):
+    for span in _source_context_spans(query, graph):
         first = span["start"]
         framing = re.search(r"\b(?:in|from|on|within|using|according\s+to)\s+(?:the\s+)?$", query[:first], re.I)
         if not framing:
@@ -52,18 +63,19 @@ def _relation_text(query):
     return text[:boundary.start() if boundary else len(text)].rstrip()
 
 
-def _body_end(query, start):
+def _body_end(query, start, graph=None):
     tail = query[start:]
+    reference = re.escape(_source_element(graph).removeprefix("Figure "))
     stop = re.search(r"[:;?]|\band\s+(?:which|what|give|show|include|provide|explain|describe|its|their)\b|"
                      r"\b(?:give|giving|include|including|return|provide)\s+(?:each|their|the|its|acronyms?|abbreviations?|codes?|categor\w*|famil\w*)\b|"
                      r"\b(?:belong\s+to|a\s+part\s+of|part\s+of|stand(?:s)?\s+for)\b|"
                      r"\bseparately\s+(?:from|and)\b|"
                      r"\b(?:because|since|given\s+that|on\s+the\s+basis\s+of)\b|"
-                     r"\b(?:in|from|using|within|of|on|according\s+to)\s+(?:the\s+)?(?:Figure\s+)?A1\b", tail, re.I)
+                     r"\b(?:in|from|using|within|of|on|according\s+to)\s+(?:the\s+)?(?:Figure\s+)?" + reference + r"\b", tail, re.I)
     return start + stop.start() if stop else len(query.rstrip(" .?"))
 
 
-def _selector_bodies(query):
+def _selector_bodies(query, graph=None):
     """Identify explicit coordinated selector lists without splitting labels."""
     patterns = [
         r"\b(?:compare|contrast)\s+", r"\bdifferences?\s+between\s+",
@@ -77,17 +89,18 @@ def _selector_bodies(query):
     bodies = []
     for pattern in patterns:
         for found in re.finditer(pattern, query, re.I):
-            start, end = found.end(), _body_end(query, found.end())
+            start, end = found.end(), _body_end(query, found.end(), graph)
             if end > start and (start, end) not in bodies:
                 bodies.append((start, end))
     return bodies
 
 
-def _unresolved_selectors(query, mentions, *, operation_views=False, relation_spans=()):
-    masked = _masked(query, mentions)
-    ignored = {"the", "a", "an", "process", "processes", "and", "or", "both", "each", "all", "every", "in", "figure", "a1",
+def _unresolved_selectors(query, mentions, *, operation_views=False, relation_spans=(), graph=None):
+    masked = _masked(query, mentions, graph)
+    ignored = {"the", "a", "an", "process", "processes", "and", "or", "both", "each", "all", "every", "in", "figure",
                "direct", "immediate", "children", "recursive", "recursively", "descendants", "of",
                "they", "them", "their", "it", "its", "these", "those"}
+    ignored.add(_source_element(graph).removeprefix("Figure ").casefold())
     # These are grammatical tails, not aliases or entity vocabulary. Replacing
     # them with spaces retains span boundaries and leaves unknown names intact.
     grammar = []
@@ -111,7 +124,7 @@ def _unresolved_selectors(query, mentions, *, operation_views=False, relation_sp
     for pattern in grammar:
         masked = re.sub(pattern, lambda found: " " * len(found[0]), masked, flags=re.I)
     unresolved = []
-    bodies = list(dict.fromkeys([*_selector_bodies(query), *relation_spans]))
+    bodies = list(dict.fromkeys([*_selector_bodies(query, graph), *relation_spans]))
     for start, end in bodies:
         boundaries = [start]
         for separator in re.finditer(r",|\band\b|\bor\b|\bversus\b|\bvs\.?\b", masked[start:end], re.I):
@@ -157,12 +170,13 @@ def _legacy_plan_graph_query(graph, query):
     if not isinstance(query, str) or not query.strip() or len(query) > 16360:
         raise ValueError("GRAPH_QA_QUERY_INVALID")
     mentions = resolve_mentions(graph, query)
-    epistemic, lexical_overlap = _epistemic_intent(_masked(query, mentions).casefold())
-    relation_text = _relation_text(query)
+    epistemic, lexical_overlap = _epistemic_intent(_masked(query, mentions, graph).casefold())
+    relation_text = _relation_text(query, graph)
+    reference = re.escape(_source_element(graph).removeprefix("Figure "))
     membership = None
     relation_patterns = [
-        r"(?:^|[.:?]\s*)(?:Is|Are)\s+(.+?)\s+(?:(?:a\s+)?(?:type|subtype|part|member)\s+of|in|under|beneath|within)\s+(.+?)(?:\s+in\s+Figure\s+A1)?[?.]*$",
-        r"(?:^|[.:?]\s*)Does\s+(?:the\s+)?(?:chart|(?:figure\s+)?A1|indentation)\s+(?:place|show|list|put|depict|indicate|indent)\s+(.+?)\s+(?:under|beneath|in|within|as\s+(?:a\s+)?(?:sub)?type\s+of)\s+(.+?)[?.]*$",
+        r"(?:^|[.:?]\s*)(?:Is|Are)\s+(.+?)\s+(?:(?:a\s+)?(?:type|subtype|part|member)\s+of|in|under|beneath|within)\s+(.+?)(?:\s+in\s+Figure\s+" + reference + r")?[?.]*$",
+        r"(?:^|[.:?]\s*)Does\s+(?:the\s+)?(?:chart|(?:figure\s+)?" + reference + r"|indentation)\s+(?:place|show|list|put|depict|indicate|indent)\s+(.+?)\s+(?:under|beneath|in|within|as\s+(?:a\s+)?(?:sub)?type\s+of)\s+(.+?)[?.]*$",
         r"(?:^|[.:?]\s*)Does\s+(.+?)\s+(?:(?:appear|fall|sit|belong|go)\s+)?(?:under|beneath|in|within|to)\s+(.+?)[?.]*$",
     ]
     # Evidence intent supplements literal relations. The captured-mention
@@ -190,7 +204,7 @@ def _legacy_plan_graph_query(graph, query):
         sides = []
         for group in (1, 2):
             first, last = membership.span(group)
-            last = min(last, _body_end(query, first))
+            last = min(last, _body_end(query, first, graph))
             relation_spans.append((first, last))
             selected = [m for m in mentions if first <= m["start"] and m["end"] <= last]
             if not selected and group == 2:
@@ -207,7 +221,7 @@ def _legacy_plan_graph_query(graph, query):
     by_id = {node["id"]: node for node in graph["nodes"]}
     processes = [identifier for identifier in entities if by_id[identifier]["kind"] == "process"]
     categories = [identifier for identifier in entities if by_id[identifier]["kind"] == "category"]
-    outside = _masked(query, mentions).casefold()
+    outside = _masked(query, mentions, graph).casefold()
     operations = []
 
     def add(kind, subjects=None, **parameters):
@@ -266,7 +280,7 @@ def _legacy_plan_graph_query(graph, query):
                 operation.update({"subject_scope": "returned_children", "use_returned_children": True,
                                   "after_operations": child_operations})
     view_comparison = bool(entities and set(child_operations) >= {"direct_children", "descendants"})
-    unresolved = _unresolved_selectors(query, mentions, operation_views=view_comparison, relation_spans=relation_spans)
+    unresolved = _unresolved_selectors(query, mentions, operation_views=view_comparison, relation_spans=relation_spans, graph=graph)
     if member_sides and any(len(side) != 1 for side in member_sides):
         unresolved.extend(query[first:last].strip(" ?.") for (first, last), side in zip(relation_spans, member_sides) if not side)
     diagnostics = []
@@ -288,7 +302,7 @@ def _legacy_plan_graph_query(graph, query):
     else:
         status = "ready"
     return {"planner_version": PLANNER_VERSION, "query": query, "status": status,
-            "source_context": _source_context_spans(query),
+            "source_context": _source_context_spans(query, graph),
             "mentions": mentions, "resolved_entities": entities, "unresolved_selectors": list(dict.fromkeys(unresolved)),
             "operations": operations, "comparison": comparison, "comparison_kind": "operation_views" if view_comparison else "entities", "diagnostics": diagnostics,
             "limits": ["Literal labels and exact codes; span-local overlap suppression.",
@@ -301,5 +315,17 @@ def plan_graph_query(graph, query, *, concept_bindings=None):
     if not isinstance(query, str) or not query.strip() or len(query) > 16360:
         raise ValueError("GRAPH_QA_QUERY_INVALID")
     from src.evidence_a1_intents import compose_plan
-    return compose_plan(graph, query, _legacy_plan_graph_query, resolve_mentions,
-                        _source_context_spans, concept_bindings=concept_bindings)
+    result = compose_plan(graph, query, _legacy_plan_graph_query, resolve_mentions,
+                        lambda text: _source_context_spans(text, graph), concept_bindings=concept_bindings)
+    result["planner_version"] = PLANNER_VERSION
+    selected = _source_element(graph).removeprefix("Figure ").casefold()
+    references = re.finditer(r"\bFigure\s+([A-Z]\d+)(?!\w|\.\w)|"
+        r"\b(?:in|from|on|within|using|according\s+to)\s+(?:the\s+)?([A-Z]\d+)(?!\w|\.\w)", query, re.I)
+    foreign = [found[0] for found in references if (found[1] or found[2]).casefold() != selected]
+    if foreign:
+        result.update(status="insufficient_evidence", operations=[], source_scope_mismatches=foreign)
+        result["diagnostics"].append("source_reference_outside_selected_chart")
+        result["unresolved_selectors"] = list(dict.fromkeys(result["unresolved_selectors"] + foreign))
+        for part in result.get("requested_parts", []):
+            part.update(status="unsupported", reason="source_reference_outside_selected_chart", operation_ids=[])
+    return result
