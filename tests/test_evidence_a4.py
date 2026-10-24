@@ -43,14 +43,21 @@ def test_a4_graph_structure():
     assert len(graph["nodes"]) == 66
     assert len(graph["edges"]) == 42
 
-    # Epistemic checks
+    # Epistemic checks: dual-layer verification and 0 IS_A promotions
     edge_types = {e["type"] for e in graph["edges"]}
     assert "IS_A" not in edge_types
     assert "IS_A_PROCESS_VARIATION_OF" not in edge_types
     assert edge_types.issubset({"CHART_CONNECTOR", "ENCLOSES_ROW", "INDENTED_UNDER"})
 
-    for qk, qv in graph["edge_qualifications"].items():
-        assert qv["verification"] == "candidate"
+    assert graph["edge_qualifications"]["CHART_CONNECTOR"]["verification"] == "source_bound"
+    assert graph["edge_qualifications"]["ENCLOSES_ROW"]["verification"] == "source_bound"
+    assert graph["edge_qualifications"]["INDENTED_UNDER"]["verification"] == "candidate"
+    assert all(n["evidence"]["verification"] == "source_bound" for n in graph["nodes"])
+    assert all(
+        e["evidence"]["verification"] == "source_bound"
+        for e in graph["edges"]
+        if e["type"] in ("CHART_CONNECTOR", "ENCLOSES_ROW")
+    )
 
 
 def test_a4_characteristic_tree_and_multi_branch():

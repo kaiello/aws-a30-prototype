@@ -19,7 +19,7 @@ def _source_element(graph=None):
     graph = graph or {}
     element = graph.get("source_binding", {}).get("locator", {}).get("element_id",
         graph.get("source_element", "Figure A1"))
-    if element not in {"Figure A1", "Figure A2"}:
+    if element not in {"Figure A1", "Figure A2", "Figure A3", "Figure A4", "Figure A5"}:
         raise ValueError("GRAPH_QA_SOURCE_CONTEXT_UNSUPPORTED")
     return element
 

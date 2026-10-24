@@ -62,9 +62,8 @@ CHARACTERISTIC_NODES = [
     _c("a5node:load_chem_rad_p", "Pressure", "Mechanical Loading*", 2, [0.540, 0.470, 0.560, 0.550]),
     _c("a5node:load_chem_rad_pd", "Pressure Deformation", "Mechanical Loading*", 2, [0.575, 0.470, 0.595, 0.550]),
     _c("a5node:load_chem_exp_def", "Deformation", "Mechanical Loading*", 2, [0.620, 0.470, 0.640, 0.550]),
-    _c("a5node:load_mech_fric_p", "Pressure", "Mechanical Loading*", 2, [0.660, 0.470, 0.680, 0.550]),
-    _c("a5node:load_mech_fric_pd", "Pressure Deformation", "Mechanical Loading*", 2, [0.685, 0.470, 0.705, 0.550]),
-    _c("a5node:load_mech_direct_p", "Pressure", "Mechanical Loading*", 2, [0.720, 0.470, 0.740, 0.550]),
+    _c("a5node:load_mech_fric_pd", "Pressure Deformation", "Mechanical Loading*", 2, [0.660, 0.470, 0.680, 0.550]),
+    _c("a5node:load_mech_fric_p", "Pressure", "Mechanical Loading*", 2, [0.685, 0.470, 0.705, 0.550]),
     _c("a5node:load_mech_direct_pd", "Pressure Deformation", "Mechanical Loading*", 2, [0.755, 0.470, 0.775, 0.550]),
     # Column 3: Shielding
     _c("a5node:shield_elec_rad_pd_gas", "Gas", "Shielding", 3, [0.150, 0.580, 0.170, 0.650]),
@@ -95,9 +94,9 @@ PROCESS_NODES = [
     _p("a5node:proc_row_chem", "ROW", "roll welding", [0.580, 0.760, 0.610, 0.800], "Chemical -> Radiation -> Pressure Deformation -> [No Shielding]", "Chemical -> Radiation -> Pressure Deformation -> [No Shielding] -> ROW"),
     _p("a5node:proc_cew_chem", "CEW", "coextrusion welding", [0.580, 0.810, 0.610, 0.850], "Chemical -> Radiation -> Pressure Deformation -> [No Shielding]", "Chemical -> Radiation -> Pressure Deformation -> [No Shielding] -> CEW"),
     _p("a5node:proc_exw", "EXW", "explosion welding", [0.620, 0.710, 0.650, 0.750], "Chemical -> Explosion -> Deformation -> [No Shielding]", "Chemical -> Explosion -> Deformation -> [No Shielding] -> EXW"),
-    _p("a5node:proc_frw", "FRW", "friction welding", [0.660, 0.710, 0.690, 0.750], "Mechanical -> Friction -> Pressure -> [No Shielding]", "Mechanical -> Friction -> Pressure -> [No Shielding] -> FRW"),
+    _p("a5node:proc_frw", "FRW", "friction welding", [0.660, 0.710, 0.690, 0.750], "Mechanical -> Friction -> Pressure Deformation -> [No Shielding]", "Mechanical -> Friction -> Pressure Deformation -> [No Shielding] -> FRW"),
     _p("a5node:proc_fsw", "FSW", "friction stir welding", [0.660, 0.760, 0.690, 0.800], "Mechanical -> Friction -> Pressure Deformation -> [No Shielding]", "Mechanical -> Friction -> Pressure Deformation -> [No Shielding] -> FSW"),
-    _p("a5node:proc_usw", "USW", "ultrasonic welding", [0.720, 0.710, 0.750, 0.750], "Mechanical -> [No Thermal Source Box] -> Pressure -> [No Shielding]", "Mechanical -> [No Thermal Source Box] -> Pressure -> [No Shielding] -> USW"),
+    _p("a5node:proc_usw", "USW", "ultrasonic welding", [0.720, 0.710, 0.750, 0.750], "Mechanical -> Friction -> Pressure -> [No Shielding]", "Mechanical -> Friction -> Pressure -> [No Shielding] -> USW"),
     _p("a5node:proc_cw", "CW", "cold welding", [0.760, 0.710, 0.790, 0.750], "Mechanical -> [No Thermal Source Box] -> Pressure Deformation -> [No Shielding]", "Mechanical -> [No Thermal Source Box] -> Pressure Deformation -> [No Shielding] -> CW"),
 ]
 
@@ -130,8 +129,7 @@ EDGES = [
     _e("a5node:energy_chemical", "a5node:thermal_chem_radiation"),
     _e("a5node:energy_chemical", "a5node:thermal_chem_explosion"),
     _e("a5node:energy_mechanical", "a5node:thermal_mech_friction"),
-    # Direct skip from Mechanical to Loading (CW & USW)
-    _e("a5node:energy_mechanical", "a5node:load_mech_direct_p"),
+    # Direct skip from Mechanical to Loading (CW only)
     _e("a5node:energy_mechanical", "a5node:load_mech_direct_pd"),
     # Thermal -> Loading
     _e("a5node:thermal_elec_radiation", "a5node:load_elec_rad_pd"),
@@ -143,8 +141,8 @@ EDGES = [
     _e("a5node:thermal_chem_radiation", "a5node:load_chem_rad_p"),
     _e("a5node:thermal_chem_radiation", "a5node:load_chem_rad_pd"),
     _e("a5node:thermal_chem_explosion", "a5node:load_chem_exp_def"),
-    _e("a5node:thermal_mech_friction", "a5node:load_mech_fric_p"),
     _e("a5node:thermal_mech_friction", "a5node:load_mech_fric_pd"),
+    _e("a5node:thermal_mech_friction", "a5node:load_mech_fric_p"),
     # Loading -> Shielding
     _e("a5node:load_elec_rad_pd", "a5node:shield_elec_rad_pd_gas"),
     _e("a5node:load_elec_rad_pd", "a5node:shield_elec_rad_pd_vac"),
@@ -173,9 +171,9 @@ EDGES = [
     _e("a5node:load_chem_rad_pd", "a5node:proc_row_chem"),
     _e("a5node:load_chem_rad_pd", "a5node:proc_cew_chem"),
     _e("a5node:load_chem_exp_def", "a5node:proc_exw"),
-    _e("a5node:load_mech_fric_p", "a5node:proc_frw"),
+    _e("a5node:load_mech_fric_pd", "a5node:proc_frw"),
     _e("a5node:load_mech_fric_pd", "a5node:proc_fsw"),
-    _e("a5node:load_mech_direct_p", "a5node:proc_usw"),
+    _e("a5node:load_mech_fric_p", "a5node:proc_usw"),
     _e("a5node:load_mech_direct_pd", "a5node:proc_cw"),
 ] + [_e("a5node:solid_state_welding_root", row["id"]) for row in LEGEND_TABLE]
 
@@ -198,7 +196,7 @@ SPEC_A5 = DecisionTreeSpec(
         "IW": ["Electrical -> Induction -> Pressure -> Gas", "Electrical -> Induction -> Pressure -> Vacuum"],
     },
     source_anomalies=[
-        {"title": "CW and USW Direct Column Hop", "description": "Cold welding (CW) and ultrasonic welding (USW) branch directly from Mechanical energy to Mechanical Loading*, skipping the Thermal Source column entirely."},
+        {"title": "CW Direct Column Hop", "description": "Cold welding (CW) branches directly from Mechanical energy to Mechanical Loading* (Pressure Deformation), skipping the Thermal Source column entirely, whereas FRW, FSW, and USW pass through Friction."},
         {"title": "Scoped Radiation Boxes", "description": "Radiation thermal source appears under both Electrical and Chemical energy as separate boxes that must remain distinct to avoid branch merging."},
     ],
     cross_chart_links=[{"from_figure": "Figure A3", "from_label": "Solid-State Welding", "to_figure": "Figure A5", "to_node": "a5node:solid_state_welding_root"}],

@@ -39,17 +39,24 @@ def test_a5_graph_structure():
     graph = build_decision_tree_graph(source, geometry, SPEC_A5)
     assert graph["schema_version"] == "a1-geometry-1.0"
     assert graph["root_id"] == "a5node:solid_state_welding_root"
-    assert len(graph["nodes"]) == 69
-    assert len(graph["edges"]) == 67
+    assert len(graph["nodes"]) == 68
+    assert len(graph["edges"]) == 66
 
-    # Epistemic checks
+    # Epistemic checks: dual-layer verification and 0 IS_A promotions
     edge_types = {e["type"] for e in graph["edges"]}
     assert "IS_A" not in edge_types
     assert "IS_A_PROCESS_VARIATION_OF" not in edge_types
     assert edge_types.issubset({"CHART_CONNECTOR", "ENCLOSES_ROW", "INDENTED_UNDER"})
 
-    for qk, qv in graph["edge_qualifications"].items():
-        assert qv["verification"] == "candidate"
+    assert graph["edge_qualifications"]["CHART_CONNECTOR"]["verification"] == "source_bound"
+    assert graph["edge_qualifications"]["ENCLOSES_ROW"]["verification"] == "source_bound"
+    assert graph["edge_qualifications"]["INDENTED_UNDER"]["verification"] == "candidate"
+    assert all(n["evidence"]["verification"] == "source_bound" for n in graph["nodes"])
+    assert all(
+        e["evidence"]["verification"] == "source_bound"
+        for e in graph["edges"]
+        if e["type"] in ("CHART_CONNECTOR", "ENCLOSES_ROW")
+    )
 
 
 def test_a5_characteristic_tree_and_multi_branch():
@@ -94,11 +101,22 @@ def test_a5_legend_and_source_anomalies():
     legend_nodes = [n for n in graph["nodes"] if n.get("subtype") == "legend_row"]
     assert len(legend_nodes) == 15
 
-    # CW and USW direct column hop (skipping Thermal Source)
+    # CW direct column hop (skipping Thermal Source) vs USW (via Friction)
     cw_node = next(n for n in graph["nodes"] if n.get("code") == "CW")
     assert "[No Thermal Source Box]" in cw_node["path_summary"]
+    assert "Pressure Deformation" in cw_node["path_summary"]
+
     usw_node = next(n for n in graph["nodes"] if n.get("code") == "USW")
-    assert "[No Thermal Source Box]" in usw_node["path_summary"]
+    assert "Friction" in usw_node["path_summary"]
+    assert "Pressure" in usw_node["path_summary"]
+    assert "[No Thermal Source Box]" not in usw_node["path_summary"]
+
+    frw_node = next(n for n in graph["nodes"] if n.get("code") == "FRW")
+    assert "Friction" in frw_node["path_summary"]
+    assert "Pressure Deformation" in frw_node["path_summary"]
+
+    exw_node = next(n for n in graph["nodes"] if n.get("code") == "EXW")
+    assert "Deformation" in exw_node["path_summary"]
 
     # Scoped Radiation boxes: two distinct nodes
     rad_nodes = [n for n in graph["nodes"] if n.get("label") == "Radiation"]
