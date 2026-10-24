@@ -11,7 +11,7 @@ Follow this workflow as the lead developing agent for `aws-a30-prototype` to mai
 - Starting any development task on `aws-a30-prototype`
 - Diagnosing a failed or partial natural-language question (NLQ) answer
 - Modifying planner schemas, lowering adapters, compilers, or graph executors
-- Expanding source ingestion to new figures, tables, or glossary clauses
+- Expanding source ingestion to new figures, tables, or glossary clauses (delegate figure extraction to the authoritative `.agents/skills/source-aware-ingest` skill)
 - Preparing branch handoffs or evaluation reports
 
 ## Core Epistemic Rules

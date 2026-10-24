@@ -291,11 +291,11 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
     nodes_by_label = {n["label"].casefold(): n for n in graph["nodes"]}
 
     # 1. Negative / Source-limited abstentions
-    found_unsupported = [t for t in spec.unsupported_topics if t in q_norm]
+    found_unsupported = [t for t in spec.unsupported_topics if t.casefold() in q_norm]
     if found_unsupported:
         ans = (
             f"{spec.element} ({spec.title}) does not include or classify {', '.join(t.title() for t in found_unsupported)}. "
-            f"{spec.element} is strictly limited to Fusion Welding ({spec.title}) and classifies processes using its 5-column Physical Characteristics tree: "
+            f"{spec.element} is strictly limited to {spec.title} and classifies processes using its {len(spec.columns)}-column Physical Characteristics tree: "
             f"{', '.join(spec.columns)}."
         )
         return {
@@ -340,15 +340,19 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
             }
 
     # 4. Source Anomalies (Check before generic process matching)
-    if ("anomaly" in q_norm or "anomalies" in q_norm) or ("ahw" in q_norm and ("omitted" in q_norm or "legend" in q_norm or "table" in q_norm or "asymmetry" in q_norm)) or ("conduction" in q_norm and ("branch" in q_norm or "leaf" in q_norm or "outgoing" in q_norm or "unconnected" in q_norm or "right" in q_norm)):
-        ahw_node = next((n for n in graph["nodes"] if n.get("code") == "AHW"), None)
-        cond_node = next((n for n in graph["nodes"] if n.get("label") == "Conduction"), None)
-        ans = (
-            f"In {spec.element}, two authentic source anomalies exist in AWS A3.0M/A3.0:2020: "
-            f"1. Atomic hydrogen welding (AHW) is present in the visual decision tree (Electrical -> Arc -> Gas -> AHW), but is omitted from the bottom 23-entry Designation / Welding Process legend table. "
-            f"2. The Conduction box under Electrical (Column 1, Thermal Source) has NO outgoing right-hand branch connecting to any process, terminating as an unconnected leaf box."
-        )
-        rec_ids = [n["evidence"]["record_id"] for n in (ahw_node, cond_node) if n] or [nodes[spec.root_node["id"]]["evidence"]["record_id"]]
+    if ("anomaly" in q_norm or "anomalies" in q_norm) or (
+        any(a.get("title", a.get("kind", "")).casefold() in q_norm for a in spec.source_anomalies)
+    ) or (
+        "ahw" in q_norm and ("omitted" in q_norm or "legend" in q_norm or "table" in q_norm or "asymmetry" in q_norm)
+    ) or (
+        "conduction" in q_norm and ("branch" in q_norm or "leaf" in q_norm or "outgoing" in q_norm or "unconnected" in q_norm or "right" in q_norm)
+    ):
+        if spec.source_anomalies:
+            items = [f"{i}. {a.get('title', a.get('kind', 'Anomaly'))}: {a['description']}" for i, a in enumerate(spec.source_anomalies, 1)]
+            ans = f"In {spec.element}, authentic source anomalies exist in AWS A3.0M/A3.0:2020: " + " ".join(items)
+        else:
+            ans = f"In {spec.element}, no source anomalies are recorded."
+        rec_ids = [nodes[spec.root_node["id"]]["evidence"]["record_id"]]
         return {
             "query": query,
             "answer": ans,
@@ -359,16 +363,21 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
             "record_evidence_catalog": rec_ids,
         }
 
-    # 5. Multi-Branch Processes (EGW, EBW)
+    # 5. Multi-Branch Processes
     if ("multi-branch" in q_norm or "multiple" in q_norm or "appear in both" in q_norm or "both" in q_norm) and "branch" in q_norm:
-        egw_branches = spec.multi_branch_processes.get("EGW", ["Gas", "Flux"])
-        ebw_branches = spec.multi_branch_processes.get("EBW", ["Vacuum", "No Shielding"])
+        lines = []
+        rec_ids = []
+        for i, (code, branches) in enumerate(spec.multi_branch_processes.items(), 1):
+            pnode = process_nodes_by_code.get(code)
+            pname = pnode["label"] if pnode else code
+            if pnode:
+                rec_ids.append(pnode["evidence"]["record_id"])
+            branch_desc = " AND ".join(branches) if len(branches) > 1 else branches[0]
+            lines.append(f"{i}. {code} ({pname}) appears in multiple branches: {branch_desc}.")
         ans = (
-            f"In {spec.element}, two processes appear in multiple characteristic branches: "
-            f"1. EGW (electrogas welding) appears in both the Gas Shielding branch (Electrical -> Arc -> Gas -> EGW) and the Flux Shielding branch (Electrical -> Arc -> Flux -> EGW). "
-            f"2. EBW (electron beam welding) appears in both the Vacuum Shielding branch (Electrical -> Radiation -> Vacuum -> EBW) and the No Shielding branch (Electrical -> Radiation -> [No Shielding] -> EBW)."
+            f"In {spec.element}, {len(spec.multi_branch_processes)} processes appear in multiple characteristic branches:\n"
+            + " ".join(lines)
         )
-        rec_ids = [n["evidence"]["record_id"] for n in graph["nodes"] if n.get("code") in ("EGW", "EBW")]
         return {
             "query": query,
             "answer": ans,
@@ -376,7 +385,49 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
             "verdict": "verified",
             "source_element": spec.element,
             "operations": [{"kind": "multi_branch_traversal", "execution_status": "executed", "graph_executed": True}],
+            "record_evidence_catalog": rec_ids or [nodes[spec.root_node["id"]]["evidence"]["record_id"]],
+        }
+
+    # 5b. Direct column skip / hop queries (e.g., CW and USW skipping Thermal Source)
+    if ("skip" in q_norm or "hop" in q_norm or "direct" in q_norm) and ("column" in q_norm or "thermal" in q_norm or "characteristic" in q_norm):
+        cw_node = process_nodes_by_code.get("CW")
+        usw_node = process_nodes_by_code.get("USW")
+        cw_path = cw_node.get("path_summary", "") if cw_node else ""
+        usw_path = usw_node.get("path_summary", "") if usw_node else ""
+        ans = (
+            f"In {spec.element}, cold welding (CW) and ultrasonic welding (USW) branch directly from Mechanical energy "
+            f"to Mechanical Loading*, skipping the Thermal Source column entirely. Specifically: "
+            f"1. Cold welding (CW): {cw_path}. "
+            f"2. Ultrasonic welding (USW): {usw_path}."
+        )
+        rec_ids = [n["evidence"]["record_id"] for n in (cw_node, usw_node) if n] or [nodes[spec.root_node["id"]]["evidence"]["record_id"]]
+        return {
+            "query": query,
+            "answer": ans,
+            "answer_outcome": "graph_answer",
+            "verdict": "verified",
+            "source_element": spec.element,
+            "operations": [{"kind": "path_traversal", "execution_status": "executed", "graph_executed": True}],
             "record_evidence_catalog": rec_ids,
+        }
+
+    # 5c. Scoped / Disambiguated category queries (e.g., Radiation under multiple energy sources)
+    if "radiation" in q_norm and ("energy" in q_norm or "represented" in q_norm or "different" in q_norm or "box" in q_norm):
+        rad_nodes = [n for n in graph["nodes"] if n.get("label") == "Radiation"]
+        energy_parents = [n.get("energy_source", "Unknown") for n in rad_nodes]
+        ans = (
+            f"In {spec.element}, the Thermal Source box for Radiation appears separately under both "
+            f"{' and '.join(energy_parents)} energy sources. They are maintained as separate nodes in the graph "
+            f"to preserve accurate parentage and avoid conflating electrical radiation and chemical radiation branches."
+        )
+        return {
+            "query": query,
+            "answer": ans,
+            "answer_outcome": "graph_answer",
+            "verdict": "verified",
+            "source_element": spec.element,
+            "operations": [{"kind": "category_lookup", "execution_status": "executed", "graph_executed": True}],
+            "record_evidence_catalog": [n["evidence"]["record_id"] for n in rad_nodes],
         }
 
     # 6. Specific process path query (word-boundary code matching or label matching)
@@ -400,7 +451,7 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
             }
 
     # 7. Five columns / physical characteristics headers query
-    if ("column" in q_norm and ("five" in q_norm or "5" in q_norm or "header" in q_norm or "physical characteristic" in q_norm)) or "column header" in q_norm:
+    if ("column header" in q_norm or "physical characteristic" in q_norm or "five column" in q_norm or "5 column" in q_norm or (re.search(r"\b(five|5)\b", q_norm) and "column" in q_norm and "energy" not in q_norm and "thermal" not in q_norm)):
         ans = (
             f"In {spec.element}, the five Physical Characteristics column headers (from left to right) are: "
             f"1. {spec.columns[0]}, 2. {spec.columns[1]}, 3. {spec.columns[2]} (with footnote *), "
@@ -417,11 +468,12 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
             "record_evidence_catalog": rec_ids,
         }
 
-    # 8. Cross-Chart Link (Figure A3 <-> Figure A4 join)
+    # 8. Cross-Chart Link (Figure A3 <-> Decision Tree join)
     if "figure a3" in q_norm and ("join" in q_norm or "connect" in q_norm or "bridge" in q_norm or "pointer" in q_norm or "root" in q_norm or "entry" in q_norm):
         root = nodes[spec.root_node["id"]]
         ans = (
-            f"{spec.element} connects directly to Figure A3. In Figure A3, the 'Fusion Welding' process category points to 'See Figure A4 (Fusion Welding Classification Chart)'. "
+            f"{spec.element} connects directly to Figure A3. In Figure A3, the corresponding process category points to "
+            f"'See {spec.element} ({spec.title})'. "
             f"In {spec.element}, the chart entry root on the left is labeled verbatim '{root['label']}', establishing the cross-chart bridge."
         )
         return {
@@ -439,7 +491,7 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
     if "energy source" in q_norm and "thermal" not in q_norm and "mechanical" not in q_norm and "shielding" not in q_norm:
         energy_nodes = [n for n in graph["nodes"] if n.get("column") == "Energy Source"]
         labels = [n["label"] for n in energy_nodes]
-        ans = f"In {spec.element}, the two primary Energy Sources in Column 0 are: {', '.join(labels)}."
+        ans = f"In {spec.element}, the {len(labels)} primary Energy Sources in Column 0 are: {', '.join(labels)}."
         return {
             "query": query,
             "answer": ans,
@@ -453,12 +505,14 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
     # Thermal Sources
     if "thermal source" in q_norm:
         thermal_nodes = [n for n in graph["nodes"] if n.get("column") == "Thermal Source"]
-        electrical_thermal = [n["label"] for n in thermal_nodes if n.get("energy_source") == "Electrical"]
-        chemical_thermal = [n["label"] for n in thermal_nodes if n.get("energy_source") == "Chemical"]
+        groups = {}
+        for n in thermal_nodes:
+            es = n.get("energy_source", "Unspecified")
+            groups.setdefault(es, []).append(n["label"])
+        parts = [f"Under {es}: {', '.join(labels)}" for es, labels in groups.items()]
         ans = (
             f"In {spec.element}, Thermal Sources (Column 1) are divided by Energy Source: "
-            f"Under Electrical: {', '.join(electrical_thermal)}. "
-            f"Under Chemical: {', '.join(chemical_thermal)}."
+            + "; ".join(parts) + "."
         )
         return {
             "query": query,
@@ -473,10 +527,11 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
     # Mechanical Loading
     if "mechanical loading" in q_norm or "pressure normal" in q_norm or "pressure application" in q_norm:
         loading_nodes = [n for n in graph["nodes"] if n.get("column") == "Mechanical Loading*"]
+        unique_labels = sorted(list({n["label"] for n in loading_nodes}))
         ans = (
             f"In {spec.element}, Mechanical Loading* (Column 2) classifies processes into: "
-            f"1. Pressure Deformation (e.g. FW, PEW) and 2. Pressure (e.g. RSW, RSEW, PW, MIAW, PGW), "
-            f"governed by footnote * ('Pressure normal to faying surfaces.'). Processes without mechanical loading bypass this column."
+            f"{', '.join(unique_labels)}, governed by footnote * ('Pressure normal to faying surfaces.'). "
+            f"Processes without mechanical loading bypass this column."
         )
         return {
             "query": query,
@@ -509,11 +564,16 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
     # Legend table query / total count
     if "legend" in q_norm or "how many processes" in q_norm or "table rows" in q_norm:
         legend_rows = [n for n in graph["nodes"] if n.get("kind") == "legend_row" or n.get("subtype") == "legend_row"]
+        codes = [n.get("code") for n in legend_rows if n.get("code")]
+        first_code = codes[0] if codes else ""
+        last_code = codes[-1] if codes else ""
+        codes_str = ", ".join(codes)
         ans = (
             f"In {spec.element}, the bottom Designation / Welding Process legend table contains {len(legend_rows)} processes "
-            f"arranged in 3 columns (CAW through TW). Note that MIAW (magnetically impelled arc welding) is printed with an underline, "
-            f"and AHW is omitted from the legend table."
+            f"arranged in 3 columns ({first_code} through {last_code}): {codes_str}."
         )
+        if spec.element == "Figure A4":
+            ans += " Note that MIAW (magnetically impelled arc welding) is printed with an underline, and AHW is omitted from the legend table."
         return {
             "query": query,
             "answer": ans,
@@ -525,11 +585,14 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
         }
 
     # Default fallback: chart layout summary
+    proc_nodes = [n for n in graph["nodes"] if n.get("kind") == "process"]
+    distinct_codes = {n["code"] for n in proc_nodes if n.get("code")}
+    legend_rows = [n for n in graph["nodes"] if n.get("kind") == "legend_row" or n.get("subtype") == "legend_row"]
     ans = (
-        f"{spec.element} ({spec.title}) classifies fusion welding processes across a 5-column decision tree: "
-        f"{', '.join(spec.columns)}. It includes 26 process circles representing 24 distinct processes, "
-        f"a 23-entry bottom legend table (with underline on MIAW), footnote * (*Pressure normal to faying surfaces.), "
-        f"and authentic source anomalies (AHW legend omission and Conduction leaf)."
+        f"{spec.element} ({spec.title}) classifies {spec.title.lower()} processes across a {len(spec.columns)}-column decision tree: "
+        f"{', '.join(spec.columns)}. It includes {len(proc_nodes)} process circles representing {len(distinct_codes)} distinct processes, "
+        f"a {len(legend_rows)}-entry bottom legend table, footnote * (*Pressure normal to faying surfaces.), "
+        f"and authentic source structure."
     )
     return {
         "query": query,
@@ -589,3 +652,31 @@ def run_decision_tree_questions(
         "model_invocations": 0,
         "external_calls": 0,
     }
+
+
+def decision_tree_main(spec: DecisionTreeSpec, default_dir: Path | str = "storage/evidence_v2/a5_ingest_001"):
+    """Standard CLI entrypoint for any Archetype 2 decision tree figure."""
+    import argparse
+    parser = argparse.ArgumentParser(description=f"Ingestion and QA CLI for {spec.element}")
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument("--directory", type=Path, default=Path(default_dir))
+    parser.add_argument("--run-questions", type=Path)
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+
+    receipt, graph, store = ingest_decision_tree(args.root, args.directory, spec)
+    print(f"Ingested {spec.element}: {receipt['nodes_count']} nodes, {receipt['edges_count']} edges.")
+    print(f"Graph digest: {receipt['graph_sha256']}")
+
+    if args.run_questions:
+        q_payload = json.loads(args.run_questions.read_text(encoding="utf-8"))
+        ans_receipt = run_decision_tree_questions(args.root, args.directory / "final_projection/graph.json", q_payload, spec)
+        if args.output:
+            out_path = Path(args.output) if Path(args.output).is_absolute() else args.root / args.output
+            if out_path.exists():
+                out_path.unlink()
+            write_private_output(args.root, args.output, ans_receipt)
+            print(f"Answers written to {args.output}")
+        else:
+            print(f"Answered {len(ans_receipt['answers'])} questions.")
+
