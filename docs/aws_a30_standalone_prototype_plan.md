@@ -1,5 +1,30 @@
 # Implementation Plan: Standalone AWS A3.0 Multimodal NLQ Prototype
 
+## Prevention branch: bounded serial workstream2
+
+Local `feat/planner-contract-preflight` starts at reviewed repair checkpoint
+`bc51eae458e59764d6879ef175933aea4db7480e`; main remains `71088ce`.
+Repair004 and all67 actual grades are delivered before this work begins.
+
+- [x] Reuse the shared metadata policy; add one offline, one-response preflight
+  through the actual public planner/compiler/retrieval/answer path. Require an
+  original saved nonempty rationale and preserve its selected actions unchanged.
+- [x] Add one small project planning/release skill and short branch handoff;
+  distinguish software/manual/cached/fresh evidence and actual runtime instructions.
+- [x] Exercise the preflight on the existing original receipt, validate the skill
+  and independently review the small prevention diff. No full67 replay or new model.
+
+Result: corrected source-bound preflight CLEAR; original planned rationale and
+actions survive the real compiler/retrieval/answer path; network/model/API calls0.
+Skill quick validation passes. Independent review's optional candidate-input hash
+omission is fixed and narrowly confirmed; its original first check is retained.
+Two one-response offline checks ran (initial and corrected provenance), no model
+performance or semantic-answer acceptance claim. See `docs/branch_handoff.md`.
+
+Scope: recurrence safeguards only. Do not repair remaining model choices or create
+a third workstream. No push/merge/deletion, paid calls, OCR, new questions/figures,
+UI, A3, Navy Weld, Utopia or framework expansion.
+
 ## Completed bounded offline contract repair004
 
 - [x] Inspect both interfaces; define shared trace-only rationale mapping with

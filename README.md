@@ -1,5 +1,10 @@
 # AWS A3.0 Standalone Multimodal Prototype
 
+Local prevention branch `feat/planner-contract-preflight` adds a one-response
+offline contract check and a small developer planning/release skill after repair004.
+See [branch handoff](docs/branch_handoff.md) for the exact command and known failures.
+It does not improve model selection or authorize inference/publication.
+
 ## Current disposition: offline contract repair004 complete
 
 The metadata boundary is repaired: original planned rationale is validated and

@@ -1,5 +1,12 @@
 # Multi-Agent System (MAS) Operating Guidelines: AWS A3.0 Prototype
 
+For planner-contract work, use
+[`planner-contract-release`](../.agents/skills/planner-contract-release/SKILL.md)
+and the [short handoff](branch_handoff.md). The new offline preflight exercises an
+original saved response through the real public entry point; missing/failed
+preflight blocks a paid batch. Passing it proves neither semantic completeness
+nor new model performance, and grants no inference or publication permission.
+
 ## Current disposition: offline contract repair004 complete
 
 The metadata boundary is repaired: original planned rationale is validated and

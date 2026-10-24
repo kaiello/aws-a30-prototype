@@ -1,5 +1,15 @@
 # System Architecture: AWS A3.0 Multimodal Prototype
 
+Prevention branch: `src/evidence_chart_preflight.py` inherits the public
+`LocalQuestionPlanner.__call__` and replaces only setup/transport with one original
+saved response, under a network guard. Existing A1/A2 APIs still own compilation,
+retrieval, admission and answer composition. Exact original actions, mapped
+metadata, captured execution, delivered evidence and immutable input hashes are
+checked. Semantic completeness remains independently UNASSESSED; this is not a
+new production orchestration layer. The project planning/release SKILL.md is
+developer guidance only; actual runtime instructions remain in the shared JSON.
+Executable safety ceilings and compiler/executor guards are intentionally retained.
+
 ## Current disposition: offline contract repair004 complete
 
 The metadata boundary is repaired: original planned rationale is validated and
