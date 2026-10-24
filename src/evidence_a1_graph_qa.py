@@ -16,6 +16,7 @@ from src.evidence_reader import build_messages
 from src.evidence_v2 import EvidenceStore, EvidencePacket, RoutePlan
 from src.evidence_a1_planner import plan_graph_query
 from src.evidence_a1 import a1_source_identity_id
+from src.evidence_a1_lexicon import words
 
 HARNESS_VERSION = "a1-graph-qa-1.7.7"
 RELATIONS = {"CHART_CONNECTOR", "ENCLOSES_ROW", "INDENTED_UNDER"}
@@ -529,6 +530,8 @@ def _operation(view, operation, complete_chart):
             result["alternatives"] = alternatives
             result["candidate_layout_relation"] = alternatives[0]["candidate_layout_relation"] if len(alternatives) == 1 else "alternatives_reported"
             result["answer"] = " ".join(texts) + " All shown paths retain candidate indentation; reviewed semantic subtype is not established. Alternative targets can describe different levels of one path and are not forced into an exclusive choice."
+            if any(set(words(nodes[child]["label"])) & set(words(nodes[parent]["label"])) for parent in right):
+                result["answer"] += " Sharing words in process labels does not establish a subtype relationship."
             for placement in placements:
                 process, family = nodes[placement["process_id"]], nodes[placement["category_id"]]
                 result["answer"] += " Positive source placement: " + process["label"] + " (" + process["code"] + ") is enclosed by " + family["label"] + "."
@@ -578,7 +581,11 @@ def _operation(view, operation, complete_chart):
                 return stop("complete_chart_required_for_bounded_negative")
             verdict = "yes" if actual == parent else "no"
             alternatives.append({"target_id": parent, "verdict": verdict})
-            texts.append(("Yes" if actual == parent else "No") + ", within " + source_element + "'s chart: " + nodes[child]["label"] + " (" + nodes[child]["code"] + ") is listed inside " + nodes[actual]["label"] + ("." if actual == parent else ", rather than " + nodes[parent]["label"] + "."))
+            text = ("Yes" if actual == parent else "No") + ", within " + source_element + "'s chart: " + nodes[child]["label"] + " (" + nodes[child]["code"] + ") is listed inside " + nodes[actual]["label"] + ("." if actual == parent else ", rather than " + nodes[parent]["label"] + ".")
+            row = view.row(child)
+            if row and row.get("indent_parent_ids"):
+                text += " Candidate layout parent: " + "; ".join(nodes[p]["label"] + " (" + nodes[p]["code"] + ")" for p in row["indent_parent_ids"]) + "; semantic subtype is unreviewed."
+            texts.append(text)
         result["alternatives"] = alternatives
         result["verdict"] = alternatives[0]["verdict"] if len(alternatives) == 1 else "not_established"
         result["trace"]["negative_proof"] = "explicit_positive_foreign_enclosure_plus_complete_chart" if any(item["verdict"] == "no" for item in alternatives) else None

@@ -204,3 +204,40 @@ def test_list_follow_up_selects_actual_producer_results(source, mode, selection)
         assert [item["kind"] for item in projection["operations"]] == [
             "parents" if mode == "parents" else "physical_neighbors", "designation"]
         assert projection["operations"][1]["result_refs"]["subject_ids"][0]["select"] == selection
+
+
+def test_targetless_membership_lowers_to_category_and_selection_is_categories(source):
+    query = "What category contains ZZRP in Figure A2?"
+    act = action("category_lookup", kind="check_relationship", mode="membership",
+                 subjects=["ZZRP"], targets=[], fields=["name", "acronym", "group"])
+    plan = compile_plan(source, query, envelope(query, [act]))
+    assert plan["status"] == "ready"
+    assert [item["kind"] for item in plan["operations"]] == ["category", "designation"]
+    result = execute_graph_plan(source, plan, complete_chart=True)
+    assert "ALPHA FAMILY" in result["answer"]
+    assert "ZZRP" in result["answer"]
+
+
+def test_auxiliary_information_fields_do_not_block_valid_path(source):
+    query = "Trace the path from ZZRP to the root."
+    act = action("path_lookup", kind="explain_path", mode="from_to",
+                 subjects=["ZZRP"], targets=["n1"],
+                 information_fields=["kind of visible connection at each step"])
+    plan = compile_plan(source, query, envelope(query, [act]))
+    assert plan["status"] == "ready"
+    assert [item["kind"] for item in plan["operations"]] == ["paths", "designation"]
+    result = execute_graph_plan(source, plan, complete_chart=True)
+    assert result["answer_outcome"] == "graph_answer"
+
+
+def test_chart_scope_with_figure_element_name_lowers_to_chart_layout_and_epistemic_limits(source):
+    query = "What does Figure A2 establish regarding indentation and arrows?"
+    act = action("chart_limits", kind="check_relationship", mode="source_limits",
+                 subjects=["Figure A2"], targets=[], fields=["evidence", "source_limits"], scope="chart")
+    plan = compile_plan(source, query, envelope(query, [act]))
+    assert plan["status"] == "ready"
+    assert [item["kind"] for item in plan["operations"]] == ["chart_layout", "epistemic_limits"]
+    result = execute_graph_plan(source, plan, complete_chart=True)
+    assert result["answer_outcome"] == "graph_answer"
+    assert "candidate" in result["answer"].lower()
+

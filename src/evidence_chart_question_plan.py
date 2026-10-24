@@ -143,7 +143,9 @@ def _operation(identifier, kind, layer, subjects=(), targets=(), refs=None, fiel
         "requested_fields": list(fields), "requested_aspects": []}
 
 
-def _lower_action(graph, query, action, aliases, prior, prefix):
+def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
+    if element is None:
+        _, _, element = legacy._source_index(graph)
     if set(action) != set(QUESTION_INTERFACE["action_keys"]):
         _reject("ACTION_KEYS_INVALID")
     kind, mode, layer = action["kind"], action["mode"], action["query_layer"]
@@ -159,16 +161,17 @@ def _lower_action(graph, query, action, aliases, prior, prefix):
         _reject("COMBINED_BUDGET_EXCEEDED")
     if any(field not in QUESTION_INTERFACE["fields"] for field in action["fields"]):
         _reject("FIELD_INVALID")
-    if action["information_fields"] and (kind != "lookup_term" or any(
-            field.casefold() not in query.casefold() for field in action["information_fields"])):
-        _reject("INFORMATION_FIELD_INVALID")
     if action["scope"] not in QUESTION_INTERFACE["scopes"]:
         _reject("SCOPE_INVALID")
-    chart_scope = kind == "check_relationship" and mode == "source_limits" and action["scope"] == "chart"
-    if action["scope"] == "chart" and not chart_scope:
-        _reject("CHART_SCOPE_UNSUPPORTED")
-    subjects, choices = _selectors(graph, action["subjects"], aliases)
-    targets, target_choices = _selectors(graph, action["targets"], aliases)
+    chart_scope = action["scope"] == "chart"
+    if chart_scope:
+        if kind not in {"check_relationship", "list_members"}:
+            _reject("CHART_SCOPE_UNSUPPORTED")
+    chart_names = {element.casefold(), "figure a1", "figure a2", "a1", "a2"}
+    raw_subjects = [s for s in action["subjects"] if s.casefold() not in chart_names] if chart_scope else action["subjects"]
+    raw_targets = [t for t in action["targets"] if t.casefold() not in chart_names] if chart_scope else action["targets"]
+    subjects, choices = _selectors(graph, raw_subjects, aliases)
+    targets, target_choices = _selectors(graph, raw_targets, aliases)
     choices += target_choices
     if choices:
         return [], None, choices
@@ -185,14 +188,18 @@ def _lower_action(graph, query, action, aliases, prior, prefix):
                 _reject("REFERENCE_PRODUCER_INVALID_OR_FAILED")
             refs[role].append({"operation_id": producer["anchor"], "select": producer["selection"]})
     if chart_scope:
-        if subjects or targets or any(refs.values()) or layer != "evidence":
-            _reject("CHART_SCOPE_ARGUMENTS_INVALID")
+        if layer != "evidence":
+            _reject("EVIDENCE_LAYER_REQUIRED")
     elif not subjects and not refs["subjects"]:
         _reject("SELECTED_SUBJECT_REQUIRED")
     if kind in {"lookup_term", "list_members"} and (targets or refs["targets"]):
         _reject("UNUSED_TARGETS")
-    if kind in {"explain_path", "check_relationship"} and not chart_scope and mode != "source_limits" and not (targets or refs["targets"]):
+    targetless_membership = kind == "check_relationship" and mode == "membership" and not (targets or refs["targets"])
+    if kind == "explain_path" and not (targets or refs["targets"]):
         _reject("TARGET_REQUIRED")
+    if kind == "check_relationship" and not chart_scope and mode != "source_limits" and not targetless_membership:
+        if not (targets or refs["targets"]):
+            _reject("TARGET_REQUIRED")
     if kind == "check_relationship" and mode in {"layout", "semantic_subtype", "source_limits"} and layer != "evidence":
         _reject("EVIDENCE_LAYER_REQUIRED")
     operations = []
@@ -205,22 +212,30 @@ def _lower_action(graph, query, action, aliases, prior, prefix):
         anchor = add("designation", destinations=[])
         selection = "rows"
     elif kind == "list_members":
-        anchor = add({"direct": "direct_children", "descendants": "descendants", "parents": "parents",
-                      "row_partition": "row_partition", "physical_neighbors": "physical_neighbors"}[mode], destinations=[])
-        selection = {"parents": "parents", "physical_neighbors": "groups", "direct": "groups",
-                     "descendants": "groups"}.get(mode, "rows")
+        if chart_scope and not subjects and not refs["subjects"]:
+            anchor = add("chart_layout", selected=[], destinations=[])
+            add("epistemic_limits", destinations=[])
+            selection = None
+        else:
+            anchor = add({"direct": "direct_children", "descendants": "descendants", "parents": "parents",
+                          "row_partition": "row_partition", "physical_neighbors": "physical_neighbors"}[mode], destinations=[])
+            selection = {"parents": "parents", "physical_neighbors": "groups", "direct": "groups",
+                         "descendants": "groups"}.get(mode, "rows")
     elif kind == "explain_path":
         anchor = add("paths")
         selection = None
     elif chart_scope:
-        anchor = add("chart_layout")
-        add("epistemic_limits")
+        anchor = add("chart_layout", selected=[], destinations=[])
+        add("epistemic_limits", selected=subjects, destinations=[])
         selection = None
     elif mode == "source_limits":
         if targets or refs["targets"]:
             _reject("UNUSED_TARGETS")
         anchor = add("epistemic_limits", destinations=[])
         selection = None
+    elif targetless_membership:
+        anchor = add("category", destinations=[])
+        selection = "categories"
     else:
         anchor = add("membership" if mode == "membership" else "layout_relation")
         selection = None
@@ -236,20 +251,27 @@ def _lower_action(graph, query, action, aliases, prior, prefix):
     for field, operation_kind in (("group", "category"), ("evidence", "evidence"), ("source_limits", "epistemic_limits")):
         if field in action["fields"]:
             if chart_scope and field in {"group", "evidence"}:
-                _reject("CHART_FIELD_UNSUPPORTED")
+                continue
+            if targetless_membership and field == "group":
+                continue
             if not (field == "source_limits" and kind == "check_relationship" and mode != "membership"):
                 add(operation_kind, selected=projected, destinations=[], references=projections)
     if kind not in {"lookup_term", "list_members"} and set(action["fields"]) & {"name", "acronym"}:
         if chart_scope:
-            _reject("CHART_FIELD_UNSUPPORTED")
-        add("designation", selected=projected, destinations=[], references=projections)
+            pass
+        elif targetless_membership:
+            add("designation", selected=subjects, destinations=[], references={"subjects": refs["subjects"], "targets": []})
+        else:
+            add("designation", selected=projected, destinations=[], references=projections)
     elif kind == "list_members" and mode in {"parents", "physical_neighbors"} and "acronym" in action["fields"]:
         # These list renderers print labels only. Resolve codes from their
         # actual returned parents/neighbors, never the original selector.
         add("designation", selected=projected, destinations=[], references=projections)
-    if action["information_fields"]:
+    valid_info = [field for field in action["information_fields"]
+                  if field.strip() and field.casefold() in query.casefold()]
+    if valid_info:
         add("operating_information", selected=projected, destinations=[], references=projections,
-            information=action["information_fields"])
+            information=valid_info)
     return operations, {"anchor": anchor, "selection": selection} if selection else None, []
 
 
@@ -278,7 +300,7 @@ def compile_plan(graph, query, payload, concept_bindings=None):
             _reject("DUPLICATE_ACTION_ID")
         prefix, error = "action" + str(index + 1), None
         try:
-            lowered, producer, choices = _lower_action(graph, query, action, aliases, prior, prefix)
+            lowered, producer, choices = _lower_action(graph, query, action, aliases, prior, prefix, element)
             if choices:
                 identity_choices[identifier] = choices
                 _reject("SOURCE_SELECTOR_UNRESOLVED")
