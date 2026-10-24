@@ -29,7 +29,7 @@ _WIRE_KEYS = {"operation": ("id", "kind", "query_layer", "subject_ids", "target_
 _ROOT_KEYS = {"contract_version", "wire_schema_version", "instruction_version",
     "coverage_authority", "budgets", "node_kinds", "id_pattern", "wire_keys",
     "part_rules", "empty_subject_scopes", "operation_profiles", "static_routing_guidance",
-    "question_interface"}
+    "question_interface", "archetype_profiles"}
 _QUESTION_KEYS = {"schema_version", "instruction_version", "action_keys", "envelope_keys",
     "part_keys", "kinds", "fields", "modes", "scopes", "guidance", "part_metadata"}
 _ACTION_KEYS = ["id", "kind", "query_layer", "subjects", "targets", "subjects_from",
@@ -84,6 +84,8 @@ def _choices(value: Any, allowed: tuple | set, *, empty: bool = True) -> bool:
 
 def _validate(doc: Any) -> None:
     _keys(doc, _ROOT_KEYS, "ROOT_KEYS_INVALID")
+    if "archetype_profiles" in doc:
+        _require(isinstance(doc["archetype_profiles"], dict), "ARCHETYPE_PROFILES_INVALID")
     _require(doc["contract_version"] == "chart-plan-contract-1.2", "VERSION_UNSUPPORTED")
     _require(doc["wire_schema_version"] == "chart-llm-plan-1.0", "WIRE_VERSION_UNSUPPORTED")
     _require(isinstance(doc["instruction_version"], str) and re.fullmatch(
@@ -228,6 +230,7 @@ ALL_KINDS = CONTRACT.definitions["node_kinds"]
 ID_PATTERN = CONTRACT.definitions["id_pattern"]
 OPERATION_KEYS = CONTRACT.definitions["wire_keys"]["operation"]
 PART_KEYS = CONTRACT.definitions["wire_keys"]["part"]
+ARCHETYPE_PROFILES = CONTRACT.definitions.get("archetype_profiles", {})
 ENVELOPE_KEYS = CONTRACT.definitions["wire_keys"]["envelope"]
 PLANNED_REASON = CONTRACT.definitions["part_rules"]["planned_reason"]
 PART_REASON_RULE = CONTRACT.definitions["part_rules"]["reason"]

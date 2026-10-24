@@ -563,5 +563,50 @@
       "unresolved_reason": "required_forward_unchanged",
       "description": "part.reason: for planned parts, an optional bounded rationale (including an empty string) is unverified trace metadata only. The adapter preserves it separately and maps the internal reason to part_rules.planned_reason; it never changes actions, selectors or evidence. Unresolved parts require a nonblank reason and action_ids=[]; that explanation is forwarded unchanged. Planned parts require existing action_ids. Never use a rationale as a source fact, admission decision or proof of answer completeness."
     }
+  },
+  "archetype_profiles": {
+    "box_indentation_chart": {
+      "figures": [
+        "Figure A1",
+        "Figure A2",
+        "Figure A3"
+      ],
+      "columns": [
+        "Operation",
+        "Method",
+        "Process Category",
+        "Classification Chart"
+      ],
+      "admission_policy": "NO_UNCORROBORATED_IS_A",
+      "features": [
+        "box_enclosure",
+        "candidate_indentation",
+        "cross_chart_pointers",
+        "footnotes"
+      ]
+    },
+    "characteristic_decision_tree": {
+      "figures": [
+        "Figure A4",
+        "Figure A5",
+        "Figure A6"
+      ],
+      "columns": [
+        "Energy Source",
+        "Thermal Source",
+        "Mechanical Loading*",
+        "Shielding",
+        "Process"
+      ],
+      "admission_policy": "NO_UNCORROBORATED_IS_A",
+      "features": [
+        "5_column_tree",
+        "process_circles",
+        "legend_table",
+        "footnote_asterisk",
+        "multi_branch_processes",
+        "source_anomalies"
+      ]
+    }
   }
 }
