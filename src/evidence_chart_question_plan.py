@@ -195,9 +195,10 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
     if kind in {"lookup_term", "list_members"} and (targets or refs["targets"]):
         _reject("UNUSED_TARGETS")
     targetless_membership = kind == "check_relationship" and mode == "membership" and not (targets or refs["targets"])
+    targetless_layout = kind == "check_relationship" and mode in {"layout", "semantic_subtype"} and not (targets or refs["targets"])
     if kind == "explain_path" and not (targets or refs["targets"]):
         _reject("TARGET_REQUIRED")
-    if kind == "check_relationship" and not chart_scope and mode != "source_limits" and not targetless_membership:
+    if kind == "check_relationship" and not chart_scope and mode != "source_limits" and not targetless_membership and not targetless_layout:
         if not (targets or refs["targets"]):
             _reject("TARGET_REQUIRED")
     if kind == "check_relationship" and mode in {"layout", "semantic_subtype", "source_limits"} and layer != "evidence":
@@ -236,11 +237,28 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
     elif targetless_membership:
         anchor = add("category", destinations=[])
         selection = "categories"
+    elif targetless_layout:
+        if mode == "layout":
+            anchor = add("parents", destinations=[])
+            selection = "parents"
+        else:
+            anchor = add("epistemic_limits", destinations=[])
+            selection = None
     else:
-        anchor = add("membership" if mode == "membership" else "layout_relation")
-        selection = None
-        if mode in {"layout", "semantic_subtype"}:
-            add("epistemic_limits", destinations=[], references={"subjects": refs["subjects"], "targets": []})
+        nodes = {n["id"]: n for n in graph["nodes"]}
+        target_kinds = {nodes[aliases[t]]["kind"] for t in targets if t in aliases and aliases[t] in nodes}
+        subject_kinds = {nodes[aliases[s]]["kind"] for s in subjects if s in aliases and aliases[s] in nodes}
+        if mode in {"layout", "semantic_subtype"} and (("root" in subject_kinds or "category" in subject_kinds) or "root" in target_kinds):
+            # Physical route / connector between non-process subjects or root target
+            anchor = add("paths")
+            selection = None
+            if mode in {"layout", "semantic_subtype"}:
+                add("epistemic_limits", destinations=[], references={"subjects": refs["subjects"], "targets": []})
+        else:
+            anchor = add("membership" if mode == "membership" else "layout_relation")
+            selection = None
+            if mode in {"layout", "semantic_subtype"}:
+                add("epistemic_limits", destinations=[], references={"subjects": refs["subjects"], "targets": []})
     # Project requested fields over actual lookup/list results. For a relation or
     # path, identity/evidence projections cover both selected endpoints.
     if selection:
@@ -252,14 +270,20 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
         if field in action["fields"]:
             if chart_scope and field in {"group", "evidence"}:
                 continue
-            if targetless_membership and field == "group":
+            if (targetless_membership or targetless_layout) and field == "group":
                 continue
             if not (field == "source_limits" and kind == "check_relationship" and mode != "membership"):
-                add(operation_kind, selected=projected, destinations=[], references=projections)
+                if operation_kind == "category":
+                    nodes = {n["id"]: n for n in graph["nodes"]}
+                    cat_selected = [s for s in projected if nodes.get(aliases.get(s, s), {}).get("kind") == "process"] if not selection else projected
+                    if cat_selected or selection:
+                        add(operation_kind, selected=cat_selected, destinations=[], references=projections)
+                else:
+                    add(operation_kind, selected=projected, destinations=[], references=projections)
     if kind not in {"lookup_term", "list_members"} and set(action["fields"]) & {"name", "acronym"}:
         if chart_scope:
             pass
-        elif targetless_membership:
+        elif targetless_membership or targetless_layout:
             add("designation", selected=subjects, destinations=[], references={"subjects": refs["subjects"], "targets": []})
         else:
             add("designation", selected=projected, destinations=[], references=projections)
