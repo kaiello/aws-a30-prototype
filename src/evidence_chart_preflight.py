@@ -66,7 +66,7 @@ def run_preflight(root, input_path, question_id, receipt_path, output_directory,
     if len(questions) != 1 or len({q["id"] for q in payload["questions"]}) != len(payload["questions"]):
         raise ValueError("PREFLIGHT_UNIQUE_EXISTING_QUESTION_REQUIRED")
     source = payload["source_element"]
-    if source not in {"Figure A1", "Figure A2"} or (source == "Figure A2" and graph_path is None):
+    if source not in {"Figure A1", "Figure A2", "Figure A3"} or (source in {"Figure A2", "Figure A3"} and graph_path is None):
         raise ValueError("PREFLIGHT_SUPPORTED_SOURCE_AND_GRAPH_REQUIRED")
     if source == "Figure A1" and (graph_path is not None or source_observation_path is not None):
         raise ValueError("PREFLIGHT_A1_USES_CANONICAL_SOURCE_ONLY")
@@ -110,7 +110,12 @@ def run_preflight(root, input_path, question_id, receipt_path, output_directory,
     with patch.object(socket, "create_connection", blocked), patch.object(socket.socket, "connect", blocked), \
             patch.object(socket.socket, "connect_ex", blocked):
         try:
-            if source == "Figure A2":
+            if source == "Figure A3":
+                from src.evidence_a3 import run_questions
+                backend = run_questions(root, graph_path, selected, question_planner=planner,
+                                        source_observation_path=source_observation_path)
+                result = backend["answers"][0]["result"]
+            elif source == "Figure A2":
                 from src.evidence_a2 import run_questions
                 backend = run_questions(root, graph_path, selected, question_planner=planner,
                                         source_observation_path=source_observation_path)

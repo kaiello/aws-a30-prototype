@@ -62,7 +62,7 @@ def _validate_chart_source_binding(binding):
     _require(isinstance(binding["asset_sha256"], str) and re.fullmatch(
         r"[0-9a-f]{64}", binding["asset_sha256"]), "RECORD_ASSET_INVALID")
     locator = binding["locator"]
-    profiles = {"Figure A1": "figure:figure_a1", "Figure A2": "figure:figure_a2"}
+    profiles = {"Figure A1": "figure:figure_a1", "Figure A2": "figure:figure_a2", "Figure A3": "figure:figure_a3"}
     _require(isinstance(locator, dict) and locator.get("element_id") in profiles
         and locator.get("canonical_element_id") == profiles[locator["element_id"]]
         and locator.get("source_identity_id") == binding["source_identity_id"]
