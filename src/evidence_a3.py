@@ -654,7 +654,12 @@ def run_questions(root, graph_path, payload, *, query_layer="auto", question_pla
     answers = []
     for item in payload["questions"]:
         started = time.perf_counter()
-        res = answer_a3_query(graph, item["query"], knowledge_store=store)
+        if question_planner is not None:
+            from src.evidence_a1_graph_qa import answer_graph
+            res = answer_graph(graph, item["query"], knowledge_store=store, query_layer=query_layer,
+                               question_planner=question_planner, complete_chart=True)
+        else:
+            res = answer_a3_query(graph, item["query"], knowledge_store=store)
         elapsed = time.perf_counter() - started
         answers.append({
             "question_id": item["id"],

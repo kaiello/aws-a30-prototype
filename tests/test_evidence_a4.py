@@ -136,3 +136,23 @@ def test_a4_deterministic_qa():
         content_ok = all(elem.casefold() in res["answer"].casefold() for elem in rule["required_elements"])
         assert content_ok, f"{qid} failed content: missing {[e for e in rule['required_elements'] if e.casefold() not in res['answer'].casefold()]}"
         assert res["answer_outcome"] == rule["expected_outcome"], f"{qid} failed delivery outcome"
+
+
+def test_a4_anti_drift_loop():
+    from src.archetype_decision_tree import run_anti_drift_verifier
+    receipt = run_anti_drift_verifier(ROOT, SPEC_A4)
+    assert receipt["status"] == "PASS"
+    assert receipt["element"] == "Figure A4"
+    checks = receipt["checks"]
+    assert checks["check1_geometry_and_title"]["status"] == "PASS"
+    assert checks["check1_geometry_and_title"]["title_verified_in_list_of_figures"] is True
+    assert checks["check1_geometry_and_title"]["vector_connectors_verified"] is True
+    assert checks["check2_epistemic_tier_guard"]["status"] == "PASS"
+    assert checks["check2_epistemic_tier_guard"]["accepted"] == 149
+    assert checks["check2_epistemic_tier_guard"]["is_a_promotions"] == 0
+    assert checks["check3_table_a3_cross_check"]["status"] == "PASS"
+    assert checks["check3_table_a3_cross_check"]["undeclared_mismatches_count"] == 0
+    assert checks["check4_shared_preflight"]["status"] == "PASS"
+    assert checks["check4_shared_preflight"]["preflight_status"] == "CLEAR_REAL_ENTRY_CONTRACT"
+    assert checks["check4_shared_preflight"]["new_model_calls"] == 0
+

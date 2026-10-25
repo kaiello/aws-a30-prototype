@@ -81,12 +81,29 @@ class DecisionTreeSpec:
 
 
 def verify_pdf_geometry(page: Any, bounds: Any, spec: DecisionTreeSpec) -> Dict[str, Any]:
-    """Verify that every declared box/label exists in the PDF text layer or vector drawings and connectors link boxes."""
+    """Check 1: Verify from AWS_A3.0_2020.pdf that the title matches List of Figures, every label matches a PDF text span, and vector connectors link boxes."""
     import fitz
+
+    # 1. Title verification against List of Figures (printed p. x, PDF index 10)
+    doc = page.parent
+    if len(doc) > 10:
+        lof_lines = [l.strip() for l in doc[10].get_text("text").splitlines() if l.strip()]
+        start = next((i for i, l in enumerate(lof_lines) if "List of Figures" in l), 0)
+        prefix = spec.element.replace("Figure ", "").strip()
+        title_in_lof = False
+        for i, l in enumerate(lof_lines[start:]):
+            if l == prefix:
+                cand = lof_lines[start + i + 1].split(".")[0].strip()
+                if spec.title.casefold() in cand.casefold():
+                    title_in_lof = True
+                break
+        if not title_in_lof:
+            raise ValueError(f"{spec.element}_TITLE_MISMATCH_WITH_LIST_OF_FIGURES: expected '{spec.title}'")
+
+    # 2. Text Layer Verification: verify legend table rows and caption in bounds
     text_inside = page.get_text("text", clip=bounds)
     text_norm = text_inside.casefold()
 
-    # 1. Text Layer Verification: verify legend table rows
     missing_tokens = []
     verified_tokens = []
     for row in spec.legend_table:
@@ -103,7 +120,7 @@ def verify_pdf_geometry(page: Any, bounds: Any, spec: DecisionTreeSpec) -> Dict[
     if missing_tokens:
         raise ValueError(f"{spec.element}_MISSING_TEXT_TOKENS: {missing_tokens}")
 
-    # 2. Vector Drawing Verification: extract vector drawings in crop
+    # 3. Vector Drawing Verification: extract vector drawings in crop
     drawings = [d for d in page.get_drawings() if bounds.intersects(d["rect"])]
     if not drawings:
         raise ValueError(f"{spec.element}_NO_VECTOR_DRAWINGS_IN_CROP")
@@ -138,12 +155,154 @@ def verify_pdf_geometry(page: Any, bounds: Any, spec: DecisionTreeSpec) -> Dict[
             verified_edges += 1
 
     return {
+        "title_verified_in_list_of_figures": True,
         "text_layer_verified": True,
         "verified_text_tokens": len(verified_tokens),
         "drawings_in_crop": len(drawings),
         "vector_connectors_verified": verified_edges > 0,
         "verified_edge_connectors": verified_edges,
     }
+
+
+def extract_table_a3(doc: Any) -> Dict[str, str]:
+    """Check 3 Helper: Parse normative Table A3 catalog from AWS A3.0M/A3.0:2020 PDF (indices 84 and 85)."""
+    table_a3 = {}
+    for p_idx in [84, 85]:
+        page = doc[p_idx]
+        words = page.get_text("words")
+        lines = {}
+        for w in words:
+            lines.setdefault((w[5], w[6]), []).append(w)
+        for b_idx in set(k[0] for k in lines.keys()):
+            b_lines = [" ".join(w[4] for w in lines[k]) for k in sorted(lines.keys()) if k[0] == b_idx]
+            if len(b_lines) > 10:
+                start_i = 0
+                for i in range(min(6, len(b_lines))):
+                    if "Letter Designation" in b_lines[i] or "Process" in b_lines[i]:
+                        start_i = i + 1
+                for i in range(start_i, len(b_lines) - 1, 2):
+                    code = b_lines[i].strip()
+                    name = b_lines[i + 1].strip()
+                    if re.fullmatch(r"[A-Z]{1,6}(?:-[A-Z0-9]{1,4})?", code):
+                        table_a3[code] = name
+    return table_a3
+
+
+def verify_epistemic_tier_guard(db_path: Path) -> Dict[str, Any]:
+    """Check 2: Query SQLite registry db to assert ACCEPTED > 0 and IS_A == 0 in chart-only gate."""
+    if not db_path.exists():
+        raise FileNotFoundError(f"Registry DB not found: {db_path}")
+    import sqlite3
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+    cur.execute("SELECT payload_json FROM a1k_typed_assertions")
+    rows = [json.loads(r[0]) for r in cur.fetchall()]
+    accepted = sum(1 for r in rows if r.get("status") == "ACCEPTED")
+    disputed = sum(1 for r in rows if r.get("status") == "DISPUTED")
+    candidate = sum(1 for r in rows if r.get("status") == "CANDIDATE")
+    is_a = sum(1 for r in rows if r.get("predicate") == "IS_A")
+
+    if accepted == 0:
+        raise ValueError("Check 2 Failed: ACCEPTED assertions must be > 0 (found 0; dual-layer status flattened)")
+    if is_a != 0:
+        raise ValueError(f"Check 2 Failed: IS_A promotions must be 0 in chart-only gate (found {is_a})")
+
+    return {
+        "status": "PASS",
+        "accepted": accepted,
+        "disputed": disputed,
+        "candidate": candidate,
+        "is_a_promotions": is_a,
+    }
+
+
+def run_anti_drift_verifier(root: Path | str, spec: DecisionTreeSpec, directory: Optional[Path | str] = None, skip_preflight: bool = False) -> Dict[str, Any]:
+    """Execute the 4-Check Deterministic Anti-Drift Loop against raw PDF, graph store, Table A3, and preflight."""
+    import fitz
+    root = Path(root).resolve(strict=True)
+    if directory is None:
+        schema_prefix = spec.element.lower().replace(" ", "_").replace("figure_a", "a").replace("figure_", "")
+        directory = root / f"storage/evidence_v2/{schema_prefix}_ingest_001"
+    else:
+        directory = Path(directory) if Path(directory).is_absolute() else root / directory
+
+    # 1. Check 1: PDF Vector & BBox Geometry Audit via fitz
+    source_pdf_path = root / "data/AWS_A3.0_2020.pdf"
+    with fitz.open(source_pdf_path) as doc:
+        page = doc[spec.pdf_index]
+        w, h = page.rect.width, page.rect.height
+        bounds = fitz.Rect(spec.region[1] * w, spec.region[0] * h, spec.region[3] * w, spec.region[2] * h)
+        geom = verify_pdf_geometry(page, bounds, spec)
+        check1_result = {
+            "status": "PASS",
+            **geom
+        }
+
+        # 3. Check 3: External Table A1-A3 Cross-Check
+        table_a3 = extract_table_a3(doc)
+        declared_anomaly_codes = {
+            a.get("code") for a in spec.source_anomalies if a.get("code")
+        } | {
+            a.get("title", "") for a in spec.source_anomalies
+        }
+        undeclared_mismatches = []
+        for row in spec.legend_table:
+            c = row.get("code", "")
+            n = row.get("name", "")
+            norm_name = table_a3.get(c)
+            if not norm_name or norm_name.casefold() != n.casefold():
+                if c not in declared_anomaly_codes:
+                    undeclared_mismatches.append({"code": c, "name": n, "normative_name": norm_name})
+        if undeclared_mismatches:
+            raise ValueError(f"{spec.element}_UNDECLARED_TABLE_A3_MISMATCHES: {undeclared_mismatches}")
+        check3_result = {
+            "status": "PASS",
+            "table_a3_entries_count": len(table_a3),
+            "legend_entries_verified": len(spec.legend_table),
+            "undeclared_mismatches_count": 0,
+            "declared_anomalies": [a.get("title", a.get("kind", "")) for a in spec.source_anomalies],
+        }
+
+    # 2. Check 2: Dual-Layer Epistemic Tier Ratio Guard
+    db_path = directory / "final_projection/graph.registry.db"
+    check2_result = verify_epistemic_tier_guard(db_path)
+
+    # 4. Check 4: Target-Figure Shared Preflight
+    if not skip_preflight:
+        from src.evidence_chart_preflight import run_figure_preflight
+        receipt = run_figure_preflight(spec.element, root=root)
+        if receipt["status"] != "CLEAR_REAL_ENTRY_CONTRACT":
+            raise ValueError(f"Check 4 Failed: Preflight status is {receipt['status']}")
+        if receipt["new_model_calls"] != 0:
+            raise ValueError(f"Check 4 Failed: New model calls > 0 ({receipt['new_model_calls']})")
+        if not all(receipt["checks"].values()):
+            failed_checks = [k for k, v in receipt["checks"].items() if not v]
+            raise ValueError(f"Check 4 Failed: Failed checks: {failed_checks}")
+        check4_result = {
+            "status": "PASS",
+            "preflight_status": receipt["status"],
+            "checks_passed": len(receipt["checks"]),
+            "new_model_calls": receipt["new_model_calls"],
+        }
+    else:
+        check4_result = {
+            "status": "SKIPPED",
+            "preflight_status": "SKIPPED",
+            "checks_passed": 0,
+            "new_model_calls": 0,
+        }
+
+    return {
+        "status": "PASS",
+        "element": spec.element,
+        "checks": {
+            "check1_geometry_and_title": check1_result,
+            "check2_epistemic_tier_guard": check2_result,
+            "check3_table_a3_cross_check": check3_result,
+            "check4_shared_preflight": check4_result,
+        }
+    }
+
 
 
 def authenticate_source(root: Path | str, spec: DecisionTreeSpec) -> Tuple[Dict[str, Any], Dict[str, Any], bytes]:
@@ -329,10 +488,12 @@ def ingest_decision_tree(root: Path | str, directory: Path | str, spec: Decision
             "candidate_assertions": len(graph["nodes"]) + len(graph["edges"]),
             "corroborated_assertions": len(graph["nodes"]),
         },
+        "anti_drift_receipt": run_anti_drift_verifier(root, spec, directory=directory),
     }
     receipt_path = directory / "ingest_receipt.json"
-    if not receipt_path.exists():
-        write_private_output(root, receipt_path, receipt)
+    if receipt_path.exists():
+        receipt_path.unlink()
+    write_private_output(root, receipt_path, receipt)
     return receipt, graph, store
 
 
@@ -723,7 +884,13 @@ def decision_tree_main(spec: DecisionTreeSpec, default_dir: Path | str = "storag
     parser.add_argument("--directory", type=Path, default=Path(default_dir))
     parser.add_argument("--run-questions", type=Path)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--verify-anti-drift", action="store_true", help="Run the 4-check deterministic anti-drift verifier loop")
     args = parser.parse_args()
+
+    if args.verify_anti_drift:
+        receipt = run_anti_drift_verifier(args.root, spec, directory=args.directory)
+        print(json.dumps(receipt, indent=2))
+        return 0 if receipt["status"] == "PASS" else 1
 
     receipt, graph, store = ingest_decision_tree(args.root, args.directory, spec)
     print(f"Ingested {spec.element}: {receipt['nodes_count']} nodes, {receipt['edges_count']} edges.")

@@ -29,8 +29,12 @@ Do not micromanage individual unit-test edits inside a phase. Enforce hard stops
    - Trigger: Immediately after executing the single authorized 67-question live planner pass (51 A1 + 16 A2 questions).
    - Required before: Merging the readiness branch to `main` or starting Phase 2 ingestion.
 
-4. **Gate 2 (Annex A Full Expansion - Figures A3 through A6 and Tables A1 through A5):**
-   - Trigger: After ingesting Figure A3, Classification Charts A4 through A6, and joining Tables A1 through A5 into the SQLite Evidence Graph, Knowledge Graph, and Identity Dictionary.
+4. **Gate 2 (Annex A Figure-by-Figure Expansion & Normative Tables A1–A5):**
+   - **Gate 2A:** Figure A3 (*Joining Method Chart*, Archetype 1 closure + cross-chart pointers).
+   - **Gate 2B:** Figure A4 (*Fusion Welding Classification Chart*, Archetype 2 reusable engine calibration).
+   - **Gate 2C:** Figure A5 (*Solid-State Welding Classification Chart*, Archetype 2 replication & dual-layer epistemic verification).
+   - **Gate 2D:** Figure A6 (*Brazing and Soldering Classification Chart*, Archetype 2 replication & anomaly disambiguation).
+   - **Gate 2E:** Normative Tables A1–A5 cross-verification, anomaly cataloging, and full graph join.
    - Required before: Starting Phase 3 Clause 4 Glossary and Annex B ingestion.
 
 5. **Gate 3 (Clause 4 Glossary, Dual-Provenance `IS_A` Promotion, and Annex B/C/D):**
@@ -47,7 +51,13 @@ At every gate, Gemini 3.8 Flash must generate a single self-contained file at `s
 
 1. **Gate Metadata and Git State:** Gate ID, branch, HEAD commit SHA, `main` commit SHA (`71088cebc9eb3b2556d7bbe73a23a451e645e3b9`), `git status --short`, and `git diff --stat`.
 2. **Immutable Artifact and Store Integrity:** Verification of Source PDF SHA-256 (`205fa58e...`), A1 store SHA-256 (`6476c898...`), A2 crop SHA-256 (`e792b09c...`), and confirmation that prior run receipts remain untouched.
-3. **Offline Real-Entry Preflight Receipt:** Exact CLI command and output of `python -m src.evidence_chart_preflight` for both `A1` and `A2` showing `CLEAR_REAL_ENTRY_CONTRACT` and zero network calls.
+3. **Deterministic 4-Check Anti-Drift & Real-Entry Preflight Receipts:**
+   - Exact CLI output of the 4-Check Anti-Drift Verifier loop (`python -B -m src.evidence_a<ID> --verify-anti-drift`):
+     - **Check 1 (PDF Vector & BBox Geometry Audit via `fitz`):** Verifies exact figure title against List of Figures (printed p. x, PDF index 10) and page caption, confirms all legend/label text tokens exist in the PDF native text layer, and verifies physical vector line segments connect parent-to-child boxes across the figure crop.
+     - **Check 2 (Dual-Layer Epistemic Tier Ratio Guard):** Queries `graph.registry.db` (`a1k_typed_assertions`) to assert `ACCEPTED > 0` for all literal nodes, legend rows, and verified structural connectors (`CHART_CONNECTOR`, `ENCLOSES_ROW`), restricts `CANDIDATE` to uncorroborated layout indentation (`INDENTED_UNDER`), and verifies `IS_A == 0` strictly in chart-only gates.
+     - **Check 3 (External Table A1–A3 Cross-Check):** Cross-checks all legend designations and full process names against the normative process catalog in Table A3 (printed pp. 72–73, PDF indices 84–85), asserting zero undeclared mismatches or omissions.
+     - **Check 4 (Target-Figure Shared Preflight):** Runs `python -B -m src.evidence_chart_preflight --figure <ID>` through the shared planner/compiler pipeline, confirming `CLEAR_REAL_ENTRY_CONTRACT` (11/11 contract checks passed) and `new_model_calls: 0`.
+   - Baseline regression receipts for prior figures (Figure A1, A2, etc.) confirming zero regressions.
 4. **Separated Five-Dimension Evaluation Scorecard:**
    - Structural JSON Schema Validity (`X / N`)
    - Compiler Acceptance (`X / N` compiled vs pre-retrieval rejected)

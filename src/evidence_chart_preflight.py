@@ -168,17 +168,83 @@ def run_preflight(root, input_path, question_id, receipt_path, output_directory,
     return receipt
 
 
+FIGURE_CONFIGS = {
+    "A1": {
+        "source": "Figure A1",
+        "input": "eval/evidence_v2_a1_owner_cqs.json",
+        "question_id": "A1-CQ-001",
+        "receipt": "storage/evidence_v2/a1_a2_relationship_003/a1_deepseek/request_001/receipt.json",
+        "graph": None,
+    },
+    "A2": {
+        "source": "Figure A2",
+        "input": "storage/evidence_v2/a2_ingest_001/evaluation/questions.json",
+        "question_id": "A2-DEV001-01",
+        "receipt": "storage/evidence_v2/a1_a2_relationship_003/a2_deepseek/request_001/receipt.json",
+        "graph": "storage/evidence_v2/a2_ingest_001/final_projection_005/graph.json",
+    },
+    "A3": {
+        "source": "Figure A3",
+        "input": "storage/evidence_v2/a3_ingest_001/evaluation/questions.json",
+        "question_id": "A3-DEV001-01",
+        "receipt": "storage/evidence_v2/a3_ingest_001/evaluation/a3_receipt.json",
+        "graph": "storage/evidence_v2/a3_ingest_001/final_projection/graph.json",
+    },
+    "A4": {
+        "source": "Figure A4",
+        "input": "storage/evidence_v2/a4_ingest_001/evaluation/questions.json",
+        "question_id": "A4-DEV001-01",
+        "receipt": "storage/evidence_v2/a4_ingest_001/evaluation/a4_receipt.json",
+        "graph": "storage/evidence_v2/a4_ingest_001/final_projection/graph.json",
+    },
+    "A5": {
+        "source": "Figure A5",
+        "input": "storage/evidence_v2/a5_ingest_001/evaluation/questions.json",
+        "question_id": "A5-DEV001-01",
+        "receipt": "storage/evidence_v2/a5_ingest_001/evaluation/a5_receipt.json",
+        "graph": "storage/evidence_v2/a5_ingest_001/final_projection/graph.json",
+    },
+}
+
+
+def run_figure_preflight(figure: str, root: Path | str = None, output_directory: Path | str = None):
+    """Execute real-entry contract preflight for a declared figure using canonical paths."""
+    import shutil
+    root = Path(root or Path(__file__).resolve().parents[1]).resolve(strict=True)
+    norm_fig = figure.replace("Figure ", "").replace("figure_", "").replace("Figure_", "").strip().upper()
+    if norm_fig not in FIGURE_CONFIGS:
+        raise ValueError(f"UNSUPPORTED_FIGURE_PREFLIGHT: {figure} (supported: {list(FIGURE_CONFIGS.keys())})")
+    cfg = FIGURE_CONFIGS[norm_fig]
+    if output_directory is None:
+        out_dir = root / f"storage/evidence_v2/planner_contract_preflight_003/{norm_fig.lower()}_preflight_auto"
+    else:
+        out_dir = Path(output_directory) if Path(output_directory).is_absolute() else root / output_directory
+    if out_dir.exists():
+        shutil.rmtree(out_dir)
+    input_path = root / cfg["input"]
+    receipt_path = root / cfg["receipt"]
+    graph_path = (root / cfg["graph"]) if cfg["graph"] else None
+    return run_preflight(root, input_path, cfg["question_id"], receipt_path, out_dir, graph_path=graph_path)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument("--figure", help="Target figure for auto-configured preflight (e.g. A3, A4, A5)")
     for name in ("input", "receipt", "output-directory"):
-        parser.add_argument("--" + name, type=Path, required=True)
-    parser.add_argument("--question-id", required=True)
+        parser.add_argument("--" + name, type=Path)
+    parser.add_argument("--question-id")
     parser.add_argument("--graph", type=Path)
     parser.add_argument("--source-observation", type=Path)
     args = parser.parse_args(argv)
-    receipt = run_preflight(args.root, args.input, args.question_id, args.receipt, args.output_directory,
-                            graph_path=args.graph, source_observation_path=args.source_observation)
+
+    if args.figure:
+        receipt = run_figure_preflight(args.figure, root=args.root, output_directory=args.output_directory)
+    else:
+        if not args.input or not args.receipt or not args.output_directory or not args.question_id:
+            parser.error("--input, --receipt, --output-directory, and --question-id are required when --figure is not used")
+        receipt = run_preflight(args.root, args.input, args.question_id, args.receipt, args.output_directory,
+                                graph_path=args.graph, source_observation_path=args.source_observation)
     print(json.dumps({key: receipt[key] for key in ("status", "question_id", "new_model_calls", "checks")}))
     return 0 if receipt["status"] == "CLEAR_REAL_ENTRY_CONTRACT" else 1
 
