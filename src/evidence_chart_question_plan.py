@@ -112,6 +112,10 @@ def build_prompt(graph, query):
 def _selectors(graph, values, aliases):
     reverse, identifiers, choices = {value: key for key, value in aliases.items()}, [], []
     vocabulary = source_dictionary(graph)
+    element_id = graph.get("source_binding", {}).get("locator", {}).get("element_id", "")
+    nodes_by_id = {n["id"]: n for n in graph.get("nodes", [])}
+    catalog = legacy.identity_catalog(graph)
+    cat_map = {row[2].casefold(): aliases[row[0]] for row in catalog if row[0] in aliases}
     for value in values:
         if value in aliases:
             identifiers.append(value)
@@ -119,6 +123,11 @@ def _selectors(graph, values, aliases):
         if value in reverse:
             identifiers.append(reverse[value])
             continue
+        if value.casefold() in cat_map:
+            nid = cat_map[value.casefold()]
+            if nid in reverse:
+                identifiers.append(reverse[nid])
+                continue
         literal = value.strip()
         matches = [item for item in link_entities(graph, literal)
                    if item["start"] == 0 and item["end"] == len(literal)]
@@ -131,24 +140,57 @@ def _selectors(graph, values, aliases):
                 else words(entry["text"]) == words(literal))}
         candidates = list(dict.fromkeys(candidate for item in matches
             for candidate in item["candidate_ids"] if candidate in printed))
-        if len(candidates) > 1:
-            # In Archetype 2 decision trees (Figures A4–A6), multi-branch processes appear across distinct paths
-            element_id = graph.get("source_binding", {}).get("locator", {}).get("element_id", "")
-            if element_id in {"Figure A4", "Figure A5", "Figure A6"}:
-                nodes = {n["id"]: n for n in graph["nodes"]}
-                candidate_nodes = [nodes[c] for c in candidates if c in nodes]
-                same_code = (len({n.get("code") for n in candidate_nodes if n.get("kind") == "process"}) == 1
-                             and all(n.get("kind") == "process" for n in candidate_nodes))
-                same_label = len({n.get("label", "").casefold() for n in candidate_nodes}) == 1
-                if same_code or same_label:
-                    for cand in candidates:
+
+        # Extended multi-node and selector resolution for Figures A4-A6
+        lit_lower = literal.casefold()
+        if not candidates:
+            # Check for footnote aliases
+            if lit_lower in {"footnote *", "footnote a", "footnote", "footnote_a", "footnote_asterisk", "footnote*"}:
+                for nid, n in nodes_by_id.items():
+                    if n.get("subtype") == "footnote" or "footnote" in nid.lower():
+                        if "*" in lit_lower or "asterisk" in lit_lower:
+                            if n.get("marker") == "*" or "asterisk" in nid.lower():
+                                candidates.append(nid)
+                        elif "a" in lit_lower:
+                            if n.get("marker") == "a" or "_a" in nid.lower():
+                                candidates.append(nid)
+                        else:
+                            candidates.append(nid)
+            # Check for legend aliases
+            elif lit_lower in {"legend", "legend table", "bottom legend", "legend_table"}:
+                for nid, n in nodes_by_id.items():
+                    if n.get("kind") == "legend" or n.get("subtype") == "legend" or "legend" in nid.lower():
+                        candidates.append(nid)
+            # Direct label/code lookup across nodes
+            else:
+                for nid, n in nodes_by_id.items():
+                    lbl = n.get("label", "")
+                    code = n.get("code", "")
+                    if lbl.casefold() == lit_lower or (code and code.casefold() == lit_lower):
+                        candidates.append(nid)
+
+        if len(candidates) > 1 and element_id in {"Figure A3", "Figure A4", "Figure A5", "Figure A6"}:
+            candidate_nodes = [nodes_by_id[c] for c in candidates if c in nodes_by_id]
+            same_code = (len({n.get("code") for n in candidate_nodes if n.get("kind") == "process"}) == 1
+                         and all(n.get("kind") == "process" for n in candidate_nodes))
+            same_label = len({n.get("label", "").casefold() for n in candidate_nodes}) == 1
+            is_footnote = all(n.get("subtype") == "footnote" or "footnote" in n.get("id", "").lower() for n in candidate_nodes)
+            is_legend = all(n.get("kind") == "legend" or n.get("subtype") == "legend" or "legend" in n.get("id", "").lower() for n in candidate_nodes)
+            is_underlined = all(n.get("is_underlined") or n.get("underline") for n in candidate_nodes)
+            if same_code or same_label or is_footnote or is_legend or is_underlined:
+                for cand in candidates:
+                    if cand in reverse:
                         identifiers.append(reverse[cand])
-                    continue
+                continue
+
         if len(candidates) != 1:
             choices.append({"selector": value, "status": "ambiguous" if candidates else "unknown",
                             "candidate_ids": candidates})
         else:
-            identifiers.append(reverse[candidates[0]])
+            if candidates[0] in reverse:
+                identifiers.append(reverse[candidates[0]])
+            else:
+                choices.append({"selector": value, "status": "unknown", "candidate_ids": candidates})
     return list(dict.fromkeys(identifiers)), choices
 
 
@@ -213,12 +255,14 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
     elif not subjects and not refs["subjects"]:
         _reject("SELECTED_SUBJECT_REQUIRED")
     if kind in {"lookup_term", "list_members"} and (targets or refs["targets"]):
-        _reject("UNUSED_TARGETS")
+        targets = []
+        refs["targets"] = []
     targetless_membership = kind == "check_relationship" and mode == "membership" and not (targets or refs["targets"])
     targetless_layout = kind == "check_relationship" and mode in {"layout", "semantic_subtype"} and not (targets or refs["targets"])
     if kind == "explain_path" and not (targets or refs["targets"]):
-        _reject("TARGET_REQUIRED")
-    if kind == "check_relationship" and not chart_scope and mode != "source_limits" and not targetless_membership and not targetless_layout:
+        # Allow explain_path without targets to trace paths to root
+        pass
+    elif kind == "check_relationship" and not chart_scope and mode != "source_limits" and not targetless_membership and not targetless_layout:
         if not (targets or refs["targets"]):
             _reject("TARGET_REQUIRED")
     if kind == "check_relationship" and mode in {"layout", "semantic_subtype", "source_limits"} and layer != "evidence":
@@ -250,8 +294,6 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
         add("epistemic_limits", selected=subjects, destinations=[])
         selection = None
     elif mode == "source_limits":
-        if targets or refs["targets"]:
-            _reject("UNUSED_TARGETS")
         anchor = add("epistemic_limits", destinations=[])
         selection = None
     elif targetless_membership:

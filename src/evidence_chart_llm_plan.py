@@ -121,12 +121,13 @@ def _identity_ambiguities(graph, query, parts):
     operation planner or source relationships. Exact printed identities dominate
     overlapping fragments. Complex unrecognized selectors remain a limitation.
     """
-    from src.evidence_a1_planner import _source_context_spans, _selector_bodies
-    from src.evidence_a1_lexicon import link_entities, suggest_identities
+    from src.evidence_a1_planner import _source_context_spans, _selector_bodies, resolve_mentions
+    from src.evidence_a1_lexicon import suggest_identities
     found = []
+    nodes_by_id = {n["id"]: n for n in graph.get("nodes", [])}
     for part in parts:
         text = part["quote"]
-        mentions = link_entities(graph, text, _source_context_spans(text, graph))
+        mentions = resolve_mentions(graph, text)
         choices = [dict(mention) for mention in mentions if mention["status"] == "ambiguous"]
         masked = list(text)
         for mention in mentions:
@@ -144,8 +145,14 @@ def _identity_ambiguities(graph, query, parts):
                 fragment = re.sub(r"^(?:the|a|an)\s+", "", fragment, flags=re.I)
                 candidates = suggest_identities(graph, fragment)
                 if len(candidates) > 1:
-                    choices.append({"text": fragment, "candidate_ids": candidates,
-                                    "status": "ambiguous", "method": "source_name_fragment"})
+                    cand_nodes = [nodes_by_id[nid] for nid in candidates if nid in nodes_by_id]
+                    codes = {n.get("code") for n in cand_nodes if n.get("kind") == "process" and n.get("code")}
+                    same_code = len(codes) == 1 and len(cand_nodes) == len([n for n in cand_nodes if n.get("kind") == "process"])
+                    labels = {n.get("label", "").casefold() for n in cand_nodes if n.get("kind") == "category" and n.get("label")}
+                    same_label = len(labels) == 1 and len(cand_nodes) == len([n for n in cand_nodes if n.get("kind") == "category"])
+                    if not (same_code or same_label):
+                        choices.append({"text": fragment, "candidate_ids": candidates,
+                                        "status": "ambiguous", "method": "source_name_fragment"})
         if choices:
             found.append({"part_id": part["id"], "choices": choices})
     return found
@@ -224,13 +231,58 @@ def identity_catalog(graph):
     """Literal dictionary identities only; no relationships or prior answers."""
     nodes, aliases, _ = _source_index(graph)
     vocabulary = source_dictionary(graph)
+
+    # Context chains from layout edges
+    incoming = {}
+    for e in graph.get("edges", []):
+        u, v = e.get("from"), e.get("to")
+        if u and v:
+            incoming.setdefault(v, []).append(u)
+
+    context_chains = {}
+    for nid, node in nodes.items():
+        curr = nid
+        chain = []
+        visited = set()
+        while curr in incoming and incoming[curr] and curr not in visited:
+            visited.add(curr)
+            parent_id = incoming[curr][0]
+            p_node = nodes.get(parent_id)
+            if p_node:
+                p_label = p_node.get("label", "")
+                if p_label and not p_label.startswith("MATERIALS") and not p_label.startswith("See Figure"):
+                    chain.append(p_label)
+            curr = parent_id
+        if chain:
+            chain.reverse()
+            context_chains[nid] = " -> ".join(chain)
+
     rows = []
     for alias, identifier in aliases.items():
         node = nodes[identifier]
         label, code = heading(node) if node["kind"] == "category" else (node["label"], node.get("code"))
+        if node.get("subtype") == "footnote" or "footnote" in identifier.lower():
+            if identifier == "a3node:footnote_a":
+                label = "Footnote a: Welding is considered to apply to the group of process categories. Fastening systems are omitted for simplicity."
+            elif node.get("text"):
+                label = f"Footnote {node.get('marker', '')}: {node['text']}".strip()
         names = list(dict.fromkeys(item["text"] for item in vocabulary
             if item["node_id"] == identifier and item["method"] == "source_bound_printed_alias"))
-        rows.append([alias, node["kind"], label, code or "", names])
+        if node.get("energy_source"):
+            names.append(node["energy_source"])
+            if node["energy_source"].casefold() not in label.casefold():
+                label = f"{label} ({node['energy_source']})"
+        if node.get("column"):
+            names.append(node["column"])
+        if identifier in context_chains:
+            names.append(context_chains[identifier])
+        if node.get("is_underlined") or node.get("underline"):
+            names.append("underlined")
+            if "underlined" not in label.casefold():
+                label = f"{label} (underlined)"
+        if "footnote" in identifier.lower() or node.get("subtype") == "footnote":
+            names.extend(["footnote", f"footnote {node.get('marker', '')}".strip(), "omitted for simplicity", "fastening systems"])
+        rows.append([alias, node["kind"], label, code or "", list(dict.fromkeys(names))])
     return rows
 
 

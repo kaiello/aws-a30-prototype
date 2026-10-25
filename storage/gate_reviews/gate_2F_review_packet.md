@@ -11,7 +11,7 @@
 
 - **Gate ID:** Gate 2F (Final Annex A Validation Gate; Phase 2 Closeout & Transition to Phase 3)
 - **Current Branch:** `feat/gate-2f-annex-a-live-holdout`
-- **HEAD Commit SHA:** `74cd6c6556c2bcce1401436e48fbba601d370986` (or amended final commit)
+- **HEAD Commit SHA:** `284f55c` (`fix(gate-2f): complete 5 deterministic repairs, resolve multi-node catalog ambiguities, and achieve 30/30 (100%) live holdout PASS`)
 - **Base `main` Commit:** `4bd5d0b` (`docs: update ROADMAP.md to align with shared Gemini roadmap specification`)
 - **Git Branch Hygiene & Cleanup Summary:**
   - Merged `feat/annex-a-tables-join` (`d55eba2`) into `main`.
@@ -60,17 +60,17 @@
 |---|---|---|---|
 | **1. Schema Validity** | 100% valid JSON envelopes | **30 / 30 (100%)** | **PASS** |
 | **2. Compiler Acceptance** | 0 pre-retrieval rejections | **30 / 30 (100% — exactly 0 rejected)** | **PASS** |
-| **3. Executed Operations** | Bounded graph operations executed | **65 operations executed** | **PASS** |
+| **3. Executed Operations** | Bounded graph operations executed | **109 operations executed (30/30 questions with $\ge 1$ ops)** | **PASS** |
 | **4. Content Grade** | $\ge 93.3\%$ (28/30) PASS | **30 / 30 PASS (100.0%)** | **PASS** |
 | **5. Delivery Grade per Part** | $\ge 93.3\%$ (28/30) PASS | **30 / 30 PASS (100.0%)** | **PASS** |
 
 ### Per-Figure Holdout Breakdown:
-- **Figure A3 (5 Unseen Questions):** 5 / 5 PASS (100%) | 12 graph operations executed | Avg latency: 1.94s
-- **Figure A4 (5 Unseen Questions):** 5 / 5 PASS (100%) | 25 graph operations executed | Avg latency: 2.53s
-- **Figure A5 (5 Unseen Questions):** 5 / 5 PASS (100%) | 13 graph operations executed | Avg latency: 2.38s
-- **Figure A6 (5 Unseen Questions):** 5 / 5 PASS (100%) | 5 graph operations executed | Avg latency: 2.80s
+- **Figure A3 (5 Unseen Questions):** 5 / 5 PASS (100%) | 16 graph operations executed | Avg latency: 2.03s
+- **Figure A4 (5 Unseen Questions):** 5 / 5 PASS (100%) | 37 graph operations executed | Avg latency: 3.16s
+- **Figure A5 (5 Unseen Questions):** 5 / 5 PASS (100%) | 29 graph operations executed | Avg latency: 2.69s
+- **Figure A6 (5 Unseen Questions):** 5 / 5 PASS (100%) | 17 graph operations executed | Avg latency: 2.89s
 - **Annex A Tables & Cross-Chart Synthesis (10 Questions):** 10 / 10 PASS (100%) | 10 table operations | Instantaneous (<0.01s)
-- **Total Suite:** **30 / 30 PASS (100%)** in **48.09s**.
+- **Total Suite:** **30 / 30 PASS (100%)** in **53.7s** | **0 blocked actions** | **0 retries**.
 
 ---
 
@@ -79,25 +79,25 @@
 | Question ID | Source Element | Operations | Content | Delivery | Answer Summary & Verification Proof |
 |---|---|:---:|:---:|:---:|---|
 | `A3-HO001-01` | Figure A3 | 5 | **PASS** | **PASS** | Identified Mechanical Fastening, Welding, and Adhesive Bonding branching directly from Materials Joining; confirmed Welding carries footnote marker a (`Weldinga`). |
-| `A3-HO001-02` | Figure A3 | 1 | **PASS** | **PASS** | Quoted Footnote a verbatim: `"Welding is considered to apply to the group of process categories. Fastening systems are omitted for simplicity."` Confirmed omission reason. |
+| `A3-HO001-02` | Figure A3 | 3 | **PASS** | **PASS** | Quoted Footnote a verbatim: `"Welding is considered to apply to the group of process categories. Fastening systems are omitted for simplicity."` Confirmed omission reason. |
 | `A3-HO001-03` | Figure A3 | 2 | **PASS** | **PASS** | Traced full ordered path: `Materials Joining -> Welding -> Solid-State Welding -> Solid-State Welding Classification Chart (See Figure A5)`. |
-| `A3-HO001-04` | Figure A3 | 2 | **PASS** | **PASS** | Identified `Brazing and Soldering Classification Chart (See Figure A6)` and confirmed its parent category is `Welding`. |
+| `A3-HO001-04` | Figure A3 | 4 | **PASS** | **PASS** | Identified `Brazing and Soldering Classification Chart (See Figure A6)` and confirmed its parent category is `Welding`. |
 | `A3-HO001-05` | Figure A3 | 2 | **PASS** | **PASS** | Stated source limits: Figure A3 does not include Thermal Spraying or Thermal Cutting (allied processes classified in Figure A2); limited to Materials Joining. |
-| `A4-HO001-01` | Figure A4 | 2 | **PASS** | **PASS** | Traced full 5-column paths: FCAW (`Electrical -> Arc -> None -> Flux -> FCAW`) and GTAW (`Electrical -> Arc -> None -> Gas -> GTAW`). |
-| `A4-HO001-02` | Figure A4 | 12 | **PASS** | **PASS** | Identified electrogas welding (EGW, under Gas and Flux shielding) and electron beam welding (EBW, under Vacuum and No Shielding). |
-| `A4-HO001-03` | Figure A4 | 3 | **PASS** | **PASS** | Identified Resistance spot/seam, flash, projection, and upset welding under Electrical -> Resistance; quoted Footnote * verbatim: `"*Pressure normal to faying surfaces."` |
-| `A4-HO001-04` | Figure A4 | 3 | **PASS** | **PASS** | Identified that Conduction under Electrical energy has no outgoing right-hand branch; identified AHW is in tree under Gas shielding but omitted from bottom legend. |
-| `A4-HO001-05` | Figure A4 | 5 | **PASS** | **PASS** | Identified oxyfuel gas welding processes (OAW, OHW, PGW) using No Shielding, and braze welding using Flux. |
-| `A5-HO001-01` | Figure A5 | 6 | **PASS** | **PASS** | Compared classification paths: USW (`Mechanical -> Friction -> Pressure -> No Shielding -> USW`) vs CW (`Mechanical -> [Skips Thermal Source] -> Pressure Deformation -> No Shielding -> CW`). |
-| `A5-HO001-02` | Figure A5 | 0 | **PASS** | **PASS** | Listed all 3 characteristic branches for DFW: (1) Chem -> Rad -> Press Def -> Gas; (2) Elec -> Rad -> Press Def -> Gas; (3) Elec -> Rad -> Press Def -> Vac. |
-| `A5-HO001-03` | Figure A5 | 0 | **PASS** | **PASS** | Identified the 3 solid-state welding processes together under Radiation with Pressure Deformation and No Shielding: CEW, FOW, ROW. |
+| `A4-HO001-01` | Figure A4 | 12 | **PASS** | **PASS** | Traced full 5-column paths: FCAW (`Electrical -> Arc -> None -> Flux -> FCAW`) and GTAW (`Electrical -> Arc -> None -> Gas -> GTAW`). |
+| `A4-HO001-02` | Figure A4 | 10 | **PASS** | **PASS** | Identified electrogas welding (EGW, under Gas and Flux shielding) and electron beam welding (EBW, under Vacuum and No Shielding). |
+| `A4-HO001-03` | Figure A4 | 5 | **PASS** | **PASS** | Identified Resistance spot/seam, flash, projection, and upset welding under Electrical -> Resistance; quoted Footnote * verbatim: `"*Pressure normal to faying surfaces."` |
+| `A4-HO001-04` | Figure A4 | 7 | **PASS** | **PASS** | Identified that Conduction under Electrical energy has no outgoing right-hand branch; identified AHW is in tree under Gas shielding but omitted from bottom legend. |
+| `A4-HO001-05` | Figure A4 | 3 | **PASS** | **PASS** | Identified oxyfuel gas welding processes (OAW, OHW, PGW) using No Shielding, and braze welding using Flux. |
+| `A5-HO001-01` | Figure A5 | 10 | **PASS** | **PASS** | Compared classification paths: USW (`Mechanical -> Friction -> Pressure -> No Shielding -> USW`) vs CW (`Mechanical -> [Skips Thermal Source] -> Pressure Deformation -> No Shielding -> CW`). |
+| `A5-HO001-02` | Figure A5 | 3 | **PASS** | **PASS** | Listed all 3 characteristic branches for DFW: (1) Chem -> Rad -> Press -> Gas; (2) Elec -> Rad -> Press -> Gas; (3) Elec -> Rad -> Press -> Vac (all sharing Pressure). |
+| `A5-HO001-03` | Figure A5 | 5 | **PASS** | **PASS** | Identified the 3 solid-state welding processes together under Radiation with Pressure Deformation and No Shielding: CEW, FOW, ROW. |
 | `A5-HO001-04` | Figure A5 | 6 | **PASS** | **PASS** | Stated exact Mechanical Loading* label for EXW (`Pressure Deformation`) and noted Thermal Source is omitted (skips Thermal Source column). |
-| `A5-HO001-05` | Figure A5 | 1 | **PASS** | **PASS** | Differentiated Electrical -> Resistance processes: ROW uses `Pressure Deformation`, while RSW, RSEW, USW use `Pressure`. |
-| `A6-HO001-01` | Figure A6 | 2 | **PASS** | **PASS** | Stated AB stands for `arc brazing`; traced both paths: (1) `Elec -> Arc -> Press -> Gas -> AB`; (2) `Elec -> Arc -> Press -> Flux -> AB`. |
-| `A6-HO001-02` | Figure A6 | 3 | **PASS** | **PASS** | Listed all 5 branches for B-CA: Elec/Ind/None/Gas, Elec/Rad/None/Gas, Elec/Rad/None/Vac, Chem/Flame/None/Gas, Chem/ChemRxn/None/Gas. |
-| `A6-HO001-03` | Figure A6 | 0 | **PASS** | **PASS** | Listed 4 branches for DFB (Elec/Chem -> Ind/Rad -> Gas/Vac) and identified shared Mechanical Loading* box `Pressure`. |
-| `A6-HO001-04` | Figure A6 | 0 | **PASS** | **PASS** | Identified soldering processes under Conduction with Flux: iron soldering (INS), ultrasonic soldering (USS), wave soldering (WS), dip soldering (DS), resistance soldering (RS). |
-| `A6-HO001-05` | Figure A6 | 0 | **PASS** | **PASS** | Listed the 4 underlined designations and process names: B-CA (controlled-atmosphere brazing), EBB (electron beam brazing), EXB (exothermic brazing), LBB (laser beam brazing). |
+| `A5-HO001-05` | Figure A5 | 5 | **PASS** | **PASS** | Differentiated Electrical -> Resistance processes: UW uses `Pressure`, while RSW and RSEW use `Pressure Deformation`. |
+| `A6-HO001-01` | Figure A6 | 4 | **PASS** | **PASS** | Stated AB stands for `arc brazing`; traced both paths: (1) `Elec -> Arc -> [No Mech Loading] -> Gas -> AB`; (2) `Elec -> Arc -> [No Mech Loading] -> Flux -> AB`. |
+| `A6-HO001-02` | Figure A6 | 3 | **PASS** | **PASS** | Listed all 5 branches for B-CA: Elec/Ind/None/Gas, Elec/Ind/None/Vac, Elec/Rad/None/Gas, Elec/Rad/None/Vac, Chem/Flame/None/Gas. |
+| `A6-HO001-03` | Figure A6 | 4 | **PASS** | **PASS** | Listed 4 branches for DFB (Elec -> Ind -> Press -> Gas/Vac, Elec -> Rad -> Press -> Gas/Vac) and identified shared Mechanical Loading* box `Pressure`. |
+| `A6-HO001-04` | Figure A6 | 4 | **PASS** | **PASS** | Identified soldering processes under Conduction with Flux: iron soldering (INS), ultrasonic soldering (USS), wave soldering (WS), dip soldering (DS). |
+| `A6-HO001-05` | Figure A6 | 2 | **PASS** | **PASS** | Listed the 4 underlined designations and process names: B-CA (controlled-atmosphere brazing), EBB (electron beam brazing), EXB (exothermic brazing), LBB (laser beam brazing). |
 | `AT-HO001-01` | Tables A1–A5 | 1 | **PASS** | **PASS** | Confirmed AB stands for `adhesive bonding` in Tables A1, A2, A3, Figure A1, and Clause 4, vs `arc brazing` in Figure A6 (authentic designation collision). |
 | `AT-HO001-02` | Tables A1–A5 | 1 | **PASS** | **PASS** | Identified USW under `plastics welding` (p. 69, PDF index 81) and under `solid-state welding` (p. 70, PDF index 82) in Table A1. |
 | `AT-HO001-03` | Tables A1–A5 | 1 | **PASS** | **PASS** | Explained Table A3 (134) vs Table A2 (133) entry difference: AHW included in Table A3, omitted from Table A2; treated as obsolete in Table A5, in tree but omitted from legend in Figure A4. |
@@ -105,7 +105,7 @@
 | `AT-HO001-05` | Tables A1–A5 | 1 | **PASS** | **PASS** | Decoded combined designations: PAW-AD (adaptive control plasma arc welding), RSW-RO (robotic resistance spot welding), EBW-HV-AU (automatic high vacuum electron beam welding). |
 | `AT-HO001-06` | Tables A1–A5 | 1 | **PASS** | **PASS** | Listed obsolete carbon arc processes (CAB, TCAB, CABW, CAW-G, CAW-S, CAW-T) and identified `firecracker welding` as having no letter designation. |
 | `AT-HO001-07` | Tables A1–A5 | 1 | **PASS** | **PASS** | Stated why indented processes under AW are candidate layout observations (`CANDIDATE_LAYOUT_PARENT`) with `0` `IS_A` relations: visual layout does not establish semantic subtype authority without Clause 4 corroboration. |
-| `AT-HO001-08` | Tables A1–A5 | 1 | **PASS** | **PASS** | Compared induction welding (IW): under `Other Welding and Joining` in Table A1 / Figure A1; under Electrical -> Resistance with Pressure in Figure A4; under Electrical -> Resistance with Pressure and Pressure Deformation in Figure A5. |
+| `AT-HO001-08` | Tables A1–A5 | 1 | **PASS** | **PASS** | Compared induction welding (IW): under `Other Welding and Joining` in Table A1 / Figure A1; under Electrical -> Induction in Figure A4; under Electrical -> Induction with Pressure in Figure A5. |
 | `AT-HO001-09` | Tables A1–A5 | 1 | **PASS** | **PASS** | Traced Brazing (B) and Soldering (S): 2 distinct top-level groups in Table A1 / Figure A1; combined reference node in Figure A3 pointing to Figure A6; unified 5-column decision tree in Figure A6. |
 | `AT-HO001-10` | Tables A1–A5 | 1 | **PASS** | **PASS** | Evaluated epistemic response: neither Figures A1–A6 nor Tables A1–A5 specify fillet weld leg dimensions or preheat temperatures; required response is source-limit abstention. |
 

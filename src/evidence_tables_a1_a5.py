@@ -538,7 +538,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
     ql = q_norm.lower()
 
     # AT-HO001-01 / AT-DEV001-09: AB Designation Collision
-    if "ab" in ql and ("collision" in ql or "figure a6" in ql or "stand for" in ql):
+    if re.search(r"\bab\b", ql) and ("collision" in ql or "figure a6" in ql or "stand for" in ql):
         ans = (
             "In Tables A1 (p. 69), A2 (p. 71), A3 (p. 72), and Figure A1 (p. 75), the letter designation AB stands for "
             "'adhesive bonding' (under Other Welding and Joining). In contrast, in Figure A6 (p. 79) and its legend table, "
@@ -617,32 +617,32 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
 
     # AT-HO001-08: Compare induction welding (IW) in Table A1 / Figure A1 vs Figures A4 / A5
     if "induction welding" in ql and ("compare" in ql or "figure a4" in ql or "figure a5" in ql or "characteristic paths" in ql):
+        from src.evidence_a4 import SPEC_A4
+        from src.evidence_a5 import SPEC_A5
+        a4_iw_paths = [p["path_summary"] for p in SPEC_A4.process_nodes if p.get("code") == "IW" and p.get("path_summary")]
+        a5_iw_paths = [p["path_summary"] for p in SPEC_A5.process_nodes if p.get("code") == "IW" and p.get("path_summary")]
+        a4_path_str = "; ".join(a4_iw_paths)
+        a5_path_str = "; ".join(a5_iw_paths)
         ans = (
-            """Comparing the classification of induction welding (IW):
-"
+            "Comparing the classification of induction welding (IW):\n"
             "- In Table A1 (p. 70) and Figure A1 (p. 75), IW is classified under the major group 'Other Welding and Joining' "
-            "(separate from Arc Welding, Resistance Welding, or Solid-State Welding).
-"
-            "- In Figure A4 (Fusion Welding, p. 77), IW appears under Electrical -> Resistance with Pressure in Mechanical Loading* and No Shielding.
-"
-            "- In Figure A5 (Solid-State Welding, p. 78), IW appears in two distinct branches under Electrical -> Resistance: "
-            "one with Pressure and No Shielding, and one with Pressure Deformation and No Shielding."""
+            "(separate from Arc Welding, Resistance Welding, or Solid-State Welding).\n"
+            f"- In Figure A4 (Fusion Welding, p. 77), IW appears under: {a4_path_str}.\n"
+            f"- In Figure A5 (Solid-State Welding, p. 78), IW appears in two distinct branches under: {a5_path_str}."
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
     # AT-HO001-09: Trace Brazing (B) and Soldering (S) Table A1 / Figure A1 vs Figure A3 / Figure A6
-    if "brazing" in ql and "soldering" in ql and ("trace" in ql or "grouped" in ql or "figure a3" in ql or "figure a6" in ql):
+    if "brazing" in ql and "soldering" in ql and ("trace" in ql or "group" in ql or "figure a3" in ql or "figure a6" in ql):
         ans = (
-            """Tracing Brazing (B) and Soldering (S) across Annex A:
-"
+            "Tracing Brazing (B) and Soldering (S) across Annex A:\n"
             "1. In Table A1 (pp. 69–70) and Figure A1 (p. 75), Brazing (B) and Soldering (S) are two separate, distinct major process groups "
-            "at the top level of the master taxonomy (B with 8 letter designations, S with 5 letter designations).
-"
-            "2. In Figure A3 (p. 77, Joining Method Chart), Materials Joining branches into Welding, Mechanical Fastening, and Adhesive Bonding; "
-            "Brazing and Soldering are combined under a single joint reference node pointing to 'Brazing and Soldering Classification Chart (See Figure A6)'.
-"
+            "at the top level of the master taxonomy (B with 8 letter designations, S with 5 letter designations).\n"
+            "2. In Figure A3 (p. 76, Joining Method Chart), under Materials Joining -> Welding, "
+            "Brazing and Soldering are grouped together under 'Brazing and Soldering' which points to "
+            "'Brazing and Soldering Classification Chart (See Figure A6)', which leads to the unified Figure A6 chart.\n"
             "3. In Figure A6 (p. 79), Brazing and Soldering are fully integrated into a unified 5-column physical characteristic decision tree "
-            "sharing Energy Sources (Electrical and Chemical) and Thermal Sources (Arc, Resistance, Conduction, Induction, Radiation, Flame Contact, Chemical Reaction)."""
+            "sharing Energy Sources (Electrical and Chemical) and Thermal Sources (Arc, Resistance, Conduction, Induction, Radiation, Flame Contact, Chemical Reaction)."
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 

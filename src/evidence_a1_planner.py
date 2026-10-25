@@ -36,7 +36,20 @@ def _source_context_spans(query, graph=None):
 def resolve_mentions(graph, query):
     """Source-derived literal identity linking; no relationships are admitted."""
     from src.evidence_a1_lexicon import link_entities
-    return link_entities(graph, query, _source_context_spans(query, graph))
+    mentions = link_entities(graph, query, _source_context_spans(query, graph))
+    element_id = graph.get("source_binding", {}).get("locator", {}).get("element_id", "")
+    if element_id in {"Figure A4", "Figure A5", "Figure A6"}:
+        nodes_by_id = {n["id"]: n for n in graph.get("nodes", [])}
+        for m in mentions:
+            if m.get("status") == "ambiguous" and len(m.get("candidate_ids", [])) > 1:
+                cand_nodes = [nodes_by_id[nid] for nid in m["candidate_ids"] if nid in nodes_by_id]
+                codes = {n.get("code") for n in cand_nodes if n.get("kind") == "process" and n.get("code")}
+                same_code = len(codes) == 1 and len(cand_nodes) == len([n for n in cand_nodes if n.get("kind") == "process"])
+                labels = {n.get("label", "").casefold() for n in cand_nodes if n.get("kind") == "category" and n.get("label")}
+                same_label = len(labels) == 1 and len(cand_nodes) == len([n for n in cand_nodes if n.get("kind") == "category"])
+                if same_code or same_label:
+                    m["status"] = "linked"
+    return mentions
 
 
 def _masked(query, mentions, graph=None):

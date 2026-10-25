@@ -20,6 +20,7 @@ import time
 
 from src.evidence_a1_cli import write_private_output
 from src.evidence_a1 import bind_chart_graph_evidence
+from src.archetype_decision_tree import DecisionTreeSpec
 
 VERSION = "a3-source-aware-ingest-1.0"
 ELEMENT = "Figure A3"
@@ -675,6 +676,146 @@ def run_questions(root, graph_path, payload, *, query_layer="auto", question_pla
         "model_invocations": 0,
         "external_calls": 0,
     }
+
+
+SPEC_A3 = DecisionTreeSpec(
+    figure_id="figure:figure_a3",
+    element=ELEMENT,
+    title="Joining Method Chart",
+    pdf_index=88,
+    printed_page="76",
+    region=REGION,
+    expected_crop_sha256=CROP_SHA256,
+    dpi=DPI,
+    columns=["Operation", "Method", "Process Category", "Classification Chart"],
+    root_node={
+        "id": "a3node:materials_joining",
+        "kind": "root",
+        "label": "MATERIALS JOINING",
+        "column": "Operation",
+        "column_index": 0,
+        "region": [0.651829, 0.271774, 0.695024, 0.364064],
+        "literal_region": [0.662651, 0.294511, 0.684861, 0.344909],
+    },
+    characteristic_nodes=[
+        {
+            "id": "a3node:mechanical_fastening",
+            "kind": "category",
+            "label": "Mechanical Fastening",
+            "column": "Method",
+            "column_index": 1,
+            "region": [0.571508, 0.409133, 0.612520, 0.499052],
+            "literal_region": [0.582025, 0.423655, 0.603931, 0.486652],
+        },
+        {
+            "id": "a3node:welding",
+            "kind": "category",
+            "label": "Welding",
+            "printed_label": "Weldinga",
+            "footnote_marker": "a",
+            "column": "Method",
+            "column_index": 1,
+            "region": [0.664474, 0.426782, 0.677895, 0.479265],
+            "literal_region": [0.662955, 0.427199, 0.679080, 0.479172],
+        },
+        {
+            "id": "a3node:adhesive_bonding",
+            "kind": "category",
+            "label": "Adhesive Bonding",
+            "column": "Method",
+            "column_index": 1,
+            "region": [0.728218, 0.406997, 0.769228, 0.496914],
+            "literal_region": [0.739017, 0.427199, 0.761227, 0.478778],
+        },
+        {
+            "id": "a3node:fusion_welding",
+            "kind": "category",
+            "label": "Fusion Welding",
+            "column": "Process Category",
+            "column_index": 2,
+            "region": [0.583851, 0.563036, 0.603322, 0.607922],
+            "literal_region": [0.583851, 0.563036, 0.603322, 0.607922],
+        },
+        {
+            "id": "a3node:solid_state_welding",
+            "kind": "category",
+            "label": "Solid-State Welding",
+            "column": "Process Category",
+            "column_index": 2,
+            "region": [0.656261, 0.562249, 0.686078, 0.606741],
+            "literal_region": [0.656261, 0.562249, 0.686078, 0.606741],
+        },
+        {
+            "id": "a3node:brazing_and_soldering",
+            "kind": "category",
+            "label": "Brazing and Soldering",
+            "column": "Process Category",
+            "column_index": 2,
+            "region": [0.735670, 0.563430, 0.768000, 0.608000],
+            "literal_region": [0.735670, 0.563430, 0.768000, 0.608000],
+        },
+    ],
+    process_nodes=[
+        {
+            "id": "a3node:see_figure_a4",
+            "kind": "process",
+            "label": "See Figure A4 (Fusion Welding Classification Chart)",
+            "code": "A4",
+            "target_figure": "Figure A4",
+            "target_title": "Fusion Welding Classification Chart",
+            "column": "Classification Chart",
+            "column_index": 3,
+            "region": [0.589936, 0.645720, 0.599063, 0.729191],
+            "literal_region": [0.589936, 0.645720, 0.599063, 0.729191],
+        },
+        {
+            "id": "a3node:see_figure_a5",
+            "kind": "process",
+            "label": "See Figure A5 (Solid-State Welding Classification Chart)",
+            "code": "A5",
+            "target_figure": "Figure A5",
+            "target_title": "Solid-State Welding Classification Chart",
+            "column": "Classification Chart",
+            "column_index": 3,
+            "region": [0.662955, 0.645720, 0.672082, 0.728798],
+            "literal_region": [0.662955, 0.645720, 0.672082, 0.728798],
+        },
+        {
+            "id": "a3node:see_figure_a6",
+            "kind": "process",
+            "label": "See Figure A6 (Brazing and Soldering Classification Chart)",
+            "code": "A6",
+            "target_figure": "Figure A6",
+            "target_title": "Brazing and Soldering Classification Chart",
+            "column": "Classification Chart",
+            "column_index": 3,
+            "region": [0.745102, 0.645720, 0.754229, 0.728798],
+            "literal_region": [0.745102, 0.645720, 0.754229, 0.728798],
+        },
+    ],
+    edges=[],
+    legend_table=[],
+    footnotes=[
+        {
+            "id": "a3node:footnote_a",
+            "kind": "category",
+            "subtype": "footnote",
+            "label": "Footnote a: Welding refers to the group of process categories.",
+            "text": "Welding is considered to apply to the group of process categories. Fastening systems are omitted for simplicity.",
+            "marker": "a",
+            "target_term": "Welding",
+            "region": [0.787443, 0.271779, 0.800862, 0.569776],
+            "literal_region": [0.787443, 0.271779, 0.800862, 0.569776],
+        }
+    ],
+    cross_chart_links=[
+        {"from_figure": "Figure A3", "from_label": "Fusion Welding", "to_figure": "Figure A4", "to_label": "Fusion Welding Classification Chart"},
+        {"from_figure": "Figure A3", "from_label": "Solid-State Welding", "to_figure": "Figure A5", "to_label": "Solid-State Welding Classification Chart"},
+        {"from_figure": "Figure A3", "from_label": "Brazing and Soldering", "to_figure": "Figure A6", "to_label": "Brazing and Soldering Classification Chart"},
+    ],
+    unsupported_topics=["Thermal Spraying", "Thermal Cutting"],
+    adapter_version="a3-source-aware-ingest-1.0",
+)
 
 
 def main():

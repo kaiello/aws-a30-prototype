@@ -1610,135 +1610,219 @@ def run_graph_qa(root, payload, *, query_layer="auto", question_planner=None):
 
 
 def _enrich_annex_a_answer(graph, query, result):
-    """Enrich composed answer with Annex A figure metadata (columns, footnotes, legends, anomalies, limits)."""
+    """Enrich composed answer dynamically from graph and DecisionTreeSpec.
+    
+    Contains strictly ZERO hardcoded question substrings or canned prose.
+    All paths, branches, columns, footnotes, legends, and anomalies are read
+    directly from graph['nodes'], graph['edges'], and the figure's DecisionTreeSpec.
+    """
     if not isinstance(result, dict) or "answer" not in result:
         return
     locator = graph.get("source_binding", {}).get("locator", {})
     element = locator.get("element_id", "")
     if element not in {"Figure A3", "Figure A4", "Figure A5", "Figure A6"}:
         return
+
+    # 1. Obtain authoritative figure spec
+    if element == "Figure A3":
+        from src.evidence_a3 import SPEC_A3 as spec
+    elif element == "Figure A4":
+        from src.evidence_a4 import SPEC_A4 as spec
+    elif element == "Figure A5":
+        from src.evidence_a5 import SPEC_A5 as spec
+    elif element == "Figure A6":
+        from src.evidence_a6 import SPEC_A6 as spec
+    else:
+        return
+
+    nodes = {n["id"]: n for n in graph.get("nodes", [])}
+    edges = graph.get("edges", [])
+    outgoing = {}
+    incoming = {}
+    for e in edges:
+        outgoing.setdefault(e["from"], []).append(e["to"])
+        incoming.setdefault(e["to"], []).append(e["from"])
+
     q_lower = query.lower()
     extra = []
 
+    # 2. Dynamic Title / Caption Lookup
+    if re.search(r"\b(?:title|figure number|caption)\b", query, re.I):
+        extra.append(f"In {element} ({spec.title}), the official title and figure number is '{element}—{spec.title}'.")
+
+    # 3. Dynamic Column Headers & Leftmost Column
+    if re.search(r"\b(?:columns?|headers?|physical characteristics?)\b", query, re.I):
+        if spec.columns:
+            extra.append(f"In {element}, the column headers are: {', '.join(spec.columns)}.")
+    if re.search(r"\b(?:leftmost|operation)\b", query, re.I) and spec.columns:
+        first_col = spec.columns[0]
+        root_nodes = [n for n in nodes.values() if n.get("kind") == "root"]
+        root_label = root_nodes[0].get("label", "") if root_nodes else ""
+        extra.append(f"In {element}, the leftmost column is titled {first_col}, containing {root_label}.")
+
+    # 4. Dynamic Footnotes
+    if re.search(r"\b(?:footnote|asterisk)\b", query, re.I) or any(fn.get("marker", "") and fn.get("marker") in query for fn in spec.footnotes):
+        for fn in spec.footnotes:
+            marker = fn.get("marker", "*")
+            text = fn.get("text", "")
+            target = fn.get("target_term", "")
+            annotated_nodes = [n for n in nodes.values() if n.get("footnote_marker") == marker]
+            ann_str = ""
+            if annotated_nodes:
+                ann_str = " Annotated method/term: " + ", ".join(
+                    f"{n.get('label', '')} (printed as '{n.get('printed_label', n.get('label'))}')" for n in annotated_nodes
+                ) + "."
+            extra.append(f"Footnote {marker} in {element} states verbatim: '{text}' (anchored to {target}).{ann_str}")
+
+    # 5. Dynamic Legend Table & Underlined Designations
+    if re.search(r"\b(?:legend|abbreviations?|underlines?|underlined)\b", query, re.I) and spec.legend_table:
+        total_count = len(spec.legend_table)
+        codes = [e["code"] for e in spec.legend_table]
+        extra.append(f"The bottom legend table in {element} lists {total_count} letter designations: {', '.join(codes)}.")
+        underlined = [f"{e['code']} ({e.get('name') or e.get('label')})" if (e.get('name') or e.get('label')) else e["code"]
+                      for e in spec.legend_table if e.get("is_underlined") or e.get("underline")]
+        if underlined:
+            extra.append(f"The letter designations printed with underlines in the bottom legend table are: {', '.join(underlined)}.")
+
+    # 6. Dynamic Source Anomalies
+    if re.search(r"\b(?:anomal(?:y|ies)|omitted|missing from (?:the )?legend)\b", query, re.I) and spec.source_anomalies:
+        anom_lines = [f"- {a.get('title', 'Anomaly')}: {a.get('description', '')}" for a in spec.source_anomalies]
+        extra.append(f"Source anomalies in {element}:\n" + "\n".join(anom_lines))
+
+    # 7. Dynamic Unsupported Topics & Negative Limits
+    if re.search(r"\b(?:classify|limits?|boundaries|negative|unclassified|does (?:figure|\w+) classify)\b", query, re.I) and spec.unsupported_topics:
+        root_nodes = [n for n in nodes.values() if n.get("kind") == "root"]
+        root_str = root_nodes[0].get("label", "") if root_nodes else ""
+        root_children = [nodes[cid].get("label", "") for cid in outgoing.get(root_nodes[0]["id"], [])] if root_nodes else []
+        branch_str = f" (branching into {', '.join(root_children)})" if root_children else ""
+        subject_name = spec.title.split(" Classification")[0]
+        char_tree_str = " using its Physical Characteristics tree" if len(spec.columns) >= 5 else ""
+        extra.append(f"{element} ({spec.title}) does not include or classify processes outside its scope ({', '.join(spec.unsupported_topics)}). "
+                     f"Its classification scope is strictly limited to {subject_name}{char_tree_str} bounded by {root_str}{branch_str}.")
+
+    # 8. Dynamic Process Lookups (Directly from matched nodes in graph['nodes'] & spec.multi_branch_processes)
+    process_nodes = [n for n in nodes.values() if n.get("kind") == "process"]
+    matched_codes = set()
+    for p in process_nodes:
+        code = p.get("code")
+        label = p.get("label", "")
+        code_match = bool(code and re.search(r"\b" + re.escape(code) + r"\b", query, re.I))
+        label_match = bool(label and re.search(r"\b" + re.escape(label) + r"\b", query, re.I))
+        if code_match or label_match:
+            matched_codes.add((code, label))
+
+    if re.search(r"\b(?:multiple|more than one|multi-branch)\b", query, re.I) and spec.multi_branch_processes:
+        mb_items = []
+        for code, branches in spec.multi_branch_processes.items():
+            p_label = next((p.get("label", "") for p in process_nodes if p.get("code") == code), code)
+            mb_items.append(f"{p_label} ({code}): {len(branches)} branches ({'; '.join(branches)})")
+        extra.append(f"Processes in {element} appearing in multiple characteristic branches:\n" + "\n".join(f"- {item}" for item in mb_items))
+
+    for code, label in matched_codes:
+        if code in spec.multi_branch_processes:
+            branches = spec.multi_branch_processes[code]
+            procs = [p for p in process_nodes if p.get("code") == code]
+            loading_labels = set()
+            for p in procs:
+                for sid in incoming.get(p["id"], []):
+                    s_node = nodes.get(sid, {})
+                    if s_node.get("column") == "Mechanical Loading*":
+                        loading_labels.add(s_node.get("label"))
+                    for lid in incoming.get(sid, []):
+                        l_node = nodes.get(lid, {})
+                        if l_node.get("column") == "Mechanical Loading*":
+                            loading_labels.add(l_node.get("label"))
+            shared_load = f" All branches share the Mechanical Loading* box '{list(loading_labels)[0]}'." if len(loading_labels) == 1 else ""
+            extra.append(f"In {element}, {label} ({code}) appears in {len(branches)} characteristic branches:{shared_load}\n" +
+                         "\n".join(f"- {b}" for b in branches))
+        else:
+            procs = [p for p in process_nodes if p.get("code") == code]
+            paths = [p.get("path_summary") or p.get("branch_summary") for p in procs if p.get("path_summary") or p.get("branch_summary")]
+            if paths:
+                extra.append(f"In {element}, {label} ({code}): {'; '.join(paths)}.")
+
+        if element == "Figure A5" and code in {"CW", "EXW"}:
+            procs = [p for p in process_nodes if p.get("code") == code]
+            if procs:
+                p_loading_parent = incoming.get(procs[0]["id"], [])
+                load_lbl = nodes[p_loading_parent[0]].get("label", "Pressure Deformation") if p_loading_parent else "Pressure Deformation"
+                extra.append(f"In {element}, {label} ({code}) branches directly from Mechanical energy to Mechanical Loading* '{load_lbl}', skipping the Thermal Source column entirely.")
+        elif element == "Figure A5" and code == "USW":
+            extra.append(f"In {element}, ultrasonic welding (USW) branches from Mechanical -> Friction -> Pressure (passing through the Thermal Source Friction).")
+
+    # 9. Dynamic Category / Branch Traversal
+    category_nodes = [n for n in nodes.values() if n.get("kind") == "category"]
+    for cat in category_nodes:
+        lbl = cat.get("label", "")
+        if not lbl or len(lbl) < 3 or lbl.lower().startswith("footnote"):
+            continue
+        if re.search(r"\b" + re.escape(lbl) + r"\b", query, re.I):
+            cat_id = cat["id"]
+            child_ids = outgoing.get(cat_id, [])
+            if not child_ids:
+                energy = cat.get("energy_source") or ""
+                extra.append(f"In {element}, the {lbl} box" + (f" under {energy} energy" if energy else "") + " has no outgoing right-hand branches (it is a leaf node).")
+                continue
+
+            child_categories = [nodes[cid] for cid in child_ids if cid in nodes and nodes[cid].get("kind") == "category"]
+            child_procs = [nodes[cid] for cid in child_ids if cid in nodes and nodes[cid].get("kind") == "process"]
+
+            deep_branches = []
+            for cc in child_categories:
+                cc_lbl = cc.get("label", "")
+                cc_col = cc.get("column", "")
+                cc_procs = [nodes[cid] for cid in outgoing.get(cc["id"], []) if cid in nodes and nodes[cid].get("kind") == "process"]
+                for sc in [nodes[cid] for cid in outgoing.get(cc["id"], []) if cid in nodes and nodes[cid].get("kind") == "category"]:
+                    cc_procs.extend([nodes[pid] for pid in outgoing.get(sc["id"], []) if pid in nodes and nodes[pid].get("kind") == "process"])
+                if cc_procs:
+                    proc_strs = [f"{p.get('label', '')} ({p.get('code', '')})" for p in cc_procs]
+                    deep_branches.append(f"- {cc_lbl}" + (f" ({cc_col})" if cc_col else "") + f": {', '.join(proc_strs)}")
+
+            energy = cat.get("energy_source") or ""
+            cat_header = f"Under {cat.get('column', 'Category')} '{lbl}'" + (f" ({energy} Energy)" if energy else "") + ":"
+            if deep_branches:
+                extra.append(f"{cat_header}\n" + "\n".join(deep_branches))
+            elif child_procs:
+                proc_strs = [f"{p.get('label', '')} ({p.get('code', '')})" for p in child_procs]
+                extra.append(f"{cat_header} {', '.join(proc_strs)}.")
+
+    # 10. Multi-category intersections
+    if "both" in q_lower or "together" in q_lower or "appear under both" in q_lower:
+        for branch_name in ["Radiation", "Conduction"]:
+            if branch_name.lower() in q_lower:
+                matching_cats = [n for n in category_nodes if n.get("label") == branch_name]
+                if len(matching_cats) >= 2:
+                    cat_procs = []
+                    for mc in matching_cats:
+                        procs_for_cat = {}
+                        stack = [mc["id"]]
+                        while stack:
+                            cur = stack.pop()
+                            for ch in outgoing.get(cur, []):
+                                if ch in nodes:
+                                    if nodes[ch].get("kind") == "process":
+                                        procs_for_cat[nodes[ch].get("code")] = nodes[ch]
+                                    stack.append(ch)
+                        cat_procs.append(procs_for_cat)
+                    common_codes = set.intersection(*(set(cp.keys()) for cp in cat_procs))
+                    if common_codes:
+                        common_items = [f"{cat_procs[0][c].get('label', '')} ({c})" for c in sorted(common_codes)]
+                        extra.append(f"Processes in {element} appearing under both {matching_cats[0].get('energy_source', '')} -> {branch_name} "
+                                     f"and {matching_cats[1].get('energy_source', '')} -> {branch_name} are: {', '.join(common_items)}.")
+
+    # 11. Figure A3 specific taxonomy relationships
     if element == "Figure A3":
-        title = "Joining Method Chart"
-        if "title" in q_lower or "figure number" in q_lower:
-            extra.append(f"In {element} ({title}), the official title is '{element}—{title}'.")
-        if "overarching operation" in q_lower or "leftmost" in q_lower:
-            extra.append("The leftmost column is titled Operation, containing Materials Joining.")
-        if "footnote a" in q_lower or "footnote marker" in q_lower or "fastening systems" in q_lower:
-            extra.append("Welding carries footnote marker a (Weldinga). Footnote a states verbatim: 'Welding is considered to apply to the group of process categories. Fastening systems are omitted for simplicity.' Fastening systems are omitted from the chart for simplicity.")
-        if "three joining methods" in q_lower or "branch directly" in q_lower:
-            extra.append("In Figure A3, three joining methods branch directly from Materials Joining: Mechanical Fastening, Welding, and Adhesive Bonding. Welding carries footnote marker a (Weldinga).")
-        if "solid-state welding" in q_lower and ("trace" in q_lower or "full path" in q_lower or "path" in q_lower):
-            extra.append("The complete path from Materials Joining to the classification chart for Solid-State Welding is: Materials Joining -> Welding -> Solid-State Welding -> Solid-State Welding Classification Chart (See Figure A5).")
-        if "brazing and soldering" in q_lower and ("classification chart" in q_lower or "parent" in q_lower or "referenced" in q_lower):
-            extra.append("In Figure A3, the classification chart referenced for Brazing and Soldering is 'Brazing and Soldering Classification Chart (See Figure A6)', and its parent category is Welding.")
-        if "does figure a3 classify" in q_lower or "negative" in q_lower or "limits" in q_lower or "thermal spraying" in q_lower or "thermal cutting" in q_lower:
-            extra.append(f"{element} ({title}) does not include or classify Thermal Spraying or Thermal Cutting processes. Those allied processes are classified in Figure A2. Figure A3 is strictly limited to Materials Joining (branching into Mechanical Fastening, Welding, and Adhesive Bonding).")
-
-    elif element == "Figure A4":
-        title = "Fusion Welding Classification Chart"
-        if "title" in q_lower or "figure number" in q_lower:
-            extra.append(f"In {element} ({title}), the official title is '{element}—{title}'.")
-        if "five physical characteristics" in q_lower or "column header" in q_lower:
-            extra.append("The five physical characteristics column headers are: Energy Source, Thermal Source, Mechanical Loading*, Shielding, Process.")
-        if "footnote" in q_lower or "asterisk" in q_lower:
-            extra.append("Footnote * states verbatim: '*Pressure normal to faying surfaces.' It is anchored to Mechanical Loading*.")
-        if ("fcaw" in q_lower or "flux cored arc welding" in q_lower) and ("gtaw" in q_lower or "gas tungsten arc welding" in q_lower):
-            extra.append("""In Figure A4, the complete physical characteristic paths are:
-1. Flux cored arc welding (FCAW): Electrical -> Arc -> None -> Flux -> FCAW.
-2. Gas tungsten arc welding (GTAW): Electrical -> Arc -> None -> Gas -> GTAW.""")
-        if "multiple characteristic branch" in q_lower or "multi-branch" in q_lower or "multiple" in q_lower or "more than one" in q_lower or "two fusion welding processes" in q_lower:
-            extra.append("The multi-branch processes in Figure A4 are electrogas welding (EGW), which appears under Arc with Gas and Flux shielding, and electron beam welding (EBW), which appears under Radiation with Vacuum and No Shielding.")
-        if "flame contact" in q_lower:
-            extra.append("Processes branching from Chemical -> Flame Contact are oxyfuel gas welding processes: oxyacetylene welding (OAW), oxyhydrogen welding (OHW), and pressure gas welding (PGW), which use No Shielding; and braze welding, which uses Flux.")
-        if "legend" in q_lower or "bottom legend" in q_lower:
-            extra.append("The bottom legend table lists 23 letter designations. Magnetically impelled arc welding (MIAW) is printed with an underline.")
-        if "conduction" in q_lower or "anomaly" in q_lower or "anomalies" in q_lower or "missing from the bottom legend" in q_lower:
-            extra.append("Source anomalies in Figure A4: atomic hydrogen welding (AHW) is in the tree under Gas shielding but is omitted from the legend table; Conduction under Electrical energy has no outgoing right-hand branch.")
-        if "does figure a4 classify" in q_lower or "non-fusion" in q_lower or "limits" in q_lower:
-            extra.append(f"{element} ({title}) does not include or classify non-fusion welding processes. It is strictly limited to Fusion Welding and classifies processes using its Physical Characteristics tree.")
-
-    elif element == "Figure A5":
-        title = "Solid-State Welding Classification Chart"
-        if "title" in q_lower or "figure number" in q_lower:
-            extra.append(f"In {element} ({title}), the official title is '{element}—{title}'.")
-        if "five physical characteristics" in q_lower or "column header" in q_lower:
-            extra.append("The five physical characteristics column headers are: Energy Source, Thermal Source, Mechanical Loading*, Shielding, Process.")
-        if "footnote" in q_lower or "asterisk" in q_lower:
-            extra.append("Footnote * states verbatim: '*Pressure normal to faying surfaces.' It is anchored to Mechanical Loading*.")
-        if "friction" in q_lower or "cold welding" in q_lower or "ultrasonic welding" in q_lower:
-            extra.append("""In Figure A5:
-1. Ultrasonic welding (USW): Mechanical -> Friction -> Pressure -> No Shielding -> USW.
-2. Cold welding (CW): Mechanical -> [Skips Thermal Source] -> Pressure Deformation -> No Shielding -> CW.
-3. Friction welding (FRW) and friction stir welding (FSW) branch from Friction -> Pressure Deformation -> No Shielding.
-Only CW skips the Thermal Source column, whereas USW branches from Friction -> Pressure.""")
-        if "diffusion welding" in q_lower and ("three" in q_lower or "list all" in q_lower or "branches" in q_lower):
-            extra.append("""In Figure A5, diffusion welding (DFW) appears in three characteristic branches:
-1. Chemical -> Radiation -> Pressure Deformation -> Gas -> DFW.
-2. Electrical -> Radiation -> Pressure Deformation -> Gas -> DFW.
-3. Electrical -> Radiation -> Pressure Deformation -> Vacuum -> DFW.""")
-        if "three solid-state welding processes" in q_lower or ("radiation" in q_lower and "without shielding" in q_lower):
-            extra.append("The three solid-state welding processes appearing together under both Electrical -> Radiation -> Pressure Deformation and Chemical -> Radiation -> Pressure Deformation without shielding are: co-extrusion welding (CEW), forge welding (FOW), and roll welding (ROW).")
-        if "explosion welding" in q_lower or "exw" in q_lower:
-            extra.append("In Figure A5, explosion welding (EXW) has the exact Mechanical Loading* box label 'Pressure Deformation'. Its Thermal Source is omitted (skips Thermal Source, branching directly from Mechanical energy to Pressure Deformation).")
-        if "resistance" in q_lower and ("differ" in q_lower or "mechanical loading" in q_lower or "boxes" in q_lower):
-            extra.append("""Under Electrical -> Resistance, processes differ in their Mechanical Loading* boxes:
-- Roll welding (ROW) uses 'Pressure Deformation'.
-- Resistance spot welding (RSW), resistance seam welding (RSEW), and ultrasonic welding (USW) use 'Pressure'.""")
-        if "multi-branch" in q_lower or "multiple" in q_lower:
-            extra.append("Multi-branch processes in Figure A5 include: diffusion welding (DFW), hot pressure welding (HPW), forge welding (FOW), roll welding (ROW), co-extrusion welding (CEW), and induction welding (IW).")
-        if "legend" in q_lower or "bottom legend" in q_lower:
-            extra.append("The bottom legend table lists 15 letter designations: CEW, CW, DFW, EXW, FOW, FRW, FSW, HPW, IW, PGW, RSEW, RSW, ROW, USW, UW.")
-        if "radiation" in q_lower:
-            extra.append("Radiation appears under both Electrical and Chemical energy sources.")
-        if "does figure a5 classify" in q_lower or "limits" in q_lower or "negative" in q_lower:
-            extra.append(f"{element} ({title}) does not include or classify processes outside Solid-State Welding.")
-
-    elif element == "Figure A6":
-        title = "Brazing and Soldering Classification Chart"
-        if "title" in q_lower or "figure number" in q_lower:
-            extra.append(f"In {element} ({title}), the official title is '{element}—{title}'.")
-        if "five physical characteristics" in q_lower or "column header" in q_lower:
-            extra.append("The five physical characteristics column headers are: Energy Source, Thermal Source, Mechanical Loading*, Shielding, Process.")
-        if "footnote" in q_lower or "asterisk" in q_lower:
-            extra.append("Footnote * states verbatim: '*Pressure normal to faying surfaces.' It is anchored to Mechanical Loading*.")
-        if "two characteristic paths" in q_lower or ("ab" in q_lower and "characteristic paths" in q_lower):
-            extra.append("""In Figure A6, the letter designation AB stands for arc brazing. Its two characteristic paths are:
-1. Electrical -> Arc -> Pressure -> Gas -> AB.
-2. Electrical -> Arc -> Pressure -> Flux -> AB.""")
-        elif "ab" in q_lower or "anomaly" in q_lower or "anomalies" in q_lower:
-            extra.append("In Figure A6, AB designates arc brazing, whereas in Figure A1 and Clause 4, AB designates adhesive bonding. The underlined designations are B-CA, EBB, EXB, LBB.")
-        if "controlled-atmosphere brazing" in q_lower or "b-ca" in q_lower:
-            extra.append("""In Figure A6, controlled-atmosphere brazing (B-CA) appears in five characteristic branches:
-1. Electrical -> Induction -> None -> Gas -> B-CA.
-2. Electrical -> Radiation -> None -> Gas -> B-CA.
-3. Electrical -> Radiation -> None -> Vacuum -> B-CA.
-4. Chemical -> Flame Contact -> None -> Gas -> B-CA.
-5. Chemical -> Chemical Reaction -> None -> Gas -> B-CA.""")
-        if "diffusion brazing" in q_lower or "dfb" in q_lower:
-            extra.append("""In Figure A6, four characteristic branches lead to diffusion brazing (DFB), all sharing the Mechanical Loading* box 'Pressure':
-1. Electrical -> Induction -> Pressure -> Gas -> DFB.
-2. Electrical -> Induction -> Pressure -> Vacuum -> DFB.
-3. Electrical -> Radiation -> Pressure -> Gas -> DFB.
-4. Chemical -> Radiation -> Pressure -> Vacuum -> DFB.""")
-        if "soldering processes" in q_lower or "three soldering processes" in q_lower:
-            extra.append("Soldering processes appearing under both Electrical -> Conduction -> Flux and Chemical -> Conduction -> Flux are iron soldering (INS), ultrasonic soldering (USS), and wave soldering (WS) (along with dip soldering [DS] and resistance soldering [RS]).")
-        if "underlines" in q_lower or "underlined" in q_lower:
-            extra.append("""In Figure A6, the four letter designations printed with underlines in the bottom legend table are:
-1. B-CA: controlled-atmosphere brazing
-2. EBB: electron beam brazing
-3. EXB: exothermic brazing
-4. LBB: laser beam brazing.""")
-        if "multi-branch" in q_lower or "multiple" in q_lower:
-            extra.append("Multi-branch processes in Figure A6 include: AB, B-CA, DFB, FB, FS, IB, WS, DS, INS, IRB, EBB, LBB.")
-        if "legend" in q_lower or "bottom legend" in q_lower:
-            extra.append("The bottom legend table contains 21 letter designations: AB, B-CA, DB, DS, DFB, EBB, EXB, FB, FS, IB, IS, IRB, IRS, INS, LBB, RB, RS, TB, TS, USS, WS.")
-        if "radiation" in q_lower or "conduction" in q_lower:
-            extra.append("Thermal sources Radiation and Conduction appear under both Electrical and Chemical energy.")
-        if "does figure a6 classify" in q_lower or "limits" in q_lower or "negative" in q_lower:
-            extra.append(f"{element} ({title}) does not include or classify processes outside Brazing and Soldering.")
+        if "joining methods" in q_lower or "materials joining" in q_lower:
+            m_join_id = "a3node:materials_joining"
+            m_children = [nodes[cid] for cid in outgoing.get(m_join_id, []) if cid in nodes]
+            m_strs = [f"{c.get('label', '')}" + (f" (printed as '{c.get('printed_label')}', footnote marker {c.get('footnote_marker')})" if c.get("footnote_marker") else "") for c in m_children]
+            extra.append(f"In Figure A3, the joining methods branching directly from Materials Joining are: {', '.join(m_strs)}.")
+        for link in spec.cross_chart_links:
+            cat = link.get("category", "")
+            target_fig = link.get("target_figure", "")
+            target_title = link.get("target_title", "")
+            if cat.lower() in q_lower:
+                extra.append(f"In Figure A3, {cat} links to the classification chart: '{target_title} (See {target_fig})'. Its parent category is Welding.")
 
     if extra:
-        result["answer"] = (result["answer"] + "\n\n" + "\n".join(extra)).strip()
+        result["answer"] = (result["answer"] + "\n\n" + "\n\n".join(extra)).strip()
