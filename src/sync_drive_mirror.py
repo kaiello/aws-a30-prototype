@@ -106,10 +106,10 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
         for p in gate_dir.glob("gate_*_review_packet.md"):
             collected.append(p)
 
-    # 6. storage/evidence_v2/<fig>_ingest_001/ lightweight review artifacts
+    # 6. storage/evidence_v2/<slice>_001/ lightweight review artifacts
     ev_dir = base_dir / "storage" / "evidence_v2"
     if ev_dir.is_dir():
-        for ingest_dir in ev_dir.glob("*_ingest_001"):
+        for ingest_dir in ev_dir.glob("*_001"):
             if not ingest_dir.is_dir():
                 continue
             for p in ingest_dir.rglob("*"):
@@ -124,7 +124,7 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
                 # Include crops, receipts, graphs, and evaluation files
                 if (
                     p.name.endswith("_crop_300.png")
-                    or p.name in ("graph.json", "questions.json", "rubric.json", "results.json", "ingest_receipt.json")
+                    or p.name in ("graph.json", "questions.json", "rubric.json", "results.json", "ingest_receipt.json", "tables_graph.json", "answers.json")
                     or p.name.endswith("_receipt.json")
                 ):
                     collected.append(p)
