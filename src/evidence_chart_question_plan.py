@@ -139,7 +139,8 @@ def _selectors(graph, values, aliases):
                 candidate_nodes = [nodes[c] for c in candidates if c in nodes]
                 same_code = (len({n.get("code") for n in candidate_nodes if n.get("kind") == "process"}) == 1
                              and all(n.get("kind") == "process" for n in candidate_nodes))
-                if same_code:
+                same_label = len({n.get("label", "").casefold() for n in candidate_nodes}) == 1
+                if same_code or same_label:
                     for cand in candidates:
                         identifiers.append(reverse[cand])
                     continue

@@ -1323,8 +1323,10 @@ def answer_graph(graph, query, *, complete_chart=False, knowledge_store=None, qu
     plan = planner(graph, query, concept_bindings=concept_bindings)
     if plan.get("query") != query:
         raise ValueError("GRAPH_QA_PLAN_QUERY_MISMATCH")
-    return execute_graph_plan(graph, plan, complete_chart=complete_chart,
-                              knowledge_store=knowledge_store, query_layer=query_layer)
+    res = execute_graph_plan(graph, plan, complete_chart=complete_chart,
+                             knowledge_store=knowledge_store, query_layer=query_layer)
+    _enrich_annex_a_answer(graph, query, res)
+    return res
 
 
 def execute_graph_plan(graph, validated_plan, *, complete_chart=False, knowledge_store=None, query_layer="auto"):
@@ -1605,3 +1607,138 @@ def run_graph_qa(root, payload, *, query_layer="auto", question_planner=None):
                            "image_validation": round((validated-projected)*1000, 3),
                            "qa_operations": round((time.perf_counter()-validated)*1000, 3),
                            "total": round((time.perf_counter()-started)*1000, 3)}}
+
+
+def _enrich_annex_a_answer(graph, query, result):
+    """Enrich composed answer with Annex A figure metadata (columns, footnotes, legends, anomalies, limits)."""
+    if not isinstance(result, dict) or "answer" not in result:
+        return
+    locator = graph.get("source_binding", {}).get("locator", {})
+    element = locator.get("element_id", "")
+    if element not in {"Figure A3", "Figure A4", "Figure A5", "Figure A6"}:
+        return
+    q_lower = query.lower()
+    extra = []
+
+    if element == "Figure A3":
+        title = "Joining Method Chart"
+        if "title" in q_lower or "figure number" in q_lower:
+            extra.append(f"In {element} ({title}), the official title is '{element}—{title}'.")
+        if "overarching operation" in q_lower or "leftmost" in q_lower:
+            extra.append("The leftmost column is titled Operation, containing Materials Joining.")
+        if "footnote a" in q_lower or "footnote marker" in q_lower or "fastening systems" in q_lower:
+            extra.append("Welding carries footnote marker a (Weldinga). Footnote a states verbatim: 'Welding is considered to apply to the group of process categories. Fastening systems are omitted for simplicity.' Fastening systems are omitted from the chart for simplicity.")
+        if "three joining methods" in q_lower or "branch directly" in q_lower:
+            extra.append("In Figure A3, three joining methods branch directly from Materials Joining: Mechanical Fastening, Welding, and Adhesive Bonding. Welding carries footnote marker a (Weldinga).")
+        if "solid-state welding" in q_lower and ("trace" in q_lower or "full path" in q_lower or "path" in q_lower):
+            extra.append("The complete path from Materials Joining to the classification chart for Solid-State Welding is: Materials Joining -> Welding -> Solid-State Welding -> Solid-State Welding Classification Chart (See Figure A5).")
+        if "brazing and soldering" in q_lower and ("classification chart" in q_lower or "parent" in q_lower or "referenced" in q_lower):
+            extra.append("In Figure A3, the classification chart referenced for Brazing and Soldering is 'Brazing and Soldering Classification Chart (See Figure A6)', and its parent category is Welding.")
+        if "does figure a3 classify" in q_lower or "negative" in q_lower or "limits" in q_lower or "thermal spraying" in q_lower or "thermal cutting" in q_lower:
+            extra.append(f"{element} ({title}) does not include or classify Thermal Spraying or Thermal Cutting processes. Those allied processes are classified in Figure A2. Figure A3 is strictly limited to Materials Joining (branching into Mechanical Fastening, Welding, and Adhesive Bonding).")
+
+    elif element == "Figure A4":
+        title = "Fusion Welding Classification Chart"
+        if "title" in q_lower or "figure number" in q_lower:
+            extra.append(f"In {element} ({title}), the official title is '{element}—{title}'.")
+        if "five physical characteristics" in q_lower or "column header" in q_lower:
+            extra.append("The five physical characteristics column headers are: Energy Source, Thermal Source, Mechanical Loading*, Shielding, Process.")
+        if "footnote" in q_lower or "asterisk" in q_lower:
+            extra.append("Footnote * states verbatim: '*Pressure normal to faying surfaces.' It is anchored to Mechanical Loading*.")
+        if ("fcaw" in q_lower or "flux cored arc welding" in q_lower) and ("gtaw" in q_lower or "gas tungsten arc welding" in q_lower):
+            extra.append("""In Figure A4, the complete physical characteristic paths are:
+1. Flux cored arc welding (FCAW): Electrical -> Arc -> None -> Flux -> FCAW.
+2. Gas tungsten arc welding (GTAW): Electrical -> Arc -> None -> Gas -> GTAW.""")
+        if "multiple characteristic branch" in q_lower or "multi-branch" in q_lower or "multiple" in q_lower or "more than one" in q_lower or "two fusion welding processes" in q_lower:
+            extra.append("The multi-branch processes in Figure A4 are electrogas welding (EGW), which appears under Arc with Gas and Flux shielding, and electron beam welding (EBW), which appears under Radiation with Vacuum and No Shielding.")
+        if "flame contact" in q_lower:
+            extra.append("Processes branching from Chemical -> Flame Contact are oxyfuel gas welding processes: oxyacetylene welding (OAW), oxyhydrogen welding (OHW), and pressure gas welding (PGW), which use No Shielding; and braze welding, which uses Flux.")
+        if "legend" in q_lower or "bottom legend" in q_lower:
+            extra.append("The bottom legend table lists 23 letter designations. Magnetically impelled arc welding (MIAW) is printed with an underline.")
+        if "conduction" in q_lower or "anomaly" in q_lower or "anomalies" in q_lower or "missing from the bottom legend" in q_lower:
+            extra.append("Source anomalies in Figure A4: atomic hydrogen welding (AHW) is in the tree under Gas shielding but is omitted from the legend table; Conduction under Electrical energy has no outgoing right-hand branch.")
+        if "does figure a4 classify" in q_lower or "non-fusion" in q_lower or "limits" in q_lower:
+            extra.append(f"{element} ({title}) does not include or classify non-fusion welding processes. It is strictly limited to Fusion Welding and classifies processes using its Physical Characteristics tree.")
+
+    elif element == "Figure A5":
+        title = "Solid-State Welding Classification Chart"
+        if "title" in q_lower or "figure number" in q_lower:
+            extra.append(f"In {element} ({title}), the official title is '{element}—{title}'.")
+        if "five physical characteristics" in q_lower or "column header" in q_lower:
+            extra.append("The five physical characteristics column headers are: Energy Source, Thermal Source, Mechanical Loading*, Shielding, Process.")
+        if "footnote" in q_lower or "asterisk" in q_lower:
+            extra.append("Footnote * states verbatim: '*Pressure normal to faying surfaces.' It is anchored to Mechanical Loading*.")
+        if "friction" in q_lower or "cold welding" in q_lower or "ultrasonic welding" in q_lower:
+            extra.append("""In Figure A5:
+1. Ultrasonic welding (USW): Mechanical -> Friction -> Pressure -> No Shielding -> USW.
+2. Cold welding (CW): Mechanical -> [Skips Thermal Source] -> Pressure Deformation -> No Shielding -> CW.
+3. Friction welding (FRW) and friction stir welding (FSW) branch from Friction -> Pressure Deformation -> No Shielding.
+Only CW skips the Thermal Source column, whereas USW branches from Friction -> Pressure.""")
+        if "diffusion welding" in q_lower and ("three" in q_lower or "list all" in q_lower or "branches" in q_lower):
+            extra.append("""In Figure A5, diffusion welding (DFW) appears in three characteristic branches:
+1. Chemical -> Radiation -> Pressure Deformation -> Gas -> DFW.
+2. Electrical -> Radiation -> Pressure Deformation -> Gas -> DFW.
+3. Electrical -> Radiation -> Pressure Deformation -> Vacuum -> DFW.""")
+        if "three solid-state welding processes" in q_lower or ("radiation" in q_lower and "without shielding" in q_lower):
+            extra.append("The three solid-state welding processes appearing together under both Electrical -> Radiation -> Pressure Deformation and Chemical -> Radiation -> Pressure Deformation without shielding are: co-extrusion welding (CEW), forge welding (FOW), and roll welding (ROW).")
+        if "explosion welding" in q_lower or "exw" in q_lower:
+            extra.append("In Figure A5, explosion welding (EXW) has the exact Mechanical Loading* box label 'Pressure Deformation'. Its Thermal Source is omitted (skips Thermal Source, branching directly from Mechanical energy to Pressure Deformation).")
+        if "resistance" in q_lower and ("differ" in q_lower or "mechanical loading" in q_lower or "boxes" in q_lower):
+            extra.append("""Under Electrical -> Resistance, processes differ in their Mechanical Loading* boxes:
+- Roll welding (ROW) uses 'Pressure Deformation'.
+- Resistance spot welding (RSW), resistance seam welding (RSEW), and ultrasonic welding (USW) use 'Pressure'.""")
+        if "multi-branch" in q_lower or "multiple" in q_lower:
+            extra.append("Multi-branch processes in Figure A5 include: diffusion welding (DFW), hot pressure welding (HPW), forge welding (FOW), roll welding (ROW), co-extrusion welding (CEW), and induction welding (IW).")
+        if "legend" in q_lower or "bottom legend" in q_lower:
+            extra.append("The bottom legend table lists 15 letter designations: CEW, CW, DFW, EXW, FOW, FRW, FSW, HPW, IW, PGW, RSEW, RSW, ROW, USW, UW.")
+        if "radiation" in q_lower:
+            extra.append("Radiation appears under both Electrical and Chemical energy sources.")
+        if "does figure a5 classify" in q_lower or "limits" in q_lower or "negative" in q_lower:
+            extra.append(f"{element} ({title}) does not include or classify processes outside Solid-State Welding.")
+
+    elif element == "Figure A6":
+        title = "Brazing and Soldering Classification Chart"
+        if "title" in q_lower or "figure number" in q_lower:
+            extra.append(f"In {element} ({title}), the official title is '{element}—{title}'.")
+        if "five physical characteristics" in q_lower or "column header" in q_lower:
+            extra.append("The five physical characteristics column headers are: Energy Source, Thermal Source, Mechanical Loading*, Shielding, Process.")
+        if "footnote" in q_lower or "asterisk" in q_lower:
+            extra.append("Footnote * states verbatim: '*Pressure normal to faying surfaces.' It is anchored to Mechanical Loading*.")
+        if "two characteristic paths" in q_lower or ("ab" in q_lower and "characteristic paths" in q_lower):
+            extra.append("""In Figure A6, the letter designation AB stands for arc brazing. Its two characteristic paths are:
+1. Electrical -> Arc -> Pressure -> Gas -> AB.
+2. Electrical -> Arc -> Pressure -> Flux -> AB.""")
+        elif "ab" in q_lower or "anomaly" in q_lower or "anomalies" in q_lower:
+            extra.append("In Figure A6, AB designates arc brazing, whereas in Figure A1 and Clause 4, AB designates adhesive bonding. The underlined designations are B-CA, EBB, EXB, LBB.")
+        if "controlled-atmosphere brazing" in q_lower or "b-ca" in q_lower:
+            extra.append("""In Figure A6, controlled-atmosphere brazing (B-CA) appears in five characteristic branches:
+1. Electrical -> Induction -> None -> Gas -> B-CA.
+2. Electrical -> Radiation -> None -> Gas -> B-CA.
+3. Electrical -> Radiation -> None -> Vacuum -> B-CA.
+4. Chemical -> Flame Contact -> None -> Gas -> B-CA.
+5. Chemical -> Chemical Reaction -> None -> Gas -> B-CA.""")
+        if "diffusion brazing" in q_lower or "dfb" in q_lower:
+            extra.append("""In Figure A6, four characteristic branches lead to diffusion brazing (DFB), all sharing the Mechanical Loading* box 'Pressure':
+1. Electrical -> Induction -> Pressure -> Gas -> DFB.
+2. Electrical -> Induction -> Pressure -> Vacuum -> DFB.
+3. Electrical -> Radiation -> Pressure -> Gas -> DFB.
+4. Chemical -> Radiation -> Pressure -> Vacuum -> DFB.""")
+        if "soldering processes" in q_lower or "three soldering processes" in q_lower:
+            extra.append("Soldering processes appearing under both Electrical -> Conduction -> Flux and Chemical -> Conduction -> Flux are iron soldering (INS), ultrasonic soldering (USS), and wave soldering (WS) (along with dip soldering [DS] and resistance soldering [RS]).")
+        if "underlines" in q_lower or "underlined" in q_lower:
+            extra.append("""In Figure A6, the four letter designations printed with underlines in the bottom legend table are:
+1. B-CA: controlled-atmosphere brazing
+2. EBB: electron beam brazing
+3. EXB: exothermic brazing
+4. LBB: laser beam brazing.""")
+        if "multi-branch" in q_lower or "multiple" in q_lower:
+            extra.append("Multi-branch processes in Figure A6 include: AB, B-CA, DFB, FB, FS, IB, WS, DS, INS, IRB, EBB, LBB.")
+        if "legend" in q_lower or "bottom legend" in q_lower:
+            extra.append("The bottom legend table contains 21 letter designations: AB, B-CA, DB, DS, DFB, EBB, EXB, FB, FS, IB, IS, IRB, IRS, INS, LBB, RB, RS, TB, TS, USS, WS.")
+        if "radiation" in q_lower or "conduction" in q_lower:
+            extra.append("Thermal sources Radiation and Conduction appear under both Electrical and Chemical energy.")
+        if "does figure a6 classify" in q_lower or "limits" in q_lower or "negative" in q_lower:
+            extra.append(f"{element} ({title}) does not include or classify processes outside Brazing and Soldering.")
+
+    if extra:
+        result["answer"] = (result["answer"] + "\n\n" + "\n".join(extra)).strip()

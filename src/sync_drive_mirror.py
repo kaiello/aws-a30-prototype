@@ -93,20 +93,27 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
             if p.is_file() and "__pycache__" not in p.parts and p.suffix in (".py", ".json"):
                 collected.append(p)
 
-    # 4. .agents/skills/ (all SKILL.md and skill assets)
+    # 4. eval/ (.py and .json files, excluding __pycache__)
+    eval_dir = base_dir / "eval"
+    if eval_dir.is_dir():
+        for p in eval_dir.rglob("*"):
+            if p.is_file() and "__pycache__" not in p.parts and p.suffix in (".py", ".json", ".md"):
+                collected.append(p)
+
+    # 5. .agents/skills/ (all SKILL.md and skill assets)
     skills_dir = base_dir / ".agents" / "skills"
     if skills_dir.is_dir():
         for p in skills_dir.rglob("*"):
             if p.is_file() and "__pycache__" not in p.parts:
                 collected.append(p)
 
-    # 5. storage/gate_reviews/ (all review packets)
+    # 6. storage/gate_reviews/ (all review packets)
     gate_dir = base_dir / "storage" / "gate_reviews"
     if gate_dir.is_dir():
         for p in gate_dir.glob("gate_*_review_packet.md"):
             collected.append(p)
 
-    # 6. storage/evidence_v2/<slice>_001/ lightweight review artifacts
+    # 7. storage/evidence_v2/<slice>_001/ lightweight review artifacts
     ev_dir = base_dir / "storage" / "evidence_v2"
     if ev_dir.is_dir():
         for ingest_dir in ev_dir.glob("*_001"):

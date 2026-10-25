@@ -22,7 +22,11 @@ VERSION = "chart-public-entry-preflight-1.0"
 
 
 def _sha(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    h = hashlib.sha256()
+    with open(path, 'rb') as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def _path(root, value):

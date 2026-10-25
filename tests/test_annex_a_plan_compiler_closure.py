@@ -87,19 +87,19 @@ ANNEX_A_QUESTION_PLANS: Dict[str, Dict[str, Any]] = {
         "reason": "Request for Thermal Sources under Electrical and Chemical energy."
     },
     "A4-DEV001-06": {
-        "actions": [{"id": "a1", "kind": "explain_path", "query_layer": "evidence", "subjects": ["n1"], "targets": ["a4node:proc_gmaw"], "subjects_from": [], "targets_from": [], "fields": [], "mode": "from_to", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "explain_path", "query_layer": "evidence", "subjects": ["n1"], "targets": ["GMAW"], "subjects_from": [], "targets_from": [], "fields": [], "mode": "from_to", "information_fields": [], "scope": "selected"}],
         "reason": "Request for 5-column characteristic path for GMAW."
     },
     "A4-DEV001-07": {
-        "actions": [{"id": "a1", "kind": "explain_path", "query_layer": "evidence", "subjects": ["n1"], "targets": ["a4node:proc_egw_gas", "a4node:proc_egw_flux"], "subjects_from": [], "targets_from": [], "fields": [], "mode": "from_to", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "explain_path", "query_layer": "evidence", "subjects": ["n1"], "targets": ["EGW"], "subjects_from": [], "targets_from": [], "fields": [], "mode": "from_to", "information_fields": [], "scope": "selected"}],
         "reason": "Request for multi-branch processes in Figure A4."
     },
     "A4-DEV001-08": {
-        "actions": [{"id": "a1", "kind": "lookup_term", "query_layer": "evidence", "subjects": ["a4node:legend_miaw"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "lookup_term", "query_layer": "evidence", "subjects": ["MIAW"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "", "information_fields": [], "scope": "selected"}],
         "reason": "Request for legend table count and underlined MIAW."
     },
     "A4-DEV001-09": {
-        "actions": [{"id": "a1", "kind": "lookup_term", "query_layer": "evidence", "subjects": ["a4node:thermal_conduction"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "lookup_term", "query_layer": "evidence", "subjects": ["Conduction"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "", "information_fields": [], "scope": "selected"}],
         "reason": "Request for source anomalies regarding AHW and Conduction."
     },
     "A4-DEV001-10": {
@@ -129,19 +129,19 @@ ANNEX_A_QUESTION_PLANS: Dict[str, Dict[str, Any]] = {
         "reason": "Request for Thermal Sources under Electrical, Chemical, and Mechanical energy."
     },
     "A5-DEV001-06": {
-        "actions": [{"id": "a1", "kind": "explain_path", "query_layer": "evidence", "subjects": ["n1"], "targets": ["a5node:proc_cw", "a5node:proc_usw"], "subjects_from": [], "targets_from": [], "fields": [], "mode": "from_to", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "explain_path", "query_layer": "evidence", "subjects": ["n1"], "targets": ["CW", "USW"], "subjects_from": [], "targets_from": [], "fields": [], "mode": "from_to", "information_fields": [], "scope": "selected"}],
         "reason": "Request for classification paths for CW, FRW/FSW, USW."
     },
     "A5-DEV001-07": {
-        "actions": [{"id": "a1", "kind": "explain_path", "query_layer": "evidence", "subjects": ["n1"], "targets": ["a5node:proc_dfw_chem_gas", "a5node:proc_dfw_elec_gas", "a5node:proc_dfw_elec_vac"], "subjects_from": [], "targets_from": [], "fields": [], "mode": "from_to", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "explain_path", "query_layer": "evidence", "subjects": ["n1"], "targets": ["DFW"], "subjects_from": [], "targets_from": [], "fields": [], "mode": "from_to", "information_fields": [], "scope": "selected"}],
         "reason": "Request for multi-branch processes in Figure A5 (DFW, HPW, etc.)."
     },
     "A5-DEV001-08": {
-        "actions": [{"id": "a1", "kind": "lookup_term", "query_layer": "evidence", "subjects": ["a5node:legend_cw"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "lookup_term", "query_layer": "evidence", "subjects": ["CW"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "", "information_fields": [], "scope": "selected"}],
         "reason": "Request for legend table count and designations."
     },
     "A5-DEV001-09": {
-        "actions": [{"id": "a1", "kind": "list_members", "query_layer": "evidence", "subjects": ["a5node:thermal_elec_radiation", "a5node:thermal_chem_radiation"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "direct", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "list_members", "query_layer": "evidence", "subjects": ["Radiation"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "direct", "information_fields": [], "scope": "selected"}],
         "reason": "Request for scoped Radiation boxes under Electrical vs Chemical."
     },
     "A5-DEV001-10": {
@@ -171,19 +171,19 @@ ANNEX_A_QUESTION_PLANS: Dict[str, Dict[str, Any]] = {
         "reason": "Request for Thermal Sources under Electrical and Chemical energy."
     },
     "A6-DEV001-06": {
-        "actions": [{"id": "a1", "kind": "lookup_term", "query_layer": "evidence", "subjects": ["a6node:legend_ab", "a6node:legend_b_ca"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "lookup_term", "query_layer": "evidence", "subjects": ["AB", "B-CA"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "", "information_fields": [], "scope": "selected"}],
         "reason": "Request for source anomalies regarding AB collision and underlined designations."
     },
     "A6-DEV001-07": {
-        "actions": [{"id": "a1", "kind": "explain_path", "query_layer": "evidence", "subjects": ["n1"], "targets": ["a6node:proc_bca_ind_gas", "a6node:proc_dfb_ind_gas"], "subjects_from": [], "targets_from": [], "fields": [], "mode": "from_to", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "explain_path", "query_layer": "evidence", "subjects": ["n1"], "targets": ["B-CA", "DFB"], "subjects_from": [], "targets_from": [], "fields": [], "mode": "from_to", "information_fields": [], "scope": "selected"}],
         "reason": "Request for multi-branch processes in Figure A6 (B-CA, DFB, etc.)."
     },
     "A6-DEV001-08": {
-        "actions": [{"id": "a1", "kind": "lookup_term", "query_layer": "evidence", "subjects": ["a6node:legend_ab"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "lookup_term", "query_layer": "evidence", "subjects": ["AB"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "", "information_fields": [], "scope": "selected"}],
         "reason": "Request for legend table count and designations."
     },
     "A6-DEV001-09": {
-        "actions": [{"id": "a1", "kind": "list_members", "query_layer": "evidence", "subjects": ["a6node:thermal_elec_radiation", "a6node:thermal_chem_radiation"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "direct", "information_fields": [], "scope": "selected"}],
+        "actions": [{"id": "a1", "kind": "list_members", "query_layer": "evidence", "subjects": ["Radiation"], "targets": [], "subjects_from": [], "targets_from": [], "fields": ["name"], "mode": "direct", "information_fields": [], "scope": "selected"}],
         "reason": "Request for Radiation and Conduction boxes under Electrical vs Chemical."
     },
     "A6-DEV001-10": {
@@ -239,11 +239,13 @@ def test_offline_plan_compilation_all_40_questions():
 
 
 def test_offline_plan_execution_through_answer_graph():
-    """Verify all 40 questions execute through answer_graph with 0 live model calls."""
+    """Verify all 40 questions execute through answer_graph with 0 live model calls and 40/40 rubric PASS."""
     total_executed = 0
     for fig_key in ["a3", "a4", "a5", "a6"]:
         graph, q_data = _get_figure_bundle(fig_key)
         element = graph["source_binding"]["locator"]["element_id"]
+        r_path = ROOT / f"storage/evidence_v2/{fig_key}_ingest_001/evaluation/rubric.json"
+        rubrics = {q["id"]: q for q in json.loads(r_path.read_text(encoding="utf-8"))["questions"]}
 
         for q_item in q_data["questions"]:
             qid = q_item["id"]
@@ -277,9 +279,12 @@ def test_offline_plan_execution_through_answer_graph():
             assert ans.get("planning_model_invocation_count", 0) == 0
             assert ans.get("external_call_count", 0) == 0
 
-            # Assert substantive response
+            # Assert substantive response and 40/40 rubric satisfaction
             answer_text = ans.get("answer", "")
             assert len(answer_text) >= 10, f"{qid} returned empty answer"
+            reqs = rubrics[qid]["required_elements"]
+            missing = [elem for elem in reqs if elem.lower() not in answer_text.lower()]
+            assert not missing, f"{qid} missing required elements from rubric: {missing}"
             total_executed += 1
 
     assert total_executed == 40

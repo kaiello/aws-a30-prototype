@@ -1,0 +1,163 @@
+{
+  "schema_version": "evidence-v2-annex-a-holdout-1.0",
+  "total_questions": 30,
+  "figures": [
+    "Figure A3",
+    "Figure A4",
+    "Figure A5",
+    "Figure A6",
+    "Annex A Tables A1–A5"
+  ],
+  "questions": [
+    {
+      "id": "A3-HO001-01",
+      "source_element": "Figure A3",
+      "query": "In Figure A3, which three joining methods branch directly from Materials Joining, and which one carries a footnote marker?"
+    },
+    {
+      "id": "A3-HO001-02",
+      "source_element": "Figure A3",
+      "query": "According to footnote a in Figure A3, why are fastening systems omitted from the chart?"
+    },
+    {
+      "id": "A3-HO001-03",
+      "source_element": "Figure A3",
+      "query": "In Figure A3, trace the full path from Materials Joining to the classification chart for Solid-State Welding."
+    },
+    {
+      "id": "A3-HO001-04",
+      "source_element": "Figure A3",
+      "query": "In Figure A3, which classification chart is referenced for Brazing and Soldering, and which category is its parent?"
+    },
+    {
+      "id": "A3-HO001-05",
+      "source_element": "Figure A3",
+      "query": "Does Figure A3 classify Thermal Spraying or Thermal Cutting processes, or what are its explicit source limits?"
+    },
+    {
+      "id": "A4-HO001-01",
+      "source_element": "Figure A4",
+      "query": "In Figure A4, trace the complete physical characteristic path for flux cored arc welding (FCAW) and gas tungsten arc welding (GTAW)."
+    },
+    {
+      "id": "A4-HO001-02",
+      "source_element": "Figure A4",
+      "query": "In Figure A4, which two fusion welding processes appear in more than one characteristic branch, and what distinguishes their branches?"
+    },
+    {
+      "id": "A4-HO001-03",
+      "source_element": "Figure A4",
+      "query": "In Figure A4, which process under Electrical -> Resistance uses Pressure in the Mechanical Loading* column, and what does footnote * specify?"
+    },
+    {
+      "id": "A4-HO001-04",
+      "source_element": "Figure A4",
+      "query": "In Figure A4, what happens to the Conduction box under Electrical energy, and which process is in the tree under Gas shielding but missing from the bottom legend?"
+    },
+    {
+      "id": "A4-HO001-05",
+      "source_element": "Figure A4",
+      "query": "In Figure A4, which processes branch from Chemical -> Flame Contact, and what shielding mediums do they use?"
+    },
+    {
+      "id": "A5-HO001-01",
+      "source_element": "Figure A5",
+      "query": "In Figure A5, compare the complete classification path of ultrasonic welding (USW) with that of cold welding (CW)."
+    },
+    {
+      "id": "A5-HO001-02",
+      "source_element": "Figure A5",
+      "query": "In Figure A5, list all three characteristic branches where diffusion welding (DFW) appears."
+    },
+    {
+      "id": "A5-HO001-03",
+      "source_element": "Figure A5",
+      "query": "In Figure A5, which three solid-state welding processes appear together under both Electrical -> Radiation -> Pressure Deformation and Chemical -> Radiation -> Pressure Deformation without shielding?"
+    },
+    {
+      "id": "A5-HO001-04",
+      "source_element": "Figure A5",
+      "query": "In Figure A5, what is the exact Mechanical Loading* box label for explosion welding (EXW), and what is its Thermal Source?"
+    },
+    {
+      "id": "A5-HO001-05",
+      "source_element": "Figure A5",
+      "query": "In Figure A5, which processes are classified under Electrical -> Resistance, and how do their Mechanical Loading* boxes differ?"
+    },
+    {
+      "id": "A6-HO001-01",
+      "source_element": "Figure A6",
+      "query": "In Figure A6, what does the letter designation AB stand for in the legend and chart, and what are its two characteristic paths?"
+    },
+    {
+      "id": "A6-HO001-02",
+      "source_element": "Figure A6",
+      "query": "In Figure A6, list all five characteristic branches where controlled-atmosphere brazing (B-CA) appears."
+    },
+    {
+      "id": "A6-HO001-03",
+      "source_element": "Figure A6",
+      "query": "In Figure A6, which four characteristic branches lead to diffusion brazing (DFB), and what Mechanical Loading* box do all four share?"
+    },
+    {
+      "id": "A6-HO001-04",
+      "source_element": "Figure A6",
+      "query": "In Figure A6, which three soldering processes appear under both Electrical -> Conduction -> Flux and Chemical -> Conduction -> Flux?"
+    },
+    {
+      "id": "A6-HO001-05",
+      "source_element": "Figure A6",
+      "query": "In Figure A6, which four letter designations in the bottom legend table are printed with underlines, and what are their full process names?"
+    },
+    {
+      "id": "AT-HO001-01",
+      "source_element": "Annex A Tables A1–A5",
+      "query": "What does the letter designation AB stand for in Tables A1, A2, A3, and Figure A1 versus in Figure A6?"
+    },
+    {
+      "id": "AT-HO001-02",
+      "source_element": "Annex A Tables A1–A5",
+      "query": "In Table A1, under which two distinct parent groups does ultrasonic welding (USW) appear, and on which printed pages?"
+    },
+    {
+      "id": "AT-HO001-03",
+      "source_element": "Annex A Tables A1–A5",
+      "query": "Why does Table A3 contain 134 entries while Table A2 contains 133 entries, and how is that missing process treated in Table A5 and Figure A4?"
+    },
+    {
+      "id": "AT-HO001-04",
+      "source_element": "Annex A Tables A1–A5",
+      "query": "Identify the two typographical errors printed in Table A2 on pages 71 and 72 and give their correct forms from Table A1 and Table A3."
+    },
+    {
+      "id": "AT-HO001-05",
+      "source_element": "Annex A Tables A1–A5",
+      "query": "Using Table A4 and Table A3, decode the combined designations PAW-AD, RSW-RO, and EBW-HV-AU."
+    },
+    {
+      "id": "AT-HO001-06",
+      "source_element": "Annex A Tables A1–A5",
+      "query": "In Table A5, list all obsolete carbon arc brazing and carbon arc welding processes and their letter designations, and identify which obsolete process in Table A5 has no letter designation."
+    },
+    {
+      "id": "AT-HO001-07",
+      "source_element": "Annex A Tables A1–A5",
+      "query": "Are the indented processes under Arc Welding (AW) in Table A1 and Figure A1 admitted as accepted IS_A relations in Phase 2, and why?"
+    },
+    {
+      "id": "AT-HO001-08",
+      "source_element": "Annex A Tables A1–A5",
+      "query": "Compare the classification of induction welding (IW) in Table A1 and Figure A1 with its physical characteristic paths in Figure A4 and Figure A5."
+    },
+    {
+      "id": "AT-HO001-09",
+      "source_element": "Annex A Tables A1–A5",
+      "query": "Trace how Brazing (B) and Soldering (S) are grouped in Table A1 and Figure A1 versus how they are joined through Figure A3 into Figure A6."
+    },
+    {
+      "id": "AT-HO001-10",
+      "source_element": "Annex A Tables A1–A5",
+      "query": "Do Figures A1–A6 or Tables A1–A5 specify minimum fillet weld leg dimensions or preheat temperatures, and what is the required epistemic response?"
+    }
+  ]
+}
