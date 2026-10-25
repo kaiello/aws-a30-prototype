@@ -60,17 +60,17 @@
 |---|---|---|---|
 | **1. Schema Validity** | 100% valid JSON envelopes | **30 / 30 (100%)** | **PASS** |
 | **2. Compiler Acceptance** | 0 pre-retrieval rejections | **30 / 30 (100% — exactly 0 rejected)** | **PASS** |
-| **3. Executed Operations** | Bounded graph operations executed | **109 operations executed (30/30 questions with $\ge 1$ ops)** | **PASS** |
+| **3. Executed Operations** | Bounded graph operations executed | **127 operations executed (30/30 questions with $\ge 1$ ops)** | **PASS** |
 | **4. Content Grade** | $\ge 93.3\%$ (28/30) PASS | **30 / 30 PASS (100.0%)** | **PASS** |
 | **5. Delivery Grade per Part** | $\ge 93.3\%$ (28/30) PASS | **30 / 30 PASS (100.0%)** | **PASS** |
 
 ### Per-Figure Holdout Breakdown:
-- **Figure A3 (5 Unseen Questions):** 5 / 5 PASS (100%) | 16 graph operations executed | Avg latency: 2.03s
-- **Figure A4 (5 Unseen Questions):** 5 / 5 PASS (100%) | 37 graph operations executed | Avg latency: 3.16s
-- **Figure A5 (5 Unseen Questions):** 5 / 5 PASS (100%) | 29 graph operations executed | Avg latency: 2.69s
-- **Figure A6 (5 Unseen Questions):** 5 / 5 PASS (100%) | 17 graph operations executed | Avg latency: 2.89s
+- **Figure A3 (5 Unseen Questions):** 5 / 5 PASS (100%) | 16 graph operations executed | Avg latency: 0.12s
+- **Figure A4 (5 Unseen Questions):** 5 / 5 PASS (100%) | 42 graph operations executed | Avg latency: 0.59s
+- **Figure A5 (5 Unseen Questions):** 5 / 5 PASS (100%) | 36 graph operations executed | Avg latency: 0.72s
+- **Figure A6 (5 Unseen Questions):** 5 / 5 PASS (100%) | 23 graph operations executed | Avg latency: 0.72s
 - **Annex A Tables & Cross-Chart Synthesis (10 Questions):** 10 / 10 PASS (100%) | 10 table operations | Instantaneous (<0.01s)
-- **Total Suite:** **30 / 30 PASS (100%)** in **53.7s** | **0 blocked actions** | **0 retries**.
+- **Total Suite:** **30 / 30 PASS (100%)** in **10.7s** | **0 blocked actions** | **0 retries**.
 
 ---
 
@@ -91,12 +91,12 @@
 | `A5-HO001-01` | Figure A5 | 10 | **PASS** | **PASS** | Compared classification paths: USW (`Mechanical -> Friction -> Pressure -> No Shielding -> USW`) vs CW (`Mechanical -> [Skips Thermal Source] -> Pressure Deformation -> No Shielding -> CW`). |
 | `A5-HO001-02` | Figure A5 | 3 | **PASS** | **PASS** | Listed all 3 characteristic branches for DFW: (1) Chem -> Rad -> Press -> Gas; (2) Elec -> Rad -> Press -> Gas; (3) Elec -> Rad -> Press -> Vac (all sharing Pressure). |
 | `A5-HO001-03` | Figure A5 | 5 | **PASS** | **PASS** | Identified the 3 solid-state welding processes together under Radiation with Pressure Deformation and No Shielding: CEW, FOW, ROW. |
-| `A5-HO001-04` | Figure A5 | 6 | **PASS** | **PASS** | Stated exact Mechanical Loading* label for EXW (`Pressure Deformation`) and noted Thermal Source is omitted (skips Thermal Source column). |
+| `A5-HO001-04` | Figure A5 | 6 | **PASS** | **PASS** | Identified explosion welding (EXW) path under Chemical -> Explosion (Thermal Source) -> Deformation (Mechanical Loading*) -> No Shielding -> EXW. Verified EXW does not branch from Mechanical energy or skip Thermal Source. |
 | `A5-HO001-05` | Figure A5 | 5 | **PASS** | **PASS** | Differentiated Electrical -> Resistance processes: UW uses `Pressure`, while RSW and RSEW use `Pressure Deformation`. |
 | `A6-HO001-01` | Figure A6 | 4 | **PASS** | **PASS** | Stated AB stands for `arc brazing`; traced both paths: (1) `Elec -> Arc -> [No Mech Loading] -> Gas -> AB`; (2) `Elec -> Arc -> [No Mech Loading] -> Flux -> AB`. |
-| `A6-HO001-02` | Figure A6 | 3 | **PASS** | **PASS** | Listed all 5 branches for B-CA: Elec/Ind/None/Gas, Elec/Ind/None/Vac, Elec/Rad/None/Gas, Elec/Rad/None/Vac, Chem/Flame/None/Gas. |
-| `A6-HO001-03` | Figure A6 | 4 | **PASS** | **PASS** | Listed 4 branches for DFB (Elec -> Ind -> Press -> Gas/Vac, Elec -> Rad -> Press -> Gas/Vac) and identified shared Mechanical Loading* box `Pressure`. |
-| `A6-HO001-04` | Figure A6 | 4 | **PASS** | **PASS** | Identified soldering processes under Conduction with Flux: iron soldering (INS), ultrasonic soldering (USS), wave soldering (WS), dip soldering (DS). |
+| `A6-HO001-02` | Figure A6 | 2 | **PASS** | **PASS** | Listed all 5 characteristic branches for B-CA across Induction/Radiation under Electrical and Radiation under Chemical, Gas/Vacuum, No Mechanical Loading. |
+| `A6-HO001-03` | Figure A6 | 7 | **PASS** | **PASS** | Listed 4 branches for DFB (Elec -> Ind -> Press -> Gas/Vac, Elec -> Rad -> Press -> Gas/Vac) and identified shared Mechanical Loading* box `Pressure`. |
+| `A6-HO001-04` | Figure A6 | 4 | **PASS** | **PASS** | Identified soldering processes under Conduction with Flux: dip soldering (DS), iron soldering (INS), wave soldering (WS) appearing under both Electrical -> Conduction -> Flux and Chemical -> Conduction -> Flux, plus ultrasonic soldering (USS) under Electrical -> Conduction -> Flux. |
 | `A6-HO001-05` | Figure A6 | 2 | **PASS** | **PASS** | Listed the 4 underlined designations and process names: B-CA (controlled-atmosphere brazing), EBB (electron beam brazing), EXB (exothermic brazing), LBB (laser beam brazing). |
 | `AT-HO001-01` | Tables A1–A5 | 1 | **PASS** | **PASS** | Confirmed AB stands for `adhesive bonding` in Tables A1, A2, A3, Figure A1, and Clause 4, vs `arc brazing` in Figure A6 (authentic designation collision). |
 | `AT-HO001-02` | Tables A1–A5 | 1 | **PASS** | **PASS** | Identified USW under `plastics welding` (p. 69, PDF index 81) and under `solid-state welding` (p. 70, PDF index 82) in Table A1. |

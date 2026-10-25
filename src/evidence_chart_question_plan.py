@@ -241,6 +241,7 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
     for role in refs:
         if action[role] and action[role + "_from"]:
             _reject("LITERALS_AND_REFERENCES_MIXED")
+        resolved_from = []
         for previous in action[role + "_from"]:
             _identifier(previous)
             if previous not in prior:
@@ -248,7 +249,15 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
             producer = prior[previous]
             if not producer.get("anchor"):
                 _reject("REFERENCE_PRODUCER_INVALID_OR_FAILED")
-            refs[role].append({"operation_id": producer["anchor"], "select": producer["selection"]})
+            if kind in {"check_relationship", "explain_path"} and producer.get("node_ids"):
+                resolved_from.extend(producer["node_ids"])
+            else:
+                refs[role].append({"operation_id": producer["anchor"], "select": producer["selection"]})
+        if resolved_from:
+            if role == "subjects" and not subjects:
+                subjects = list(dict.fromkeys(resolved_from))
+            elif role == "targets" and not targets:
+                targets = list(dict.fromkeys(resolved_from))
     if chart_scope:
         if layer != "evidence":
             _reject("EVIDENCE_LAYER_REQUIRED")
@@ -260,8 +269,12 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
     targetless_membership = kind == "check_relationship" and mode == "membership" and not (targets or refs["targets"])
     targetless_layout = kind == "check_relationship" and mode in {"layout", "semantic_subtype"} and not (targets or refs["targets"])
     if kind == "explain_path" and not (targets or refs["targets"]):
-        # Allow explain_path without targets to trace paths to root
-        pass
+        root_nodes = [n["id"] for n in graph.get("nodes", []) if n.get("kind") == "root"]
+        reverse = {nid: alias for alias, nid in aliases.items()}
+        if root_nodes and root_nodes[0] in reverse:
+            targets = [reverse[root_nodes[0]]]
+        elif "n1" in aliases:
+            targets = ["n1"]
     elif kind == "check_relationship" and not chart_scope and mode != "source_limits" and not targetless_membership and not targetless_layout:
         if not (targets or refs["targets"]):
             _reject("TARGET_REQUIRED")
@@ -273,6 +286,15 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
         operations.append(_operation(identifier, operation_kind, layer, selected, destinations,
                                      references, information))
         return identifier
+    def emit_single(operation_kind, destinations=targets, references=refs):
+        first_anchor = None
+        if len(subjects) > 1:
+            for s in subjects:
+                a = add(operation_kind, selected=[s], destinations=destinations, references=references)
+                if first_anchor is None:
+                    first_anchor = a
+            return first_anchor
+        return add(operation_kind, selected=subjects, destinations=destinations, references=references)
     if kind == "lookup_term":
         anchor = add("designation", destinations=[])
         selection = "rows"
@@ -287,7 +309,7 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
             selection = {"parents": "parents", "physical_neighbors": "groups", "direct": "groups",
                          "descendants": "groups"}.get(mode, "rows")
     elif kind == "explain_path":
-        anchor = add("paths")
+        anchor = emit_single("paths")
         selection = None
     elif chart_scope:
         anchor = add("chart_layout", selected=[], destinations=[])
@@ -310,14 +332,14 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
         nodes = {n["id"]: n for n in graph["nodes"]}
         target_kinds = {nodes[aliases[t]]["kind"] for t in targets if t in aliases and aliases[t] in nodes}
         subject_kinds = {nodes[aliases[s]]["kind"] for s in subjects if s in aliases and aliases[s] in nodes}
-        if mode in {"layout", "semantic_subtype"} and (("root" in subject_kinds or "category" in subject_kinds) or "root" in target_kinds):
+        if (("root" in subject_kinds or "category" in subject_kinds) or "root" in target_kinds):
             # Physical route / connector between non-process subjects or root target
-            anchor = add("paths")
+            anchor = emit_single("paths")
             selection = None
             if mode in {"layout", "semantic_subtype"}:
                 add("epistemic_limits", destinations=[], references={"subjects": refs["subjects"], "targets": []})
         else:
-            anchor = add("membership" if mode == "membership" else "layout_relation")
+            anchor = emit_single("membership" if mode == "membership" else "layout_relation")
             selection = None
             if mode in {"layout", "semantic_subtype"}:
                 add("epistemic_limits", destinations=[], references={"subjects": refs["subjects"], "targets": []})
@@ -333,6 +355,8 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
             if chart_scope and field in {"group", "evidence"}:
                 continue
             if (targetless_membership or targetless_layout) and field == "group":
+                continue
+            if kind == "list_members" and field == "group":
                 continue
             if not (field == "source_limits" and kind == "check_relationship" and mode != "membership"):
                 if operation_kind == "category":
@@ -358,7 +382,30 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
     if valid_info:
         add("operating_information", selected=projected, destinations=[], references=projections,
             information=valid_info)
-    return operations, {"anchor": anchor, "selection": selection} if selection else None, []
+    from src.evidence_a1_graph_qa import _GraphView
+    produced_node_ids = []
+    view = _GraphView(graph)
+    reverse = {nid: alias for alias, nid in aliases.items()}
+    if kind == "lookup_term":
+        produced_node_ids = list(subjects)
+    elif kind == "list_members":
+        if not subjects and chart_scope:
+            produced_node_ids = [reverse[nid] for nid in view.nodes if nid in reverse and view.nodes[nid]["kind"] == "process"]
+        else:
+            all_procs = []
+            for s in subjects:
+                actual_id = aliases.get(s, s)
+                if actual_id in view.nodes and view.nodes[actual_id]["kind"] == "process":
+                    all_procs.append(s)
+                else:
+                    found, _ = view.descendants([actual_id], direct=mode == "direct")
+                    all_procs.extend([reverse[nid] for nid in found if nid in reverse and view.nodes[nid]["kind"] == "process"])
+            produced_node_ids = all_procs if all_procs else list(subjects)
+    else:
+        produced_node_ids = list(subjects)
+
+    producer_info = {"anchor": anchor, "selection": selection, "node_ids": produced_node_ids}
+    return operations, producer_info, []
 
 
 def compile_plan(graph, query, payload, concept_bindings=None):

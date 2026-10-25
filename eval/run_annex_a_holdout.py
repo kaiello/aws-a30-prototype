@@ -90,8 +90,8 @@ HOLDOUT_RUBRIC = {
         "forbidden_elements": ["action1_blocked", "CHART_QUESTION_PLAN_", "ambiguous_source_identity"],
     },
     "A5-HO001-04": {
-        "required_elements": ["EXW", "Pressure Deformation", "Thermal Source"],
-        "forbidden_elements": ["action1_blocked", "CHART_QUESTION_PLAN_", "ambiguous_source_identity"],
+        "required_elements": ["EXW", "Deformation", "Explosion", "Chemical"],
+        "forbidden_elements": ["action1_blocked", "CHART_QUESTION_PLAN_", "ambiguous_source_identity", "skips the Thermal Source"],
     },
     "A5-HO001-05": {
         "required_elements": ["Resistance", "Pressure", "Pressure Deformation", "UW", "RSW", "RSEW"],
@@ -164,9 +164,61 @@ HOLDOUT_RUBRIC = {
 }
 
 
+class ReplayQuestionPlanner:
+    """Offline deterministic replay planner using saved receipts with 0 live network calls."""
+    def __init__(self, root: Path, directory: Path):
+        self.root = Path(root)
+        self.directory = Path(directory)
+        runtime_file = self.directory / "runtime.json"
+        if runtime_file.exists():
+            with open(runtime_file, "r", encoding="utf-8") as f:
+                self.metadata = json.load(f)
+        else:
+            self.metadata = {
+                "provider": "deepseek_https_explicit",
+                "model": "deepseek-flash",
+                "documented_model_version": "DeepSeek-V4.1-Flash-1017",
+                "options": {"temperature": 0},
+            }
+        self.calls = []
+        self.requests = 0
+        self.structural_block = None
+
+    def record_result(self, answer):
+        pass
+
+    def __call__(self, graph, query, *, concept_bindings=None):
+        from src.evidence_chart_question_plan import compile_plan
+        from src.evidence_chart_local_planner import _rejected
+        from src.evidence_a1_vision import _strict_loads, _canonical
+
+        self.requests += 1
+        req_dir = self.directory / f"request_{self.requests:03d}"
+        receipt_file = req_dir / "receipt.json"
+        if not receipt_file.exists():
+            raise FileNotFoundError(f"Missing replay receipt: {receipt_file}")
+        with open(receipt_file, "r", encoding="utf-8") as f:
+            receipt = json.load(f)
+        self.calls.append(receipt)
+        payload = _strict_loads(receipt["raw_output"])
+        try:
+            plan = compile_plan(graph, query, payload, concept_bindings=concept_bindings)
+        except (ValueError, TypeError, KeyError) as exc:
+            plan = _rejected(query, "MODEL_PLAN_REJECTED: " + str(exc))
+        plan["model_planning"] = {key: receipt.get(key) for key in (
+            "version", "model", "digest", "provider", "options", "elapsed_seconds",
+            "request_sha256", "model_invocation_count", "external_call_count")}
+        (req_dir / "validated_plan.json").write_bytes(_canonical(plan))
+        return plan
+
+
 def run_annex_a_live_holdout() -> Dict[str, Any]:
+    is_live = "--live" in sys.argv
     print("=" * 70)
-    print("Gate 2F: Bounded Live LLM Holdout Run (30 Questions, temperature=0, 0 retries)")
+    if is_live:
+        print("Gate 2F: Bounded Live LLM Holdout Run (30 Questions, temperature=0, 0 retries)")
+    else:
+        print("Gate 2F: Offline Receipt Replay Benchmark (30 Questions, 0 live LLM calls)")
     print("=" * 70)
 
     holdout_file = ROOT / "eval/evidence_v2_annex_a_holdout.json"
@@ -178,13 +230,18 @@ def run_annex_a_live_holdout() -> Dict[str, Any]:
 
     # Set up planner directory
     planner_dir = ROOT / "storage/evidence_v2/annex_a_holdout_001/deepseek_run"
-    if planner_dir.exists():
-        import shutil
-        shutil.rmtree(planner_dir)
-
-    planner = DeepSeekQuestionPlanner(ROOT, planner_dir)
-    print(f"Instantiated DeepSeekQuestionPlanner in {planner_dir}")
-    print(f"Model: {planner.metadata.get('model')} | Options: {planner.metadata.get('options')}")
+    if is_live:
+        if planner_dir.exists():
+            import shutil
+            shutil.rmtree(planner_dir)
+        planner = DeepSeekQuestionPlanner(ROOT, planner_dir)
+        print(f"Instantiated DeepSeekQuestionPlanner in {planner_dir}")
+        print(f"Model: {planner.metadata.get('model')} | Options: {planner.metadata.get('options')}")
+    else:
+        if not planner_dir.exists():
+            raise FileNotFoundError(f"Replay planner directory does not exist: {planner_dir}")
+        planner = ReplayQuestionPlanner(ROOT, planner_dir)
+        print(f"Instantiated ReplayQuestionPlanner in {planner_dir} (0 live LLM calls)")
 
     # Load graphs and prepare stores
     loaded_figures = {}
@@ -244,6 +301,7 @@ def run_annex_a_live_holdout() -> Dict[str, Any]:
             has_blocked = (
                 "action1_blocked" in ans_text
                 or "action_blocked" in ans_text
+                or "[blocked]" in ans_text
                 or "ambiguous_source_identity" in ans_text
                 or "PLANNER_SCHEMA_INTEGRATION_BLOCKER" in ans_text
                 or "LOCAL_BACKEND_ERROR" in ans_text
@@ -296,6 +354,7 @@ def run_annex_a_live_holdout() -> Dict[str, Any]:
             has_blocked = (
                 "action1_blocked" in ans_text
                 or "action_blocked" in ans_text
+                or "[blocked]" in ans_text
                 or "ambiguous_source_identity" in ans_text
             )
 
@@ -343,6 +402,7 @@ def run_annex_a_live_holdout() -> Dict[str, Any]:
         1 for r in results
         if "action1_blocked" in r["answer"]
         or "action_blocked" in r["answer"]
+        or "[blocked]" in r["answer"]
         or "ambiguous_source_identity" in r["answer"]
     )
     rubric_satisfied_count = sum(

@@ -1741,7 +1741,7 @@ def _enrich_annex_a_answer(graph, query, result):
             if paths:
                 extra.append(f"In {element}, {label} ({code}): {'; '.join(paths)}.")
 
-        if element == "Figure A5" and code in {"CW", "EXW"}:
+        if element == "Figure A5" and code == "CW":
             procs = [p for p in process_nodes if p.get("code") == code]
             if procs:
                 p_loading_parent = incoming.get(procs[0]["id"], [])
@@ -1818,10 +1818,10 @@ def _enrich_annex_a_answer(graph, query, result):
             m_strs = [f"{c.get('label', '')}" + (f" (printed as '{c.get('printed_label')}', footnote marker {c.get('footnote_marker')})" if c.get("footnote_marker") else "") for c in m_children]
             extra.append(f"In Figure A3, the joining methods branching directly from Materials Joining are: {', '.join(m_strs)}.")
         for link in spec.cross_chart_links:
-            cat = link.get("category", "")
-            target_fig = link.get("target_figure", "")
-            target_title = link.get("target_title", "")
-            if cat.lower() in q_lower:
+            cat = link.get("from_label") or link.get("category", "")
+            target_fig = link.get("to_figure") or link.get("target_figure", "")
+            target_title = link.get("to_label") or link.get("target_title", "")
+            if cat and cat.lower() in q_lower:
                 extra.append(f"In Figure A3, {cat} links to the classification chart: '{target_title} (See {target_fig})'. Its parent category is Welding.")
 
     if extra:

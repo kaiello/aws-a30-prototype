@@ -642,7 +642,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
             "Brazing and Soldering are grouped together under 'Brazing and Soldering' which points to "
             "'Brazing and Soldering Classification Chart (See Figure A6)', which leads to the unified Figure A6 chart.\n"
             "3. In Figure A6 (p. 79), Brazing and Soldering are fully integrated into a unified 5-column physical characteristic decision tree "
-            "sharing Energy Sources (Electrical and Chemical) and Thermal Sources (Arc, Resistance, Conduction, Induction, Radiation, Flame Contact, Chemical Reaction)."
+            "sharing Energy Sources (Electrical and Chemical) and Thermal Sources (Arc, Resistance, Conduction, Induction, Radiation, Flame Contact)."
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
