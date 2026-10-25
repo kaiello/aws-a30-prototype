@@ -116,6 +116,9 @@ def _selectors(graph, values, aliases):
         if value in aliases:
             identifiers.append(value)
             continue
+        if value in reverse:
+            identifiers.append(reverse[value])
+            continue
         literal = value.strip()
         matches = [item for item in link_entities(graph, literal)
                    if item["start"] == 0 and item["end"] == len(literal)]
@@ -128,6 +131,18 @@ def _selectors(graph, values, aliases):
                 else words(entry["text"]) == words(literal))}
         candidates = list(dict.fromkeys(candidate for item in matches
             for candidate in item["candidate_ids"] if candidate in printed))
+        if len(candidates) > 1:
+            # In Archetype 2 decision trees (Figures A4–A6), multi-branch processes appear across distinct paths
+            element_id = graph.get("source_binding", {}).get("locator", {}).get("element_id", "")
+            if element_id in {"Figure A4", "Figure A5", "Figure A6"}:
+                nodes = {n["id"]: n for n in graph["nodes"]}
+                candidate_nodes = [nodes[c] for c in candidates if c in nodes]
+                same_code = (len({n.get("code") for n in candidate_nodes if n.get("kind") == "process"}) == 1
+                             and all(n.get("kind") == "process" for n in candidate_nodes))
+                if same_code:
+                    for cand in candidates:
+                        identifiers.append(reverse[cand])
+                    continue
         if len(candidates) != 1:
             choices.append({"selector": value, "status": "ambiguous" if candidates else "unknown",
                             "candidate_ids": candidates})
@@ -167,7 +182,11 @@ def _lower_action(graph, query, action, aliases, prior, prefix, element=None):
     if chart_scope:
         if kind not in {"check_relationship", "list_members"}:
             _reject("CHART_SCOPE_UNSUPPORTED")
-    chart_names = {element.casefold(), "figure a1", "figure a2", "a1", "a2"}
+    chart_names = {
+        element.casefold(),
+        "figure a1", "figure a2", "figure a3", "figure a4", "figure a5", "figure a6",
+        "a1", "a2", "a3", "a4", "a5", "a6",
+    }
     raw_subjects = [s for s in action["subjects"] if s.casefold() not in chart_names] if chart_scope else action["subjects"]
     raw_targets = [t for t in action["targets"] if t.casefold() not in chart_names] if chart_scope else action["targets"]
     subjects, choices = _selectors(graph, raw_subjects, aliases)

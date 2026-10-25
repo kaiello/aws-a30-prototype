@@ -92,8 +92,14 @@ def _scope(graph, query):
     for record in extract_reference_records(lexical):
         if record["kind"] != "page":
             resolution = record["resolution"]
+            allowed = {locator["element_id"], "Annex A"}
+            for n in graph.get("nodes", []):
+                if n.get("source_figure"):
+                    allowed.add(n["source_figure"])
+                if n.get("target_figure"):
+                    allowed.add(n["target_figure"])
             if (resolution["status"] != "exact"
-                    or any(label not in {locator["element_id"], "Annex A"}
+                    or any(label not in allowed
                            for label in resolution.get("labels", []))):
                 _reject("SOURCE_SCOPE_MISMATCH")
         if record.get("qualifiers", {}).get("page"):
