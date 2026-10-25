@@ -49,7 +49,7 @@ Do not micromanage individual unit-test edits inside a phase. Enforce hard stops
 
 At every gate, Gemini 3.8 Flash must generate a single self-contained file at `storage/gate_reviews/gate_<ID>_review_packet.md`. Never approve a gate without all seven sections populated:
 
-1. **Gate Metadata and Git State:** Gate ID, branch, HEAD commit SHA, `main` commit SHA (`71088cebc9eb3b2556d7bbe73a23a451e645e3b9`), `git status --short`, and `git diff --stat`.
+1. **Gate Metadata and Git State:** Gate ID, branch, HEAD commit SHA, `main` commit SHA (`71088cebc9eb3b2556d7bbe73a23a451e645e3b9`), `git status --short`, `git diff --stat`, and confirmation that Google Drive mirror was synchronized (`Drive Mirror Synced: G:\My Drive\git_projects\aws-a30-prototype (Timestamp UTC)`).
 2. **Immutable Artifact and Store Integrity:** Verification of Source PDF SHA-256 (`205fa58e...`), A1 store SHA-256 (`6476c898...`), A2 crop SHA-256 (`e792b09c...`), and confirmation that prior run receipts remain untouched.
 3. **Deterministic 4-Check Anti-Drift & Real-Entry Preflight Receipts:**
    - Exact CLI output of the 4-Check Anti-Drift Verifier loop (`python -B -m src.evidence_a<ID> --verify-anti-drift`):
@@ -70,3 +70,20 @@ At every gate, Gemini 3.8 Flash must generate a single self-contained file at `s
    - Confirmation via `grep` / `git diff` that no question IDs (`A1-QA002-*`, `A1-HO002-*`) or hardcoded answer strings were added to `src/`
 6. **Per-Item Failure and Regression Ledger:** Exact question IDs, failure layer attribution (Layers 1 through 6), and verbatim composed answers for any partial/failed/repaired items.
 7. **Requested Authorization:** The exact single next step requested from the reviewer.
+
+---
+
+## Mandatory Gate Closeout & Google Drive Mirror Step
+
+Before stopping for review at any gate:
+1. Run the automatic Google Drive mirror:
+   ```powershell
+   python -B -m src.sync_drive_mirror
+   ```
+2. Confirm that `G:\My Drive\git_projects\aws-a30-prototype` contains:
+   - Updated `src/`, `tests/`, `.agents/skills/`, and documentation (`ROADMAP.md`, `goal.md`, `GEMINI.md`, `AGENTS.md`)
+   - All gate review packets in `storage/gate_reviews/`
+   - Lightweight reviewable figure artifacts (`*_crop_300.png`, `graph.json`, `questions.json`, `rubric.json`, receipts) in `storage/evidence_v2/`
+   - Fresh `git_state_summary.txt` recording status, branches, commits, and diff
+   - Strictly zero `.git/` files, SQLite databases (`*.db`, `*.db-wal`, `*.db-shm`), or raw request receipt directories
+3. Record `Drive Mirror Synced: G:\My Drive\git_projects\aws-a30-prototype (Timestamp UTC)` in Section 1 of `storage/gate_reviews/gate_<ID>_review_packet.md`.
