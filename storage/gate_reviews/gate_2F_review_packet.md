@@ -11,7 +11,7 @@
 
 - **Gate ID:** Gate 2F (Final Annex A Validation Gate; Phase 2 Closeout & Transition to Phase 3)
 - **Current Branch:** `feat/gate-2f-annex-a-live-holdout`
-- **HEAD Commit SHA:** `284f55c` (`fix(gate-2f): complete 5 deterministic repairs, resolve multi-node catalog ambiguities, and achieve 30/30 (100%) live holdout PASS`)
+- **HEAD Commit SHA:** `7e48e52` (`fix(gate-2f): clean up EXW grounding, cross-chart links, and fan out multi-subject operations (30/30 PASS, 0 blocked)`)
 - **Base `main` Commit:** `4bd5d0b` (`docs: update ROADMAP.md to align with shared Gemini roadmap specification`)
 - **Git Branch Hygiene & Cleanup Summary:**
   - Merged `feat/annex-a-tables-join` (`d55eba2`) into `main`.
