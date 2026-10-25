@@ -633,14 +633,20 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
             "record_evidence_catalog": rec_ids,
         }
 
-    # 5c. Scoped / Disambiguated category queries (e.g., Radiation under multiple energy sources)
-    if "radiation" in q_norm and ("energy" in q_norm or "represented" in q_norm or "different" in q_norm or "box" in q_norm):
-        rad_nodes = [n for n in graph["nodes"] if n.get("label") == "Radiation"]
-        energy_parents = [n.get("energy_source", "Unknown") for n in rad_nodes]
+    # 5c. Scoped / Disambiguated category queries (e.g., Radiation or Conduction under multiple energy sources)
+    if ("radiation" in q_norm or "conduction" in q_norm) and ("energy" in q_norm or "represented" in q_norm or "different" in q_norm or "box" in q_norm):
+        scoped_boxes = []
+        rec_nodes = []
+        for term in ["Radiation", "Conduction"]:
+            nodes_for_term = [n for n in graph["nodes"] if n.get("label") == term and n.get("column") == "Thermal Source"]
+            if nodes_for_term:
+                rec_nodes.extend(nodes_for_term)
+                parents = [n.get("energy_source", "Unknown") for n in nodes_for_term]
+                scoped_boxes.append(f"{term} (under {' and '.join(parents)})")
         ans = (
-            f"In {spec.element}, the Thermal Source box for Radiation appears separately under both "
-            f"{' and '.join(energy_parents)} energy sources. They are maintained as separate nodes in the graph "
-            f"to preserve accurate parentage and avoid conflating electrical radiation and chemical radiation branches."
+            f"In {spec.element}, Thermal Source boxes appear separately under multiple energy sources: "
+            f"{', '.join(scoped_boxes)}. They are maintained as separate nodes in the graph "
+            f"to preserve accurate parentage and avoid conflating electrical and chemical branches."
         )
         return {
             "query": query,
@@ -649,7 +655,7 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
             "verdict": "verified",
             "source_element": spec.element,
             "operations": [{"kind": "category_lookup", "execution_status": "executed", "graph_executed": True}],
-            "record_evidence_catalog": [n["evidence"]["record_id"] for n in rad_nodes],
+            "record_evidence_catalog": [n["evidence"]["record_id"] for n in rec_nodes],
         }
 
     # 6. Specific process path query (word-boundary code matching or label matching)
@@ -796,6 +802,8 @@ def answer_decision_tree_query(graph: Dict[str, Any], query: str, spec: Decision
         )
         if spec.element == "Figure A4":
             ans += " Note that MIAW (magnetically impelled arc welding) is printed with an underline, and AHW is omitted from the legend table."
+        elif spec.element == "Figure A6":
+            ans += " Note that B-CA, EBB, EXB, and LBB are printed with underlines, and AB designates arc brazing."
         return {
             "query": query,
             "answer": ans,

@@ -66,7 +66,7 @@ def run_preflight(root, input_path, question_id, receipt_path, output_directory,
     if len(questions) != 1 or len({q["id"] for q in payload["questions"]}) != len(payload["questions"]):
         raise ValueError("PREFLIGHT_UNIQUE_EXISTING_QUESTION_REQUIRED")
     source = payload["source_element"]
-    if source not in {"Figure A1", "Figure A2", "Figure A3", "Figure A4", "Figure A5"} or (source in {"Figure A2", "Figure A3", "Figure A4", "Figure A5"} and graph_path is None):
+    if source not in {"Figure A1", "Figure A2", "Figure A3", "Figure A4", "Figure A5", "Figure A6"} or (source in {"Figure A2", "Figure A3", "Figure A4", "Figure A5", "Figure A6"} and graph_path is None):
         raise ValueError("PREFLIGHT_SUPPORTED_SOURCE_AND_GRAPH_REQUIRED")
     if source == "Figure A1" and (graph_path is not None or source_observation_path is not None):
         raise ValueError("PREFLIGHT_A1_USES_CANONICAL_SOURCE_ONLY")
@@ -110,7 +110,12 @@ def run_preflight(root, input_path, question_id, receipt_path, output_directory,
     with patch.object(socket, "create_connection", blocked), patch.object(socket.socket, "connect", blocked), \
             patch.object(socket.socket, "connect_ex", blocked):
         try:
-            if source == "Figure A5":
+            if source == "Figure A6":
+                from src.evidence_a6 import run_questions
+                backend = run_questions(root, graph_path, selected, question_planner=planner,
+                                        source_observation_path=source_observation_path)
+                result = backend["answers"][0]["result"]
+            elif source == "Figure A5":
                 from src.evidence_a5 import run_questions
                 backend = run_questions(root, graph_path, selected, question_planner=planner,
                                         source_observation_path=source_observation_path)
@@ -203,6 +208,13 @@ FIGURE_CONFIGS = {
         "question_id": "A5-DEV001-01",
         "receipt": "storage/evidence_v2/a5_ingest_001/evaluation/a5_receipt.json",
         "graph": "storage/evidence_v2/a5_ingest_001/final_projection/graph.json",
+    },
+    "A6": {
+        "source": "Figure A6",
+        "input": "storage/evidence_v2/a6_ingest_001/evaluation/questions.json",
+        "question_id": "A6-DEV001-01",
+        "receipt": "storage/evidence_v2/a6_ingest_001/evaluation/a6_receipt.json",
+        "graph": "storage/evidence_v2/a6_ingest_001/final_projection/graph.json",
     },
 }
 
