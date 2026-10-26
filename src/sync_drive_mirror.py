@@ -149,6 +149,43 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
     return sorted(list(set(collected)))
 
 
+def prune_destination(dest_dir: Path, expected_rel_paths: set[Path]) -> List[Path]:
+    """Prune files in managed reviewable areas of dest_dir that are not in expected_rel_paths."""
+    dest_dir = Path(dest_dir).resolve()
+    if not dest_dir.is_dir():
+        return []
+
+    pruned: List[Path] = []
+    # Collect candidate files in managed areas of dest_dir
+    candidates = collect_reviewable_files(dest_dir)
+    for cand in candidates:
+        rel = cand.relative_to(dest_dir)
+        if rel == Path("git_state_summary.txt"):
+            continue
+        if rel not in expected_rel_paths:
+            try:
+                cand.unlink(missing_ok=True)
+                pruned.append(rel)
+            except Exception:
+                pass
+
+    # Also clean legacy uncollected stores if present
+    for legacy_rel in [
+        Path("storage/clause4_store.json"),
+        Path("storage/evidence_v2/clause4_store.json"),
+        Path("src/evidence_clause4.py"),
+    ]:
+        p = dest_dir / legacy_rel
+        if p.exists() and legacy_rel not in expected_rel_paths:
+            try:
+                p.unlink(missing_ok=True)
+                pruned.append(legacy_rel)
+            except Exception:
+                pass
+
+    return sorted(list(set(pruned)))
+
+
 def sync_mirror(
     source_dir: Path,
     target_dir: Path,
@@ -163,6 +200,8 @@ def sync_mirror(
     git_context = Path(active_worktree or source_dir).resolve()
 
     files = collect_reviewable_files(source_dir)
+    expected_rel = {src_file.relative_to(source_dir) for src_file in files}
+    pruned_files = prune_destination(target_dir, expected_rel)
     synced_count = 0
     total_bytes = 0
 
@@ -187,6 +226,8 @@ def sync_mirror(
         "target_directory": str(target_dir),
         "git_context_directory": str(git_context),
         "files_synced": synced_count,
+        "files_pruned": len(pruned_files),
+        "pruned_list": [str(p) for p in pruned_files],
         "total_bytes": total_bytes,
         "git_state_summary_written": True,
     }
@@ -209,6 +250,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         if CANONICAL_PROTOTYPE.exists() and current_root != CANONICAL_PROTOTYPE:
             # Sync to canonical prototype first to keep it fresh
             review_files = collect_reviewable_files(current_root)
+            expected_canonical_rel = {f.relative_to(current_root) for f in review_files}
+            prune_destination(CANONICAL_PROTOTYPE, expected_canonical_rel)
             for f in review_files:
                 rel = f.relative_to(current_root)
                 dst = CANONICAL_PROTOTYPE / rel
@@ -221,6 +264,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     receipt = sync_mirror(source_dir, args.target, active_worktree=worktree_dir)
     print(f"Drive Mirror Synced: {receipt['target_directory']} ({receipt['timestamp_utc']})")
     print(f"Files synced: {receipt['files_synced']} ({receipt['total_bytes']:,} bytes)")
+    if receipt["files_pruned"] > 0:
+        print(f"Files pruned: {receipt['files_pruned']} ({', '.join(receipt['pruned_list'])})")
     print(f"Git state summary written: {args.target / 'git_state_summary.txt'}")
     return 0
 
