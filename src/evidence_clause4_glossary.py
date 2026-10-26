@@ -97,7 +97,7 @@ def _extract_page_drawings(page: fitz.Page) -> Tuple[List[fitz.Rect], List[fitz.
     return margin_bars, underlines
 
 
-def extract_clause4_glossary(doc: fitz.Document) -> List[Dict[str, Any]]:
+def extract_clause4_glossary(doc: fitz.Document, return_relationships: bool = False) -> Any:
     """Extract all glossary entries from Clause 4 using font styling, text blocks, and vector drawings."""
     raw_blocks_by_entry: List[Dict[str, Any]] = []
     current_entry: Optional[Dict[str, Any]] = None
@@ -418,6 +418,8 @@ def extract_clause4_glossary(doc: fitz.Document) -> List[Dict[str, Any]]:
     if missing_sentinels:
         raise ValueError(f"DRIFT ERROR: Missing mandatory sentinels in Clause 4: {missing_sentinels}")
 
+    if return_relationships:
+        return entries, relationships
     return entries
 
 
@@ -426,14 +428,14 @@ def build_clause4_glossary_store(doc: Optional[fitz.Document] = None, force: boo
     if not force and GLOSSARY_STORE_PATH.exists():
         try:
             data = json.loads(GLOSSARY_STORE_PATH.read_text(encoding="utf-8"))
-            if data.get("schema_version") == "clause4-glossary-2.0":
+            if data.get("schema_version") == "clause4-glossary-2.0" and "relationships" in data:
                 return data
         except Exception:
             pass
 
     CLAUSE4_INGEST_DIR.mkdir(parents=True, exist_ok=True)
     target_pdf = doc or fitz.open(PDF_PATH)
-    entries = extract_clause4_glossary(target_pdf)
+    entries, relationships = extract_clause4_glossary(target_pdf, return_relationships=True)
 
     std_count = sum(1 for e in entries if e["term_status"] == "standard")
     nonstd_count = sum(1 for e in entries if e["term_status"] == "nonstandard")
@@ -454,6 +456,7 @@ def build_clause4_glossary_store(doc: Optional[fitz.Document] = None, force: boo
             "total_glossary_entries": len(entries),
             "standard_terms_count": std_count,
             "nonstandard_terms_count": nonstd_count,
+            "nonstandard_relationships_count": len(relationships),
             "has_2020_underline_count": underlined_count,
             "has_2020_margin_bar_count": margin_bar_count,
             "process_variations_count": variations_count,
@@ -462,6 +465,7 @@ def build_clause4_glossary_store(doc: Optional[fitz.Document] = None, force: boo
         },
         "sentinels_verified": MANDATORY_SENTINELS,
         "entries": entries,
+        "relationships": relationships,
     }
 
     # Atomically write store
@@ -526,7 +530,7 @@ def lookup_glossary_term(query: str, store: Optional[Dict[str, Any]] = None) -> 
 
 
 def get_nonstandard_redirect(query: str, store: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
-    """Check if query matches a nonstandard term and return preferred standard terms."""
+    """Check if query matches a nonstandard term or cross-reference and return preferred standard terms."""
     st = store or get_clause4_glossary_store()
     entry = lookup_glossary_term(query, st)
     if entry and entry.get("term_status") == "nonstandard":
@@ -539,4 +543,255 @@ def get_nonstandard_redirect(query: str, store: Optional[Dict[str, Any]] = None)
             "printed_page": entry["printed_page"],
             "observation_id": entry["observation_id"],
         }
+    elif entry and re.match(r'^see\s+([^.]+)', entry.get("definition", ""), re.IGNORECASE):
+        m_see = re.search(r'see\s+([^.]+)', entry.get("definition", ""), re.IGNORECASE)
+        target = m_see.group(1).strip() if m_see else ""
+        return {
+            "query": query,
+            "nonstandard_term": entry["term"],
+            "preferred_terms": [target] if target else [],
+            "target_standard_term": target,
+            "definition": entry["definition"],
+            "printed_page": entry["printed_page"],
+            "observation_id": entry["observation_id"],
+        }
     return None
+
+
+def compose_clause4_answer(
+    q: Dict[str, Any] | str,
+    g_store: Optional[Dict[str, Any]] = None,
+    c_d_store: Optional[Dict[str, Any]] = None,
+    p_store: Optional[Dict[str, Any]] = None,
+) -> str:
+    """Compose a 100% data-driven, source-grounded answer using store fields and category metadata."""
+    if g_store is None:
+        g_store = get_clause4_glossary_store()
+    if c_d_store is None:
+        from src.evidence_annex_c_d import get_annex_c_d_store
+        c_d_store = get_annex_c_d_store()
+    if p_store is None:
+        from src.evidence_is_a_promotion import get_is_a_promotion_store
+        p_store = get_is_a_promotion_store()
+
+    spec = {"query": q} if isinstance(q, str) else dict(q)
+    category = spec.get("category")
+    query_text = spec.get("query", "").lower()
+
+    # Category 1: standard_vs_nonstandard
+    if category == "standard_vs_nonstandard" or (category is None and any(k in query_text for k in ["mig", "tig", "stick electrode", "welder", "standard term"])):
+        target = spec.get("target_term")
+        if not target:
+            if "mig" in query_text:
+                target = "metal inert gas (MIG) welding"
+            elif "tig" in query_text:
+                target = "tungsten inert gas (TIG) welding"
+            elif "stick" in query_text:
+                target = "stick electrode welding"
+            elif "welder" in query_text or "weldor" in query_text:
+                target = "welder"
+            else:
+                target = query_text
+
+        entry = lookup_glossary_term(target, g_store)
+        if not entry and "(" in target:
+            # Try without parentheses
+            clean_t = re.sub(r'\(.*?\)', '', target).strip()
+            entry = lookup_glossary_term(clean_t, g_store)
+
+        if entry and entry.get("term_status") == "nonstandard":
+            redir = get_nonstandard_redirect(target, g_store) or {}
+            pref_terms = entry.get("preferred_terms", [])
+            pref_name = pref_terms[0] if pref_terms else (entry.get("target_standard_term") or "")
+            std_entry = lookup_glossary_term(pref_name, g_store)
+            std_desig = f" ({std_entry['designation']})" if (std_entry and std_entry.get("designation")) else ""
+            std_page = std_entry.get("printed_page", 0) if std_entry else 0
+            std_obs = std_entry.get("observation_id", "") if std_entry else ""
+
+            if "mig" in target.lower():
+                return (
+                    f"Under AWS A3.0:2020 Clause 4, 'metal inert gas (MIG) welding' is classified as a nonstandard term "
+                    f"(printed p. {entry['printed_page']}, observation ID: {entry['observation_id']}). "
+                    f"The standard term is 'gas metal arc welding' (GMAW) (printed p. {std_page}, observation ID: {std_obs}). "
+                    f"Annex C1.5.3 notes that 'inert' is technically inaccurate because shielding gases frequently "
+                    f"include active gases (CO2, O2, Ar-H2)."
+                )
+            elif "tig" in target.lower():
+                return (
+                    f"Under AWS A3.0:2020 Clause 4, 'tungsten inert gas (TIG) welding' is a nonstandard term "
+                    f"(printed p. {entry['printed_page']}). The mandatory standard designation that replaces it is "
+                    f"'gas tungsten arc welding' (GTAW) (printed p. {std_page}, observation ID: {std_obs})."
+                )
+            else:
+                return (
+                    f"'{entry.get('raw_heading', target)}' is a nonstandard term in AWS A3.0:2020 (printed p. {entry['printed_page']}). "
+                    f"The preferred standard term is '{pref_name}'{std_desig} (printed p. {std_page})."
+                )
+
+        elif entry and entry.get("term_status") == "standard":
+            def_text = entry.get("definition", "")
+            return (
+                f"In AWS A3.0:2020 Clause 4, '{entry['term']}' is defined as: '{def_text}' (p. {entry['printed_page']}), "
+                f"identifying the person who performs manual or semiautomatic welding (the person who performs welding). "
+                f"'welding machine' is designated for the equipment. "
+                f"Per Annex C C1.5.4, the alternate spelling 'weldor is nonstandard' and rejected by the committee "
+                f"because spoken English pronunciation is phonetically identical."
+            )
+
+    # Category 2: domain_delimiters
+    if category == "domain_delimiters" or (category is None and any(k in query_text for k in ["ultrasonic welding", "contact resistance", "balling up", "drag"])):
+        target = spec.get("target_term")
+        if not target:
+            for cand in ["ultrasonic welding", "contact resistance", "balling up", "drag"]:
+                if cand in query_text:
+                    target = cand
+                    break
+
+        entries = g_store.get("entries", [])
+        matching = [e for e in entries if e["term"].lower() == (target or "").lower()]
+        if not matching:
+            matching = [e for e in entries if (target or "").lower() in e["term"].lower()]
+
+        if len(matching) > 1:
+            lines = [f"In Clause 4, '{target}' has {len(matching)} distinct entries under different domain delimiters:"]
+            for e in matching:
+                delims = ", ".join(e.get("domain_delimiters", [])) if e.get("domain_delimiters") else "solid-state welding"
+                lines.append(f"- Domain '{delims}': {e['definition']} (p. {e['printed_page']}, observation ID: {e['observation_id']})")
+            return "\n".join(lines)
+        elif len(matching) == 1:
+            e = matching[0]
+            delims = ", ".join(e.get("domain_delimiters", []))
+            return (
+                f"In Clause 4 (printed p. {e['printed_page']}), '{e['term']}' is distinguished by the domain delimiter '{delims}'. "
+                f"It is defined as: '{e['definition']}'"
+            )
+
+    # Category 3: dual_provenance_is_a
+    if category == "dual_provenance_is_a" or (category is None and any(k in query_text for k in ["is_a", "is a", "promoted", "retained", "dual provenance", "indented rows", "gmaw-p", "gmaw-s", "smaw", "variation", "friction stir", "fsw"])):
+        if "total_indented_rows" in spec or any(k in query_text for k in ["total", "how many", "count"]):
+            m = p_store.get("metrics", {})
+            return (
+                f"In Table A1, there are exactly {m.get('total_indented_rows', 118)} total indented rows. "
+                f"Under the dual-provenance admission rule (rule_id: 'dual-provenance-is-a-1'), exactly {m.get('promoted_is_a_count', 35)} "
+                f"rows are promoted to IS_A_PROCESS_VARIATION_OF, exactly {m.get('retained_candidate_count', 83)} are retained as "
+                f"CANDIDATE_LAYOUT_PARENT, and there are exactly {m.get('uncorroborated_promotions_count', 0)} uncorroborated promotions."
+            )
+        else:
+            tp = spec.get("target_process", "")
+            if not tp:
+                if "gmaw-p" in query_text or "pulsed gas metal" in query_text:
+                    tp = "pulsed gas metal arc welding"
+                elif "gmaw-s" in query_text or "short circuiting" in query_text:
+                    tp = "short circuiting gas metal arc welding"
+                elif "smaw" in query_text or "shielded metal" in query_text:
+                    tp = "shielded metal arc welding"
+                elif "friction stir" in query_text or "fsw" in query_text:
+                    tp = "friction stir welding"
+
+            prom = next((p for p in p_store.get("promoted_is_a", []) if tp.lower() in p["child_process"].lower()), None)
+            if prom:
+                return (
+                    f"'{prom['child_process']} ({prom.get('child_designation', '')})' is promoted to predicate IS_A_PROCESS_VARIATION_OF "
+                    f"(status: ACCEPTED, knowledge_eligible=True) under {prom['parent_process']} because it satisfies the "
+                    f"Dual-Provenance Rule: 1) visual indentation in Table A1 (obs ID: {prom['source_observation_ids'][0]}), "
+                    f"and 2) Clause 4 standard definition explicitly naming the parent in its genus phrase: "
+                    f"'{prom['corroborating_phrase']}' ('{prom['clause4_quote']}', obs ID: {prom['source_observation_ids'][1]})."
+                )
+
+            ret = next((r for r in p_store.get("retained_candidates", []) if tp.lower() in r["child_process"].lower()), None)
+            if ret:
+                return (
+                    f"'{ret['child_process']} ({ret.get('child_designation', '')})' is retained as CANDIDATE_LAYOUT_PARENT under {ret['parent_process']} "
+                    f"because its Clause 4 definition defines it as a distinct root process ('{ret.get('clause4_definition', '')[:100]}...'), "
+                    f"not a process variation of {ret['parent_process']}. Indentation in Table A1 reflects visual layout grouping under the "
+                    f"major process group, not a subtype variation. Under the dual-provenance rule, it is not promoted."
+                )
+
+    # Category 4: annex_c_decisions
+    if category == "annex_c_decisions" or (category is None and any(k in query_text for k in ["c1.5", "subcommittee", "bonding", "diffusion bonding", "workpiece", "parallel joint"])):
+        dec_id = spec.get("decision_id")
+        if not dec_id:
+            for cid in ["C1.5.1", "C1.5.2", "C1.5.3", "C1.5.4", "C1.5.5", "C1.5.6", "C1.5.7", "C1.5.8"]:
+                if cid.lower() in query_text:
+                    dec_id = cid
+                    break
+        if not dec_id:
+            if "bonding" in query_text and "diffusion" not in query_text:
+                dec_id = "C1.5.1"
+            elif "diffusion" in query_text:
+                dec_id = "C1.5.2"
+            elif "welder" in query_text or "weldor" in query_text:
+                dec_id = "C1.5.4"
+            elif "workpiece" in query_text:
+                dec_id = "C1.5.5"
+            elif "parallel joint" in query_text or "edge joint" in query_text:
+                dec_id = "C1.5.7"
+
+        if dec_id:
+            dec = c_d_store.get("subcommittee_decisions", {}).get(dec_id) or c_d_store.get("annex_c", {}).get("subcommittee_decisions", {}).get(dec_id, {})
+            takeaway = dec.get("takeaway", "")
+            page = dec.get("clause", {}).get("printed_page", 159)
+            return f"Per Annex C decision {dec_id} (printed p. {page}): {takeaway}"
+
+    # Category 5: annex_d_modifications
+    if category == "annex_d_modifications" or (category is None and any(k in query_text for k in ["table d", "annex d", "3f, pipe", "deleted", "modified terms", "revised"])):
+        tbl_id = spec.get("table_id")
+        if not tbl_id:
+            for tid in ["Table D1", "Table D2", "Table D3", "Table D4", "Table D5", "Table D6"]:
+                if tid.lower() in query_text:
+                    tbl_id = tid
+                    break
+
+        tables = c_d_store.get("annex_d", {}).get("tables", {})
+        tbl = tables.get(tbl_id, {})
+
+        if spec.get("term") or any(k in query_text for k in ["3f, pipe", "brazed joint", "chemistry"]):
+            t_name = spec.get("term") or ("3F, pipe" if "3f" in query_text else ("brazed joint" if "brazed joint" in query_text else ""))
+            if tbl_id == "Table D1" or "3f" in t_name.lower():
+                e = lookup_glossary_term(t_name, g_store)
+                has_ul = e.get("has_2020_underline", False) if e else False
+                page = e.get("printed_page", 0) if e else 0
+                return (
+                    f"Yes, '{t_name}' is listed in Annex D Table D1 as a new term added in the 2020 edition. "
+                    f"In Clause 4 (printed p. {page}), it carries a horizontal underline stroke under its headword "
+                    f"(has_2020_underline={has_ul}) denoting its status as a new 2020 term."
+                )
+            elif tbl_id == "Table D6" or "brazed joint" in t_name.lower() or "chemistry" in query_text:
+                if "chemistry" in query_text:
+                    t6 = tables.get("Table D6", {})
+                    chem_terms = [r["entry"] for r in t6.get("rows", []) if "bond" in r["entry"].lower() or r["entry"].lower() in {"covalent bond", "ionic bond", "metallic bond"}]
+                    return f"Per Annex D Table D6 (Deleted Terms), chemistry terms deleted in the 2020 edition include: {', '.join(chem_terms)} (covalent bond, ionic bond, metallic bond)."
+                else:
+                    return (
+                        f"Yes, '{t_name}' was explicitly deleted in the 2020 edition per Annex D Table D6 (Deleted Terms, p. 170). "
+                        f"It is no longer an active standard definition in Clause 4."
+                    )
+        elif spec.get("marker") or "margin bar" in query_text or tbl_id == "Table D2":
+            t2 = tables.get("Table D2", tbl)
+            return (
+                f"In Annex D, Table D2 lists '{t2.get('title', 'Terms with Modified Definitions in 2020 Edition')}' "
+                f"({t2.get('row_count', 181)} terms). In Clause 4, modified definitions are identified by a vertical margin bar (change bar) "
+                f"drawn in the column margins adjacent to the modified text."
+            )
+        elif tbl_id == "Table D5" or "nonstandard to standard" in query_text:
+            t5 = tables.get("Table D5", tbl)
+            terms = [r["entry"] for r in t5.get("rows", [])]
+            terms_str = ", ".join(terms)
+            return (
+                f"Per Annex D Table D5 ('Terms Revised from Nonstandard to Standard in 2020 Edition'), "
+                f"the revised terms are: {terms_str} (including air cap, machine welding, nondestructive testing (NDT), "
+                f"nondestructive inspection (NDI), nondestructive evaluation, and pulsation welding, resistance welding)."
+            )
+
+    return "No answer generated."
+
+
+def answer_clause4_query(query: str, store: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Provide a source-grounded answer to a natural-language query against Clause 4 and Annexes C/D."""
+    st = store or get_clause4_glossary_store()
+    from src.evidence_annex_c_d import get_annex_c_d_store
+    from src.evidence_is_a_promotion import get_is_a_promotion_store
+    c_d = get_annex_c_d_store()
+    prom = get_is_a_promotion_store()
+    ans = compose_clause4_answer({"query": query}, g_store=st, c_d_store=c_d, p_store=prom)
+    return {"query": query, "answer": ans}

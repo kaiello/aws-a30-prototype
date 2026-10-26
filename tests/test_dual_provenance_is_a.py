@@ -11,17 +11,16 @@ Validates that:
 
 import pytest
 
-from src.evidence_clause4 import (
-    get_clause4_store,
+from src.evidence_is_a_promotion import (
+    get_is_a_promotion_store,
     compute_dual_provenance_is_a,
-    answer_clause4_query,
 )
+from src.evidence_clause4_glossary import answer_clause4_query
 
 
 @pytest.fixture(scope="module")
 def dual_prov():
-    store = get_clause4_store()
-    return store["dual_provenance_is_a"]
+    return get_is_a_promotion_store()
 
 
 def test_dual_provenance_counts(dual_prov):

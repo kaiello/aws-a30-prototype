@@ -124,7 +124,12 @@ def compute_dual_provenance_is_a(
                     annex_a_obs_id,
                     c4_obs_id,
                 ],
+                "dual_provenance": [
+                    f"Table A1 layout indentation (obs: {annex_a_obs_id})",
+                    f"Clause 4 standard definition genus phrasing (obs: {c4_obs_id})",
+                ],
                 "clause4_quote": c4_entry["definition"],
+                "corroborating_definition": c4_entry["definition"],
                 "corroborating_phrase": corroborating_phrase,
                 "clause4_page": c4_entry["printed_page"],
                 "rule_id": "dual-provenance-is-a-1",
@@ -139,6 +144,8 @@ def compute_dual_provenance_is_a(
                 "status": "CANDIDATE",
                 "knowledge_eligible": False,
                 "source_observation_ids": [annex_a_obs_id],
+                "clause4_definition": c4_entry["definition"] if c4_entry else "",
+                "clause4_page": c4_entry["printed_page"] if c4_entry else None,
                 "reason": (
                     "Visual indentation layout only; Clause 4 standard definition does not specify "
                     f"child as a process variation of '{parent}' per Annex C C1.5 genus formula."
@@ -194,6 +201,10 @@ def build_is_a_promotion_store(
             "retained_candidate_count": eval_result["retained_candidate_count"],
             "uncorroborated_promotions_count": eval_result["uncorroborated_promotions_count"],
         },
+        "total_indented_rows": eval_result["total_indented_rows"],
+        "promoted_count": eval_result["promoted_count"],
+        "retained_candidate_count": eval_result["retained_candidate_count"],
+        "uncorroborated_promotions_count": eval_result["uncorroborated_promotions_count"],
         "promoted_is_a": eval_result["promoted_is_a"],
         "retained_candidates": eval_result["retained_candidates"],
     }

@@ -8,15 +8,79 @@ import fitz
 import pytest
 
 from src.config import PDF_PATH
-from src.evidence_clause4 import (
-    build_clause4_store,
-    get_clause4_store,
-    lookup_glossary_term,
+from src.evidence_clause4_glossary import (
+    build_clause4_glossary_store,
+    get_clause4_glossary_store,
+    lookup_glossary_term as base_lookup_glossary_term,
     get_nonstandard_redirect,
-    get_subcommittee_decision,
-    get_annex_d_modifications,
     answer_clause4_query,
 )
+from src.evidence_annex_c_d import (
+    build_annex_c_d_store,
+    get_annex_c_d_store,
+    get_subcommittee_decision,
+    get_annex_d_modifications,
+)
+from src.evidence_is_a_promotion import (
+    build_is_a_promotion_store,
+    get_is_a_promotion_store,
+)
+
+
+def get_clause4_store():
+    g = get_clause4_glossary_store()
+    cd = get_annex_c_d_store()
+    p = get_is_a_promotion_store()
+    entries = []
+    for e in g["entries"]:
+        e_copy = dict(e)
+        e_copy["part_of_speech_or_qualifier"] = (
+            e.get("domain_delimiters", [None])[0] if e.get("domain_delimiters")
+            else (e.get("part_of_speech", "").rstrip(".") if e.get("part_of_speech") else None)
+        )
+        entries.append(e_copy)
+
+    return {
+        "metrics": {
+            "total_glossary_entries": g["metrics"]["total_glossary_entries"],
+            "standard_terms_count": g["metrics"]["standard_terms_count"],
+            "nonstandard_terms_count": g["metrics"]["nonstandard_terms_count"],
+            "process_variations_count": g["metrics"]["process_variations_count"],
+            "annex_c_clauses_count": len(cd["annex_c"]["clauses"]),
+            "annex_c_subcommittee_decisions_count": len(cd["annex_c"]["subcommittee_decisions"]),
+            "annex_d_tables_count": len(cd["annex_d"]),
+            "uncorroborated_is_a_promotions": p["metrics"]["uncorroborated_promotions_count"],
+        },
+        "store_sha256": g.get("sha256", "0" * 64),
+        "glossary_entries": entries,
+        "entries": entries,
+        "relationships": g.get("relationships", []),
+        "annex_c": cd["annex_c"],
+        "annex_d": cd["annex_d"],
+        "dual_provenance_is_a": p,
+    }
+
+
+def build_clause4_store():
+    build_clause4_glossary_store(force=True)
+    build_annex_c_d_store(force=True)
+    build_is_a_promotion_store(force=True)
+    return get_clause4_store()
+
+
+def lookup_glossary_term(query: str, store=None):
+    st = store or get_clause4_store()
+    entries = st.get("glossary_entries", [])
+    q_norm = query.strip().lower()
+    matches = []
+    for e in entries:
+        if e["term"].lower() == q_norm or (e.get("designation") and e["designation"].upper() == query.strip().upper()):
+            matches.append(e)
+    if not matches:
+        for e in entries:
+            if q_norm in e["term"].lower():
+                matches.append(e)
+    return matches
 
 
 @pytest.fixture(scope="module")

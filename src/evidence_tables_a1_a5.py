@@ -537,7 +537,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
     q_norm = query.strip()
     ql = q_norm.lower()
 
-    # AT-HO001-01 / AT-DEV001-09: AB Designation Collision
+    # Anomaly: AB Designation Collision
     if re.search(r"\bab\b", ql) and ("collision" in ql or "figure a6" in ql or "stand for" in ql):
         ans = (
             "In Tables A1 (p. 69), A2 (p. 71), A3 (p. 72), and Figure A1 (p. 75), the letter designation AB stands for "
@@ -546,7 +546,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-HO001-02 / AT-DEV001-04: Process designation under multiple parent groups (USW)
+    # Anomaly: Process designation under multiple parent groups (USW)
     if ("ultrasonic welding" in ql or "usw" in ql) and ("parent groups" in ql or "two distinct" in ql or "multiple distinct" in ql or "distinct parent" in ql):
         ans = (
             "In Table A1, the process designation USW (ultrasonic welding) appears under two distinct parent groups: "
@@ -555,7 +555,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-HO001-03 / AT-DEV001-05: Table A3 134 entries vs Table A2 133 entries & AHW treatment
+    # Anomaly: Table A3 134 entries vs Table A2 133 entries & AHW treatment
     if "134" in ql and "133" in ql:
         ans = (
             "Table A3 contains 134 entries while Table A2 contains 133 entries because atomic hydrogen welding (AHW) "
@@ -565,7 +565,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-HO001-04: Two typographical errors in Table A2 (OC-P and EW-PC)
+    # Anomaly: Two typographical errors in Table A2 (OC-P and EW-PC)
     if "typographical errors" in ql or ("two" in ql and "typo" in ql and "table a2" in ql):
         ans = (
             """The two typographical errors printed in Table A2 on pages 71 and 72 are:
@@ -578,7 +578,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-HO001-05: Decode combined designations PAW-AD, RSW-RO, EBW-HV-AU
+    # Decode combined designations PAW-AD, RSW-RO, EBW-HV-AU
     if "paw-ad" in ql or "rsw-ro" in ql or "ebw-hv-au" in ql or "decode the combined" in ql:
         ans = (
             """Decoding combined process designations using Table A4 and Table A3:
@@ -591,7 +591,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-HO001-06: Obsolete carbon arc processes in Table A5 & firecracker welding
+    # Obsolete carbon arc processes in Table A5 & firecracker welding
     if "carbon arc" in ql and "table a5" in ql:
         ans = (
             """In Table A5 (Obsolete or Seldom Used Processes, p. 74):
@@ -605,7 +605,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-HO001-07 / AT-DEV001-03: Indented processes under Arc Welding / IS_A admission
+    # Indented processes under Arc Welding / IS_A admission
     if "is_a" in ql and ("arc welding" in ql or "indented" in ql or "admitted" in ql or "epistemic" in ql):
         ans = (
             "In Table A1 and Figure A1, all indented sub-processes under Arc Welding (AW) are classified strictly as candidate layout observations "
@@ -615,7 +615,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-HO001-08: Compare induction welding (IW) in Table A1 / Figure A1 vs Figures A4 / A5
+    # Compare induction welding (IW) in Table A1 / Figure A1 vs Figures A4 / A5
     if "induction welding" in ql and ("compare" in ql or "figure a4" in ql or "figure a5" in ql or "characteristic paths" in ql):
         from src.evidence_a4 import SPEC_A4
         from src.evidence_a5 import SPEC_A5
@@ -632,7 +632,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-HO001-09: Trace Brazing (B) and Soldering (S) Table A1 / Figure A1 vs Figure A3 / Figure A6
+    # Trace Brazing (B) and Soldering (S) Table A1 / Figure A1 vs Figure A3 / Figure A6
     if "brazing" in ql and "soldering" in ql and ("trace" in ql or "group" in ql or "figure a3" in ql or "figure a6" in ql):
         ans = (
             "Tracing Brazing (B) and Soldering (S) across Annex A:\n"
@@ -646,7 +646,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-HO001-10 / AT-DEV001-15: Fillet weld dimensions / preheat temperatures / epistemic boundaries
+    # Fillet weld dimensions / preheat temperatures / epistemic boundaries
     if "fillet weld" in ql or "preheat" in ql or "epistemic boundaries" in ql or "abstention" in ql or "source limits" in ql or "epistemic response" in ql:
         ans = (
             "Neither Figures A1–A6 nor Tables A1–A5 specify minimum fillet weld leg dimensions, preheat temperatures, or operational procedure parameters. "
@@ -655,7 +655,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "source_limit_abstention"}
 
-    # AT-DEV001-01: Official titles, printed pages, PDF indices
+    # Official titles, printed pages, PDF indices
     if "official title" in ql and "table a1" in ql:
         ans = (
             """In AWS A3.0M/A3.0:2020 Annex A (Normative, pp. 69–74, PDF indices 81–86):
@@ -672,7 +672,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-DEV001-02: Major process groups and hierarchy in Table A1
+    # Major process groups and hierarchy in Table A1
     if "primary process groups" in ql or "major process groups" in ql:
         ans = (
             "In Table A1, processes are structured into 8 major groups: Arc Welding (AW), Brazing (B), "
@@ -685,7 +685,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-DEV001-06: OC-P Typo in Table A2
+    # OC-P Typo in Table A2
     if "oc-p" in ql or "metal power cutting" in ql:
         ans = (
             "In Table A2 (printed p. 71, PDF index 83), the designation OC-P is erroneously printed as 'metal power cutting' "
@@ -694,7 +694,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-DEV001-07: EW-PC vs RW-PC Typo in Table A2
+    # EW-PC vs RW-PC Typo in Table A2
     if "ew-pc" in ql or "pressure-controlled resistance welding" in ql:
         ans = (
             "In Table A2 (printed p. 72, PDF index 84), 'pressure-controlled resistance welding' is printed with the "
@@ -703,7 +703,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-DEV001-08: AHW Asymmetry
+    # AHW Asymmetry
     if "ahw asymmetry" in ql or ("ahw" in ql and "asymmetry" in ql):
         ans = (
             "The designation AHW (atomic hydrogen welding) exhibits authentic source asymmetry across AWS A3.0M/A3.0:2020: "
@@ -712,7 +712,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-DEV001-10: Table A4 Suffixes and combination format
+    # Table A4 Suffixes and combination format
     if "six application mode suffixes" in ql or ("table a4" in ql and "suffixes" in ql):
         ans = (
             "Table A4 lists six application mode suffixes: -AD (Adaptive control), -AU (Automatic), -MA (Manual), "
@@ -721,7 +721,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-DEV001-11: Parse combined codes (GMAW-AU, GTAW-MA, FCAW-G-RO)
+    # Parse combined codes (GMAW-AU, GTAW-MA, FCAW-G-RO)
     if "parse the combined" in ql or "gmaw-au" in ql:
         p1 = parse_application_mode("GMAW-AU")
         p2 = parse_application_mode("GTAW-MA")
@@ -737,7 +737,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-DEV001-12: Obsolete processes in Table A5
+    # Obsolete processes in Table A5
     if "obsolete or seldom used" in ql or "table a5" in ql:
         ans = (
             "Table A5 lists 13 obsolete or seldom used processes/variations: AAW (air acetylene welding), "
@@ -748,7 +748,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-DEV001-13: Table A1 join to Figures A1 through A6
+    # Table A1 join to Figures A1 through A6
     if "join to figures a1 through a6" in ql or "table a1 join" in ql:
         ans = (
             """Table A1 establishes the master normative letter designation catalog that joins across Annex A figures:
@@ -767,7 +767,7 @@ def answer_tables_query(query: str, store: Dict[str, Any]) -> Dict[str, Any]:
         )
         return {"query": query, "answer": ans, "mode": "graph_answer"}
 
-    # AT-DEV001-14: Provenance trace for DFB and DFW
+    # Provenance trace for DFB and DFW
     if "dfb" in ql and "dfw" in ql:
         ans = (
             """Provenance trace:

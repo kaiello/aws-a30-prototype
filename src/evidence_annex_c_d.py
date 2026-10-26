@@ -57,6 +57,7 @@ def extract_annex_c_style_and_decisions(doc: fitz.Document) -> Dict[str, Any]:
         ("C1.5.6", "nondestructive examination"),
         ("C1.5.7", "parallel joint"),
         ("C1.5.8", "deposit"),
+        ("C1.6", "Obsolete or Seldom Used Terms"),
         ("C2", "Principles of Style"),
         ("C2.1", "Parts of Speech"),
         ("C2.2", "Cross-References"),
@@ -104,46 +105,80 @@ def extract_annex_c_style_and_decisions(doc: fitz.Document) -> Dict[str, Any]:
                 "text": clean_text.strip(),
             }
 
-    # Curate the 8 decisions with executive takeaway summaries
+    # Curate the 8 decisions with executive takeaway summaries explicitly derived from and quoting clause text
     decisions_summary = {
         "C1.5.1": {
             "topic": "bonding",
-            "takeaway": "The Definitions Subcommittee discourages 'bonding' for 'welding'. Reserved strictly for joining/allied processes with adhesive or mechanical bond (adhesive bonding, brazing, soldering, thermal spraying). Atomic bond = weld/welding.",
+            "takeaway": (
+                f"Per C1.5.1: 'The Definitions Subcommittee discourages the use of the term \"bonding\" for \"welding.\"' "
+                f"The committee reserves bonding for joining processes where 'either an adhesive bond or a mechanical bond is predominant' "
+                f"(adhesive bonding, brazing, soldering, thermal spraying). When 'an atomic bond between the atoms at that interface is predominant, "
+                f"the resulting joint is called a weld, and the process that produced that joint is called welding.'"
+            ),
             "clause": clauses.get("C1.5.1", {}),
         },
         "C1.5.2": {
             "topic": "diffusion welding",
-            "takeaway": "Consistent with international custom (BS499). Replaces 'diffusion bonding'. 'Diffusion bonding' was an aircraft industry euphemism to avoid welded structure stigma; A3.0 rejects this prejudice.",
+            "takeaway": (
+                f"Per C1.5.2: 'Diffusion welding is consistent with international custom' and British Standards Institution (BS499). "
+                f"The committee explains that 'diffusion bonding' originated as an 'aircraft industry euphemism' to avoid 'prejudice' against "
+                f"welded structures ('aversion to welding'), and concludes that 'diffusion welding, rather than \"diffusion bonding,\" "
+                f"is now universally accepted as a part of standard welding terminology.'"
+            ),
             "clause": clauses.get("C1.5.2", {}),
         },
         "C1.5.3": {
             "topic": "GTAW & GMAW vs TIG & MIG",
-            "takeaway": "GTAW and GMAW are standard; TIG and MIG are nonstandard. 'Inert' is inaccurate because shielding gases frequently include active gases (CO2, O2, Ar-H2). Calling it TAG or MAG creates absurdities where process names change with base metal.",
+            "takeaway": (
+                f"Per C1.5.3: 'The Definitions Subcommittee prefers the terms gas metal arc welding and gas tungsten arc welding', "
+                f"rejecting TIG and MIG because 'application of non-inert, i.e., active, gases for arc shielding rendered the term TIG inaccurate' "
+                f"(active gases including CO2, O2, Ar-H2), and 'arguments similar to those made in support of GTAW also apply to gas metal arc welding "
+                f"(GMAW) versus metal inert gas welding (MIGW).'"
+            ),
             "clause": clauses.get("C1.5.3", {}),
         },
         "C1.5.4": {
             "topic": "welder vs welding machine vs weldor",
-            "takeaway": "'welder' is the person who performs welding. 'welding machine' is the equipment. The alternate spelling 'weldor' is rejected because spoken English pronunciation is phonetically identical.",
+            "takeaway": (
+                f"Per C1.5.4: 'The use of the term welder to indicate the person who does the welding originated in the early days of welding' "
+                f"and 'welding machine' indicates the equipment. The alternate spelling 'weldor is nonstandard' and rejected because "
+                f"in spoken English pronunciation is phonetically identical."
+            ),
             "clause": clauses.get("C1.5.4", {}),
         },
         "C1.5.5": {
             "topic": "workpiece",
-            "takeaway": "Designated standard term for the part being processed. Webster's Third New International Dictionary defines workpiece specifically as a piece of work in process of manufacture, whereas component, member, or part carry non-manufacturing connotations.",
+            "takeaway": (
+                f"Per C1.5.5: 'The use of the term workpiece to indicate the part to be welded, brazed, soldered...' was chosen because "
+                f"'Webster\'s Third New International Dictionary specifically defines workpiece as \"a piece of work in process of manufacture\"', "
+                f"whereas component, member, or part carry other non-manufacturing definitions."
+            ),
             "clause": clauses.get("C1.5.5", {}),
         },
         "C1.5.6": {
             "topic": "nondestructive examination (NDE)",
-            "takeaway": "Established in the 2001 edition in consultation with ASME, ASNT, and ASTM. NDE determines 'acceptability' in accordance with established criteria rather than guaranteeing 'suitability for intended purpose'. NDT, NDI, and nondestructive evaluation are standard alternatives.",
+            "takeaway": (
+                f"Per C1.5.6: The committee established 'nondestructive examination (NDE)' as standard to mean 'The process of determining "
+                f"acceptability of a material or a component in accordance with established criteria without impairing its future usefulness', "
+                f"consulting ASME, ASNT, and ASTM."
+            ),
             "clause": clauses.get("C1.5.6", {}),
         },
         "C1.5.7": {
             "topic": "parallel joint (replaces edge joint in 2020 edition)",
-            "takeaway": "Introduced in the 2020 edition to replace 'edge joint'. Historically five basic joint types were recognized (butt, corner, edge, lap, T-joint). All describe relative member orientation except edge joint, which described weld location and caused confusion with edge weld. Parallel joint describes member orientation: 'A joint type formed by butting, parallel surfaces of one or more workpieces with flush ends.'",
+            "takeaway": (
+                f"Per C1.5.7: In the 2020 edition, 'parallel joint has been introduced as a replacement for edge joint and is defined as \"A joint type formed by butting, "
+                f"parallel surfaces of one or more workpieces with flush ends.\"' Historically, five basic joint types were recognized (butt, corner, "
+                f"lap, parallel, and T-joints). Edge joint was replaced because it described weld location rather than member orientation."
+            ),
             "clause": clauses.get("C1.5.7", {}),
         },
         "C1.5.8": {
             "topic": "deposit",
-            "takeaway": "The term deposit and its derivatives are used ONLY in connection with filler metal or surfacing material. Use with weld metal, weld bead, or weld is nonstandard.",
+            "takeaway": (
+                f"Per C1.5.8: 'The term deposit or any of its derivatives, is used only in connection with the terms filler metal or surfacing material. "
+                f"Use with such terms as weld metal, weld bead, weld, etc., is nonstandard.'"
+            ),
             "clause": clauses.get("C1.5.8", {}),
         },
     }

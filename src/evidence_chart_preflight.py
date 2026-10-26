@@ -181,42 +181,36 @@ FIGURE_CONFIGS = {
     "A1": {
         "source": "Figure A1",
         "input": "eval/evidence_v2_a1_owner_cqs.json",
-        "question_id": "A1-CQ-001",
         "receipt": "storage/evidence_v2/a1_a2_relationship_003/a1_deepseek/request_001/receipt.json",
         "graph": None,
     },
     "A2": {
         "source": "Figure A2",
         "input": "storage/evidence_v2/a2_ingest_001/evaluation/questions.json",
-        "question_id": "A2-DEV001-01",
         "receipt": "storage/evidence_v2/a1_a2_relationship_003/a2_deepseek/request_001/receipt.json",
         "graph": "storage/evidence_v2/a2_ingest_001/final_projection_005/graph.json",
     },
     "A3": {
         "source": "Figure A3",
         "input": "storage/evidence_v2/a3_ingest_001/evaluation/questions.json",
-        "question_id": "A3-DEV001-01",
         "receipt": "storage/evidence_v2/a3_ingest_001/evaluation/a3_receipt.json",
         "graph": "storage/evidence_v2/a3_ingest_001/final_projection/graph.json",
     },
     "A4": {
         "source": "Figure A4",
         "input": "storage/evidence_v2/a4_ingest_001/evaluation/questions.json",
-        "question_id": "A4-DEV001-01",
         "receipt": "storage/evidence_v2/a4_ingest_001/evaluation/a4_receipt.json",
         "graph": "storage/evidence_v2/a4_ingest_001/final_projection/graph.json",
     },
     "A5": {
         "source": "Figure A5",
         "input": "storage/evidence_v2/a5_ingest_001/evaluation/questions.json",
-        "question_id": "A5-DEV001-01",
         "receipt": "storage/evidence_v2/a5_ingest_001/evaluation/a5_receipt.json",
         "graph": "storage/evidence_v2/a5_ingest_001/final_projection/graph.json",
     },
     "A6": {
         "source": "Figure A6",
         "input": "storage/evidence_v2/a6_ingest_001/evaluation/questions.json",
-        "question_id": "A6-DEV001-01",
         "receipt": "storage/evidence_v2/a6_ingest_001/evaluation/a6_receipt.json",
         "graph": "storage/evidence_v2/a6_ingest_001/final_projection/graph.json",
     },
@@ -240,7 +234,9 @@ def run_figure_preflight(figure: str, root: Path | str = None, output_directory:
     input_path = root / cfg["input"]
     receipt_path = root / cfg["receipt"]
     graph_path = (root / cfg["graph"]) if cfg["graph"] else None
-    return run_preflight(root, input_path, cfg["question_id"], receipt_path, out_dir, graph_path=graph_path)
+    payload = _strict_loads(input_path.read_bytes())
+    question_id = cfg.get("question_id") or payload["questions"][0]["id"]
+    return run_preflight(root, input_path, question_id, receipt_path, out_dir, graph_path=graph_path)
 
 
 def main(argv=None):
@@ -254,8 +250,9 @@ def main(argv=None):
     parser.add_argument("--source-observation", type=Path)
     args = parser.parse_args(argv)
 
-    if args.figure:
-        receipt = run_figure_preflight(args.figure, root=args.root, output_directory=args.output_directory)
+    if args.figure or (not args.input and not args.receipt and not args.output_directory and not args.question_id):
+        target_fig = args.figure or "A1"
+        receipt = run_figure_preflight(target_fig, root=args.root, output_directory=args.output_directory)
     else:
         if not args.input or not args.receipt or not args.output_directory or not args.question_id:
             parser.error("--input, --receipt, --output-directory, and --question-id are required when --figure is not used")
