@@ -113,8 +113,17 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
         for p in gate_dir.glob("gate_*_review_packet.md"):
             collected.append(p)
 
-    # 7. storage/evidence_v2/<slice>_001/ lightweight review artifacts
+    # 6b. storage/ canonical JSON stores
+    storage_root = base_dir / "storage"
+    if storage_root.is_dir():
+        for p in storage_root.glob("*.json"):
+            collected.append(p)
+
+    # 7. storage/evidence_v2/ stores and lightweight review artifacts
     ev_dir = base_dir / "storage" / "evidence_v2"
+    if ev_dir.is_dir():
+        for p in ev_dir.glob("*.json"):
+            collected.append(p)
     if ev_dir.is_dir():
         for ingest_dir in ev_dir.glob("*_001"):
             if not ingest_dir.is_dir():
