@@ -140,6 +140,9 @@ def test_figure_b6_multi_page_continuation(figure_stores):
     assert "GROOVE DEPTH" in callout_texts
     assert "ROOT OPENING" in callout_texts
     assert "BEVEL RADIUS" in callout_texts
+    assert "BEVEL FACE" in callout_texts
+    assert "BEVEL DEPTH AND GROOVE DEPTH" in callout_texts
+    assert "GROOVE IN SOLID MATERIAL" in callout_texts
 
 
 def test_figures_b2_through_b5_properties(figure_stores):
@@ -155,14 +158,21 @@ def test_figures_b2_through_b5_properties(figure_stores):
     assert b3["sub_panels"][0]["name"] == "SINGLE-SPLICED BUTT JOINT"
     assert b3["sub_panels"][1]["name"] == "DOUBLE-SPLICED EDGE JOINT WITH FILLER"
 
+    b3_callouts = set(n["text"] for n in b3["nodes"].values() if n.get("node_type") == "CALLOUT")
+    assert {"SPLICE MEMBER", "JOINT MEMBER", "FILLER"}.issubset(b3_callouts)
+
     # Figure B4: Joint Root
     b4 = figure_stores["Figure B4"]
     assert len(b4["sub_panels"]) == 6
     assert any("shading" in n.lower() for n in ANNEX_B_SPECS["Figure B4"].notes)
+    b4_callouts = set(n["text"] for n in b4["nodes"].values() if n.get("node_type") == "CALLOUT")
+    assert "Joint root denoted by shading." in b4_callouts
 
     # Figure B5: Groove Face, Root Edge, Root Face
     b5 = figure_stores["Figure B5"]
     assert len(b5["sub_panels"]) == 4
+    b5_callouts = set(n["text"] for n in b5["nodes"].values() if n.get("node_type") == "CALLOUT")
+    assert {"ROOT FACE AND GROOVE FACE", "GROOVE FACE", "ROOT EDGE"}.issubset(b5_callouts)
 
 
 def test_dual_layer_epistemic_admission(figure_stores, unified_manifest):
@@ -170,8 +180,8 @@ def test_dual_layer_epistemic_admission(figure_stores, unified_manifest):
     m = unified_manifest["metrics"]
     assert m["candidate_nodes_count"] == 0
     assert m["uncorroborated_promotions_count"] == 0
-    assert m["total_accepted_nodes"] == 68
-    assert m["total_accepted_edges"] == 201
+    assert m["total_accepted_nodes"] == 86
+    assert m["total_accepted_edges"] == 210
 
     for fig_id, store in figure_stores.items():
         assert store["metrics"]["candidate_nodes_count"] == 0
@@ -272,3 +282,29 @@ def test_data_driven_qa_composition(figure_stores, query_input, expected_element
         assert elem in ans["elements_present"] or elem in ans["answer_text"], (
             f"Expected element '{elem}' missing from answer: {ans['answer_text']}"
         )
+
+
+def test_repaired_callouts_duplicates_and_cross_references(figure_stores):
+    """Verify Gate 3B repairs: full vocabulary in nodes, 0 duplicate edges, non-empty figures cross-refs."""
+    for fig_id, store in figure_stores.items():
+        spec = ANNEX_B_SPECS[fig_id]
+        callout_texts = set(n["text"] for n in store["nodes"].values() if n.get("node_type") == "CALLOUT")
+
+        # 1. Every item in spec.callout_vocabulary exists in store["nodes"]
+        for v in spec.callout_vocabulary:
+            assert v in callout_texts, f"{fig_id} missing callout vocabulary '{v}' in nodes"
+
+        # 2. edges contains zero identical (source, target, edge_type, observation_id) duplicates
+        edge_keys = [(e["source"], e["target"], e["edge_type"], e.get("observation_id", "")) for e in store["edges"]]
+        assert len(edge_keys) == len(set(edge_keys)), f"{fig_id} contains duplicate edges"
+
+        # 3. Joined Clause 4 terms have non-empty cross_references["figures"] back-links
+        for cj in store["cross_clause_joins"]:
+            term = cj["term"]
+            # Terms with expected direct figure citations
+            if term in ["butt joint", "parallel joint", "bevel angle", "groove depth", "single-spliced butt joint", "double-spliced butt joint", "joint root", "groove face", "root edge", "root face"]:
+                figs = cj["cross_references"].get("figures", [])
+                assert len(figs) > 0, f"Clause 4 term '{term}' in {fig_id} has empty cross_references['figures']"
+                assert any(f.startswith("B1") or f.startswith("B2") or f.startswith("B3") or f.startswith("B4") or f.startswith("B5") or f.startswith("B6") for f in figs), (
+                    f"Clause 4 term '{term}' in {fig_id} lacks Annex B figure backlink: {figs}"
+                )

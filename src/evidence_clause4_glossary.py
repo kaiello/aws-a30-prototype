@@ -97,6 +97,49 @@ def _extract_page_drawings(page: fitz.Page) -> Tuple[List[fitz.Rect], List[fitz.
     return margin_bars, underlines
 
 
+def extract_figure_cross_references(full_text: str) -> List[str]:
+    """Extract figure references supporting singular/plural and ranges like B6(A)–(D)."""
+    refs = set()
+    blocks = re.findall(r'(?:Figures?)\s+([^.;\n]+)', full_text)
+    for block in blocks:
+        matches = re.finditer(
+            r'([A-Z]\d+)(?:\(([A-Z0-9]+)\))?(?:\s*[\u2013\-\u2014]\s*(?:([A-Z]\d+)?\(([A-Z0-9]+)\)|([A-Z]\d+)))?',
+            block
+        )
+        for m in matches:
+            base_fig = m.group(1)
+            sub = m.group(2)
+            range_fig = m.group(3)
+            range_sub = m.group(4)
+            range_end_fig = m.group(5)
+
+            refs.add(base_fig)
+            if sub:
+                refs.add(f"{base_fig}({sub})")
+                if range_sub and len(sub) == 1 and len(range_sub) == 1:
+                    target_fig = range_fig or base_fig
+                    refs.add(target_fig)
+                    for c_code in range(ord(sub), ord(range_sub) + 1):
+                        refs.add(f"{target_fig}({chr(c_code)})")
+            elif range_end_fig:
+                refs.add(range_end_fig)
+                m1 = re.match(r'([A-Z])(\d+)', base_fig)
+                m2 = re.match(r'([A-Z])(\d+)', range_end_fig)
+                if m1 and m2 and m1.group(1) == m2.group(1):
+                    for n in range(int(m1.group(2)), int(m2.group(2)) + 1):
+                        refs.add(f"{m1.group(1)}{n}")
+
+    if not refs:
+        direct = re.findall(r'Figure\s+([A-Z]\d+(?:\([A-Z0-9]+\))?)', full_text)
+        for d in direct:
+            refs.add(d)
+            m_base = re.match(r'([A-Z]\d+)', d)
+            if m_base:
+                refs.add(m_base.group(1))
+
+    return sorted(list(refs))
+
+
 def extract_clause4_glossary(doc: fitz.Document, return_relationships: bool = False) -> Any:
     """Extract all glossary entries from Clause 4 using font styling, text blocks, and vector drawings."""
     raw_blocks_by_entry: List[Dict[str, Any]] = []
@@ -268,7 +311,7 @@ def extract_clause4_glossary(doc: fitz.Document, return_relationships: bool = Fa
                     genus = m_var2.group(1).strip()
                     is_variation = True
 
-            fig_refs = re.findall(r'Figure\s+([A-Z]\d+(?:\([A-Z0-9]+\))?)', full_text)
+            fig_refs = extract_figure_cross_references(full_text)
             table_refs = re.findall(r'Table\s+([A-Z]\d+)', full_text)
             see_also_refs = re.findall(r'See also\s+([A-Za-z0-9\s,\u2013\-]+?)(?:\.|$)', full_text)
 
@@ -361,7 +404,7 @@ def extract_clause4_glossary(doc: fitz.Document, return_relationships: bool = Fa
                 else:
                     domain_delimiters.append(qualifier)
 
-            fig_refs = re.findall(r'Figure\s+([A-Z]\d+(?:\([A-Z0-9]+\))?)', full_text)
+            fig_refs = extract_figure_cross_references(full_text)
             table_refs = re.findall(r'Table\s+([A-Z]\d+)', full_text)
 
             slug = re.sub(r'[^a-z0-9]+', '_', term_name.lower()).strip('_')
