@@ -15,8 +15,11 @@ from src.hybrid_retriever import (
     search_fts_chunks,
     search_dense_chunks,
     reciprocal_rank_fusion,
-    hybrid_retrieve
+    hybrid_retrieve,
+    CONTEXTUAL_VDB_PATH,
 )
+
+HAS_CONTEXTUAL_VDB = CONTEXTUAL_VDB_PATH.exists()
 
 def test_fts_chunks_search():
     results = search_fts_chunks("complete joint penetration", top_k=5)
@@ -25,6 +28,7 @@ def test_fts_chunks_search():
     contents = " ".join(r["content"].lower() for r in results)
     assert "complete joint penetration" in contents
 
+@pytest.mark.skipif(not HAS_CONTEXTUAL_VDB, reason="Contextual VDB missing")
 def test_dense_chunks_search():
     results = search_dense_chunks("gas tungsten arc welding electrode", top_k=5)
     assert len(results) > 0
@@ -50,6 +54,7 @@ def test_reciprocal_rank_fusion():
     assert top_2_ids == {"doc_a", "doc_b"}
     assert fused[0]["rrf_score"] > fused[2]["rrf_score"]
 
+@pytest.mark.skipif(not HAS_CONTEXTUAL_VDB, reason="Contextual VDB missing")
 def test_hybrid_retrieve_fillet_weld_figure_b25():
     results = hybrid_retrieve("throat of a fillet weld in Figure B25", top_k=5)
     assert len(results) >= 3
@@ -57,6 +62,7 @@ def test_hybrid_retrieve_fillet_weld_figure_b25():
     # Verify that either Clause 4 definition or Figure B25 is in top hits
     assert any("figure_b25" in d.lower() or "clause_4_p25" in d.lower() for d in doc_ids)
 
+@pytest.mark.skipif(not HAS_CONTEXTUAL_VDB, reason="Contextual VDB missing")
 def test_hybrid_retrieve_previously_missing_figures():
     # Test Figure B39 (Metal transfer modes in GMAW) - previously missing
     res_b39 = hybrid_retrieve("metal transfer modes in gas metal arc welding Figure B39", top_k=5)

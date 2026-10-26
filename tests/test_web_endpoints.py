@@ -6,9 +6,23 @@ import urllib.request
 import urllib.parse
 import json
 import time
-import sys
+import socket
+import pytest
 
 BASE_URL = "http://localhost:8000"
+
+
+def _is_server_running(host: str = "localhost", port: int = 8000) -> bool:
+    try:
+        with socket.create_connection((host, port), timeout=0.5):
+            return True
+    except OSError:
+        return False
+
+
+SERVER_AVAILABLE = _is_server_running()
+pytestmark = pytest.mark.skipif(not SERVER_AVAILABLE, reason="Web Explorer live server not running on localhost:8000")
+
 
 def test_benchmark_endpoint():
     print("Testing GET /api/benchmark...")
