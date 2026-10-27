@@ -208,10 +208,31 @@ def test_annex_b_all_56_figures_exhaustive_presence(annex_b_dir: Path, unified_m
             v_count = 0
         assert v_count > 0, f"{fig_id} has 0 vector lines/curves/drawings"
 
-        # Check callouts exist and are not empty
+        # Check crop manifests have >= 1000x800 and >= 10000 bytes
+        if "crop_manifests" in store:
+            for cm in store["crop_manifests"]:
+                assert cm["width_px"] >= 1000, f"{fig_id} crop width {cm['width_px']} < 1000"
+                assert cm["height_px"] >= 800, f"{fig_id} crop height {cm['height_px']} < 800"
+                assert cm["size_bytes"] >= 10000, f"{fig_id} crop size {cm['size_bytes']} < 10000"
+                assert "sha256" in cm and len(cm["sha256"]) == 64
+        elif "graph" in store:
+            fig_node = [n for n in store["graph"]["nodes"] if n["node_type"] == "FIGURE"][0]
+            w, h = fig_node["properties"]["crop_dimensions"]
+            assert w >= 1000, f"{fig_id} crop width {w} < 1000"
+            assert h >= 800, f"{fig_id} crop height {h} < 800"
+            assert "crop_sha256" in fig_node["properties"] and len(fig_node["properties"]["crop_sha256"]) == 64
+
+        # Check real printed callouts exist (not just 'Panel (X)' or figure title)
         if "nodes" in store:
             callouts = [n for n in store["nodes"].values() if n.get("node_type") == "CALLOUT"]
             assert len(callouts) > 0, f"{fig_id} has no callout nodes"
+            real_callouts = [
+                c["text"] for c in callouts
+                if not c["text"].startswith("Panel (")
+                and c["text"] != store.get("official_title")
+                and c["text"] != store.get("short_title")
+            ]
+            assert len(real_callouts) > 0, f"{fig_id} has no real printed callout nodes"
 
 
 # ---------------------------------------------------------------------------
