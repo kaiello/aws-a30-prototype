@@ -16,6 +16,8 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import hashlib
+from PIL import Image
 import pytest
 
 from src.archetype_cycle_waveform import compose_waveform_answer
@@ -157,27 +159,59 @@ def test_archetype4_sub_intervals_and_parameters(annex_b_dir: Path):
 # Tier 1 Property Test 4: Exhaustive Ingestion of All 56 Annex B Figures
 # ---------------------------------------------------------------------------
 def test_annex_b_all_56_figures_exhaustive_presence(annex_b_dir: Path, unified_manifest: Dict[str, Any]):
-    """Verify all 56 figures exist, have 0 duplicates, non-empty crops, and accepted nodes."""
+    """Verify all 56 figures exist, have 0 duplicates, high-res crops, vector items > 0, and accepted nodes."""
     m = unified_manifest["metrics"]
     assert m["total_figures"] == 56, f"Expected 56 figures, got {m['total_figures']}"
     assert m["total_duplicate_edges"] == 0, f"Found {m['total_duplicate_edges']} duplicate edges"
     assert m["total_candidate_nodes"] == 0
     assert m["total_candidate_edges"] == 0
-    assert m["total_accepted_nodes"] >= 800
-    assert m["total_accepted_edges"] >= 1600
+    assert m["total_accepted_nodes"] >= 1000, f"Expected >= 1000 accepted nodes, got {m['total_accepted_nodes']}"
+    assert m["total_accepted_edges"] >= 1800, f"Expected >= 1800 accepted edges, got {m['total_accepted_edges']}"
 
     crops_dir = annex_b_dir / "crops"
     assert crops_dir.exists()
     crop_files = list(crops_dir.glob("*.png"))
-    assert len(crop_files) >= 76, f"Expected at least 76 crop images, found {len(crop_files)}"
+    assert len(crop_files) == 80, f"Expected exactly 80 crop images, found {len(crop_files)}"
 
-    # Check each individual figure store
+    # High-resolution 300 DPI crop assertions: width >= 1000, height >= 800, size >= 10000 bytes
+    crop_hashes = set()
+    for cp in crop_files:
+        sz = cp.stat().st_size
+        assert sz >= 10000, f"Crop {cp.name} file size too small: {sz} bytes (expected >= 10000)"
+        with Image.open(cp) as img:
+            w, h = img.size
+            assert w >= 1000, f"Crop {cp.name} width too small: {w}px (expected >= 1000)"
+            assert h >= 800, f"Crop {cp.name} height too small: {h}px (expected >= 800)"
+        hval = hashlib.sha256(cp.read_bytes()).hexdigest()
+        assert hval not in crop_hashes, f"Duplicate crop hash detected for {cp.name}: {hval}"
+        crop_hashes.add(hval)
+
+    assert len(crop_hashes) == 80, f"Expected 80 unique crop hashes, got {len(crop_hashes)}"
+
+    # Check each individual figure store for vector line/curve counts and real callouts
     for fig_id, fig_info in unified_manifest["figures"].items():
         slug = fig_id.lower().replace(" ", "_")
         store_file = annex_b_dir / f"{slug}_store.json"
         assert store_file.exists(), f"Store file missing: {store_file}"
         assert fig_info["accepted_nodes"] > 0
         assert fig_info["accepted_edges"] > 0
+
+        store = json.loads(store_file.read_text(encoding="utf-8"))
+        if "metrics" in store and "total_line_items" in store["metrics"]:
+            v_count = store["metrics"]["total_line_items"] + store["metrics"]["total_curve_items"]
+        elif "metrics" in store and "vector_drawings_count" in store["metrics"]:
+            v_count = store["metrics"]["vector_drawings_count"]
+        elif "graph" in store:
+            fig_node = [n for n in store["graph"]["nodes"] if n["node_type"] == "FIGURE"][0]
+            v_count = fig_node["properties"].get("vector_drawings_count", 0)
+        else:
+            v_count = 0
+        assert v_count > 0, f"{fig_id} has 0 vector lines/curves/drawings"
+
+        # Check callouts exist and are not empty
+        if "nodes" in store:
+            callouts = [n for n in store["nodes"].values() if n.get("node_type") == "CALLOUT"]
+            assert len(callouts) > 0, f"{fig_id} has no callout nodes"
 
 
 # ---------------------------------------------------------------------------
@@ -213,16 +247,61 @@ def test_annex_b_multi_page_continuations(annex_b_dir: Path):
 # Tier 1 Property Test 6: Embedded Tables & Numbered Key Legends
 # ---------------------------------------------------------------------------
 def test_annex_b_embedded_tables_and_numbered_keys(annex_b_dir: Path):
-    """Verify figures with embedded tables and numbered keys."""
+    """Verify figures with embedded tables, numbered keys, and specialized callouts."""
     table_figs = ["Figure B1", "Figure B7", "Figure B16A", "Figure B16B", "Figure B16C", "Figure B47", "Figure B48"]
     for fid in table_figs:
         slug = fid.lower().replace(" ", "_")
         store = json.loads((annex_b_dir / f"{slug}_store.json").read_text(encoding="utf-8"))
         assert store.get("has_embedded_table") or any("embedded table" in n.lower() for n in store.get("notes", [])) or "applicable_welds_by_joint" in store
 
-    # Numbered keys
+    # Numbered keys in Figure B33: crater crack, face crack, heat-affected zone crack, etc.
     b33_store = json.loads((annex_b_dir / "figure_b33_store.json").read_text(encoding="utf-8"))
-    assert any("numbered key" in n.lower() for n in b33_store.get("notes", []))
+    b33_key_nodes = [n for n in b33_store["nodes"].values() if "key_number" in n]
+    assert len(b33_key_nodes) >= 10, f"Figure B33 must have >= 10 numbered crack key items, got {len(b33_key_nodes)}"
+    b33_texts = [n["text"].lower() for n in b33_key_nodes]
+    assert any("crater crack" in t for t in b33_texts)
+    assert any("face crack" in t for t in b33_texts)
+    assert any("heat-affected zone crack" in t for t in b33_texts)
+    assert any("lamellar tear" in t for t in b33_texts)
+    assert any("longitudinal crack" in t for t in b33_texts)
+    assert any("root crack" in t for t in b33_texts)
+    assert any("throat crack" in t for t in b33_texts)
+    assert any("toe crack" in t for t in b33_texts)
+    assert any("transverse crack" in t for t in b33_texts)
+    assert any("underbead crack" in t for t in b33_texts)
+
+    # Numbered keys and zones in Figure B46: Friction Stir Welding
+    b46_store = json.loads((annex_b_dir / "figure_b46_store.json").read_text(encoding="utf-8"))
+    b46_key_nodes = [n for n in b46_store["nodes"].values() if "key_number" in n]
+    assert len(b46_key_nodes) == 10, f"Figure B46 must have 10 numbered key items, got {len(b46_key_nodes)}"
+    b46_callouts = [n["text"].lower() for n in b46_store["nodes"].values() if n.get("node_type") == "CALLOUT"]
+    assert any("advancing side" in c for c in b46_callouts)
+    assert any("retreating side" in c for c in b46_callouts)
+    assert any("shoulder" in c for c in b46_callouts)
+    assert any("probe" in c for c in b46_callouts)
+    assert any("stir zone" in c for c in b46_callouts)
+
+    # Embedded tables & circuit labels in B7, B16A, B16B, B16C, B47, B48
+    b7_store = json.loads((annex_b_dir / "figure_b7_store.json").read_text(encoding="utf-8"))
+    b7_calls = [n.get("text", n.get("name", "")).lower() for n in b7_store["nodes"].values()]
+    assert any("square-groove" in c for c in b7_calls)
+    assert any("bevel-groove" in c for c in b7_calls)
+
+    b16a_store = json.loads((annex_b_dir / "figure_b16a_store.json").read_text(encoding="utf-8"))
+    b16a_calls = [n.get("text", n.get("name", "")).lower() for n in b16a_store["nodes"].values()]
+    assert any("flat" in c for c in b16a_calls)
+    assert any("horizontal" in c for c in b16a_calls)
+    assert any("overhead" in c for c in b16a_calls)
+    assert any("vertical" in c for c in b16a_calls)
+
+    b47_store = json.loads((annex_b_dir / "figure_b47_store.json").read_text(encoding="utf-8"))
+    b47_calls = [n.get("text", n.get("name", "")).lower() for n in b47_store["nodes"].values()]
+    assert any("direct welding" in c for c in b47_calls)
+    assert any("series welding" in c for c in b47_calls)
+
+    b48_store = json.loads((annex_b_dir / "figure_b48_store.json").read_text(encoding="utf-8"))
+    b48_calls = [n.get("text", n.get("name", "")).lower() for n in b48_store["nodes"].values()]
+    assert any("direct welding" in c for c in b48_calls)
 
 
 # ---------------------------------------------------------------------------
@@ -313,3 +392,54 @@ def test_anti_drift_zero_hardcoded_grep():
             text=True,
         )
         assert res.returncode != 0, f"Found forbidden hardcoded token '{fword}' in src/:\n{res.stdout}"
+
+
+# ---------------------------------------------------------------------------
+# Tier 1 Property Test 8: Archetype 4 PDF Span Bbox Binding & Universal QA
+# ---------------------------------------------------------------------------
+def test_archetype4_span_bbox_binding_and_universal_spatial_qa(annex_b_dir: Path):
+    """Verify Archetype 4 text span bindings and universal spatial callout QA routing."""
+    for fid in ["Figure B44", "Figure B45", "Figure B49", "Figure B50", "Figure B51", "Figure B53", "Figure B54"]:
+        slug = fid.lower().replace(" ", "_")
+        store = json.loads((annex_b_dir / f"{slug}_store.json").read_text(encoding="utf-8"))
+        fig_node = [n for n in store["graph"]["nodes"] if n["node_type"] == "FIGURE"][0]
+        assert fig_node["properties"]["vector_drawings_count"] > 0
+
+        # Check matched span count properties exist on traces, intervals, parameters
+        for n in store["graph"]["nodes"]:
+            if n["node_type"] in {"TRACE_VARIABLE", "TEMPORAL_INTERVAL", "WAVEFORM_PARAMETER"}:
+                assert "matched_pdf_spans_count" in n["properties"]
+                assert "matched_spans" in n["properties"]
+
+    # Universal Spatial Callout QA Composer resolution for B1..B52
+    unified_complete = json.loads((annex_b_dir / "annex_b_complete_unified_store.json").read_text(encoding="utf-8"))
+    unified_figures = unified_complete.get("figures", {})
+    # Load actual figure stores for query composer
+    stores_map = {}
+    for fid in ["Figure B1", "Figure B7", "Figure B12", "Figure B16A", "Figure B20", "Figure B30", "Figure B33", "Figure B46", "Figure B52"]:
+        slug = fid.lower().replace(" ", "_")
+        stores_map[fid] = json.loads((annex_b_dir / f"{slug}_store.json").read_text(encoding="utf-8"))
+
+    # Test B12 sub-panels
+    ans_b12 = compose_spatial_callout_answer("What sub-panels are in Figure B12?", stores_map)
+    assert ans_b12["status"] == "PASS"
+    assert ans_b12["figure_id"] == "Figure B12"
+    assert len(ans_b12["sub_panels"]) == 5
+
+    # Test B20 sub-panels
+    ans_b20 = compose_spatial_callout_answer("What sub-panels are shown in Figure B20?", stores_map)
+    assert ans_b20["status"] == "PASS"
+    assert ans_b20["figure_id"] == "Figure B20"
+    assert len(ans_b20["sub_panels"]) == 7
+
+    # Test B33 callouts
+    ans_b33 = compose_spatial_callout_answer("What crack types are illustrated in Figure B33?", stores_map)
+    assert ans_b33["status"] == "PASS"
+    assert ans_b33["figure_id"] == "Figure B33"
+    assert len(ans_b33["callout_labels"]) >= 10
+
+    # Test B46 callouts
+    ans_b46 = compose_spatial_callout_answer("What components and zones are in Figure B46?", stores_map)
+    assert ans_b46["status"] == "PASS"
+    assert ans_b46["figure_id"] == "Figure B46"
+    assert len(ans_b46["callout_labels"]) >= 10

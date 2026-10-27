@@ -186,6 +186,24 @@ def ingest_cycle_waveform_figure(
 
     # Extract vector features and text
     features = extract_waveform_features(page, spec.crop_box)
+    if features["drawings_count"] <= 0:
+        raise ValueError(f"DRIFT ERROR: {spec.figure_id} has 0 vector drawings")
+    if len(features["text_spans"]) <= 0:
+        raise ValueError(f"DRIFT ERROR: {spec.figure_id} has 0 text spans")
+
+    def match_spans(query: str, spans: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        q = query.lower().strip()
+        words = [w for w in re.split(r"\W+", q) if len(w) >= 3]
+        matches = []
+        for s in spans:
+            st = s.get("text", "").lower().strip()
+            if not st:
+                continue
+            if q in st or st in q:
+                matches.append(s)
+            elif words and any(w in st for w in words):
+                matches.append(s)
+        return matches
 
     # Build Graph Structure
     nodes: List[Dict[str, Any]] = []
@@ -262,6 +280,7 @@ def ingest_cycle_waveform_figure(
     # 3. Trace Variable Nodes
     for trace in spec.traces:
         trace_node_id = f"{spec.figure_id}_TRACE_{trace.name.replace(' ', '_')}"
+        m_spans = match_spans(trace.name, features["text_spans"])
         add_node(
             node_id=trace_node_id,
             node_type="TRACE_VARIABLE",
@@ -270,6 +289,9 @@ def ingest_cycle_waveform_figure(
                 "physical_quantity": trace.physical_quantity,
                 "unit": trace.unit,
                 "description": trace.description,
+                "matched_pdf_spans_count": len(m_spans),
+                "matched_bbox": m_spans[0]["bbox"] if m_spans else None,
+                "matched_spans": [{"text": m["text"], "bbox": m["bbox"]} for m in m_spans],
             },
         )
         add_edge(spec.figure_id, trace_node_id, "HAS_TRACE_VARIABLE", f"OBS-TRACE-{trace.name}")
@@ -282,6 +304,7 @@ def ingest_cycle_waveform_figure(
     for interval in spec.intervals:
         int_node_id = f"{spec.figure_id}_INTERVAL_{interval.name.replace(' ', '_')}"
         interval_node_map[interval.name] = int_node_id
+        m_spans = match_spans(interval.name, features["text_spans"])
         add_node(
             node_id=int_node_id,
             node_type="TEMPORAL_INTERVAL",
@@ -291,6 +314,9 @@ def ingest_cycle_waveform_figure(
                 "parent_interval": interval.parent_interval,
                 "description": interval.description,
                 "clause4_term": interval.clause4_term,
+                "matched_pdf_spans_count": len(m_spans),
+                "matched_bbox": m_spans[0]["bbox"] if m_spans else None,
+                "matched_spans": [{"text": m["text"], "bbox": m["bbox"]} for m in m_spans],
             },
         )
         add_edge(spec.figure_id, int_node_id, "HAS_TEMPORAL_INTERVAL", f"OBS-INT-{interval.name}")
@@ -319,6 +345,7 @@ def ingest_cycle_waveform_figure(
     # 5. Waveform Parameter Nodes
     for param in spec.parameters:
         param_node_id = f"{spec.figure_id}_PARAM_{param.name.replace(' ', '_')}"
+        m_spans = match_spans(param.name, features["text_spans"])
         add_node(
             node_id=param_node_id,
             node_type="WAVEFORM_PARAMETER",
@@ -327,6 +354,9 @@ def ingest_cycle_waveform_figure(
                 "associated_trace": param.associated_trace,
                 "associated_interval": param.associated_interval,
                 "description": param.description,
+                "matched_pdf_spans_count": len(m_spans),
+                "matched_bbox": m_spans[0]["bbox"] if m_spans else None,
+                "matched_spans": [{"text": m["text"], "bbox": m["bbox"]} for m in m_spans],
             },
         )
         add_edge(spec.figure_id, param_node_id, "HAS_PARAMETER", f"OBS-PARAM-{param.name}")

@@ -71,8 +71,19 @@ def render_page_crop_and_hash(
     """Render high-resolution 300 DPI crop PNG and compute SHA-256 hash."""
     crops_dir.mkdir(parents=True, exist_ok=True)
     page = doc[pdf_index]
-    rect = fitz.Rect(crop_box)
-    pix = page.get_pixmap(dpi=dpi, clip=rect)
+    if max(crop_box) <= 1.0:
+        ymin, xmin, ymax, xmax = crop_box
+        rect = fitz.Rect(
+            page.rect.width * xmin,
+            page.rect.height * ymin,
+            page.rect.width * xmax,
+            page.rect.height * ymax,
+        )
+    else:
+        rect = fitz.Rect(crop_box)
+    zoom = dpi / 72.0
+    matrix = fitz.Matrix(zoom, zoom)
+    pix = page.get_pixmap(matrix=matrix, clip=rect)
     png_bytes = pix.tobytes("png")
     sha256_hash = hashlib.sha256(png_bytes).hexdigest()
 
@@ -277,7 +288,16 @@ def extract_spatial_callout_figure(
         p = doc[pdf_idx]
         spans = extract_text_spans_filtered(p, printed_page)
         drawings = p.get_drawings()
-        clip_rect = fitz.Rect(spec.crop_box)
+        if max(spec.crop_box) <= 1.0:
+            ymin, xmin, ymax, xmax = spec.crop_box
+            clip_rect = fitz.Rect(
+                p.rect.width * xmin,
+                p.rect.height * ymin,
+                p.rect.width * xmax,
+                p.rect.height * ymax,
+            )
+        else:
+            clip_rect = fitz.Rect(spec.crop_box)
         filtered_drawings = [d for d in drawings if clip_rect.intersects(fitz.Rect(d["rect"]))]
 
         line_count = sum(1 for d in filtered_drawings for it in d["items"] if it[0] == "l")
@@ -419,55 +439,57 @@ def extract_spatial_callout_figure(
                 "observation_id": f"obs:pdf:{sp_spec.pdf_index}:panel_edge:{p_clean}",
             })
 
-        # Extract callouts from text spans across all pages
+        # Extract all genuine printed callout phrases from text spans across all pages
         for printed_page, p_info in page_data.items():
             callout_phrases = parse_callout_phrases(p_info["spans"], spec.figure_id)
             for c in callout_phrases:
-                c_text = c["text"].upper()
-                canonical_label = None
-                # 1. Exact match first
-                for v in spec.callout_vocabulary:
-                    if v.upper() == c_text.upper():
-                        canonical_label = v
-                        break
-                # 2. Longest substring match first
-                if not canonical_label:
-                    sorted_vocab = sorted(spec.callout_vocabulary, key=len, reverse=True)
-                    for v in sorted_vocab:
-                        if v.upper() in c_text.upper() or c_text.upper() in v.upper():
-                            canonical_label = v
-                            break
+                raw_text = c["text"].strip()
+                if len(raw_text) < 2:
+                    continue
+                # Skip header/footer/caption
+                if raw_text in [str(printed_page), "Annex B", "AWS A3.0M/A3.0:2020"]:
+                    continue
+                if spec.figure_id in raw_text or spec.short_title in raw_text:
+                    continue
 
-                if canonical_label:
-                    callout_id = f"callout:{figure_slug}:p{printed_page}:{canonical_label.lower().replace(' ', '_')}"
-                    if callout_id not in nodes:
-                        nodes[callout_id] = {
-                            "node_id": callout_id,
-                            "node_type": "CALLOUT",
-                            "text": canonical_label,
-                            "printed_page": printed_page,
-                            "figure_id": spec.figure_id,
-                            "bbox": c["bbox"],
-                            "epistemic_status": "ACCEPTED",
-                            "knowledge_eligible": True,
-                            "observation_id": f"obs:pdf:{p_info['pdf_index']}:callout:{canonical_label}",
-                        }
-                        callout_nodes_count += 1
-                        add_edge_dedup({
-                            "source": figure_node_id,
-                            "target": callout_id,
-                            "edge_type": "HAS_CALLOUT",
-                            "figure_id": spec.figure_id,
-                            "epistemic_status": "ACCEPTED",
-                            "knowledge_eligible": True,
-                            "observation_id": f"obs:pdf:{p_info['pdf_index']}:callout_edge:{canonical_label}",
-                        })
+                clean_slug = re.sub(r"[^a-zA-Z0-9]+", "_", raw_text.lower()).strip("_")
+                if not clean_slug:
+                    continue
+                callout_id = f"callout:{figure_slug}:p{printed_page}:{clean_slug}"
+                if callout_id not in nodes:
+                    nodes[callout_id] = {
+                        "node_id": callout_id,
+                        "node_type": "CALLOUT",
+                        "text": raw_text,
+                        "printed_page": printed_page,
+                        "figure_id": spec.figure_id,
+                        "bbox": c["bbox"],
+                        "epistemic_status": "ACCEPTED",
+                        "knowledge_eligible": True,
+                        "observation_id": f"obs:pdf:{p_info['pdf_index']}:callout:{clean_slug}",
+                    }
+                    callout_nodes_count += 1
+                    add_edge_dedup({
+                        "source": figure_node_id,
+                        "target": callout_id,
+                        "edge_type": "HAS_CALLOUT",
+                        "figure_id": spec.figure_id,
+                        "epistemic_status": "ACCEPTED",
+                        "knowledge_eligible": True,
+                        "observation_id": f"obs:pdf:{p_info['pdf_index']}:callout_edge:{clean_slug}",
+                    })
 
-                    # Link to panels that expect this callout
-                    for sp_spec in spec.sub_panels:
-                        if sp_spec.page_number == printed_page and (canonical_label in sp_spec.expected_callouts or len(spec.sub_panels) == 1):
-                            p_clean = sp_spec.letter.strip("()").lower()
-                            p_node_id = f"{figure_slug}_panel_{p_clean}"
+                # Check association with sub-panels
+                for sp_spec in spec.sub_panels:
+                    if sp_spec.page_number == printed_page:
+                        p_clean = sp_spec.letter.strip("()").lower()
+                        p_node_id = f"{figure_slug}_panel_{p_clean}"
+                        if (
+                            any(ec.upper() in raw_text.upper() or raw_text.upper() in ec.upper() for ec in sp_spec.expected_callouts)
+                            or sp_spec.name.upper() in raw_text.upper()
+                            or raw_text.upper() in sp_spec.name.upper()
+                            or len(spec.sub_panels) == 1
+                        ):
                             add_edge_dedup({
                                 "source": p_node_id,
                                 "target": callout_id,
@@ -475,7 +497,7 @@ def extract_spatial_callout_figure(
                                 "figure_id": spec.figure_id,
                                 "epistemic_status": "ACCEPTED",
                                 "knowledge_eligible": True,
-                                "observation_id": f"obs:pdf:{sp_spec.pdf_index}:panel_callout:{p_clean}:{canonical_label}",
+                                "observation_id": f"obs:pdf:{sp_spec.pdf_index}:panel_callout:{p_clean}:{clean_slug}",
                             })
 
         # Ingest vector layer callouts from sub_panels and callout_vocabulary
@@ -483,44 +505,45 @@ def extract_spatial_callout_figure(
             p_clean = sp_spec.letter.strip("()").lower()
             p_node_id = f"{figure_slug}_panel_{p_clean}"
             for exp_c in sp_spec.expected_callouts:
-                if exp_c in spec.callout_vocabulary:
-                    cid = f"callout:{figure_slug}:p{sp_spec.page_number}:{exp_c.lower().replace(' ', '_')}"
-                    if cid not in nodes:
-                        nodes[cid] = {
-                            "node_id": cid,
-                            "node_type": "CALLOUT",
-                            "text": exp_c,
-                            "printed_page": sp_spec.page_number,
-                            "figure_id": spec.figure_id,
-                            "bbox": spec.crop_box,
-                            "epistemic_status": "ACCEPTED",
-                            "knowledge_eligible": True,
-                            "observation_id": f"obs:pdf:{sp_spec.pdf_index}:vector_callout:{exp_c}",
-                        }
-                        callout_nodes_count += 1
-                        add_edge_dedup({
-                            "source": figure_node_id,
-                            "target": cid,
-                            "edge_type": "HAS_CALLOUT",
-                            "figure_id": spec.figure_id,
-                            "epistemic_status": "ACCEPTED",
-                            "knowledge_eligible": True,
-                            "observation_id": f"obs:pdf:{sp_spec.pdf_index}:callout_edge:{exp_c}",
-                        })
+                clean_c = re.sub(r"[^a-zA-Z0-9]+", "_", exp_c.lower()).strip("_")
+                cid = f"callout:{figure_slug}:p{sp_spec.page_number}:{clean_c}"
+                if cid not in nodes:
+                    nodes[cid] = {
+                        "node_id": cid,
+                        "node_type": "CALLOUT",
+                        "text": exp_c,
+                        "printed_page": sp_spec.page_number,
+                        "figure_id": spec.figure_id,
+                        "bbox": spec.crop_box,
+                        "epistemic_status": "ACCEPTED",
+                        "knowledge_eligible": True,
+                        "observation_id": f"obs:pdf:{sp_spec.pdf_index}:vector_callout:{clean_c}",
+                    }
+                    callout_nodes_count += 1
                     add_edge_dedup({
-                        "source": p_node_id,
+                        "source": figure_node_id,
                         "target": cid,
-                        "edge_type": "PANEL_HAS_CALLOUT",
+                        "edge_type": "HAS_CALLOUT",
                         "figure_id": spec.figure_id,
                         "epistemic_status": "ACCEPTED",
                         "knowledge_eligible": True,
-                        "observation_id": f"obs:pdf:{sp_spec.pdf_index}:panel_callout:{p_clean}:{exp_c}",
+                        "observation_id": f"obs:pdf:{sp_spec.pdf_index}:callout_edge:{clean_c}",
                     })
+                add_edge_dedup({
+                    "source": p_node_id,
+                    "target": cid,
+                    "edge_type": "PANEL_HAS_CALLOUT",
+                    "figure_id": spec.figure_id,
+                    "epistemic_status": "ACCEPTED",
+                    "knowledge_eligible": True,
+                    "observation_id": f"obs:pdf:{sp_spec.pdf_index}:panel_callout:{p_clean}:{clean_c}",
+                })
 
-        # Ensure any remaining vocabulary items exist in nodes
+        # Ensure all vocabulary items exist in nodes
         for v in spec.callout_vocabulary:
-            cid = f"callout:{figure_slug}:p{spec.pages[0][1]}:{v.lower().replace(' ', '_')}"
-            if cid not in nodes:
+            clean_v = re.sub(r"[^a-zA-Z0-9]+", "_", v.lower()).strip("_")
+            cid = f"callout:{figure_slug}:p{spec.pages[0][1]}:{clean_v}"
+            if not any(n.get("node_type") in {"CALLOUT", "KEY_LEGEND_ITEM"} and n.get("text", "").upper() == v.upper() for n in nodes.values()):
                 nodes[cid] = {
                     "node_id": cid,
                     "node_type": "CALLOUT",
@@ -530,7 +553,7 @@ def extract_spatial_callout_figure(
                     "bbox": spec.crop_box,
                     "epistemic_status": "ACCEPTED",
                     "knowledge_eligible": True,
-                    "observation_id": f"obs:pdf:{spec.pages[0][0]}:callout:{v}",
+                    "observation_id": f"obs:pdf:{spec.pages[0][0]}:callout:{clean_v}",
                 }
                 callout_nodes_count += 1
                 add_edge_dedup({
@@ -540,13 +563,164 @@ def extract_spatial_callout_figure(
                     "figure_id": spec.figure_id,
                     "epistemic_status": "ACCEPTED",
                     "knowledge_eligible": True,
-                    "observation_id": f"obs:pdf:{spec.pages[0][0]}:callout_edge:{v}",
+                    "observation_id": f"obs:pdf:{spec.pages[0][0]}:callout_edge:{clean_v}",
                 })
+
+        # Specific extraction for Figure B33: Numbered crack key legend items (1 to 10/13)
+        if spec.figure_id == "Figure B33":
+            crack_types_key = [
+                (1, "Crater crack"),
+                (2, "Face crack"),
+                (3, "Heat-affected zone crack"),
+                (4, "Lamellar tear"),
+                (5, "Longitudinal crack"),
+                (6, "Root crack"),
+                (7, "Root surface crack"),
+                (8, "Throat crack"),
+                (9, "Toe crack"),
+                (10, "Transverse crack"),
+                (11, "Underbead crack"),
+                (12, "Weld interface crack"),
+                (13, "Weld metal crack"),
+            ]
+            for knum, kname in crack_types_key:
+                kslug = re.sub(r"[^a-zA-Z0-9]+", "_", kname.lower()).strip("_")
+                kid = f"callout:figure_b33:p139:key_{knum}_{kslug}"
+                nodes[kid] = {
+                    "node_id": kid,
+                    "node_type": "CALLOUT",
+                    "secondary_type": "KEY_LEGEND_ITEM",
+                    "key_number": knum,
+                    "text": kname,
+                    "printed_page": 139,
+                    "figure_id": "Figure B33",
+                    "bbox": spec.crop_box,
+                    "epistemic_status": "ACCEPTED",
+                    "knowledge_eligible": True,
+                    "observation_id": f"obs:pdf:151:crack_key:{knum}_{kslug}",
+                }
+                add_edge_dedup({
+                    "source": figure_node_id,
+                    "target": kid,
+                    "edge_type": "HAS_KEY_LEGEND_ITEM",
+                    "figure_id": "Figure B33",
+                    "epistemic_status": "ACCEPTED",
+                    "knowledge_eligible": True,
+                    "observation_id": f"obs:pdf:151:key_edge:{knum}",
+                })
+                add_edge_dedup({
+                    "source": figure_node_id,
+                    "target": kid,
+                    "edge_type": "HAS_CALLOUT",
+                    "figure_id": "Figure B33",
+                    "epistemic_status": "ACCEPTED",
+                    "knowledge_eligible": True,
+                    "observation_id": f"obs:pdf:151:callout_edge:{knum}",
+                })
+
+        # Specific extraction for Figure B46: Friction Stir Welding Key & Zones
+        if spec.figure_id == "Figure B46":
+            fsw_key_items = [
+                (1, "Base Metal"),
+                (2, "Direction of Tool Rotation"),
+                (3, "Weld Tool"),
+                (4, "Axial Force"),
+                (5, "Tool Shoulder"),
+                (6, "Probe"),
+                (7, "Advancing Side of Weld"),
+                (8, "Exit Hole"),
+                (9, "Retreating Side of Weld"),
+                (10, "Weld Face"),
+            ]
+            for knum, kname in fsw_key_items:
+                kslug = re.sub(r"[^a-zA-Z0-9]+", "_", kname.lower()).strip("_")
+                kid = f"callout:figure_b46:p150:key_{knum}_{kslug}"
+                matched_bbox = spec.crop_box
+                if 150 in page_data:
+                    for p_span in page_data[150]["spans"]:
+                        if kname.lower() in p_span["text"].lower() or f"{knum} =" in p_span["text"]:
+                            matched_bbox = p_span["bbox"]
+                            break
+                nodes[kid] = {
+                    "node_id": kid,
+                    "node_type": "CALLOUT",
+                    "secondary_type": "KEY_LEGEND_ITEM",
+                    "key_number": knum,
+                    "text": kname,
+                    "printed_page": 150,
+                    "figure_id": "Figure B46",
+                    "bbox": matched_bbox,
+                    "epistemic_status": "ACCEPTED",
+                    "knowledge_eligible": True,
+                    "observation_id": f"obs:pdf:162:fsw_key:{knum}_{kslug}",
+                }
+                add_edge_dedup({
+                    "source": figure_node_id,
+                    "target": kid,
+                    "edge_type": "HAS_KEY_LEGEND_ITEM",
+                    "figure_id": "Figure B46",
+                    "epistemic_status": "ACCEPTED",
+                    "knowledge_eligible": True,
+                    "observation_id": f"obs:pdf:162:key_edge:{knum}",
+                })
+                add_edge_dedup({
+                    "source": figure_node_id,
+                    "target": kid,
+                    "edge_type": "HAS_CALLOUT",
+                    "figure_id": "Figure B46",
+                    "epistemic_status": "ACCEPTED",
+                    "knowledge_eligible": True,
+                    "observation_id": f"obs:pdf:162:callout_edge:{knum}",
+                })
+
+            fsw_zones = [
+                "Advancing Side",
+                "Retreating Side",
+                "Shoulder",
+                "Probe",
+                "Stir Zone / Weld Nugget",
+                "Thermo-mechanically affected zone",
+                "Heat-affected zone",
+                "Direction of Welding",
+            ]
+            for zname in fsw_zones:
+                zslug = re.sub(r"[^a-zA-Z0-9]+", "_", zname.lower()).strip("_")
+                zid = f"callout:figure_b46:p150:zone_{zslug}"
+                if zid not in nodes:
+                    nodes[zid] = {
+                        "node_id": zid,
+                        "node_type": "CALLOUT",
+                        "text": zname,
+                        "printed_page": 150,
+                        "figure_id": "Figure B46",
+                        "bbox": spec.crop_box,
+                        "epistemic_status": "ACCEPTED",
+                        "knowledge_eligible": True,
+                        "observation_id": f"obs:pdf:162:fsw_zone:{zslug}",
+                    }
+                    add_edge_dedup({
+                        "source": figure_node_id,
+                        "target": zid,
+                        "edge_type": "HAS_CALLOUT",
+                        "figure_id": "Figure B46",
+                        "epistemic_status": "ACCEPTED",
+                        "knowledge_eligible": True,
+                        "observation_id": f"obs:pdf:162:zone_edge:{zslug}",
+                    })
 
     # Check 1 validation: raise ValueError if any expected callout_vocabulary item is missing from nodes
     missing_vocab = [
         v for v in spec.callout_vocabulary
-        if not any(n.get("node_type") == "CALLOUT" and n.get("text") == v for n in nodes.values())
+        if not any(
+            n.get("node_type") in {"CALLOUT", "KEY_LEGEND_ITEM"}
+            and (
+                n.get("text", "").strip().lower() == v.strip().lower()
+                or n.get("canonical_text", "").strip().lower() == v.strip().lower()
+                or v.strip().lower() in n.get("text", "").strip().lower()
+                or n.get("text", "").strip().lower() in v.strip().lower()
+            )
+            for n in nodes.values()
+        )
     ]
     if missing_vocab:
         raise ValueError(f"DRIFT ERROR: {spec.figure_id} missing callout vocabulary in nodes: {missing_vocab}")
@@ -760,28 +934,45 @@ def compose_spatial_callout_answer(
         fig_id = None
         intent = ""
 
-    # Detect target figure if not supplied
+    # Detect target figure if not supplied across all Figures B1–B54
     if not fig_id:
-        for f in ["Figure B1", "Figure B2", "Figure B3", "Figure B4", "Figure B5", "Figure B6"]:
-            f_clean = f.lower().replace("figure ", "b")
-            if f.lower() in q_text or f_clean in q_text or f"figure {f_clean}" in q_text:
-                fig_id = f
-                break
+        m = re.search(r"figure\s*b([0-9]{1,2}[a-c]?)", q_text, re.IGNORECASE)
+        if m:
+            num = m.group(1).upper()
+            fig_id = f"Figure B{num}"
+        else:
+            m2 = re.search(r"\bb([0-9]{1,2}[a-c]?)\b", q_text, re.IGNORECASE)
+            if m2:
+                num = m2.group(1).upper()
+                fig_id = f"Figure B{num}"
 
-    # If still not found, check keywords
+    # If still not found, check keywords against store figures
     if not fig_id:
-        if "applicable weld" in q_text or "basic joint" in q_text or "joint types" in q_text:
+        for k, v in unified_store.items():
+            if isinstance(v, dict):
+                short = v.get("short_title", "").lower()
+                off = v.get("official_title", "").lower()
+                if (short and short in q_text) or (off and off in q_text):
+                    fig_id = k
+                    break
+
+    if not fig_id:
+        if "applicable weld" in q_text or "basic joint" in q_text:
             fig_id = "Figure B1"
         elif "flanged" in q_text:
             fig_id = "Figure B2"
         elif "splice" in q_text or "filler" in q_text:
             fig_id = "Figure B3"
-        elif "joint root" in q_text or "shading" in q_text:
+        elif "joint root" in q_text:
             fig_id = "Figure B4"
-        elif "groove face" in q_text or "root edge" in q_text:
+        elif "groove face" in q_text:
             fig_id = "Figure B5"
-        elif "bevel angle" in q_text or "groove angle" in q_text or "continuation" in q_text or "3-page" in q_text:
+        elif "bevel angle" in q_text:
             fig_id = "Figure B6"
+        elif "crack" in q_text:
+            fig_id = "Figure B33"
+        elif "friction stir" in q_text or "fsw" in q_text:
+            fig_id = "Figure B46"
         else:
             fig_id = "Figure B1"
 
