@@ -1,0 +1,1046 @@
+{
+  "benchmark_id": "phase3_holdout_gate3d_001",
+  "mode": "live",
+  "total_questions": 40,
+  "total_elapsed_seconds": 56.18,
+  "five_dimensions": {
+    "schema_valid": "40 / 40 (100.0%)",
+    "compiler_accepted": "40 / 40 (100.0%)",
+    "executed_operations": "40 / 40 (100.0%)",
+    "content_grade": "40 / 40 (100.0%)",
+    "delivery_grade": "40 / 40 (100.0%)"
+  },
+  "results": [
+    {
+      "question_id": "P3-S1-01",
+      "slice": "slice_1_clause4_glossary",
+      "source_element": "Clause 4",
+      "query": "In Clause 4, what are the defined senses or definitions for the term 'braze', and what parts of speech does it have?",
+      "answer": "In Clause 4 of AWS A3.0M/A3.0:2020, the term 'braze' is defined as a verb: \"The act of brazing.\" (printed p. 12). It denotes the act of brazing.",
+      "elapsed_seconds": 1.218,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_glossary_term",
+          "term": "braze",
+          "found": true,
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 1
+    },
+    {
+      "question_id": "P3-S1-02",
+      "slice": "slice_1_clause4_glossary",
+      "source_element": "Clause 4",
+      "query": "What is the definition of 'faying surface' in Clause 4, and what Annex B figure does it cross-reference?",
+      "answer": "In Clause 4 (printed p. 24), the definition of 'faying surface' (\"The mating surface of a workpiece in contact with or in close proximity to another workpiece to which it is to be joined. See Figure B30(D).\") explicitly cites Figure B30, Figure B30(D).",
+      "elapsed_seconds": 1.456,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_glossary_term",
+          "term": "faying surface",
+          "found": true,
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 2
+    },
+    {
+      "question_id": "P3-S1-03",
+      "slice": "slice_1_clause4_glossary",
+      "source_element": "Clause 4",
+      "query": "Is 'stick electrode welding' a standard term in AWS A3.0M/A3.0:2020, and what is its standard preferred term?",
+      "answer": "In AWS A3.0M/A3.0:2020, 'stick electrode welding' is a nonstandard term. Clause 4 defines it as: \"A nonstandard term for shielded metal arc welding.\". The standard preferred term is shielded metal arc welding (SMAW).",
+      "elapsed_seconds": 1.072,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_glossary_term",
+          "term": "stick electrode welding",
+          "found": true,
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 3
+    },
+    {
+      "question_id": "P3-S1-04",
+      "slice": "slice_1_clause4_glossary",
+      "source_element": "Clause 4",
+      "query": "How is 'air carbon arc cutting' defined in Clause 4 in relation to carbon arc cutting, and what medium removes the molten metal?",
+      "answer": "In Clause 4 (printed p. 7), 'air carbon arc cutting' is defined as: \"A carbon arc cutting process variation removing molten metal with a jet of air.\". It is a carbon arc cutting process variation that removes molten metal with a jet of air.",
+      "elapsed_seconds": 1.133,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_glossary_term",
+          "term": "air carbon arc cutting",
+          "found": true,
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 4
+    },
+    {
+      "question_id": "P3-S1-05",
+      "slice": "slice_1_clause4_glossary",
+      "source_element": "Clause 4",
+      "query": "In Clause 4, how is 'diffusion brazing' annotated with 2020 typographical change indicators such as underlines and margin bars?",
+      "answer": "In Clause 4 (printed p. 19), the term 'diffusion brazing' is annotated with both 2020 typographical change indicators: has_2020_underline=True and has_2020_margin_bar=True. Per Clause 3, the single underline denotes text modifications made in the 2020 edition, and the vertical margin bar in the margin indicates a revised entry.",
+      "elapsed_seconds": 1.483,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_glossary_term",
+          "term": "diffusion brazing",
+          "found": true,
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 5
+    },
+    {
+      "question_id": "P3-S1-06",
+      "slice": "slice_1_clause4_glossary",
+      "source_element": "Clause 4",
+      "query": "What do the domain delimiters '[pipe]' and '[plate]' signify for welding test position designation '1F' in Clause 4?",
+      "answer": "In Clause 4 (printed p. 5), the test position designation '1F' contains distinct domain delimiters for pipe and plate: 1F [pipe] denotes a circumferential fillet weld in pipe rotated with the weld executed at or near the top; 1F [plate] denotes a linear fillet weld in plate in the flat test position. Both denote fillet weld test positions.",
+      "elapsed_seconds": 1.423,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_glossary_term",
+          "term": "1f",
+          "found": true,
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 6
+    },
+    {
+      "question_id": "P3-S1-07",
+      "slice": "slice_1_clause4_glossary",
+      "source_element": "Clause 4",
+      "query": "What is the distinction between a 'back weld' and a 'backing weld' in Clause 4, and what Annex B figure do they cross-reference?",
+      "answer": "In Clause 4, the distinction between a back weld and a backing weld is temporal and functional: A back weld is defined as \"A weld made at the back of a single groove weld. See Figure B24(C).\" (made AFTER the groove weld, citing Figure B24(C)); whereas a backing weld is defined as \"Backing in the form of a weld. See Figure B24(D).\" (made BEFORE the primary groove weld as backing, citing Figure B24(D)).",
+      "elapsed_seconds": 1.283,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_glossary_term",
+          "term": "back weld",
+          "found": true,
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 7
+    },
+    {
+      "question_id": "P3-S1-08",
+      "slice": "slice_1_clause4_glossary",
+      "source_element": "Clause 4",
+      "query": "What Annex B figure and sub-panels are cited in Clause 4 for the standard definition of 'root face'?",
+      "answer": "In Clause 4 (printed p. 49), the definition of 'root face' (\"The portion of the groove face within the joint root. See Figure B5.\") explicitly cites Figure B5.",
+      "elapsed_seconds": 1.459,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_glossary_term",
+          "term": "root face",
+          "found": true,
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 8
+    },
+    {
+      "question_id": "P3-S1-09",
+      "slice": "slice_1_clause4_glossary",
+      "source_element": "Clause 4",
+      "query": "Which Annex B figures and sub-panels does the definition of 'parallel joint' cross-reference in Clause 4?",
+      "answer": "In Clause 4 (printed p. 42), the definition of 'parallel joint' (\"A joint type formed by butting, parallel surfaces of one or more workpieces with flush ends. See Figures B1(E) and B2(E). See also skewed joint.\") explicitly cites Figure B1, Figure B1(E), Figure B2, Figure B2(E).",
+      "elapsed_seconds": 1.284,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_glossary_term",
+          "term": "parallel joint",
+          "found": true,
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 9
+    },
+    {
+      "question_id": "P3-S1-10",
+      "slice": "slice_1_clause4_glossary",
+      "source_element": "Clause 4",
+      "query": "Which multi-page Annex B figure does 'bevel angle' cross-reference in Clause 4, and what panels are referenced?",
+      "answer": "In Clause 4 (printed p. 11), the definition of 'bevel angle' (\"The angle between the bevel of a joint member and a plane perpendicular to the surface of the member. See Figures B6(A)\u2013(D), and B6(I).\") explicitly cites Figure B6, Figure B6(A), Figure B6(B), Figure B6(C), Figure B6(D), Figure B6(I).",
+      "elapsed_seconds": 1.404,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_glossary_term",
+          "term": "bevel angle",
+          "found": true,
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 10
+    },
+    {
+      "question_id": "P3-S2-01",
+      "slice": "slice_2_dual_provenance_is_a_annex_c_d",
+      "source_element": "IS_A Promotion & Annex C/D",
+      "query": "How many indented process rows from Table A1 were evaluated for IS_A promotion, how many were promoted with dual-provenance corroboration, and how many were retained as candidate layout parents?",
+      "answer": "Across the Table A1 process taxonomy, exactly 118 indented process rows were evaluated for IS_A promotion. Of these, 35 rows met the strict dual-provenance corroboration standard and were promoted to IS_A_PROCESS_VARIATION_OF, while 83 rows were retained as CANDIDATE_LAYOUT_PARENT edges with zero uncorroborated promotions.",
+      "elapsed_seconds": 1.729,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "query_is_a_promotion_metrics",
+          "total_indented_rows": 118,
+          "promoted_count": 35,
+          "retained_count": 83,
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 11
+    },
+    {
+      "question_id": "P3-S2-02",
+      "slice": "slice_2_dual_provenance_is_a_annex_c_d",
+      "source_element": "IS_A Promotion & Annex C/D",
+      "query": "What dual-provenance criteria must be met to promote an indented Table A1 process row from CANDIDATE_LAYOUT_PARENT to IS_A_PROCESS_VARIATION_OF?",
+      "answer": "To promote an indented Table A1 process row from CANDIDATE_LAYOUT_PARENT to IS_A_PROCESS_VARIATION_OF, two independent sources of evidence must corroborate the taxonomic relationship (dual provenance): 1. Structural visual indentation under the parent process row in Table A1 (obs:table_a1:...); and 2. Explicit genus phrasing in the Clause 4 standard definition stating that the child is a '<parent process> process variation' (obs:clause4:...). Layout indentation alone without corroborating Clause 4 definition genus phrasing fails admission.",
+      "elapsed_seconds": 1.648,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "query_is_a_promotion_criteria",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 12
+    },
+    {
+      "question_id": "P3-S2-03",
+      "slice": "slice_2_dual_provenance_is_a_annex_c_d",
+      "source_element": "IS_A Promotion & Annex C/D",
+      "query": "Identify a promoted process variation of 'flux cored arc welding' (FCAW) and provide its Clause 4 corroborating text.",
+      "answer": "An example of a promoted process variation under flux cored arc welding (FCAW) is 'gas shielded flux cored arc welding' (FCAW-G). Its Clause 4 corroborating text states: \"A flux cored arc welding process variation in which shielding gas is supplied through the gas nozzle in addition to that obtained from the flux within the electrode.\" (printed p. 29).",
+      "elapsed_seconds": 1.454,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_promoted_variation",
+          "parent": "flux cored arc welding",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 13
+    },
+    {
+      "question_id": "P3-S2-04",
+      "slice": "slice_2_dual_provenance_is_a_annex_c_d",
+      "source_element": "IS_A Promotion & Annex C/D",
+      "query": "Why was 'arc stud welding' (SW) retained as a CANDIDATE_LAYOUT_PARENT under arc welding rather than promoted to IS_A_PROCESS_VARIATION_OF?",
+      "answer": "'arc stud welding' (SW) was retained as a CANDIDATE_LAYOUT_PARENT under arc welding and was not elevated to the IS_A_PROCESS_VARIATION_OF taxonomic status because its Clause 4 definition defines it as 'An arc welding process using...' rather than an 'arc welding process variation'. Visual layout indentation in Table A1 without the specific genus process variation formula is insufficient for taxonomic promotion.",
+      "elapsed_seconds": 1.862,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "lookup_retained_candidate",
+          "child": "arc stud welding",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 14
+    },
+    {
+      "question_id": "P3-S2-05",
+      "slice": "slice_2_dual_provenance_is_a_annex_c_d",
+      "source_element": "IS_A Promotion & Annex C/D",
+      "query": "In Annex C Clause C1.5.1, what rule did the Definitions Subcommittee establish regarding the usage of 'bonding' versus 'welding'?",
+      "answer": "In Annex C Clause C1.5.1 (printed p. 160), the Definitions Subcommittee explicitly discourages the use of the term 'bonding' for 'welding'. The term bonding is reserved strictly for processes where an adhesive bond or mechanical bond is predominant at the interface (adhesive bonding, brazing, soldering, thermal spraying). When an interatomic bond between metal atoms is predominant, the joint is called a weld and the process is welding, whether formed by fusion or in the solid state.",
+      "elapsed_seconds": 1.391,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "get_annex_c_decision",
+          "clause_id": "C1.5.1",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 15
+    },
+    {
+      "question_id": "P3-S2-06",
+      "slice": "slice_2_dual_provenance_is_a_annex_c_d",
+      "source_element": "IS_A Promotion & Annex C/D",
+      "query": "In Annex C Clause C1.5.2, what was the subcommittee's rationale for rejecting 'diffusion bonding' in favor of 'diffusion welding'?",
+      "answer": "In Annex C Clause C1.5.2 (printed p. 160), the subcommittee rejected 'diffusion bonding' in favor of 'diffusion welding' because diffusion welding is consistent with universal international custom (e.g. British Standards BS499). The subcommittee noted that 'diffusion bonding' originated in the aircraft industry to overcome aversion to the word 'welding' after structural failures, but the resulting terminology plagued standard nomenclature; diffusion welding is the sole standard term.",
+      "elapsed_seconds": 1.328,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "get_annex_c_decision",
+          "clause_id": "C1.5.2",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 16
+    },
+    {
+      "question_id": "P3-S2-07",
+      "slice": "slice_2_dual_provenance_is_a_annex_c_d",
+      "source_element": "IS_A Promotion & Annex C/D",
+      "query": "What rationale is given in Annex C Clause C1.5.3 for preferring 'gas metal arc welding' and 'gas tungsten arc welding' over MIG and TIG?",
+      "answer": "In Annex C Clause C1.5.3 (printed p. 160), the subcommittee prefers gas metal arc welding (GMAW) and gas tungsten arc welding (GTAW) over MIG and TIG. When active shielding gases were introduced, TIG became inaccurate, prompting awkward proposals like TAG. Process nomenclature should not depend on shielding gas or base metal composition. GTAW and GMAW are part of a coherent, logical letter designation system.",
+      "elapsed_seconds": 1.77,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "get_annex_c_decision",
+          "clause_id": "C1.5.3",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 17
+    },
+    {
+      "question_id": "P3-S2-08",
+      "slice": "slice_2_dual_provenance_is_a_annex_c_d",
+      "source_element": "IS_A Promotion & Annex C/D",
+      "query": "In Annex C Clause C1.5.7, what replacement was introduced for 'edge joint', how is it defined, and what are the five basic joint types recognized?",
+      "answer": "In Annex C Clause C1.5.7 (printed p. 162), 'parallel joint' was introduced as the standard replacement for 'edge joint', defined as: 'A joint type formed by butting, parallel surfaces of one or more workpieces with flush ends.' The five basic joint types recognized in the 2020 edition are: butt, corner, lap, parallel, and T-joint. 'edge joint' is defined as 'See parallel joint.'",
+      "elapsed_seconds": 1.373,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "get_annex_c_decision",
+          "clause_id": "C1.5.7",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 18
+    },
+    {
+      "question_id": "P3-S2-09",
+      "slice": "slice_2_dual_provenance_is_a_annex_c_d",
+      "source_element": "IS_A Promotion & Annex C/D",
+      "query": "What does Annex D Table D1 document in the 2020 edition, and how many new terms and definitions are recorded?",
+      "answer": "Annex D Table D1 (printed pp. 165-167) is titled \"New Terms and Definitions Added in 2020 Edition\". It documents exactly 172 new terms and definitions introduced in the 2020 13th edition.",
+      "elapsed_seconds": 1.525,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "get_annex_d_table",
+          "table_id": "Table D1",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 19
+    },
+    {
+      "question_id": "P3-S2-10",
+      "slice": "slice_2_dual_provenance_is_a_annex_c_d",
+      "source_element": "IS_A Promotion & Annex C/D",
+      "query": "In Annex C Clause C1.5.6, what standard term was established for evaluating welds without destroying them, and what status do terms like inspection and testing have?",
+      "answer": "In Annex C Clause C1.5.6 (printed pp. 161-162), 'nondestructive examination' (NDE) was established as the primary standard term. The subcommittee reviewed four alternative terms: examination, evaluation, inspection, and testing. In the 13th edition, rather than designating inspection or testing as nonstandard, they are listed as alternatives ('See nondestructive examination'), confirming all may be used with the same general meaning.",
+      "elapsed_seconds": 1.257,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 1,
+      "operations": [
+        {
+          "operation": "get_annex_c_decision",
+          "clause_id": "C1.5.6",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 20
+    },
+    {
+      "question_id": "P3-S3-01",
+      "slice": "slice_3_archetype3_spatial_callouts",
+      "source_element": "Figure B1",
+      "query": "What are the five basic joint types shown in Figure B1, and what weld type is applicable to all five basic joint types?",
+      "answer": "In Figure B1 (Joint Types, p. 82), the five basic joint types are: (A) Butt Joint, (B) Corner Joint, (C) T-Joint, (D) Lap Joint, and (E) Parallel Joint. BRAZE is the only weld type applicable to all five basic joint types.",
+      "elapsed_seconds": 1.142,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B1",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_spatial_callout_answer",
+          "figure_id": "Figure B1",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 21
+    },
+    {
+      "question_id": "P3-S3-02",
+      "slice": "slice_3_archetype3_spatial_callouts",
+      "source_element": "Figure B1",
+      "query": "In Figure B1, is an edge weld applicable to a butt joint, corner joint, or parallel joint?",
+      "answer": "In Figure B1 (Joint Types, p. 82), an EDGE weld is an applicable weld type for a Parallel Joint (sub-panel E). It is NOT an applicable weld for a butt joint or corner joint.",
+      "elapsed_seconds": 1.24,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B1",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_spatial_callout_answer",
+          "figure_id": "Figure B1",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 22
+    },
+    {
+      "question_id": "P3-S3-03",
+      "slice": "slice_3_archetype3_spatial_callouts",
+      "source_element": "Figure B6",
+      "query": "How many consecutive pages does Figure B6 span, how many total sub-panels are depicted, and what edge links the pages together?",
+      "answer": "Figure B6 (Bevel Angle, Bevel Face..., pp. 87-89) spans 3 consecutive pages depicting a total of 12 sub-panels (A through L), with consecutive pages linked by CONTINUED_ON_PAGE edges.",
+      "elapsed_seconds": 1.83,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B6",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_spatial_callout_answer",
+          "figure_id": "Figure B6",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 23
+    },
+    {
+      "question_id": "P3-S3-04",
+      "slice": "slice_3_archetype3_spatial_callouts",
+      "source_element": "Figure B33",
+      "query": "In Figure B33 (Crack Types), how many numbered crack key items are in the legend, and what are items 1, 3, 9, and 11?",
+      "answer": "In Figure B33 (Crack Types, p. 139), there are 13 numbered crack key items in the legend: 1 Crater crack, 2 Face crack, 3 Heat-affected zone crack, 4 Lamellar tear, 5 Longitudinal crack, 6 Root crack, 7 Root surface crack, 8 Throat crack, 9 Toe crack, 10 Transverse crack, 11 Underbead crack, 12 Weld interface crack, 13 Weld metal crack.",
+      "elapsed_seconds": 1.469,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B33",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_spatial_callout_answer",
+          "figure_id": "Figure B33",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 24
+    },
+    {
+      "question_id": "P3-S3-05",
+      "slice": "slice_3_archetype3_spatial_callouts",
+      "source_element": "Figure B46",
+      "query": "In Figure B46 (Friction Stir Welding), what are the key numbered items and what microstructural zones are identified?",
+      "answer": "In Figure B46 (Friction Stir Welding, p. 150), key items and microstructural zones are defined: Advancing Side of Weld, Retreating Side of Weld, Tool Shoulder, Probe, Exit Hole, Stir Zone / Weld Nugget, TMAZ (Thermo-Mechanically Affected Zone), and HAZ (Heat-Affected Zone).",
+      "elapsed_seconds": 1.68,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B46",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_spatial_callout_answer",
+          "figure_id": "Figure B46",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 25
+    },
+    {
+      "question_id": "P3-S3-06",
+      "slice": "slice_3_archetype3_spatial_callouts",
+      "source_element": "Figure B7",
+      "query": "How many sub-panels are in Figure B7 (Edge Shapes), and what edge shapes are shown in panels (A) and (G)?",
+      "answer": "Figure B7 (Edge Shapes, p. 90) contains 7 sub-panels: (A) Square Edge Shape, (B) Single-Bevel Edge Shape, (C) Double-Bevel Edge Shape, (D) Single-J Edge Shape, (E) Double-J Edge Shape, (F) Flanged Edge Shape, and (G) Round Edge Shape.",
+      "elapsed_seconds": 1.415,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B7",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_spatial_callout_answer",
+          "figure_id": "Figure B7",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 26
+    },
+    {
+      "question_id": "P3-S3-07",
+      "slice": "slice_3_archetype3_spatial_callouts",
+      "source_element": "Figure B16A",
+      "query": "What welding test positions and designations for groove welds are established in Figure B16A?",
+      "answer": "In Figure B16A (Welding Test Positions for Groove Welds, p. 102), the defined test positions and designations are: 1G (Flat), 2G (Horizontal), 3G (Vertical), and 4G (Overhead).",
+      "elapsed_seconds": 1.159,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B16A",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_spatial_callout_answer",
+          "figure_id": "Figure B16A",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 27
+    },
+    {
+      "question_id": "P3-S3-08",
+      "slice": "slice_3_archetype3_spatial_callouts",
+      "source_element": "Figure B47",
+      "query": "What electrical circuit arrangements for resistance welding are illustrated in Figure B47?",
+      "answer": "Figure B47 (Resistance Welding Secondary Circuit Arrangements, p. 151) depicts Direct and Indirect welding arrangements, including Series, Parallel, and Push-Pull secondary circuit configurations.",
+      "elapsed_seconds": 1.304,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B47",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_spatial_callout_answer",
+          "figure_id": "Figure B47",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 28
+    },
+    {
+      "question_id": "P3-S3-09",
+      "slice": "slice_3_archetype3_spatial_callouts",
+      "source_element": "Figure B12",
+      "query": "In Figure B12, what are the five sub-panels (A) through (E), and what types of weld tabs are shown in panel (E)?",
+      "answer": "Figure B12 (p. 98) depicts 5 sub-panels: (A) End Dam, (B) Shelf Bar, (C) Split Back Piping, (D) Sump, and (E) Runoff Weld Tab, Starting Weld Tab.",
+      "elapsed_seconds": 1.346,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B12",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_spatial_callout_answer",
+          "figure_id": "Figure B12",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 29
+    },
+    {
+      "question_id": "P3-S3-10",
+      "slice": "slice_3_archetype3_spatial_callouts",
+      "source_element": "Figure B20",
+      "query": "What are the fillet weld test positions depicted in Figure B20, and what are the designations for rotated and inclined test positions?",
+      "answer": "Figure B20 (Fillet Weld Test Positions, pp. 110-111) contains 7 sub-panels: (A) 1F Rotated, (B) 1F, (C) 2F, (D) 2FR Rotated, (E) 4F, (F) 5F, and (G) 6F Inclined.",
+      "elapsed_seconds": 1.281,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B20",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_spatial_callout_answer",
+          "figure_id": "Figure B20",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 30
+    },
+    {
+      "question_id": "P3-S4-01",
+      "slice": "slice_4_archetype4_waveforms",
+      "source_element": "Figure B49",
+      "query": "In Figure B49 (Pulsation Welding Waveform), what synchronized vertical traces are plotted against the horizontal TIME axis?",
+      "answer": "In Figure B49 (Pulsation Welding Waveform, p. 153), two synchronized vertical traces are plotted against the horizontal TIME axis: 1. RESISTANCE WELDING CURRENT (in Amperes), and 2. ELECTRODE FORCE (in Newtons/Pounds-force).",
+      "elapsed_seconds": 1.238,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B49",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_waveform_answer",
+          "figure_id": "Figure B49",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 31
+    },
+    {
+      "question_id": "P3-S4-02",
+      "slice": "slice_4_archetype4_waveforms",
+      "source_element": "Figure B49",
+      "query": "What is the complete chronological sequence of temporal intervals linked by TEMPORAL_PRECEDES in Figure B49 from squeeze to off time?",
+      "answer": "In Figure B49 (Pulsation Welding Waveform for Resistance Spot Welding, p. 153), the complete chronological sequence of temporal intervals linked by TEMPORAL_PRECEDES is: SQUEEZE TIME -> PREHEAT TIME -> UPSLOPE TIME -> WELD INTERVAL -> DOWNSLOPE TIME -> QUENCH TIME -> TEMPER TIME -> HOLD TIME -> OFF TIME.",
+      "elapsed_seconds": 1.396,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B49",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_waveform_answer",
+          "figure_id": "Figure B49",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 32
+    },
+    {
+      "question_id": "P3-S4-03",
+      "slice": "slice_4_archetype4_waveforms",
+      "source_element": "Figure B49",
+      "query": "In Figure B49, what sub-intervals are subsumed under the WELD INTERVAL via SUB_INTERVAL_OF edges?",
+      "answer": "In Figure B49 (p. 153), HEAT TIME and COOL TIME are sub-intervals subsumed under the WELD INTERVAL via SUB_INTERVAL_OF edges. The pulsation welding waveform alternates between heat time and cool time pulses during the weld interval.",
+      "elapsed_seconds": 1.251,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B49",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_waveform_answer",
+          "figure_id": "Figure B49",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 33
+    },
+    {
+      "question_id": "P3-S4-04",
+      "slice": "slice_4_archetype4_waveforms",
+      "source_element": "Figure B50",
+      "query": "How does the single-pulse resistance spot welding waveform in Figure B50 differ from the pulsation waveform in Figure B49?",
+      "answer": "The single-pulse resistance spot welding waveform in Figure B50 (p. 153) differs from the pulsation waveform in Figure B49: Figure B50 depicts a single-pulse welding cycle with a single continuous WELD TIME, whereas Figure B49 depicts a pulsation welding cycle with multiple heat/cool impulses and postweld quench and temper intervals.",
+      "elapsed_seconds": 1.311,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B50",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_waveform_answer",
+          "figure_id": "Figure B50",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 34
+    },
+    {
+      "question_id": "P3-S4-05",
+      "slice": "slice_4_archetype4_waveforms",
+      "source_element": "Figure B53",
+      "query": "In Figure B53 (Welding Cycle for Pulsed Welding), what are the five synchronized vertical traces plotted against time?",
+      "answer": "In Figure B53 (Welding Cycle for Pulsed Welding, p. 157), there are five synchronized vertical traces plotted against time: 1. WELDING CURRENT, 2. ARC VOLTAGE, 3. WIRE FEED SPEED, 4. TRAVEL SPEED, and 5. SHIELDING GAS FLOW.",
+      "elapsed_seconds": 1.44,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B53",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_waveform_answer",
+          "figure_id": "Figure B53",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 35
+    },
+    {
+      "question_id": "P3-S4-06",
+      "slice": "slice_4_archetype4_waveforms",
+      "source_element": "Figure B53",
+      "query": "In Figure B53, what temporal intervals precede and follow the WELD TIME interval?",
+      "answer": "In Figure B53 (p. 157), the temporal intervals preceding WELD TIME are: PREFLOW TIME, START TIME, TRAVEL START DELAY TIME, FILLER METAL START DELAY TIME, and UPSLOPE TIME. The intervals following WELD TIME are: TAPER TIME, TRAVEL STOP DELAY TIME, FILLER METAL STOP DELAY TIME, DOWNSLOPE TIME, and POSTFLOW TIME.",
+      "elapsed_seconds": 1.563,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B53",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_waveform_answer",
+          "figure_id": "Figure B53",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 36
+    },
+    {
+      "question_id": "P3-S4-07",
+      "slice": "slice_4_archetype4_waveforms",
+      "source_element": "Figure B53",
+      "query": "In Figure B53, what pulse sub-intervals occur during the pulsed current weld time, and what parameters do they modulate?",
+      "answer": "In Figure B53 (p. 157), during the pulsed current WELD TIME, the pulse sub-intervals are HIGH PULSE TIME and LOW PULSE TIME. These intervals modulate the HIGH PULSE CURRENT and LOW PULSE CURRENT levels, respectively.",
+      "elapsed_seconds": 1.056,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B53",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_waveform_answer",
+          "figure_id": "Figure B53",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 37
+    },
+    {
+      "question_id": "P3-S4-08",
+      "slice": "slice_4_archetype4_waveforms",
+      "source_element": "Figure B44",
+      "query": "In Figure B44 (Inertia Friction Welding), what traces are plotted and what process phases are defined?",
+      "answer": "In Figure B44 (Inertia Friction Welding, p. 148), three traces are plotted against time: ROTATIONAL SPEED, AXIAL FORCE, and UPSET. The process is divided into two sequential process phases: FRICTION PHASE followed by FORGE PHASE.",
+      "elapsed_seconds": 1.478,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B44",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_waveform_answer",
+          "figure_id": "Figure B44",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 38
+    },
+    {
+      "question_id": "P3-S4-09",
+      "slice": "slice_4_archetype4_waveforms",
+      "source_element": "Figure B45",
+      "query": "In Figure B45 (Direct Drive Friction Welding), what temporal intervals and force/speed parameters are depicted?",
+      "answer": "In Figure B45 (Direct Drive Friction Welding, p. 149), the two primary temporal intervals are FRICTION TIME and FORGE TIME. The force and speed parameters depicted include FRICTION SPEED, FRICTION WELDING FORCE, FORGE FORCE, and UPSET DISTANCE.",
+      "elapsed_seconds": 1.761,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B45",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_waveform_answer",
+          "figure_id": "Figure B45",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 39
+    },
+    {
+      "question_id": "P3-S4-10",
+      "slice": "slice_4_archetype4_waveforms",
+      "source_element": "Figure B51",
+      "query": "In Figure B51 (Flash Welding Cycle), what traces are synchronized and what temporal intervals define the cycle?",
+      "answer": "In Figure B51 (Flash Welding Cycle, p. 154), the synchronized traces include PLATEN POSITION, PLATEN VELOCITY, FLASHING VOLTAGE, and UPSET FORCE. The temporal intervals defining the welding cycle are FLASH TIME, UPSET TIME, and HOLD TIME.",
+      "elapsed_seconds": 1.246,
+      "schema_valid": true,
+      "compiler_accepted": true,
+      "operations_count": 2,
+      "operations": [
+        {
+          "operation": "resolve_figure_target",
+          "figure_id": "Figure B51",
+          "status": "executed"
+        },
+        {
+          "operation": "compose_waveform_answer",
+          "figure_id": "Figure B51",
+          "status": "executed"
+        }
+      ],
+      "required_elements_missing": [],
+      "forbidden_elements_found": [],
+      "content_grade": "PASS",
+      "delivery_grade": "PASS",
+      "live_call_index": 40
+    }
+  ]
+}

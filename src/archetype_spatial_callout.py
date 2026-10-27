@@ -113,13 +113,19 @@ def extract_text_spans_filtered(page: fitz.Page, printed_page: int) -> List[Dict
         if "lines" in block:
             for line in block["lines"]:
                 for span in line.get("spans", []):
-                    t = span.get("text", "").strip()
+                    raw_t = span.get("text", "")
+                    # Strip ASCII control characters (\x08 backspace, \x00-\x1f\x7f)
+                    t = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', raw_t).strip()
                     if not t:
                         continue
                     # Skip watermark and running header/footer
                     if "University of Michigan" in t or "Sun Dec" in t or "141.213.172.11" in t:
                         continue
-                    if t in ["Annex B", "AWS A3.0M/A3.0:2020", str(printed_page)]:
+                    if (
+                        t in ["Annex B", "AWS A3.0M/A3.0:2020", str(printed_page)]
+                        or t.startswith("Annex B")
+                        or t.startswith("AWS A3.0M/A3.0:2020")
+                    ):
                         continue
                     spans.append({
                         "text": t,
@@ -202,6 +208,9 @@ def parse_callout_phrases(spans: List[Dict[str, Any]], figure_id: str) -> List[D
         if not (s["text"].startswith("(") and len(s["text"]) <= 4)
         and not s["text"].startswith("Figure ")
         and not "Groove Depth, Bevel" in s["text"]
+        and re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', s["text"]).strip() not in ["Annex B", "AWS A3.0M/A3.0:2020"]
+        and not re.match(r"^Annex B", s["text"])
+        and not re.match(r"^AWS A3\.0M/A3\.0:2020", s["text"])
     ]
     candidates.sort(key=lambda s: (round(s["bbox"][0] / 20.0), s["bbox"][1]))
 
@@ -1086,7 +1095,16 @@ def compose_spatial_callout_answer(
 
     # 5. Callouts / Annotations
     callout_nodes = [n for n in fig_store.get("nodes", {}).values() if n.get("node_type") == "CALLOUT"]
-    callout_texts = sorted(list(set(c["text"] for c in callout_nodes)))
+    cleaned_texts = [
+        re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', c["text"]).strip()
+        for c in callout_nodes
+    ]
+    callout_texts = sorted(list(set(
+        t for t in cleaned_texts
+        if t and t not in ["Annex B", "AWS A3.0M/A3.0:2020"]
+        and not t.startswith("Annex B")
+        and not t.startswith("AWS A3.0M/A3.0:2020")
+    )))
     notes = [sp.get("notes", []) for sp in [fig_store]]
     ans = (
         f"{fig_id} ({fig_store.get('official_title')}) contains {len(callout_texts)} unique callout labels: "

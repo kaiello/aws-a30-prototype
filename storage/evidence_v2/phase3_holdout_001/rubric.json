@@ -1,0 +1,515 @@
+{
+  "rubrics": {
+    "P3-S1-01": {
+      "required_elements": [
+        "act of brazing",
+        "verb",
+        "braze"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity",
+        "CHART_QUESTION_PLAN_"
+      ]
+    },
+    "P3-S1-02": {
+      "required_elements": [
+        "mating surface",
+        "workpiece",
+        "Figure B30",
+        "faying surface"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity",
+        "CHART_QUESTION_PLAN_"
+      ]
+    },
+    "P3-S1-03": {
+      "required_elements": [
+        "nonstandard",
+        "shielded metal arc welding",
+        "SMAW"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity",
+        "standard term for stick electrode"
+      ]
+    },
+    "P3-S1-04": {
+      "required_elements": [
+        "carbon arc cutting process variation",
+        "jet of air",
+        "molten metal"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity",
+        "oxygen jet"
+      ]
+    },
+    "P3-S1-05": {
+      "required_elements": [
+        "diffusion brazing",
+        "underline",
+        "margin bar"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S1-06": {
+      "required_elements": [
+        "1F",
+        "pipe",
+        "plate",
+        "fillet weld"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity",
+        "groove weld for 1F"
+      ]
+    },
+    "P3-S1-07": {
+      "required_elements": [
+        "back weld",
+        "backing weld",
+        "Figure B24"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S1-08": {
+      "required_elements": [
+        "root face",
+        "Figure B5"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S1-09": {
+      "required_elements": [
+        "parallel joint",
+        "Figure B1",
+        "Figure B2"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S1-10": {
+      "required_elements": [
+        "bevel angle",
+        "Figure B6"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S2-01": {
+      "required_elements": [
+        "118",
+        "35",
+        "83",
+        "IS_A_PROCESS_VARIATION_OF",
+        "CANDIDATE_LAYOUT_PARENT"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S2-02": {
+      "required_elements": [
+        "Table A1",
+        "Clause 4",
+        "process variation",
+        "dual"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S2-03": {
+      "required_elements": [
+        "flux cored arc welding",
+        "process variation",
+        "FCAW"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S2-04": {
+      "required_elements": [
+        "arc stud welding",
+        "SW",
+        "arc welding",
+        "process variation"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity",
+        "promoted to IS_A"
+      ]
+    },
+    "P3-S2-05": {
+      "required_elements": [
+        "bonding",
+        "welding",
+        "adhesive",
+        "interatomic",
+        "Clause C1.5.1"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S2-06": {
+      "required_elements": [
+        "diffusion welding",
+        "diffusion bonding",
+        "Clause C1.5.2",
+        "aircraft"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S2-07": {
+      "required_elements": [
+        "gas metal arc welding",
+        "gas tungsten arc welding",
+        "GTAW",
+        "GMAW",
+        "TIG",
+        "MIG"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S2-08": {
+      "required_elements": [
+        "parallel joint",
+        "edge joint",
+        "butt",
+        "corner",
+        "lap",
+        "T-joint"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S2-09": {
+      "required_elements": [
+        "Table D1",
+        "172",
+        "New Terms and Definitions Added in 2020 Edition"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S2-10": {
+      "required_elements": [
+        "nondestructive examination",
+        "NDE",
+        "examination",
+        "evaluation",
+        "inspection",
+        "testing"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S3-01": {
+      "required_elements": [
+        "Butt Joint",
+        "Corner Joint",
+        "T-Joint",
+        "Lap Joint",
+        "Parallel Joint",
+        "BRAZE"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity",
+        "FILLET applicable to Butt"
+      ]
+    },
+    "P3-S3-02": {
+      "required_elements": [
+        "Parallel Joint",
+        "EDGE",
+        "Figure B1"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity",
+        "edge weld is applicable to a butt joint"
+      ]
+    },
+    "P3-S3-03": {
+      "required_elements": [
+        "Figure B6",
+        "3",
+        "12",
+        "CONTINUED_ON_PAGE"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S3-04": {
+      "required_elements": [
+        "Figure B33",
+        "13",
+        "Crater crack",
+        "Heat-affected zone crack",
+        "Toe crack",
+        "Underbead crack"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S3-05": {
+      "required_elements": [
+        "Figure B46",
+        "Advancing Side",
+        "Retreating Side",
+        "Shoulder",
+        "Probe",
+        "HAZ"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S3-06": {
+      "required_elements": [
+        "Figure B7",
+        "7",
+        "Square Edge Shape",
+        "Round Edge Shape"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S3-07": {
+      "required_elements": [
+        "Figure B16A",
+        "1G",
+        "2G",
+        "3G",
+        "4G",
+        "Flat",
+        "Horizontal",
+        "Vertical",
+        "Overhead"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S3-08": {
+      "required_elements": [
+        "Figure B47",
+        "Direct",
+        "Indirect",
+        "Series"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S3-09": {
+      "required_elements": [
+        "Figure B12",
+        "End Dam",
+        "Shelf Bar",
+        "Split Back Piping",
+        "Sump",
+        "Runoff Weld Tab",
+        "Starting Weld Tab"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S3-10": {
+      "required_elements": [
+        "Figure B20",
+        "1F Rotated",
+        "2FR Rotated",
+        "6F Inclined"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S4-01": {
+      "required_elements": [
+        "Figure B49",
+        "TIME",
+        "RESISTANCE WELDING CURRENT",
+        "ELECTRODE FORCE"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S4-02": {
+      "required_elements": [
+        "SQUEEZE TIME",
+        "PREHEAT TIME",
+        "UPSLOPE TIME",
+        "WELD INTERVAL",
+        "DOWNSLOPE TIME",
+        "QUENCH TIME",
+        "TEMPER TIME",
+        "HOLD TIME",
+        "OFF TIME"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S4-03": {
+      "required_elements": [
+        "HEAT TIME",
+        "COOL TIME",
+        "WELD INTERVAL",
+        "SUB_INTERVAL_OF"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S4-04": {
+      "required_elements": [
+        "Figure B50",
+        "single-pulse",
+        "Figure B49",
+        "pulsation"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S4-05": {
+      "required_elements": [
+        "Figure B53",
+        "WELDING CURRENT",
+        "ARC VOLTAGE",
+        "WIRE FEED SPEED",
+        "TRAVEL SPEED",
+        "SHIELDING GAS FLOW"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S4-06": {
+      "required_elements": [
+        "Figure B53",
+        "PREFLOW TIME",
+        "POSTFLOW TIME",
+        "WELD TIME",
+        "UPSLOPE TIME",
+        "DOWNSLOPE TIME"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S4-07": {
+      "required_elements": [
+        "HIGH PULSE TIME",
+        "LOW PULSE TIME",
+        "HIGH PULSE CURRENT",
+        "LOW PULSE CURRENT",
+        "WELD TIME"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S4-08": {
+      "required_elements": [
+        "Figure B44",
+        "ROTATIONAL SPEED",
+        "AXIAL FORCE",
+        "UPSET",
+        "FRICTION PHASE",
+        "FORGE PHASE"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S4-09": {
+      "required_elements": [
+        "Figure B45",
+        "FRICTION TIME",
+        "FORGE TIME",
+        "FRICTION SPEED",
+        "FORGE FORCE"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    },
+    "P3-S4-10": {
+      "required_elements": [
+        "Figure B51",
+        "FLASH TIME",
+        "UPSET TIME",
+        "HOLD TIME",
+        "PLATEN POSITION"
+      ],
+      "forbidden_elements": [
+        "action_blocked",
+        "ambiguous_source_identity"
+      ]
+    }
+  }
+}

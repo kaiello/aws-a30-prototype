@@ -1,0 +1,6 @@
+{
+  "version": "chart-deepseek-planner-1.0",
+  "scope": "question_and_source_dictionary_only",
+  "provider": "deepseek_https_explicit",
+  "base_url": "https://api.deepseek.com"
+}
