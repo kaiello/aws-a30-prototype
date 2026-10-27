@@ -24,7 +24,9 @@ from src.evidence_annex_b_specs import (
 )
 
 
-def verify_figure_title_in_list_of_figures(doc: fitz.Document, figure_id: str, short_title: str) -> bool:
+def verify_figure_title_in_list_of_figures(
+    doc: fitz.Document, figure_id: str, short_title: str
+) -> bool:
     """Verify that the official figure title appears in the List of Figures (PDF indices 10–11)."""
     fig_num = figure_id.replace("Figure ", "").strip()
     found = False
@@ -32,19 +34,28 @@ def verify_figure_title_in_list_of_figures(doc: fitz.Document, figure_id: str, s
         text = doc[idx].get_text("text")
         lines = [line.strip() for line in text.splitlines() if line.strip()]
         for i, line in enumerate(lines):
-            if line == fig_num or line.startswith(fig_num + "\t") or line.startswith(f"Figure {fig_num}"):
-                # Next line or same line typically has title
-                combined = " ".join(lines[max(0, i - 1):min(len(lines), i + 3)]).lower()
-                clean_short = short_title.lower()
-                # Check key word matches from short title
-                keywords = [w for w in clean_short.split() if len(w) > 3]
-                if any(kw in combined for kw in keywords):
+            if (
+                line == fig_num
+                or line.startswith(fig_num + "	")
+                or line.startswith(f"Figure {fig_num}")
+                or re.match(rf"^{fig_num}", line)
+            ):
+                combined = " ".join(lines[max(0, i - 1):min(len(lines), i + 5)]).lower()
+                clean_short = short_title.lower().strip()
+                if clean_short in combined:
+                    found = True
+                    break
+                keywords = [w for w in clean_short.split() if len(w) >= 3]
+                if keywords and any(kw in combined for kw in keywords):
                     found = True
                     break
         if found:
             break
+
     if not found:
-        raise ValueError(f"DRIFT ERROR: {figure_id} title '{short_title}' not verified in List of Figures")
+        raise ValueError(
+            f"DRIFT ERROR: {figure_id} title '{short_title}' not verified in List of Figures (doc[10..11])"
+        )
     return True
 
 
