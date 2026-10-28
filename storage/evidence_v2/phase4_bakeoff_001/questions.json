@@ -1,0 +1,212 @@
+[
+  {
+    "id": "G4-B01",
+    "slice": "slice_a_annex_a_charts",
+    "slice_name": "Annex A Classification Charts & Decision Trees",
+    "target_source": "Figure A4",
+    "query": "Tracing through the physical characteristic branches of Figure A4 (Fusion Welding Classification Chart), what are the energy source, thermal source, loading, and shielding characteristics that classify flux cored arc welding (FCAW)?"
+  },
+  {
+    "id": "G4-B02",
+    "slice": "slice_a_annex_a_charts",
+    "slice_name": "Annex A Classification Charts & Decision Trees",
+    "target_source": "Figure A5",
+    "query": "In Figure A5 (Solid-State Welding Classification Chart), which specific process branches directly from Mechanical energy to Pressure and Deformation while completely bypassing the Thermal Source characteristic column?"
+  },
+  {
+    "id": "G4-B03",
+    "slice": "slice_a_annex_a_charts",
+    "slice_name": "Annex A Classification Charts & Decision Trees",
+    "target_source": "Figure A6",
+    "query": "In Figure A6 (Brazing and Soldering Classification Chart), how many distinct process designations are defined in the bottom legend table across its 48 process circle branches, and how are arc brazing and carbon arc brazing designated?"
+  },
+  {
+    "id": "G4-B04",
+    "slice": "slice_a_annex_a_charts",
+    "slice_name": "Annex A Classification Charts & Decision Trees",
+    "target_source": "Figure A3",
+    "query": "In Figure A3 (Joining Method Chart), what are the three major methods of materials joining classified, and what does footnote a state regarding the simplicity of the chart lines?"
+  },
+  {
+    "id": "G4-B05",
+    "slice": "slice_a_annex_a_charts",
+    "slice_name": "Annex A Classification Charts & Decision Trees",
+    "target_source": "Annex A Charts",
+    "query": "Across the Annex A classification charts (Figures A1 through A6), what is the strict epistemic distinction between ACCEPTED structural connection edges and CANDIDATE layout parent edges, and how many process circles are classified in Figure A4?"
+  },
+  {
+    "id": "G4-B06",
+    "slice": "slice_b_normative_tables",
+    "slice_name": "Normative Tables A1-A5",
+    "target_source": "Table A4",
+    "query": "What are the six standard suffix letter modifiers defined in Table A4 for the application mode of welding and allied processes, and what does the suffix -AU designate?"
+  },
+  {
+    "id": "G4-B07",
+    "slice": "slice_b_normative_tables",
+    "slice_name": "Normative Tables A1-A5",
+    "target_source": "Table A5",
+    "query": "In Table A5 (Obsolete or Seldom Used Processes), how many obsolete processes are listed, and what are the designations for atomic hydrogen welding and forge welding?"
+  },
+  {
+    "id": "G4-B08",
+    "slice": "slice_b_normative_tables",
+    "slice_name": "Normative Tables A1-A5",
+    "target_source": "Table A1 / Table A3",
+    "query": "In Table A1 and Table A3, what is the official letter designation for magnetic pulse welding, and under what primary process grouping is it classified?"
+  },
+  {
+    "id": "G4-B09",
+    "slice": "slice_b_normative_tables",
+    "slice_name": "Normative Tables A1-A5",
+    "target_source": "Table A1",
+    "query": "In Table A1, under which two distinct parent process groups does the letter designation USW (ultrasonic welding) appear across pages 69 and 70?"
+  },
+  {
+    "id": "G4-B10",
+    "slice": "slice_b_normative_tables",
+    "slice_name": "Normative Tables A1-A5",
+    "target_source": "Tables A1-A3 / Figure A6",
+    "query": "Explain the authentic source designation collision for the letter designation AB between Tables A1, A2, A3, Figure A1 and Figure A6 in AWS A3.0M/A3.0:2020."
+  },
+  {
+    "id": "G4-B11",
+    "slice": "slice_c_clause4_glossary",
+    "slice_name": "Clause 4 Terms & Definitions",
+    "target_source": "Clause 4",
+    "query": "In Clause 4 of AWS A3.0M/A3.0:2020, how is the term braze defined across its distinct grammatical parts of speech, and what does it denote as a verb versus a noun?"
+  },
+  {
+    "id": "G4-B12",
+    "slice": "slice_c_clause4_glossary",
+    "slice_name": "Clause 4 Terms & Definitions",
+    "target_source": "Clause 4",
+    "query": "In Clause 4, what are the defined senses for the test position designation 1F and what domain delimiters distinguish plate applications from pipe applications?"
+  },
+  {
+    "id": "G4-B13",
+    "slice": "slice_c_clause4_glossary",
+    "slice_name": "Clause 4 Terms & Definitions",
+    "target_source": "Clause 4",
+    "query": "In Clause 4, are stick electrode welding and heliarc welding standard terms, and what preferred standard terms do they redirect to?"
+  },
+  {
+    "id": "G4-B14",
+    "slice": "slice_c_clause4_glossary",
+    "slice_name": "Clause 4 Terms & Definitions",
+    "target_source": "Clause 4 / Clause 3",
+    "query": "What do the single underline and vertical margin bar typographical markers indicate in Clause 4 of the 2020 edition of AWS A3.0M/A3.0:2020 per Clause 3?"
+  },
+  {
+    "id": "G4-B15",
+    "slice": "slice_c_clause4_glossary",
+    "slice_name": "Clause 4 Terms & Definitions",
+    "target_source": "Clause 4",
+    "query": "In Clause 4, what is the authoritative definition of kerf and which Annex B figures does its glossary entry explicitly cross-reference?"
+  },
+  {
+    "id": "G4-B16",
+    "slice": "slice_d_dual_provenance_is_a_annex_c_d",
+    "slice_name": "Dual-Provenance IS_A Promotions & Annex C/D",
+    "target_source": "Table A1 / IS_A Promotion Engine",
+    "query": "Across the Table A1 process taxonomy, exactly how many indented process rows were evaluated for IS_A promotion, how many were promoted to IS_A_PROCESS_VARIATION_OF, and how many were retained as CANDIDATE_LAYOUT_PARENT?"
+  },
+  {
+    "id": "G4-B17",
+    "slice": "slice_d_dual_provenance_is_a_annex_c_d",
+    "slice_name": "Dual-Provenance IS_A Promotions & Annex C/D",
+    "target_source": "IS_A Promotion Engine",
+    "query": "Why is gas shielded flux cored arc welding (FCAW-G) promoted to IS_A_PROCESS_VARIATION_OF under flux cored arc welding (FCAW) while flux cored arc welding remains CANDIDATE_LAYOUT_PARENT under Arc Welding?"
+  },
+  {
+    "id": "G4-B18",
+    "slice": "slice_d_dual_provenance_is_a_annex_c_d",
+    "slice_name": "Dual-Provenance IS_A Promotions & Annex C/D",
+    "target_source": "Annex C Clause C1.5.7",
+    "query": "What rule did the Definitions Subcommittee establish in Annex C Clause C1.5.7 regarding the replacement of edge joint with parallel joint?"
+  },
+  {
+    "id": "G4-B19",
+    "slice": "slice_d_dual_provenance_is_a_annex_c_d",
+    "slice_name": "Dual-Provenance IS_A Promotions & Annex C/D",
+    "target_source": "Annex C Clause C1.5.3",
+    "query": "In Annex C Clause C1.5.3, what was the subcommittee policy regarding the popular trade terms TIG welding and MIG welding?"
+  },
+  {
+    "id": "G4-B20",
+    "slice": "slice_d_dual_provenance_is_a_annex_c_d",
+    "slice_name": "Dual-Provenance IS_A Promotions & Annex C/D",
+    "target_source": "Annex D Table D1",
+    "query": "What is documented in Annex D Table D1 (New Terms Added to Clause 4 in 2020), and exactly how many new terms were added to the 2020 edition of AWS A3.0?"
+  },
+  {
+    "id": "G4-B21",
+    "slice": "slice_e_archetype3_spatial_callouts",
+    "slice_name": "Annex B Archetype 3 Spatial Callouts",
+    "target_source": "Figure B1",
+    "query": "In Figure B1 (Joint Types), what are the five basic joint types shown across panels (A) through (E), and what single weld type is applicable to all five basic joint types?"
+  },
+  {
+    "id": "G4-B22",
+    "slice": "slice_e_archetype3_spatial_callouts",
+    "slice_name": "Annex B Archetype 3 Spatial Callouts",
+    "target_source": "Figure B6",
+    "query": "In Figure B6 (Groove Faces, Bevel Angles, and Groove Angles), how many consecutive printed pages does this multi-page continuation figure span and how many total sub-panels are depicted across panels (A) through (L)?"
+  },
+  {
+    "id": "G4-B23",
+    "slice": "slice_e_archetype3_spatial_callouts",
+    "slice_name": "Annex B Archetype 3 Spatial Callouts",
+    "target_source": "Figure B33",
+    "query": "In Figure B33 (Crack Types), how many numbered crack key items are defined in the figure legend, and what are the specific names for key items 1 and 9?"
+  },
+  {
+    "id": "G4-B24",
+    "slice": "slice_e_archetype3_spatial_callouts",
+    "slice_name": "Annex B Archetype 3 Spatial Callouts",
+    "target_source": "Figure B46",
+    "query": "In Figure B46 (Friction Stir Welding), what numbered tool components and distinct microstructural zones are identified in the diagram callouts?"
+  },
+  {
+    "id": "G4-B25",
+    "slice": "slice_e_archetype3_spatial_callouts",
+    "slice_name": "Annex B Archetype 3 Spatial Callouts",
+    "target_source": "Figure B16A",
+    "query": "In Figure B16A (Welding Test Positions for Groove Welds in Plate), what are the four standard groove weld test positions depicted in sub-panels (A) through (D) and their alphanumeric designations?"
+  },
+  {
+    "id": "G4-B26",
+    "slice": "slice_f_archetype4_waveforms",
+    "slice_name": "Annex B Archetype 4 Waveforms",
+    "target_source": "Figure B49",
+    "query": "In Figure B49 (Resistance Welding Parameter Diagram for Pulsation Welding), what synchronized vertical traces are plotted against the horizontal TIME axis and what sub-intervals repeat within the WELD INTERVAL?"
+  },
+  {
+    "id": "G4-B27",
+    "slice": "slice_f_archetype4_waveforms",
+    "slice_name": "Annex B Archetype 4 Waveforms",
+    "target_source": "Figure B50",
+    "query": "In Figure B50 (Single-Pulse Resistance Welding Parameter Diagram), what are the sequential temporal intervals plotted along the TIME axis from squeeze to hold?"
+  },
+  {
+    "id": "G4-B28",
+    "slice": "slice_f_archetype4_waveforms",
+    "slice_name": "Annex B Archetype 4 Waveforms",
+    "target_source": "Figure B53",
+    "query": "In Figure B53 (Pulsed GMAW Waveform), what five synchronized vertical parameter traces are plotted against time and what sub-intervals define the pulse cycle?"
+  },
+  {
+    "id": "G4-B29",
+    "slice": "slice_f_archetype4_waveforms",
+    "slice_name": "Annex B Archetype 4 Waveforms",
+    "target_source": "Figure B44 / Figure B45",
+    "query": "Compare Figure B44 (Inertia Friction Welding) and Figure B45 (Direct Drive Friction Welding) regarding their drive energy mechanism and rotational speed traces."
+  },
+  {
+    "id": "G4-B30",
+    "slice": "slice_f_archetype4_waveforms",
+    "slice_name": "Annex B Archetype 4 Waveforms",
+    "target_source": "Figure B54",
+    "query": "In Figure B54 (Welding Cycle Parameter Diagram for GMAW, FCAW, and SAW), what sequential intervals occur at the end of the welding sequence to prevent crater defects and burnback?"
+  }
+]

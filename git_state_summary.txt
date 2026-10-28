@@ -1,0 +1,15 @@
+Active Branch: feat/gate-4-final-production-bakeoff
+Head Commit: 49e5a33 docs(gate-4): add comprehensive Gate 3D-2 status update and Gate 4 readiness report
+
+Git Status:
+?? eval/evidence_v2_phase4_bakeoff_results.json
+?? eval/run_phase4_bakeoff.py
+?? src/evidence_phase4_bakeoff.py
+?? tests/test_gate_4_production_bakeoff.py
+
+Diff vs main:
+ src/archetype_spatial_callout.py                |  10 +-
+ src/evidence_phase3_qa.py                       |  33 ++---
+ storage/gate_reviews/gate_3D-2_status_update.md | 172 ++++++++++++++++++++++++
+ 3 files changed, 186 insertions(+), 29 deletions(-)
+

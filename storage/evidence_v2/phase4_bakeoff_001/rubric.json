@@ -1,0 +1,494 @@
+{
+  "version": "aws-a30-gate-4-rubric-1.0",
+  "total_questions": 30,
+  "rubrics": {
+    "G4-B01": {
+      "required_elements": [
+        "Figure A4",
+        "Electrical",
+        "Arc",
+        "Gas",
+        "Flux"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B02": {
+      "required_elements": [
+        "Figure A5",
+        "cold welding",
+        "CW",
+        "Mechanical",
+        "Deformation"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B03": {
+      "required_elements": [
+        "Figure A6",
+        "21",
+        "48",
+        "AB",
+        "B-CA"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B04": {
+      "required_elements": [
+        "Figure A3",
+        "Mechanical Fastening",
+        "Adhesive Bonding",
+        "Welding",
+        "simplicity"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B05": {
+      "required_elements": [
+        "ACCEPTED",
+        "CANDIDATE",
+        "vector",
+        "26"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B06": {
+      "required_elements": [
+        "Table A4",
+        "-MA",
+        "-SA",
+        "-ME",
+        "-AU",
+        "Automatic"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B07": {
+      "required_elements": [
+        "Table A5",
+        "13",
+        "AHW",
+        "FOW",
+        "atomic hydrogen welding"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B08": {
+      "required_elements": [
+        "MPW",
+        "magnetic pulse welding",
+        "Solid-State Welding",
+        "Table A1"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B09": {
+      "required_elements": [
+        "Table A1",
+        "USW",
+        "plastics welding",
+        "solid-state welding",
+        "distinct parent"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B10": {
+      "required_elements": [
+        "adhesive bonding",
+        "arc brazing",
+        "Figure A6",
+        "collision"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B11": {
+      "required_elements": [
+        "braze",
+        "verb",
+        "noun",
+        "act of brazing"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B12": {
+      "required_elements": [
+        "1F",
+        "plate",
+        "pipe",
+        "fillet weld"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B13": {
+      "required_elements": [
+        "nonstandard",
+        "shielded metal arc welding",
+        "SMAW",
+        "gas tungsten arc welding",
+        "GTAW"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B14": {
+      "required_elements": [
+        "has_2020_underline=True",
+        "has_2020_margin_bar=True",
+        "Clause 3",
+        "2020"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B15": {
+      "required_elements": [
+        "kerf",
+        "width of the cut",
+        "Figure B36",
+        "Figure B37"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B16": {
+      "required_elements": [
+        "118",
+        "35",
+        "83",
+        "IS_A_PROCESS_VARIATION_OF",
+        "CANDIDATE_LAYOUT_PARENT"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B17": {
+      "required_elements": [
+        "dual-provenance",
+        "FCAW-G",
+        "flux cored arc welding",
+        "process variation",
+        "Table A1",
+        "Clause 4"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B18": {
+      "required_elements": [
+        "C1.5.7",
+        "parallel joint",
+        "edge joint",
+        "edge weld"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B19": {
+      "required_elements": [
+        "C1.5.3",
+        "TIG",
+        "MIG",
+        "GTAW",
+        "GMAW",
+        "inert gas"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B20": {
+      "required_elements": [
+        "Table D1",
+        "New Terms Added",
+        "172",
+        "2020"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B21": {
+      "required_elements": [
+        "Figure B1",
+        "Butt Joint",
+        "Corner Joint",
+        "T-Joint",
+        "Lap Joint",
+        "Parallel Joint",
+        "BRAZE"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B22": {
+      "required_elements": [
+        "Figure B6",
+        "3",
+        "consecutive pages",
+        "12",
+        "CONTINUED_ON_PAGE"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B23": {
+      "required_elements": [
+        "Figure B33",
+        "13",
+        "Crater crack",
+        "Toe crack"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B24": {
+      "required_elements": [
+        "Figure B46",
+        "Shoulder",
+        "Probe",
+        "HAZ",
+        "TMAZ",
+        "Advancing Side",
+        "Retreating Side"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B25": {
+      "required_elements": [
+        "Figure B16A",
+        "1G",
+        "2G",
+        "3G",
+        "4G",
+        "Flat",
+        "Horizontal",
+        "Vertical",
+        "Overhead"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B26": {
+      "required_elements": [
+        "Figure B49",
+        "TIME",
+        "RESISTANCE WELDING CURRENT",
+        "ELECTRODE FORCE",
+        "HEAT TIME",
+        "COOL TIME",
+        "WELD INTERVAL"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B27": {
+      "required_elements": [
+        "Figure B50",
+        "TIME",
+        "SQUEEZE TIME",
+        "WELD TIME",
+        "HOLD TIME",
+        "TEMPORAL_PRECEDES"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B28": {
+      "required_elements": [
+        "Figure B53",
+        "WELDING CURRENT",
+        "ARC VOLTAGE",
+        "WIRE FEED SPEED",
+        "TRAVEL SPEED",
+        "SHIELDING GAS FLOW",
+        "HIGH PULSE TIME",
+        "LOW PULSE TIME"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B29": {
+      "required_elements": [
+        "Figure B44",
+        "Figure B45",
+        "ROTATIONAL SPEED",
+        "FRICTION FORCE",
+        "flywheel",
+        "spindle"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    },
+    "G4-B30": {
+      "required_elements": [
+        "Figure B54",
+        "CRATER FILL TIME",
+        "MELTBACK TIME",
+        "POSTFLOW TIME",
+        "TEMPORAL_PRECEDES"
+      ],
+      "forbidden_elements": [
+        "action1_blocked",
+        "[blocked]",
+        "ambiguous_source_identity",
+        "PLANNER_SCHEMA_INTEGRATION_BLOCKER",
+        "LOCAL_BACKEND_ERROR"
+      ]
+    }
+  }
+}
