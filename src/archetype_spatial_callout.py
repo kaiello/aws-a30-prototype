@@ -115,7 +115,7 @@ def extract_text_spans_filtered(page: fitz.Page, printed_page: int) -> List[Dict
                 for span in line.get("spans", []):
                     raw_t = span.get("text", "")
                     # Strip ASCII control characters (\x08 backspace, \x00-\x1f\x7f)
-                    t = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', raw_t).strip()
+                    t = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', raw_t).strip()
                     if not t:
                         continue
                     # Skip watermark and running header/footer
@@ -1177,7 +1177,7 @@ def compose_spatial_callout_answer(
     callout_nodes = [n for n in fig_store.get("nodes", {}).values() if isinstance(n, dict) and n.get("node_type") == "CALLOUT"]
     cleaned_texts = []
     for c in callout_nodes:
-        t = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', c.get("text", "")).strip()
+        t = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', c.get("text", "")).strip()
         if t.lower() == "heat-affected zone":
             t = "Heat-affected zone (HAZ)"
         elif t.lower() == "thermo-mechanically affected zone":
@@ -1186,9 +1186,9 @@ def compose_spatial_callout_answer(
 
     callout_texts = sorted(list(set(
         t for t in cleaned_texts
-        if t and t not in ["Annex B", "AWS A3.0M/A3.0:2020"]
-        and not t.startswith("Annex B")
-        and not t.startswith("AWS A3.0M/A3.0:2020")
+        if t and t.lower() not in ["annex b", "aws a3.0m/a3.0:2020"] and "university of michigan" not in t.lower()
+        and not t.lower().startswith("annex b")
+        and not t.lower().startswith("aws a3.0m/a3.0:2020")
     )))
     ans = (
         f"{fig_id} ({fig_store.get('official_title')}) contains {len(callout_texts)} unique callout labels: "
