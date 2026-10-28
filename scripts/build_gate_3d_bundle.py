@@ -5,6 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BUNDLE_PATH = ROOT / "storage" / "gate_reviews" / "GATE_3D_FULL_AUDIT_BUNDLE.md"
 
 FILES = [
+    "storage/gate_reviews/gate_3D-1_repair_packet.md",
     "storage/gate_reviews/gate_3D_review_packet.md",
     "eval/evidence_v2_phase3_holdout_results.json",
     "storage/evidence_v2/phase3_holdout_001/questions.json",
