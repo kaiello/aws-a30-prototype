@@ -3,7 +3,7 @@
   "standard": "AWS A3.0M/A3.0:2020",
   "total_questions": 30,
   "mode": "replay",
-  "evaluation_timestamp": "2026-10-28T17:10:06Z",
+  "evaluation_timestamp": "2026-10-28T18:14:02Z",
   "route_scorecard": {
     "route_1_deterministic": {
       "name": "DeterministicQuestionPlanner (0-LLM Baseline)",
@@ -20,10 +20,10 @@
       "passed": 30,
       "total": 30,
       "accuracy_pct": 100.0,
-      "total_time_seconds": 0.013,
-      "avg_latency_seconds": 0.0,
-      "total_tokens": 42958,
-      "estimated_cost_usd": 0.0107
+      "total_time_seconds": 0.048,
+      "avg_latency_seconds": 0.002,
+      "total_tokens": 43472,
+      "estimated_cost_usd": 0.0109
     },
     "route_3_comparison_routes": {
       "openai": {
@@ -75,7 +75,7 @@
     {
       "id": "G4-B03",
       "query": "In Figure A6 (Brazing and Soldering Classification Chart), how many distinct process designations are defined in the bottom legend table across its 48 process circle branches, and how are arc brazing and carbon arc brazing designated?",
-      "answer": "In Figure A6 (Brazing and Soldering Classification Chart, printed p. 80, PDF index 92), exactly 21 distinct process designations are defined in the bottom legend table across its 48 process circle branches. Arc brazing is designated as AB and carbon arc brazing (controlled-atmosphere brazing) is designated as B-CA.",
+      "answer": "In Figure A6 (Brazing and Soldering Classification Chart, printed p. 80, PDF index 92), exactly 21 distinct process designations are defined in the bottom legend table across its 48 process circle branches. Arc brazing is designated as AB and carbon arc brazing is designated as B-CA.",
       "elapsed_seconds": 0.0001,
       "operations_count": 1,
       "schema_valid": true,
@@ -216,7 +216,7 @@
       "id": "G4-B13",
       "query": "In Clause 4, are stick electrode welding and heliarc welding standard terms, and what preferred standard terms do they redirect to?",
       "answer": "In Clause 4 of AWS A3.0M/A3.0:2020, stick electrode welding and heliarc welding are categorized as nonstandard terms printed in lightface type. Stick electrode welding redirects to the preferred standard term shielded metal arc welding (SMAW), and heliarc welding redirects to the preferred standard term gas tungsten arc welding (GTAW).",
-      "elapsed_seconds": 0.0008,
+      "elapsed_seconds": 0.0007,
       "operations_count": 1,
       "schema_valid": true,
       "compiler_accepted": true,
@@ -328,7 +328,7 @@
       "id": "G4-B21",
       "query": "In Figure B1 (Joint Types), what are the five basic joint types shown across panels (A) through (E), and what single weld type is applicable to all five basic joint types?",
       "answer": "In Figure B1 (Joint Types), the five basic joint types are: Butt Joint, Corner Joint, T-Joint, Lap Joint, Parallel Joint. The weld type applicable to all five basic joint types is BEVEL-GROOVE, BRAZE, FLARE-BEVEL-GROOVE, J-GROOVE.",
-      "elapsed_seconds": 0.0012,
+      "elapsed_seconds": 0.0011,
       "operations_count": 2,
       "schema_valid": true,
       "compiler_accepted": true,
@@ -470,7 +470,7 @@
       "id": "G4-B01",
       "query": "Tracing through the physical characteristic branches of Figure A4 (Fusion Welding Classification Chart), what are the energy source, thermal source, loading, and shielding characteristics that classify flux cored arc welding (FCAW)?",
       "answer": "In Figure A4 (Fusion Welding Classification Chart, printed p. 78, PDF index 90), flux cored arc welding (FCAW) is classified through physical characteristic branches: Energy Source: Electrical -> Thermal Source: Arc -> Loading: [No Mechanical Loading] (None) -> Shielding: Gas or Flux.",
-      "elapsed_seconds": 0.0003,
+      "elapsed_seconds": 0.0004,
       "planner_elapsed_seconds": 1.6312919000629336,
       "token_usage": {
         "completion_tokens": 138,
@@ -521,7 +521,7 @@
     {
       "id": "G4-B03",
       "query": "In Figure A6 (Brazing and Soldering Classification Chart), how many distinct process designations are defined in the bottom legend table across its 48 process circle branches, and how are arc brazing and carbon arc brazing designated?",
-      "answer": "In Figure A6 (Brazing and Soldering Classification Chart, printed p. 80, PDF index 92), exactly 21 distinct process designations are defined in the bottom legend table across its 48 process circle branches. Arc brazing is designated as AB and carbon arc brazing (controlled-atmosphere brazing) is designated as B-CA.",
+      "answer": "In Figure A6 (Brazing and Soldering Classification Chart, printed p. 80, PDF index 92), exactly 21 distinct process designations are defined in the bottom legend table across its 48 process circle branches. Arc brazing is designated as AB and carbon arc brazing is designated as B-CA.",
       "elapsed_seconds": 0.0003,
       "planner_elapsed_seconds": 1.8713382999412715,
       "token_usage": {
@@ -548,7 +548,7 @@
       "id": "G4-B04",
       "query": "In Figure A3 (Joining Method Chart), what are the three major methods of materials joining classified, and what does footnote a state regarding the simplicity of the chart lines?",
       "answer": "In Figure A3 (Joining Method Chart, printed p. 77, PDF index 89), the three major methods of materials joining classified are: Mechanical Fastening, Welding, Adhesive Bonding. Footnote a explicitly qualifies the chart connections: \"The line for simplicity does not show that all materials can be joined by each method.\"",
-      "elapsed_seconds": 0.0004,
+      "elapsed_seconds": 0.0003,
       "planner_elapsed_seconds": 1.837747799931094,
       "token_usage": {
         "completion_tokens": 121,
@@ -600,7 +600,7 @@
       "id": "G4-B06",
       "query": "What are the six standard suffix letter modifiers defined in Table A4 for the application mode of welding and allied processes, and what does the suffix -AU designate?",
       "answer": "In Table A4—Suffixes for Application Mode of Welding, Joining, and Allied Processes (printed p. 74), six standard suffix letter modifiers are defined: -AD (Adaptive control), -AU (Automatic), -MA (Manual), -ME (Mechanized), -RO (Robotic), -SA (Semiautomatic). The suffix -AU designates Automatic application mode.",
-      "elapsed_seconds": 0.0002,
+      "elapsed_seconds": 0.0003,
       "planner_elapsed_seconds": 1.7573748000431806,
       "token_usage": {
         "completion_tokens": 139,
@@ -626,7 +626,7 @@
       "id": "G4-B07",
       "query": "In Table A5 (Obsolete or Seldom Used Processes), how many obsolete processes are listed, and what are the designations for atomic hydrogen welding and forge welding?",
       "answer": "In Table A5 (Obsolete or Seldom Used Processes, printed p. 74), exactly 13 obsolete or seldom used processes are cataloged. Among them, atomic hydrogen welding is assigned the letter designation AHW, and forge welding is assigned the letter designation FOW.",
-      "elapsed_seconds": 0.0002,
+      "elapsed_seconds": 0.0003,
       "planner_elapsed_seconds": 1.1548946001566947,
       "token_usage": {
         "completion_tokens": 89,
@@ -652,7 +652,7 @@
       "id": "G4-B08",
       "query": "In Table A1 and Table A3, what is the official letter designation for magnetic pulse welding, and under what primary process grouping is it classified?",
       "answer": "In Table A1 (printed p. 70) and Table A3 (printed p. 73), magnetic pulse welding is assigned the official letter designation MPW and is classified under the primary process grouping of Solid-State Welding.",
-      "elapsed_seconds": 0.0002,
+      "elapsed_seconds": 0.0003,
       "planner_elapsed_seconds": 1.565477899974212,
       "token_usage": {
         "completion_tokens": 144,
@@ -678,7 +678,7 @@
       "id": "G4-B09",
       "query": "In Table A1, under which two distinct parent process groups does the letter designation USW (ultrasonic welding) appear across pages 69 and 70?",
       "answer": "In Table A1, the process designation USW (ultrasonic welding) appears under two distinct parent process groups: 1. Under 'plastics welding' on printed page 69 (PDF index 81); and 2. Under 'solid-state welding' on printed page 70 (PDF index 82).",
-      "elapsed_seconds": 0.0002,
+      "elapsed_seconds": 0.0003,
       "planner_elapsed_seconds": 1.615265800151974,
       "token_usage": {
         "completion_tokens": 113,
@@ -704,7 +704,7 @@
       "id": "G4-B10",
       "query": "Explain the authentic source designation collision for the letter designation AB between Tables A1, A2, A3, Figure A1 and Figure A6 in AWS A3.0M/A3.0:2020.",
       "answer": "In Tables A1 (p. 69), A2 (p. 71), A3 (p. 72), and Figure A1 (p. 75), the letter designation AB stands for 'adhesive bonding'. In contrast, in Figure A6 (printed p. 80, PDF index 92) and its legend table, the letter designation AB stands for 'arc brazing'. This represents an authentic source designation collision in AWS A3.0M/A3.0:2020.",
-      "elapsed_seconds": 0.0002,
+      "elapsed_seconds": 0.0003,
       "planner_elapsed_seconds": 1.89726180001162,
       "token_usage": {
         "completion_tokens": 205,
@@ -756,7 +756,7 @@
       "id": "G4-B12",
       "query": "In Clause 4, what are the defined senses for the test position designation 1F and what domain delimiters distinguish plate applications from pipe applications?",
       "answer": "In Clause 4 (printed p. 5), the designation '1F' contains distinct domain delimiters: 1F [pipe]: A welding test position designation for a circumferential fillet weld applied to a joint in pipe, with its axis approximately 45° from horizontal, in which the weld is made in the flat welding position by rotating the pipe about its axis. See Figure B20(A).; 1F [plate]: A welding test position designation for a linear fillet weld applied to a joint in which the weld is made in the flat welding position. See Figure B18(A).. Both denote fillet weld test positions.",
-      "elapsed_seconds": 0.0003,
+      "elapsed_seconds": 0.0004,
       "planner_elapsed_seconds": 1.7986514999065548,
       "token_usage": {
         "completion_tokens": 152,
@@ -782,7 +782,7 @@
       "id": "G4-B13",
       "query": "In Clause 4, are stick electrode welding and heliarc welding standard terms, and what preferred standard terms do they redirect to?",
       "answer": "In Clause 4 of AWS A3.0M/A3.0:2020, stick electrode welding and heliarc welding are categorized as nonstandard terms printed in lightface type. Stick electrode welding redirects to the preferred standard term shielded metal arc welding (SMAW), and heliarc welding redirects to the preferred standard term gas tungsten arc welding (GTAW).",
-      "elapsed_seconds": 0.0009,
+      "elapsed_seconds": 0.001,
       "planner_elapsed_seconds": 1.3672673997934908,
       "token_usage": {
         "completion_tokens": 120,
@@ -808,7 +808,7 @@
       "id": "G4-B14",
       "query": "What do the single underline and vertical margin bar typographical markers indicate in Clause 4 of the 2020 edition of AWS A3.0M/A3.0:2020 per Clause 3?",
       "answer": "Per Clause 3 of AWS A3.0M/A3.0:2020, typographical markers indicate modifications in the 2020 edition: single underlining beneath a term or definition indicates text changes (has_2020_underline=True), and a vertical margin bar in the outer margin indicates a revised or new entry (has_2020_margin_bar=True).",
-      "elapsed_seconds": 0.0002,
+      "elapsed_seconds": 0.0003,
       "planner_elapsed_seconds": 1.6232712999917567,
       "token_usage": {
         "completion_tokens": 118,
@@ -834,17 +834,17 @@
       "id": "G4-B15",
       "query": "In Clause 4, what is the authoritative definition of kerf and which Annex B figure does its glossary entry explicitly cross-reference?",
       "answer": "In Clause 4 of AWS A3.0M/A3.0:2020 (printed p. 35), kerf is defined as: \"The gap produced by a cutting process. See Figure B41.\" (gap produced by a cutting process). Its glossary entry explicitly cross-references Figure B41.",
-      "elapsed_seconds": 0.0003,
-      "planner_elapsed_seconds": 1.4012945999857038,
+      "elapsed_seconds": 0.0161,
+      "planner_elapsed_seconds": 1.065071600023657,
       "token_usage": {
-        "completion_tokens": 88,
-        "prompt_cache_hit_tokens": 1024,
-        "prompt_cache_miss_tokens": 253,
-        "prompt_tokens": 1277,
+        "completion_tokens": 79,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 1033,
+        "prompt_tokens": 1545,
         "prompt_tokens_details": {
-          "cached_tokens": 1024
+          "cached_tokens": 512
         },
-        "total_tokens": 1365
+        "total_tokens": 1624
       },
       "model": "deepseek-flash",
       "operations_count": 1,
@@ -860,7 +860,7 @@
       "id": "G4-B16",
       "query": "Across the Table A1 process taxonomy, exactly how many indented process rows were evaluated for IS_A promotion, how many were promoted to IS_A_PROCESS_VARIATION_OF, and how many were retained as CANDIDATE_LAYOUT_PARENT?",
       "answer": "Across the Table A1 process taxonomy, exactly 118 indented process rows were evaluated for IS_A promotion. Of these, 35 rows met the strict dual-provenance corroboration standard and were promoted to IS_A_PROCESS_VARIATION_OF, while 83 rows were retained as CANDIDATE_LAYOUT_PARENT edges with zero uncorroborated promotions.",
-      "elapsed_seconds": 0.0003,
+      "elapsed_seconds": 0.0005,
       "planner_elapsed_seconds": 1.4269610000774264,
       "token_usage": {
         "completion_tokens": 131,
@@ -886,7 +886,7 @@
       "id": "G4-B17",
       "query": "Why is gas shielded flux cored arc welding (FCAW-G) promoted to IS_A_PROCESS_VARIATION_OF under flux cored arc welding (FCAW) while flux cored arc welding remains CANDIDATE_LAYOUT_PARENT under Arc Welding?",
       "answer": "Under the dual-provenance rule (dual-provenance-is-a-1), 'gas shielded flux cored arc welding' (FCAW-G) is promoted from Table A1 visual indentation to predicate 'IS_A_PROCESS_VARIATION_OF' under flux cored arc welding (FCAW) because its Clause 4 definition (printed p. 29) explicitly corroborates the relationship: \"A flux cored arc welding process variation in which shielding gas is supplied through the gas nozzle in addition to that obtained from the flux within the electrode.\". In contrast, flux cored arc welding lacks Clause 4 genus phrasing under Arc Welding, so it remains a CANDIDATE_LAYOUT_PARENT in Table A1.",
-      "elapsed_seconds": 0.0003,
+      "elapsed_seconds": 0.0004,
       "planner_elapsed_seconds": 1.832933799829334,
       "token_usage": {
         "completion_tokens": 231,
@@ -912,7 +912,7 @@
       "id": "G4-B18",
       "query": "What rule did the Definitions Subcommittee establish in Annex C Clause C1.5.7 regarding the replacement of edge joint with parallel joint?",
       "answer": "In Annex C Clause C1.5.7 ('parallel joint', printed p. 162): Per C1.5.7: In the 2020 edition, 'parallel joint has been introduced as a replacement for edge joint and is defined as \"A joint type formed by butting, parallel surfaces of one or more workpieces with flush ends.\"' Historically, five basic joint types were recognized (butt, corner, lap, parallel, and T-joints). Edge joint was replaced because it described weld location rather than member orientation. C1.5.7  Joint is defined as “The junction of the workpiece(s) that are to be joined or have been joined.” Joint type is \ndefined as “A weld joint classification based on the relative orientation of the members being joined.” Historically, five \nbasic joint types have been recognized, namely: butt, corner, edge, lap, and T-joint. Of these five, the names of all but one \nare descriptive of the relative orientation of the members. The exception, edge joint, could identify the location of a weld \napplied to this type of joint; however, it does not describe the orientation of the members. Adding to this dilemma is the \nfact there also exists an edge weld.\nIn an effort to correct this irregularity, the term parallel joint has been introduced as a replacement for edge joint and is \ndefined as “A joint type formed by butting, parallel surfaces of one or more workpieces with flush ends.” Instead of rel-\negating edge joint to the status of a nonstandard term, it is defined as “See parallel joint.”\nWith this change, the definition for joint type will now be “A weld joint classification based on the relative orientation \nof the members being joined. The five basic joint types are the butt, corner, lap, parallel, and T-joints.”",
-      "elapsed_seconds": 0.0002,
+      "elapsed_seconds": 0.0003,
       "planner_elapsed_seconds": 1.7862144000828266,
       "token_usage": {
         "completion_tokens": 125,
@@ -990,7 +990,7 @@
       "id": "G4-B21",
       "query": "In Figure B1 (Joint Types), what are the five basic joint types shown across panels (A) through (E), and what single weld type is applicable to all five basic joint types?",
       "answer": "In Figure B1 (Joint Types), the five basic joint types are: Butt Joint, Corner Joint, T-Joint, Lap Joint, Parallel Joint. The weld type applicable to all five basic joint types is BEVEL-GROOVE, BRAZE, FLARE-BEVEL-GROOVE, J-GROOVE.",
-      "elapsed_seconds": 0.0008,
+      "elapsed_seconds": 0.0014,
       "planner_elapsed_seconds": 1.5549639000091702,
       "token_usage": {
         "completion_tokens": 155,
@@ -1016,7 +1016,7 @@
       "id": "G4-B22",
       "query": "In Figure B6 (Groove Faces, Bevel Angles, and Groove Angles), how many consecutive printed pages does this multi-page continuation figure span and how many total sub-panels are depicted across panels (A) through (L)?",
       "answer": "Figure B6 (Bevel Angle, Bevel Face, Bevel Depth, Groove Angle, Groove Depth, Bevel Radius, and Root Opening) is a multi-page continuation figure spanning 3 consecutive pages: page 87 (PDF index 99), page 88 (PDF index 100), page 89 (PDF index 101). It depicts a total of 12 sub-panels (page 87: panels (A), (B), (C), (D); page 88: panels (E), (F), (G), (H); page 89: panels (I), (J), (K), (L)) with CONTINUED_ON_PAGE edges linking consecutive pages.",
-      "elapsed_seconds": 0.0009,
+      "elapsed_seconds": 0.0033,
       "planner_elapsed_seconds": 1.6630409001372755,
       "token_usage": {
         "completion_tokens": 166,
@@ -1042,7 +1042,7 @@
       "id": "G4-B23",
       "query": "In Figure B33 (Crack Types), how many numbered crack key items are defined in the figure legend, and what are the specific names for key items 1 and 9?",
       "answer": "In Figure B33 (Crack Types), there are 13 numbered crack key items in the legend: 1 Crater crack, 2 Face crack, 3 Heat-affected zone crack, 4 Lamellar tear, 5 Longitudinal crack, 6 Root crack, 7 Root surface crack, 8 Throat crack, 9 Toe crack, 10 Transverse crack, 11 Underbead crack, 12 Weld interface crack, 13 Weld metal crack.",
-      "elapsed_seconds": 0.0008,
+      "elapsed_seconds": 0.0007,
       "planner_elapsed_seconds": 1.3432581999804825,
       "token_usage": {
         "completion_tokens": 157,
@@ -1068,7 +1068,7 @@
       "id": "G4-B24",
       "query": "In Figure B46 (Friction Stir Welding), what numbered tool components and distinct microstructural zones are identified in the diagram callouts?",
       "answer": "In Figure B46 (Schematic of the Friction Stir Welding Process), key items and microstructural zones are defined: Key items: 1 Base Metal, 2 Direction of Tool Rotation, 3 Weld Tool, 4 Axial Force, 5 Tool Shoulder, 6 Probe, 7 Advancing Side of Weld, 8 Exit Hole, 9 Retreating Side of Weld, 10 Weld Face. Microstructural zones: Advancing Side, Retreating Side, Shoulder, Probe, Exit Hole, Stir Zone / Weld Nugget, Thermo-mechanically affected zone (TMAZ), and Heat-affected zone (HAZ).",
-      "elapsed_seconds": 0.0008,
+      "elapsed_seconds": 0.0007,
       "planner_elapsed_seconds": 1.572967499960214,
       "token_usage": {
         "completion_tokens": 137,
@@ -1094,7 +1094,7 @@
       "id": "G4-B25",
       "query": "In Figure B16A (Welding Test Positions for Groove Welds in Plate), what are the four standard groove weld test positions depicted in sub-panels (A) through (D) and their alphanumeric designations?",
       "answer": "Figure B16A (Welding Position Diagram for Groove Welds and Surfacing Welds in Plate) contains 5 sub-panels: (A) Flat Position, (B) Horizontal Position, (C) Overhead Position, (D) Vertical Position, (E) Vertical Position (80° to 90°). The corresponding groove weld test position designations for plate (per Figure B17) are: 1G (Flat), 2G (Horizontal), 3G (Vertical), and 4G (Overhead).",
-      "elapsed_seconds": 0.0011,
+      "elapsed_seconds": 0.0007,
       "planner_elapsed_seconds": 1.7424025000073016,
       "token_usage": {
         "completion_tokens": 161,
@@ -1146,7 +1146,7 @@
       "id": "G4-B27",
       "query": "In Figure B50 (Single-Pulse Resistance Welding Parameter Diagram), what are the sequential temporal intervals plotted along the TIME axis from squeeze to hold?",
       "answer": "In Figure B50 (Example of a Single-Pulse Resistance Spot Welding Waveform, printed p. 153), the sequential temporal intervals plotted along the horizontal TIME axis are linked by TEMPORAL_PRECEDES: SQUEEZE TIME -> WELD TIME -> HOLD TIME, where welding current is applied continuously in a single pulse. In contrast, Figure B49 utilizes a pulsation WELD INTERVAL containing alternating cycles of HEAT TIME and COOL TIME.",
-      "elapsed_seconds": 0.0003,
+      "elapsed_seconds": 0.0002,
       "planner_elapsed_seconds": 1.6694753000047058,
       "token_usage": {
         "completion_tokens": 109,
@@ -1172,17 +1172,17 @@
       "id": "G4-B28",
       "query": "In Figure B53 (An Example of a Welding Cycle for Pulsed Welding), what five synchronized vertical parameter traces are plotted against time and what sub-intervals define the pulse cycle?",
       "answer": "In Figure B53 (An Example of a Welding Cycle for Pulsed Welding, printed p. 157), the five synchronized vertical parameter traces plotted against time are: WELDING CURRENT, ARC VOLTAGE, WIRE FEED SPEED, TRAVEL SPEED, SHIELDING GAS FLOW. The sub-intervals defining the pulse cycle within WELD TIME are HIGH PULSE TIME and LOW PULSE TIME.",
-      "elapsed_seconds": 0.0003,
-      "planner_elapsed_seconds": 1.7072852000128478,
+      "elapsed_seconds": 0.0158,
+      "planner_elapsed_seconds": 1.1991071000229567,
       "token_usage": {
-        "completion_tokens": 135,
-        "prompt_cache_hit_tokens": 1024,
-        "prompt_cache_miss_tokens": 260,
-        "prompt_tokens": 1284,
+        "completion_tokens": 117,
+        "prompt_cache_hit_tokens": 1280,
+        "prompt_cache_miss_tokens": 277,
+        "prompt_tokens": 1557,
         "prompt_tokens_details": {
-          "cached_tokens": 1024
+          "cached_tokens": 1280
         },
-        "total_tokens": 1419
+        "total_tokens": 1674
       },
       "model": "deepseek-flash",
       "operations_count": 1,
@@ -1198,7 +1198,7 @@
       "id": "G4-B29",
       "query": "Compare Figure B44 (Inertia Friction Welding) and Figure B45 (Direct Drive Friction Welding) regarding their drive energy mechanism and rotational speed traces.",
       "answer": "In Figure B44 (Generalized Diagram of Inertia Friction Welding, printed p. 148) and Figure B45 (Generalized Diagram of Direct Drive Friction Welding, printed p. 149), both diagrams plot ROTATIONAL SPEED and FRICTION FORCE against time. In Figure B44, rotational speed decays continuously from flywheel energy coast-down to zero, whereas in Figure B45, rotational speed is maintained constant by a motor-driven spindle until braking is applied at deceleration.",
-      "elapsed_seconds": 0.0003,
+      "elapsed_seconds": 0.0004,
       "planner_elapsed_seconds": 1.9154572999104857,
       "token_usage": {
         "completion_tokens": 235,
@@ -1224,7 +1224,7 @@
       "id": "G4-B30",
       "query": "In Figure B54 (Welding Cycle Parameter Diagram for GMAW, FCAW, and SAW), what sequential intervals occur at the end of the welding sequence to prevent crater defects and burnback?",
       "answer": "In Figure B54 (Typical GMAW, FCAW, and SAW Welding Cycle, printed p. 157), the sequential intervals occurring at the end of the welding sequence (linked by TEMPORAL_PRECEDES) to prevent crater defects and burnback are: CRATER FILL TIME, MELTBACK TIME, and POSTFLOW TIME.",
-      "elapsed_seconds": 0.0002,
+      "elapsed_seconds": 0.0003,
       "planner_elapsed_seconds": 1.551184199983254,
       "token_usage": {
         "completion_tokens": 122,

@@ -525,7 +525,7 @@ def _compose_annex_a_chart_answer(
         answer_text = (
             f"In Figure A6 (Brazing and Soldering Classification Chart, printed p. {p_info['printed_page']}, PDF index {p_info['pdf_index']}), "
             f"exactly {len(legend_nodes)} distinct process designations are defined in the bottom legend table across its {len(process_nodes)} process circle branches. "
-            f"Arc brazing is designated as {ab_node.get('code', 'AB')} and carbon arc brazing (controlled-atmosphere brazing) is designated as {b_ca_node.get('code', 'B-CA')}."
+            f"Arc brazing is designated as {ab_node.get('code', 'AB')} and carbon arc brazing is designated as {b_ca_node.get('code', 'B-CA')}."
         )
         elements_present.extend(["Figure A6", str(len(legend_nodes)), str(len(process_nodes)), "AB", "B-CA"])
 

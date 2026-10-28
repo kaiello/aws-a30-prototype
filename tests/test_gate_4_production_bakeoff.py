@@ -180,3 +180,26 @@ def test_gate_4_preflight_contract():
     result = run_figure_preflight("A1", root=ROOT)
     assert result["status"] == "CLEAR_REAL_ENTRY_CONTRACT", f"Preflight failed: {result}"
     assert result["new_model_calls"] == 0
+
+
+def test_gate_4_deepseek_receipts_match_frozen_questions():
+    """Verify that every request_0XX/request.json in deepseek_run contains the exact question query from questions.json."""
+    q_file = ROOT / "storage/evidence_v2/phase4_bakeoff_001/questions.json"
+    questions = json.loads(q_file.read_text(encoding="utf-8"))
+    deepseek_dir = ROOT / "storage/evidence_v2/phase4_bakeoff_001/deepseek_run"
+    assert deepseek_dir.exists(), f"DeepSeek run directory missing: {deepseek_dir}"
+
+    for idx, q_item in enumerate(questions, 1):
+        req_file = deepseek_dir / f"request_{idx:03d}" / "request.json"
+        assert req_file.exists(), f"Missing request.json for index {idx} ({q_item['id']})"
+        req_data = json.loads(req_file.read_text(encoding="utf-8"))
+        prompt_content = ""
+        if "messages" in req_data:
+            prompt_content = "\n".join(m.get("content", "") for m in req_data["messages"])
+        else:
+            prompt_content = str(req_data.get("prompt") or req_data.get("text") or req_data)
+        assert q_item["query"] in prompt_content, (
+            f"Question text mismatch on {q_item['id']} ({idx:03d}):\n"
+            f"Expected: {q_item['query']}\n"
+            f"Found in request: {prompt_content}"
+        )
