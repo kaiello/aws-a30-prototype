@@ -31,6 +31,7 @@ from src.evidence_phase3_qa import (
     Phase3QuestionPlanner,
     Phase3ReplayPlanner,
     execute_phase3_plan,
+    answer_phase3_question,
 )
 
 HOLDOUT_DIR = ROOT / "storage/evidence_v2/phase3_holdout_001"
@@ -98,17 +99,17 @@ def run_phase3_holdout() -> Dict[str, Any]:
         q_start = time.perf_counter()
 
         req_dir = PLANNER_DIR / f"request_{idx:03d}"
-        plan = planner.plan_phase3_question(query, source_element=source_elem, req_dir=req_dir)
+        qa_result = answer_phase3_question(query, planner=planner, stores=stores, req_dir=req_dir)
         elapsed = time.perf_counter() - q_start
         call_index += 1
+
+        plan = qa_result["plan"]
+        exec_res = qa_result["execution"]
+        ans_text = qa_result["answer"]
 
         receipt_meta = plan.get("receipt_metadata", {})
         schema_valid = receipt_meta.get("error") is None
         compiler_accepted = bool(plan.get("actions")) and plan.get("intent") != "rejected"
-
-        # Execute data-driven plan
-        exec_res = execute_phase3_plan(plan, query, stores=stores)
-        ans_text = exec_res.get("answer", "")
         operations = exec_res.get("operations", [])
         ops_count = len(operations)
 

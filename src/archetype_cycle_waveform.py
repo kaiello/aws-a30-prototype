@@ -512,7 +512,6 @@ def compose_waveform_answer(
     target_trace = query_or_spec.get("target_trace")
 
     if q_type == "temporal_sequence":
-        # Order of intervals along time axis
         top_level = [i for i in intervals if not i.get("parent_interval")]
         top_level.sort(key=lambda x: x.get("order", 0))
         sequence_names = [i["name"] for i in top_level]
@@ -530,7 +529,37 @@ def compose_waveform_answer(
         }
 
     if q_type == "precedence" and target_interval:
-        # Find preceding and succeeding interval
+        ordered_intervals = sorted(
+            [i for i in intervals if not i.get("parent_interval")],
+            key=lambda x: x.get("order", 0),
+        )
+        target_idx = -1
+        for idx, item in enumerate(ordered_intervals):
+            if item["name"].upper() == target_interval.upper():
+                target_idx = idx
+                break
+
+        if target_idx != -1:
+            preceding_names = [i["name"] for i in ordered_intervals[:target_idx]]
+            following_names = [i["name"] for i in ordered_intervals[target_idx + 1:]]
+            ans_text = (
+                f"In {fig_id} ({title}), temporal intervals preceding '{target_interval}' along the timeline are: "
+                + (", ".join(preceding_names) if preceding_names else "None (initial interval)")
+                + f"; intervals following '{target_interval}' are: "
+                + (", ".join(following_names) if following_names else "None (final interval)")
+                + "."
+            )
+            return {
+                "figure_id": fig_id,
+                "query_type": q_type,
+                "target_interval": target_interval,
+                "preceding_interval": preceding_names[-1] if preceding_names else None,
+                "succeeding_interval": following_names[0] if following_names else None,
+                "preceding_intervals": preceding_names,
+                "following_intervals": following_names,
+                "answer_text": ans_text,
+            }
+
         preceding = None
         succeeding = None
         for edge in edges:
@@ -563,16 +592,23 @@ def compose_waveform_answer(
             for i in intervals
             if (i.get("parent_interval") or "").upper() == parent.upper()
         ]
+        assoc_params = [
+            p["name"] for p in params
+            if (p.get("associated_interval") or "").upper() in [parent.upper()] + [s.upper() for s in subs]
+            or any(s.split()[0].upper() in p["name"].upper() for s in subs)
+        ]
+        param_clause = f" Modulated parameters include: {', '.join(assoc_params)}." if assoc_params else ""
         ans_text = (
-            f"In {fig_id}, '{parent}' is subdivided into the following cyclic pulses/sub-intervals: "
+            f"In {fig_id} ({title}), '{parent}' is subdivided into the following cyclic pulses/sub-intervals via SUB_INTERVAL_OF edges: "
             + ", ".join(subs)
-            + "."
+            + f".{param_clause}"
         )
         return {
             "figure_id": fig_id,
             "query_type": q_type,
             "parent_interval": parent,
             "sub_intervals": subs,
+            "associated_parameters": assoc_params,
             "answer_text": ans_text,
         }
 
@@ -581,22 +617,32 @@ def compose_waveform_answer(
             f"{t['name']} ({t.get('physical_quantity', '')}, {t.get('unit', '')}): {t.get('description', '')}"
             for t in traces
         ]
+        int_names = [i["name"] for i in intervals]
+        param_names = [p["name"] for p in params]
+        int_clause = f" Defined temporal intervals/process phases: {', '.join(int_names)}." if int_names else ""
+        param_clause = f" Depicted parameters: {', '.join(param_names)}." if param_names else ""
         ans_text = (
             f"{fig_id} ({title}) plots {len(traces)} synchronized vertical traces against the horizontal TIME axis:\n- "
             + "\n- ".join(trace_summaries)
+            + f"\n{int_clause}{param_clause}"
         )
         return {
             "figure_id": fig_id,
             "query_type": q_type,
             "traces": [t["name"] for t in traces],
+            "intervals": int_names,
+            "parameters": param_names,
             "answer_text": ans_text,
         }
 
     # Default: summary
+    int_names = [i["name"] for i in intervals]
+    param_names = [p["name"] for p in params]
     ans_text = (
         f"{fig_id} ({title}) depicts a synchronized {waveform_store.get('archetype', 'waveform')} "
-        f"comprising {len(traces)} vertical traces ({', '.join(t['name'] for t in traces)}) "
-        f"and {len(intervals)} sequential temporal intervals along the TIME axis."
+        f"comprising {len(traces)} vertical traces ({', '.join(t['name'] for t in traces)}), "
+        f"{len(intervals)} sequential temporal intervals/phases ({', '.join(int_names)}), "
+        f"and parameters ({', '.join(param_names)}) along the horizontal TIME axis."
     )
     return {
         "figure_id": fig_id,
@@ -605,4 +651,7 @@ def compose_waveform_answer(
         "traces_count": len(traces),
         "intervals_count": len(intervals),
         "parameters_count": len(params),
+        "traces": [t["name"] for t in traces],
+        "intervals": int_names,
+        "parameters": param_names,
     }

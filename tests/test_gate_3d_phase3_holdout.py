@@ -81,49 +81,49 @@ def test_gate_3d_offline_data_driven_execution():
     test_cases = [
         # Slice 1: Clause 4 definition lookup
         (
-            {"source_element": "Clause 4", "intent": "definition", "target_entities": ["braze"], "actions": [{"action_type": "lookup", "target": "braze"}]},
+            {"target_division": "Clause 4", "intent": "definition", "target_entities": ["braze"], "actions": [{"action_type": "lookup", "target": "braze"}]},
             "What is the definition of braze?",
             ["act of brazing", "verb", "braze"],
         ),
         # Slice 1: Nonstandard term redirect
         (
-            {"source_element": "Clause 4", "intent": "nonstandard_term", "target_entities": ["stick electrode welding"], "actions": [{"action_type": "lookup", "target": "stick electrode welding"}]},
+            {"target_division": "Clause 4", "intent": "nonstandard_term", "target_entities": ["stick electrode welding"], "actions": [{"action_type": "lookup", "target": "stick electrode welding"}]},
             "Is stick electrode welding a standard term and what is its preferred term?",
             ["nonstandard", "shielded metal arc welding", "SMAW"],
         ),
         # Slice 2: IS_A promotion metrics
         (
-            {"source_element": "IS_A Promotion & Annex C/D", "intent": "is_a_promotion_metrics", "target_entities": ["Table A1"], "actions": [{"action_type": "query_metrics", "target": "is_a"}]},
+            {"target_division": "Table A1 / IS_A", "intent": "is_a_promotion_metrics", "target_entities": ["Table A1"], "actions": [{"action_type": "query_metrics", "target": "is_a"}]},
             "How many indented process rows were evaluated for IS_A promotion and how many were promoted?",
             ["118", "35", "83", "IS_A_PROCESS_VARIATION_OF"],
         ),
         # Slice 2: Annex C decision C1.5.1
         (
-            {"source_element": "IS_A Promotion & Annex C/D", "intent": "annex_c_decision", "target_entities": ["bonding", "welding", "C1.5.1"], "actions": [{"action_type": "query_decision", "target": "C1.5.1"}]},
+            {"target_division": "Table A1 / IS_A", "intent": "annex_c_decision", "target_entities": ["bonding", "welding", "C1.5.1"], "actions": [{"action_type": "query_decision", "target": "C1.5.1"}]},
             "What rule did the Definitions Subcommittee establish in Clause C1.5.1 regarding bonding vs welding?",
             ["bonding", "welding", "adhesive", "interatomic"],
         ),
         # Slice 3: Figure B1 applicable welds
         (
-            {"source_element": "Figure B1", "intent": "applicable_welds", "target_entities": ["Figure B1", "joint types"], "actions": [{"action_type": "query_welds", "target": "Figure B1"}]},
+            {"target_division": "Figure B1", "intent": "applicable_welds", "target_entities": ["Figure B1", "joint types"], "actions": [{"action_type": "query_welds", "target": "Figure B1"}]},
             "What are the five basic joint types shown in Figure B1 and what weld type is applicable to all five?",
             ["Butt Joint", "Corner Joint", "T-Joint", "Lap Joint", "Parallel Joint", "BRAZE"],
         ),
         # Slice 3: Figure B33 crack keys
         (
-            {"source_element": "Figure B33", "intent": "crack_keys", "target_entities": ["Figure B33"], "actions": [{"action_type": "query_keys", "target": "Figure B33"}]},
+            {"target_division": "Figure B33", "intent": "crack_keys", "target_entities": ["Figure B33"], "actions": [{"action_type": "query_keys", "target": "Figure B33"}]},
             "In Figure B33 (Crack Types), how many numbered crack key items are in the legend?",
             ["Figure B33", "13", "Crater crack"],
         ),
         # Slice 4: Figure B49 waveforms
         (
-            {"source_element": "Figure B49", "intent": "waveform_traces", "target_entities": ["Figure B49"], "actions": [{"action_type": "query_traces", "target": "Figure B49"}]},
+            {"target_division": "Figure B49", "intent": "waveform_traces", "target_entities": ["Figure B49"], "actions": [{"action_type": "query_traces", "target": "Figure B49"}]},
             "In Figure B49, what synchronized vertical traces are plotted against the horizontal TIME axis?",
             ["Figure B49", "TIME", "RESISTANCE WELDING CURRENT", "ELECTRODE FORCE"],
         ),
         # Slice 4: Figure B53 waveform cycles
         (
-            {"source_element": "Figure B53", "intent": "waveform_traces", "target_entities": ["Figure B53"], "actions": [{"action_type": "query_traces", "target": "Figure B53"}]},
+            {"target_division": "Figure B53", "intent": "waveform_traces", "target_entities": ["Figure B53"], "actions": [{"action_type": "query_traces", "target": "Figure B53"}]},
             "In Figure B53, what are the five synchronized vertical traces plotted against time?",
             ["Figure B53", "WELDING CURRENT", "ARC VOLTAGE", "WIRE FEED SPEED", "TRAVEL SPEED", "SHIELDING GAS FLOW"],
         ),
@@ -158,3 +158,30 @@ def test_gate_3d_anti_drift_zero_grep():
     cmd = ["git", "grep", "-E", "QA002|HO002|CQ-0|DEV001|C4-QA001|B1-QA|B49-QA|P3-S[1-4]-", "--", "src/", "eval/*.py"]
     result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     assert result.returncode == 1, f"Anti-drift violation! Found hardcoded tokens:\n{result.stdout}"
+
+
+def test_gate_3d_no_oracle_leakage_or_keyword_dispatch():
+    """Verify zero benchmark metadata oracle leakage or forbidden dispatch names in src/evidence_phase3_qa.py."""
+    import ast
+    import inspect
+    from src.evidence_phase3_qa import answer_phase3_question
+
+    qa_file = ROOT / "src/evidence_phase3_qa.py"
+    tree = ast.parse(qa_file.read_text(encoding="utf-8"))
+
+    forbidden_names = {"source_elem", "source_element", "question_id", "qid", "slice", "slice_name"}
+    found_violations = []
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and node.id in forbidden_names:
+            found_violations.append(f"Line {node.lineno}: AST Name '{node.id}'")
+        elif isinstance(node, ast.Attribute) and node.attr in forbidden_names:
+            found_violations.append(f"Line {node.lineno}: AST Attribute '{node.attr}'")
+
+    assert not found_violations, f"Oracle leakage detected in src/evidence_phase3_qa.py:\n" + "\n".join(found_violations)
+
+    sig = inspect.signature(answer_phase3_question)
+    param_names = list(sig.parameters.keys())
+    assert param_names[0] == "question_text", f"First parameter must be 'question_text', got {param_names[0]}"
+    for p in param_names:
+        assert p not in forbidden_names, f"Parameter '{p}' violates zero-oracle contract"

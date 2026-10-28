@@ -110,7 +110,7 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
     # 6. storage/gate_reviews/ (all review packets)
     gate_dir = base_dir / "storage" / "gate_reviews"
     if gate_dir.is_dir():
-        for p in gate_dir.glob("gate_*_review_packet.md"):
+        for p in gate_dir.glob("*.md"):
             collected.append(p)
 
     # 6b. storage/ canonical JSON stores
