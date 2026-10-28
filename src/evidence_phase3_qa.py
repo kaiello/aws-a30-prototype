@@ -353,30 +353,15 @@ def execute_phase3_plan(
 
         # Archetype 3: Spatial Callout & Tabular Figures
         else:
-            if fig_id == "Figure B1" and (re.search(r"\b(all|five)\b", q_lower) or "joint types" in q_lower):
-                welds_map = fig_store.get("applicable_welds_by_joint", {})
-                common_welds = sorted(list(set.intersection(*(set(v) for v in welds_map.values())))) if welds_map else ["BRAZE"]
-                joints_list = [j.title() for j in welds_map.keys()]
-                answer_text = (
-                    f"In Figure B1 ({fig_store.get('official_title')}), the five basic joint types are: "
-                    f"{', '.join(joints_list)}. The weld type applicable to all five basic joint types is {', '.join(common_welds)}."
-                )
-                elements_present.extend(joints_list + common_welds + ["Figure B1"])
-                operations.append({
-                    "operation": "query_universal_applicable_welds",
-                    "figure_id": fig_id,
-                    "status": "executed",
-                })
-            else:
-                res = compose_spatial_callout_answer({"query": question_text, "figure_id": fig_id}, {fig_id: fig_store})
-                answer_text = res.get("answer_text", "")
-                elements_present.extend(res.get("elements_present", []) or [])
-                provenance.extend(res.get("normative_provenance", []) or [])
-                operations.append({
-                    "operation": "compose_spatial_callout_answer",
-                    "figure_id": fig_id,
-                    "status": "executed",
-                })
+            res = compose_spatial_callout_answer({"query": question_text, "figure_id": fig_id}, {fig_id: fig_store})
+            answer_text = res.get("answer_text", "")
+            elements_present.extend(res.get("elements_present", []) or [])
+            provenance.extend(res.get("normative_provenance", []) or [])
+            operations.append({
+                "operation": "compose_spatial_callout_answer",
+                "figure_id": fig_id,
+                "status": "executed",
+            })
 
     # =======================================================================
     # Route 2: Annex C Subcommittee Decisions
