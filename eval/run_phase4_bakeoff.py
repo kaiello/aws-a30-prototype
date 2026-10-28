@@ -219,9 +219,9 @@ def run_phase4_bakeoff() -> Dict[str, Any]:
 
     comparison_routes = {}
     candidate_providers = [
-        ("openai", "OPENAI_API_KEY", "GPT-5.6-Terra"),
-        ("anthropic", "ANTHROPIC_API_KEY", "Claude-3.7-Sonnet"),
-        ("gemini", "GEMINI_API_KEY", "Gemini-3.8-Flash"),
+        ("openai", "OPENAI_API_KEY", "OpenAI API"),
+        ("anthropic", "ANTHROPIC_API_KEY", "Anthropic API"),
+        ("gemini", "GEMINI_API_KEY", "Gemini API"),
     ]
 
     for prov_name, env_var, model_name in candidate_providers:

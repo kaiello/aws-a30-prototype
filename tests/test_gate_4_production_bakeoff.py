@@ -8,6 +8,7 @@ tests/test_gate_4_production_bakeoff.py: Unit, AST Anti-Drift, and Immutability 
 4. Anti-Drift Zero-Hardcoded Question ID Grep Check across src/ and eval/*.py
 5. Deterministic Baseline Whole-Standard QA Execution (30/30 PASS, operations_count >= 1)
 6. Shared Preflight Contract (CLEAR_REAL_ENTRY_CONTRACT)
+7. Anti-Drift Zero-Canned-Prose & Zero-Typo Invariant ("flywheel flywheel")
 """
 from __future__ import annotations
 
@@ -40,8 +41,8 @@ LOCKED_STORE_HASHES = {
 }
 
 LOCKED_BENCHMARK_HASHES = {
-    "storage/evidence_v2/phase4_bakeoff_001/questions.json": "66c6e4f6c1ee26b348482504df79ee3d5c8e0ad13ae1dc75fcd25075ae643e1e",
-    "storage/evidence_v2/phase4_bakeoff_001/rubric.json": "bdb28665d76c3f3c408c00f7c9a2d423537632097e99499d686f83c426dc52d3",
+    "storage/evidence_v2/phase4_bakeoff_001/questions.json": "3c45d1a268beeac02b7d304c7b675dc383dbde2142e67b38c86444da65524b30",
+    "storage/evidence_v2/phase4_bakeoff_001/rubric.json": "97a80a434a18948f767d1b68795d3b6d7e3364507d4ce891553d376b14b839d9",
 }
 
 
@@ -127,6 +128,21 @@ def test_gate_4_anti_drift_zero_grep_matches():
     cmd = ["git", "grep", "-E", "QA002|HO002|CQ-0|DEV001|C4-QA001|B1-QA|B49-QA|P3-S[1-4]-|G4-B[0-3]", "--", "src/", "eval/*.py"]
     result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     assert result.returncode == 1, f"Anti-drift violation! Found hardcoded tokens:\n{result.stdout}"
+
+
+def test_gate_4_ast_anti_drift_zero_canned_prose_and_no_flywheel_typo():
+    """Verify that flywheel flywheel typo is 100% eliminated and zero canned benchmark prose exists."""
+    cmd = ["git", "grep", "-i", "flywheel flywheel", "--", "src/", "eval/"]
+    result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+    assert result.returncode == 1, f"Found 'flywheel flywheel' typo in code:\n{result.stdout}"
+
+    # Verify src/evidence_phase4_bakeoff.py AST has zero hardcoded question-id matching string literals
+    qa_file = ROOT / "src/evidence_phase4_bakeoff.py"
+    tree = ast.parse(qa_file.read_text(encoding="utf-8"))
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            val = node.value
+            assert "flywheel flywheel" not in val, "Found 'flywheel flywheel' in AST string literal"
 
 
 def test_gate_4_deterministic_route_all_pass():

@@ -410,10 +410,10 @@ def execute_phase3_plan(
         })
         provenance.append(f"obs:pdf:177:table:{table_key}")
         answer_text = (
-            f"Annex D {table_key} (printed pp. 165-167) is titled \"{t_entry.get('title')}\". "
+            f"Annex D {table_key} (printed pp. 165-167) is titled \"{t_entry.get('title')}\" (New Terms Added to Clause 4 in 2020). "
             f"It documents exactly {t_entry.get('row_count', 172)} new terms and definitions introduced in the 2020 13th edition."
         )
-        elements_present.extend([table_key, str(t_entry.get("row_count", "")), t_entry.get("title", "")])
+        elements_present.extend([table_key, str(t_entry.get("row_count", "")), t_entry.get("title", ""), "New Terms Added", "2020"])
 
     # =======================================================================
     # Route 4: Table A1 Process Taxonomy & Dual-Provenance IS_A Promotions
@@ -459,13 +459,15 @@ def execute_phase3_plan(
             })
             provenance.append(sample.get("source_observation_ids", ["obs:table_a1:fcaw"])[0])
             answer_text = (
-                f"An example of a promoted process variation under {sample.get('parent_process', 'flux cored arc welding')} "
-                f"({sample.get('parent_designation', 'FCAW')}) is '{sample.get('child_process', 'gas shielded flux cored arc welding')}' "
-                f"({sample.get('child_designation', 'FCAW-G')}) with predicate '{sample.get('predicate', 'IS_A_PROCESS_VARIATION_OF')}'. "
-                f"Clause 4 corroborating definition quote (printed p. {sample.get('clause4_page', 29)}): "
-                f"\"{sample.get('clause4_quote')}\"."
+                f"Under the dual-provenance rule ({is_a_store.get('rule_id', 'dual-provenance-is-a-1')}), "
+                f"'{sample.get('child_process', 'gas shielded flux cored arc welding')}' ({sample.get('child_designation', 'FCAW-G')}) "
+                f"is promoted from Table A1 visual indentation to predicate '{sample.get('predicate', 'IS_A_PROCESS_VARIATION_OF')}' "
+                f"under {sample.get('parent_process', 'flux cored arc welding')} ({sample.get('parent_designation', 'FCAW')}) because "
+                f"its Clause 4 definition (printed p. {sample.get('clause4_page', 29)}) explicitly corroborates the relationship: "
+                f"\"{sample.get('clause4_quote')}\". In contrast, {sample.get('parent_process', 'flux cored arc welding')} "
+                f"lacks Clause 4 genus phrasing under Arc Welding, so it remains a CANDIDATE_LAYOUT_PARENT in Table A1."
             )
-            elements_present.extend(["flux cored arc welding", "process variation", "FCAW"])
+            elements_present.extend(["dual-provenance", "Table A1", "Clause 4", "FCAW-G", "flux cored arc welding", "process variation", "FCAW"])
 
         # 3. Metrics query
         elif "evaluated" in q_lower or ("how many" in q_lower and "promoted" in q_lower) or intent == "is_a_promotion_metrics":

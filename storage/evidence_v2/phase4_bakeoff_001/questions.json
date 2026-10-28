@@ -102,7 +102,7 @@
     "slice": "slice_c_clause4_glossary",
     "slice_name": "Clause 4 Terms & Definitions",
     "target_source": "Clause 4",
-    "query": "In Clause 4, what is the authoritative definition of kerf and which Annex B figures does its glossary entry explicitly cross-reference?"
+    "query": "In Clause 4, what is the authoritative definition of kerf and which Annex B figure does its glossary entry explicitly cross-reference?"
   },
   {
     "id": "G4-B16",
@@ -193,7 +193,7 @@
     "slice": "slice_f_archetype4_waveforms",
     "slice_name": "Annex B Archetype 4 Waveforms",
     "target_source": "Figure B53",
-    "query": "In Figure B53 (Pulsed GMAW Waveform), what five synchronized vertical parameter traces are plotted against time and what sub-intervals define the pulse cycle?"
+    "query": "In Figure B53 (An Example of a Welding Cycle for Pulsed Welding), what five synchronized vertical parameter traces are plotted against time and what sub-intervals define the pulse cycle?"
   },
   {
     "id": "G4-B29",

@@ -224,9 +224,8 @@
     "G4-B15": {
       "required_elements": [
         "kerf",
-        "width of the cut",
-        "Figure B36",
-        "Figure B37"
+        "gap produced by a cutting process",
+        "Figure B41"
       ],
       "forbidden_elements": [
         "action1_blocked",
