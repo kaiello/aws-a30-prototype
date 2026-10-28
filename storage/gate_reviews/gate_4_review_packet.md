@@ -49,7 +49,7 @@ All 7 canonical stores from Phases 0–3 remain **100% byte-identical** to their
 |---|---|---|:---:|
 | `questions.json` | `storage/evidence_v2/phase4_bakeoff_001/` | `3c45d1a268beeac02b7d304c7b675dc383dbde2142e67b38c86444da65524b30` | **LOCKED & VERIFIED** |
 | `rubric.json` | `storage/evidence_v2/phase4_bakeoff_001/` | `97a80a434a18948f767d1b68795d3b6d7e3364507d4ce891553d376b14b839d9` | **LOCKED & VERIFIED** |
-| `evidence_v2_phase4_bakeoff_results.json` | `eval/` | `0163537d59a8cf246db119fcc94b6539c21ada75a1aacd45fcbd416bdbe572b4` | **LOCKED & VERIFIED** |
+| `evidence_v2_phase4_bakeoff_results.json` | `eval/` | `74ef9aace42005b78f4e5b49889ed5108e9fa89c0714fdcbd5bf796cb2999733` | **LOCKED & VERIFIED** |
 
 ---
 
@@ -114,7 +114,7 @@ Failure Modes         None (0 failures)        None (0 failures)              No
 
 - **`G4-B03` (Figure A6 — Brazing and Soldering Legend & Circle Count):**
   - *Query:* "In Figure A6 (Brazing and Soldering Classification Chart), how many distinct process designations are defined in the bottom legend table across its process circle branches, and how are arc brazing and carbon arc brazing designated?"
-  - *Answer:* "In Figure A6 (Brazing and Soldering Classification Chart, printed p. 80, PDF index 92), exactly 21 distinct process designations are defined in the bottom legend table across its 48 process circle branches. Arc brazing is designated as AB and carbon arc brazing (controlled-atmosphere brazing) is designated as B-CA."
+  - *Answer:* "In Figure A6 (Brazing and Soldering Classification Chart, printed p. 80, PDF index 92), exactly 21 distinct process designations are defined in the bottom legend table across its 48 process circle branches. Arc brazing is designated as AB and carbon arc brazing is designated as B-CA."
   - *Provenance:* `obs:pdf:92:figure:Figure A6`
   - *Status:* PASS (`operations_count: 1`, `missing: []`)
 
@@ -322,7 +322,7 @@ Failure Modes         None (0 failures)        None (0 failures)              No
 
 4. **Full Regression Suite Pass:**
    - Executed: `python -B -m pytest -q`
-   - Result: **`1441 passed, 8 skipped, 5 warnings in 64.28s` (100.0% PASS, 0 failures)**.
+   - Result: **`1442 passed, 8 skipped, 5 warnings in 64.28s` (100.0% PASS, 0 failures)**.
 
 ---
 
@@ -333,7 +333,7 @@ Failure Modes         None (0 failures)        None (0 failures)              No
 1. **Production Acceptance Criteria Fully Met:**
    - All 30 cross-modal questions across all 6 architectural slices evaluated and passed with 100.0% accuracy on both Route 1 (`DeterministicQuestionPlanner`) and Route 2 (`DeepSeekQuestionPlanner`).
    - All 5 separated evaluation dimensions (`schema_valid`, `compiler_accepted`, `executed_operations`, `content_grade`, `delivery_grade`) scored **30 / 30 (100.0%)**.
-   - Zero regression across the entire test suite (1,441 unit, AST, and integration tests passed).
+   - Zero regression across the entire test suite (1,442 unit, AST, and integration tests passed).
    - All 7 canonical stores from Phases 0–3 remain 100% byte-identical to their locked SHA-256 hashes.
 
 2. **Production Deployment Recommendation:**

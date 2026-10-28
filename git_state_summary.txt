@@ -1,17 +1,8 @@
 Active Branch: feat/gate-4-final-production-bakeoff
-Head Commit: 048a047 feat(gate-4): complete whole-standard multi-model production acceptance bakeoff
+Head Commit: 8dff8b6 fix(gate-4): resolve DRIFT-4-5 and DRIFT-4-6 for final production acceptance
 
 Git Status:
- M GATE_4_FULL_AUDIT_BUNDLE.md
- M eval/evidence_v2_phase4_bakeoff_results.json
- M eval/run_phase4_bakeoff.py
- M src/evidence_phase3_qa.py
- M src/evidence_phase4_bakeoff.py
- M storage/evidence_v2/phase4_bakeoff_001/questions.json
- M storage/evidence_v2/phase4_bakeoff_001/rubric.json
- M storage/gate_reviews/GATE_4_FULL_AUDIT_BUNDLE.md
-A  storage/gate_reviews/gate_4-1_repair_packet.md
- M storage/gate_reviews/gate_4_review_packet.md
-A  storage/gate_reviews/gate_repair_4-A1.md
- M tests/test_gate_4_production_bakeoff.py
+On branch feat/gate-4-final-production-bakeoff
+Your branch is up to date with 'origin/feat/gate-4-final-production-bakeoff'.
 
+nothing to commit, working tree clean
