@@ -152,7 +152,7 @@ ANNEX_B_REMAINING_FIGURE_CHUNKS = [
             "- (D) Cover pass: The final pass or layer completing the groove or fillet weld face.\n"
             "- (E) Buttering: Surfacing variation depositing surfacing metal on one or both faying surfaces to provide compatible metallurgy prior to completion of the weld.\n"
             "- (F) Surfacing: The application by welding, brazing, or thermal spraying of a layer of material to produce desired properties or dimensions.\n"
-            "- (J) 'Temper beads' (p. 116, PDF p. 128 - Adapted from ASME Section IX Figure QW-462.12):\n"
+            "- (J) 'Temper beads' (p. 116, PDF p. 128 - Adapted from ASME boiler and pressure vessel codes Figure QW-462.12):\n"
             "  * 'Toe temper bead': A weld bead specifically positioned at the toe of the weld adjacent to the base metal to temper the heat-affected zone of the preceding pass.\n"
             "  * 'Surface temper weld reinforcing beads': Weld beads deposited across the weld surface or at the toe to temper the underlying weld layers; may or may not be mechanically removed after welding.\n"
             "  * 'Temper bead sequence': Controlled deposition sequence to refine grain structure in the HAZ.\n"

@@ -13,6 +13,7 @@ from src.evidence_whole_standard_preflight import run_whole_standard_preflight, 
 
 FILES = [
     "storage/gate_reviews/gate_5_review_packet.md",
+    "storage/evidence_v2/annex_a_holdout_001/evaluation/rubric.json",
     "storage/evidence_v2/phase5_hardening_001/adversarial_questions.json",
     "storage/evidence_v2/phase5_hardening_001/rubric.json",
     "storage/evidence_v2/phase5_hardening_001/results.json",

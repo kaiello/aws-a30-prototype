@@ -952,8 +952,14 @@ def execute_whole_standard_plan(
             "normative_provenance": ["obs:pdf:90:figure:Figure A4"],
         }
 
-    # 5. Out of scope queries (e.g. material mechanical properties, ASME boiler codes)
-    if any(k in q_lower for k in ["yield strength", "tensile strength", "elongation", "charpy", "hardness", "p-number", "asme section ix"]):
+    # 5. Out of scope queries (e.g. material mechanical properties, external boiler codes)
+    is_out_of_scope = bool(
+        re.search(r"\b(?:tensile|elongation|charpy|hardness|toughness|ductility)\b", q_lower)
+        or re.search(r"\b(?:mechanical|material)\s+(?:properties|property|testing|limits)\b", q_lower)
+        or re.search(r"\b(?:p-number|f-number|a-number|m-number)\b", q_lower)
+        or re.search(r"\b(?:asme|boiler|pressure\s+vessel)\b", q_lower)
+    )
+    if is_out_of_scope:
         return {
             "status": "REFUSAL_OUT_OF_SCOPE",
             "answer": "The query is outside the scope of AWS A3.0M/A3.0:2020 (Standard Welding Terms and Definitions). Mechanical material properties and external boiler code designations are not specified in this terminology standard.",

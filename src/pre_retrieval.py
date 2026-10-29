@@ -120,8 +120,8 @@ OUT_OF_SCOPE_PATTERNS = [
     r'\bwelder\s+performance\s+qualification\s+record\b',
     r'\bwps\s+qualification\s+variables\b',
     r'\bpqr\s+testing\b',
-    r'\be7018\b',
-    r'\byield\s+strength\b',
+    r'\b[er]\\d{2,4}(?:-[a-z0-9]+)?\b',
+    r'\bmechanical\s+properties\b',
     r'\belongation\b',
     r'\bfiller\s+metal\s+chemistry\b',
     r'\bradiographic\s+inspection\b',
@@ -173,7 +173,7 @@ def check_early_abstention(query: str) -> Optional[Dict[str, Any]]:
                     "AWS A3.0M/A3.0:2020 (*Standard Welding Terms and Definitions*) defines standard nomenclature, "
                     "joint geometry, test positions, and classification matrices. Acceptance criteria, reject limits, "
                     "preheat schedules, and filler metal properties are governed by specific fabrication codes "
-                    "(such as AWS D1.1, ASME Section IX, or NAVSEA specifications) and material standards (AWS A5 series)."
+                    "(such as AWS D1.1, ASME boiler and pressure vessel codes, or NAVSEA specifications) and material standards (AWS A5 series)."
                 )
             }
     return None
