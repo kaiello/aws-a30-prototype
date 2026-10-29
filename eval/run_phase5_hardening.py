@@ -92,7 +92,7 @@ def evaluate_adversarial_suite(
     }
 
     out_file = output_dir / "results.json"
-    out_file.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    out_file.write_text(json.dumps(summary, indent=2), encoding="utf-8", newline="\n")
     return summary
 
 

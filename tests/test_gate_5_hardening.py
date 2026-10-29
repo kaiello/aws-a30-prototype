@@ -38,7 +38,8 @@ from src.evidence_whole_standard_preflight import (
 
 BENCHMARK_DIR = ROOT / "storage/evidence_v2/phase5_hardening_001"
 
-LOCKED_PHASE5_HASHES = {
+LOCKED_BENCHMARK_HASHES = {
+    "storage/evidence_v2/annex_a_holdout_001/evaluation/rubric.json": "70fb2473078b1d0dab6b1b73c7b8a9fcb29724a22c60841d03ce4e54820bb479",
     "storage/evidence_v2/phase5_hardening_001/adversarial_questions.json": "0d46daec2014562e97ff74ac36c165e1ba263953ef84d0e0080b85aa0c0e39c9",
     "storage/evidence_v2/phase5_hardening_001/rubric.json": "df71960a443e9b54d2607628d59fa2181df32f49426bb7c3b81108e32e5e7981",
     "storage/evidence_v2/phase5_hardening_001/results.json": "92c62b9e2a7479d60b79bcbe88f8d52f03fa8f650d12a1a9d2b5626aab470273",
@@ -46,7 +47,7 @@ LOCKED_PHASE5_HASHES = {
 
 
 def test_gate_5_canonical_store_hashes():
-    """Verify that all 7 canonical stores + 3 Phase 5 benchmark files match locked SHA-256 digests."""
+    """Verify that all 7 canonical stores + 4 benchmark files (11/11 total) match locked SHA-256 digests."""
     # Check 7 canonical stores
     for rel_path, exp_hash in LOCKED_STORE_HASHES.items():
         file_path = ROOT / rel_path
@@ -54,17 +55,22 @@ def test_gate_5_canonical_store_hashes():
         actual = hashlib.sha256(file_path.read_bytes()).hexdigest()
         assert actual == exp_hash, f"Canonical store mutated: {rel_path}"
 
-    # Check 3 Phase 5 benchmark files
-    for rel_path, exp_hash in LOCKED_PHASE5_HASHES.items():
+    # Check 4 benchmark files (bringing total locked artifacts to 11/11)
+    for rel_path, exp_hash in LOCKED_BENCHMARK_HASHES.items():
         file_path = ROOT / rel_path
         assert file_path.exists(), f"Benchmark file missing: {rel_path}"
         actual = hashlib.sha256(file_path.read_bytes()).hexdigest()
-        assert actual == exp_hash, f"Phase 5 benchmark file mutated: {rel_path}"
+        assert actual == exp_hash, f"Benchmark file mutated: {rel_path}"
 
 
 def test_gate_5_anti_drift_source_scan():
-    """Verify that no benchmark question IDs are hardcoded in src/ or eval/*.py using full wildcard pattern."""
+    """Verify that no benchmark question IDs are hardcoded in src/ or eval/*.py using full wildcard pattern,
+    and assert zero forbidden benchmark literals across src/."""
     regex_pattern = r"QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+"
+    forbidden_literals_re = re.compile(
+        r"hyper-flux|laser-quantum|ASME\s+Section\s+IX|yield\s+strength|E7018",
+        re.IGNORECASE,
+    )
 
     targets = list((ROOT / "src").rglob("*.py")) + list((ROOT / "eval").glob("*.py"))
     violations = []
@@ -77,7 +83,15 @@ def test_gate_5_anti_drift_source_scan():
                     continue
                 violations.append(f"{target.relative_to(ROOT)}:{i}: {line.strip()}")
 
-    assert not violations, f"Anti-drift violation! Found hardcoded question IDs:\n" + "\n".join(violations)
+    # Anti-overfitting literal scan across src/
+    src_targets = list((ROOT / "src").rglob("*.py"))
+    for target in src_targets:
+        text = target.read_text(encoding="utf-8", errors="ignore")
+        for i, line in enumerate(text.splitlines(), 1):
+            if forbidden_literals_re.search(line):
+                violations.append(f"Forbidden benchmark literal in {target.relative_to(ROOT)}:{i}: {line.strip()}")
+
+    assert not violations, f"Anti-drift violation! Found hardcoded question IDs or benchmark literals:\n" + "\n".join(violations)
 
 
 def test_gate_5_composer_ast_no_silent_string_fallbacks():

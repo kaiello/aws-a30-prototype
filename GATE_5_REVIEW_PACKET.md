@@ -39,6 +39,7 @@ This review packet formalizes the full execution, remediation, and verification 
 | **Phase 3A Store** | `storage/evidence_v2/annex_b_archetype3_001/annex_b_archetype3_unified_store.json` | `16b7bea56932283b4d37d70871cf082690baaef725ef46cf85104047cc719254` | `VERIFIED_LOCKED` |
 | **Phase 3B Store** | `storage/evidence_v2/annex_b_complete_001/annex_b_complete_unified_store.json` | `d26a7f8fa45c138a56cba61c95745b99760b383c9e9c8960153efcd8e548f898` | `VERIFIED_LOCKED` |
 | **Phase 3C Store** | `storage/evidence_v2/annex_b_complete_001/annex_b_archetype4_unified_store.json` | `ccd1a957610e6bf92d02643140c2f11fb8379c634b48a7ad97bdb5e06bfaf954` | `VERIFIED_LOCKED` |
+| **Annex A Holdout Rubric** | `storage/evidence_v2/annex_a_holdout_001/evaluation/rubric.json` | `70fb2473078b1d0dab6b1b73c7b8a9fcb29724a22c60841d03ce4e54820bb479` | `VERIFIED_LOCKED` |
 | **Phase 5 Adversarial Qs** | `storage/evidence_v2/phase5_hardening_001/adversarial_questions.json` | `0d46daec2014562e97ff74ac36c165e1ba263953ef84d0e0080b85aa0c0e39c9` | `VERIFIED_LOCKED` |
 | **Phase 5 Rubric** | `storage/evidence_v2/phase5_hardening_001/rubric.json` | `df71960a443e9b54d2607628d59fa2181df32f49426bb7c3b81108e32e5e7981` | `VERIFIED_LOCKED` |
 | **Phase 5 Results** | `storage/evidence_v2/phase5_hardening_001/results.json` | `92c62b9e2a7479d60b79bcbe88f8d52f03fa8f650d12a1a9d2b5626aab470273` | `VERIFIED_LOCKED` |
@@ -123,22 +124,23 @@ This review packet formalizes the full execution, remediation, and verification 
   - Dynamically runs preflight and benchmark evaluation to inject live metrics into the bundle header.
   - Synchronized metadata headers across review packet and bundle.
 
-### 3.6 Remediation of DRIFT-5-1 (Anti-Drift Regex Wildcard & Anti-Overfitting Source Scan)
-- **Problem:** In Gate 5 review, the anti-drift grep regex in `test_gate_5_hardening.py` used `G5-A[0-9]` instead of full wildcard `G5-ADV[0-9]+`, and composer code in `src/evidence_phase4_bakeoff.py` contained hardcoded references to "hyper-flux" and "laser-quantum". Legacy `eval/run_annex_a_holdout.py` contained inline `HOLDOUT_RUBRIC` dict matching `HO[0-9]+`.
+### 3.6 Remediation of DRIFT-5-1 & HK-5-1 (Anti-Drift Regex Wildcard & Anti-Overfitting Source Scan)
+- **Problem:** In Gate 5 review, the anti-drift grep regex in `test_gate_5_hardening.py` used `G5-A[0-9]` instead of full wildcard `G5-ADV[0-9]+`, and composer code in `src/evidence_phase4_bakeoff.py` contained hardcoded references to "hyper-flux" and "laser-quantum". Legacy `eval/run_annex_a_holdout.py` contained inline `HOLDOUT_RUBRIC` dict matching `HO[0-9]+`. Additionally, task card HK-5-1 identified literal benchmark tokens (`ASME Section IX`, `yield strength`, `E7018`) in router modules.
 - **Remediation:**
-  - Eliminated literal strings `"hyper-flux welding"` and `"laser-quantum welding"` from `src/evidence_phase4_bakeoff.py`. Replaced with generic structural regex matching any unknown term, stripped leading `"the term "` / `"term "` dynamically, and dispatched to `lookup_glossary_term` returning `NOT_IN_STANDARD` when the term is missing from Clause 4.
-  - Externalized legacy `HOLDOUT_RUBRIC` dict from `eval/run_annex_a_holdout.py` to `storage/evidence_v2/annex_a_holdout_001/evaluation/rubric.json`, loaded dynamically via `_load_holdout_rubric()`.
+  - Eliminated literal strings `"hyper-flux welding"`, `"laser-quantum welding"`, `"yield strength"`, `"asme section ix"`, and `"e7018"` across all `src/` modules (`src/evidence_phase4_bakeoff.py`, `src/pre_retrieval.py`, `src/extract_annex_b_remaining_figures.py`).
+  - Generalized out-of-scope domain boundary classifier into structural category patterns (mechanical property metrics, electrode specifications, external construction/boiler codes) without hardcoding benchmark query tokens.
+  - Externalized legacy `HOLDOUT_RUBRIC` dict from `eval/run_annex_a_holdout.py` to `storage/evidence_v2/annex_a_holdout_001/evaluation/rubric.json` (SHA-256: `70fb2473...`), locked alongside canonical stores.
   - Verified zero-leakage anti-drift scan across all operational code:
     ```powershell
     git grep -E "QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+" -- src/ eval/*.py
     ```
     **Result:** `0 matches (Exit Code 1)`.
-  - Verified anti-overfitting scan:
+  - Verified full anti-overfitting scan across `src/`:
     ```powershell
-    git grep -Ei "hyper-flux|laser-quantum" -- src/
+    git grep -Ei "hyper-flux|laser-quantum|ASME Section IX|yield strength|E7018" -- src/
     ```
     **Result:** `0 matches (Exit Code 1)`.
-  - Added `test_gate_5_anti_drift_source_scan` to `tests/test_gate_5_hardening.py` asserting zero matches programmatically.
+  - Added programmatic anti-overfitting assertions to `test_gate_5_anti_drift_source_scan` in `tests/test_gate_5_hardening.py`.
 
 ### 3.7 Remediation of DRIFT-5-4 (Test Suite Diagnostics & PyMuPDF Deprecation Suppression)
 - **Problem:** External SWIG C-extension deprecation warnings from `PyMuPDF`/`fitz` under Python 3.12 cluttered pytest output. Lineage from Gate 4 baseline required explicit documentation.
