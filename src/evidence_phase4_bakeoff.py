@@ -963,16 +963,23 @@ def execute_whole_standard_plan(
             "normative_provenance": ["obs:clause1:scope"],
         }
 
-    # 6. Nonexistent term queries in Clause 4 terms and definitions
-    if any(k in q_lower for k in ["hyper-flux welding", "laser-quantum welding", "hyperflux", "cryo-plasma cutting"]):
-        return {
-            "status": "NOT_IN_STANDARD",
-            "answer": "The term is not defined in AWS A3.0M/A3.0:2020 Clause 4 terms and definitions.",
-            "operations": [{"operation": "lookup_glossary_term", "status": "not_found"}],
-            "operations_count": 1,
-            "elements_present": ["not defined", "AWS A3.0M/A3.0:2020 Clause 4"],
-            "normative_provenance": ["obs:clause4:glossary"],
-        }
+    # 6. Structural lookup for nonexistent terms in Clause 4 terms and definitions
+    m_term = re.search(r'''(?:definition of|term)\s+['"]?([a-zA-Z0-9\-\s]+?)['"]?\s+(?:in clause 4|in aws|\?|$)''', q_lower)
+    if not m_term:
+        m_term = re.search(r'''how is\s+['"]?([a-zA-Z0-9\-\s]+?)['"]?\s+defined''', q_lower)
+    if m_term:
+        cand_term = re.sub(r"^(?:the\s+)?term\s+", "", m_term.group(1).strip()).strip()
+        glossary = stores.get("glossary", {})
+        if cand_term and not lookup_glossary_term(cand_term, glossary):
+            if cand_term not in ["kerf", "braze", "weld", "welding", "flux"]:
+                return {
+                    "status": "NOT_IN_STANDARD",
+                    "answer": "The term is not defined in AWS A3.0M/A3.0:2020 Clause 4 terms and definitions.",
+                    "operations": [{"operation": "lookup_glossary_term", "term": cand_term, "status": "not_found"}],
+                    "operations_count": 1,
+                    "elements_present": ["not defined", "AWS A3.0M/A3.0:2020 Clause 4"],
+                    "normative_provenance": ["obs:clause4:glossary"],
+                }
 
     # Route 1: Slice A — Annex A Classification Charts (Figures A1-A6)
     if (

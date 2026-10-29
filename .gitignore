@@ -40,4 +40,14 @@ env/
 storage/*
 !storage/gate_reviews/
 !storage/evidence_v2/
+storage/evidence_v2/*
+!storage/evidence_v2/phase3_holdout_001/
+!storage/evidence_v2/phase4_bakeoff_001/
+!storage/evidence_v2/phase5_hardening_001/
+!storage/evidence_v2/annex_a_holdout_001/
+storage/evidence_v2/annex_a_holdout_001/*
+!storage/evidence_v2/annex_a_holdout_001/evaluation/
+storage/evidence_v2/annex_a_holdout_001/evaluation/*
+!storage/evidence_v2/annex_a_holdout_001/evaluation/rubric.json
+storage/gate_reviews/gate_[0-3]*
 *.log
