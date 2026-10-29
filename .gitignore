@@ -37,5 +37,7 @@ env/
 *.swo
 
 # Runtime storage and caches
-storage/
+storage/*
+!storage/gate_reviews/
+!storage/evidence_v2/
 *.log

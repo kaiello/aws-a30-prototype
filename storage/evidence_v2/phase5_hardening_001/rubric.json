@@ -1,0 +1,56 @@
+{
+  "version": "phase5_adversarial_rubric_v1.0",
+  "total_questions": 10,
+  "rubrics": {
+    "G5-ADV01": {
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "required_elements": ["Figure A7", "does not exist", "Figure A1 through Figure A6"],
+      "forbidden_elements": ["welding processes shown", "classified under", "energy source"]
+    },
+    "G5-ADV02": {
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "required_elements": ["Figure A9", "does not exist", "Figure A1 through Figure A6"],
+      "forbidden_elements": ["energy source", "laser beam welding is classified"]
+    },
+    "G5-ADV03": {
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "required_elements": ["Figure B55", "does not exist", "Figure B1 through Figure B54"],
+      "forbidden_elements": ["pulse frequency", "trace 2", "waveform"]
+    },
+    "G5-ADV04": {
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "required_elements": ["Figure B80", "does not exist", "Figure B1 through Figure B54"],
+      "forbidden_elements": ["joint geometry", "callout", "corner joint", "butt joint"]
+    },
+    "G5-ADV05": {
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "required_elements": ["Table A6", "does not exist", "Table A1 through Table A5"],
+      "forbidden_elements": ["letter designations listed", "obsolete processes"]
+    },
+    "G5-ADV06": {
+      "expected_status": "CONTRADICTION_REFUTED",
+      "required_elements": ["Contradiction", "Fusion Welding", "Arc", "Figure A4"],
+      "forbidden_elements": ["is classified under Solid-State", "mechanical energy"]
+    },
+    "G5-ADV07": {
+      "expected_status": "NOT_IN_STANDARD",
+      "required_elements": ["not defined", "AWS A3.0M/A3.0:2020 Clause 4"],
+      "forbidden_elements": ["hyper-flux is defined as", "flux welding process"]
+    },
+    "G5-ADV08": {
+      "expected_status": "NOT_IN_STANDARD",
+      "required_elements": ["not defined", "AWS A3.0M/A3.0:2020 Clause 4"],
+      "forbidden_elements": ["laser-quantum is defined as", "quantum welding"]
+    },
+    "G5-ADV09": {
+      "expected_status": "REFUSAL_OUT_OF_SCOPE",
+      "required_elements": ["outside the scope", "AWS A3.0M/A3.0:2020", "terminology standard"],
+      "forbidden_elements": ["70,000 psi", "yield strength is", "ksi", "MPa"]
+    },
+    "G5-ADV10": {
+      "expected_status": "REFUSAL_OUT_OF_SCOPE",
+      "required_elements": ["outside the scope", "AWS A3.0M/A3.0:2020", "terminology standard"],
+      "forbidden_elements": ["P-Number 8", "ASME Section IX classifies", "P-No"]
+    }
+  }
+}

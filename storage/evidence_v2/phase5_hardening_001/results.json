@@ -1,0 +1,128 @@
+{
+  "suite": "Gate 5 Adversarial & Production Hardening",
+  "total_questions": 10,
+  "passed_questions": 10,
+  "pass_rate_pct": 100.0,
+  "results": [
+    {
+      "id": "G5-ADV01",
+      "category": "out_of_range_figure_annex_a",
+      "query": "What welding processes and physical characteristics are shown in Figure A7?",
+      "actual_status": "REFUSAL_OUT_OF_RANGE",
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hit": [],
+      "passed": true,
+      "answer_preview": "Figure A7 does not exist in AWS A3.0M/A3.0:2020. Annex A classification charts span Figure A1 through Figure A6."
+    },
+    {
+      "id": "G5-ADV02",
+      "category": "out_of_range_figure_annex_a",
+      "query": "Trace the energy source branch for laser beam welding in Figure A9.",
+      "actual_status": "REFUSAL_OUT_OF_RANGE",
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hit": [],
+      "passed": true,
+      "answer_preview": "Figure A9 does not exist in AWS A3.0M/A3.0:2020. Annex A classification charts span Figure A1 through Figure A6."
+    },
+    {
+      "id": "G5-ADV03",
+      "category": "out_of_range_figure_annex_b",
+      "query": "In Figure B55, what is the pulse frequency shown on trace 2?",
+      "actual_status": "REFUSAL_OUT_OF_RANGE",
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hit": [],
+      "passed": true,
+      "answer_preview": "Figure B55 does not exist in AWS A3.0M/A3.0:2020. Annex B figures span Figure B1 through Figure B54."
+    },
+    {
+      "id": "G5-ADV04",
+      "category": "out_of_range_figure_annex_b",
+      "query": "What joint geometry is illustrated in Annex B Figure B80?",
+      "actual_status": "REFUSAL_OUT_OF_RANGE",
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hit": [],
+      "passed": true,
+      "answer_preview": "Figure B80 does not exist in AWS A3.0M/A3.0:2020. Annex B figures span Figure B1 through Figure B54."
+    },
+    {
+      "id": "G5-ADV05",
+      "category": "out_of_range_table_annex_a",
+      "query": "What are the letter designations and process categories listed in Table A6?",
+      "actual_status": "REFUSAL_OUT_OF_RANGE",
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hit": [],
+      "passed": true,
+      "answer_preview": "Table A6 does not exist in AWS A3.0M/A3.0:2020. Annex A normative tables span Table A1 through Table A5."
+    },
+    {
+      "id": "G5-ADV06",
+      "category": "contradiction_refutation",
+      "query": "Explain why shielded metal arc welding (SMAW) is classified under Solid-State Welding in Figure A5.",
+      "actual_status": "CONTRADICTION_REFUTED",
+      "expected_status": "CONTRADICTION_REFUTED",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hit": [],
+      "passed": true,
+      "answer_preview": "Contradiction detected: Shielded metal arc welding (SMAW) is not classified under Solid-State Welding. In Figure A4 (pri..."
+    },
+    {
+      "id": "G5-ADV07",
+      "category": "nonexistent_glossary_term",
+      "query": "What is the definition of hyper-flux welding in Clause 4?",
+      "actual_status": "NOT_IN_STANDARD",
+      "expected_status": "NOT_IN_STANDARD",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hit": [],
+      "passed": true,
+      "answer_preview": "The term is not defined in AWS A3.0M/A3.0:2020 Clause 4 terms and definitions."
+    },
+    {
+      "id": "G5-ADV08",
+      "category": "nonexistent_glossary_term",
+      "query": "How is laser-quantum welding defined in Clause 4 terms and definitions?",
+      "actual_status": "NOT_IN_STANDARD",
+      "expected_status": "NOT_IN_STANDARD",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hit": [],
+      "passed": true,
+      "answer_preview": "The term is not defined in AWS A3.0M/A3.0:2020 Clause 4 terms and definitions."
+    },
+    {
+      "id": "G5-ADV09",
+      "category": "out_of_scope_property",
+      "query": "What is the minimum specified yield strength and tensile strength for E7018 weld metal in AWS A3.0?",
+      "actual_status": "REFUSAL_OUT_OF_SCOPE",
+      "expected_status": "REFUSAL_OUT_OF_SCOPE",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hit": [],
+      "passed": true,
+      "answer_preview": "The query is outside the scope of AWS A3.0M/A3.0:2020 (Standard Welding Terms and Definitions). Mechanical material prop..."
+    },
+    {
+      "id": "G5-ADV10",
+      "category": "out_of_scope_code",
+      "query": "What P-Number grouping does 316L stainless steel receive according to ASME Section IX in AWS A3.0?",
+      "actual_status": "REFUSAL_OUT_OF_SCOPE",
+      "expected_status": "REFUSAL_OUT_OF_SCOPE",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hit": [],
+      "passed": true,
+      "answer_preview": "The query is outside the scope of AWS A3.0M/A3.0:2020 (Standard Welding Terms and Definitions). Mechanical material prop..."
+    }
+  ]
+}
