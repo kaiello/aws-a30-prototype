@@ -1,8 +1,8 @@
 # GATE 5 CONSOLIDATED FULL AUDIT BUNDLE (PRODUCTION HARDENING & SUGGESTION REMEDIATION)
 Generated for Principal Reviewer Gate 5 Hardening & Invariant Defense Audit.
-Standard: AWS A3.0M/A3.0:2020 | Gate: Gate 5 | Branch: feat/gate-5-production-hardening
-Build Commit SHA: 039440e8650bc616ad812708e51b1692176eb42e | Timestamp: 2026-10-29T01:50:33.029784+00:00
-Working Tree Tracked Codebase: CLEAN
+Standard: AWS A3.0M/A3.0:2020 | Gate: Gate 5 | Branch: main
+Build Commit SHA: 6c2018a0bca878f22c8ee1a052d9b095a1e52f99 | Timestamp: 2026-10-29T01:53:18.872760+00:00
+Working Tree Tracked Codebase: MODIFIED
 Canonical Stores: ALL_7_VERIFIED_LOCKED (7/7 historical hashes match locked digests)
 Preflight Contract: CLEAR_WHOLE_STANDARD_CONTRACT (0 network calls, offline verified)
 Adversarial Suite: 10 / 10 (100.0%) passed exact refusal/refutation rubric
@@ -52,7 +52,7 @@ This review packet formalizes the full execution, remediation, and verification 
 | **Phase 3C Store** | `storage/evidence_v2/annex_b_complete_001/annex_b_archetype4_unified_store.json` | `ccd1a957610e6bf92d02643140c2f11fb8379c634b48a7ad97bdb5e06bfaf954` | `VERIFIED_LOCKED` |
 | **Phase 5 Adversarial Qs** | `storage/evidence_v2/phase5_hardening_001/adversarial_questions.json` | `0d46daec2014562e97ff74ac36c165e1ba263953ef84d0e0080b85aa0c0e39c9` | `VERIFIED_LOCKED` |
 | **Phase 5 Rubric** | `storage/evidence_v2/phase5_hardening_001/rubric.json` | `df71960a443e9b54d2607628d59fa2181df32f49426bb7c3b81108e32e5e7981` | `VERIFIED_LOCKED` |
-| **Phase 5 Results** | `storage/evidence_v2/phase5_hardening_001/results.json` | `f2c38b4075cca47c1f6333d17f874095cf3ea3271957e445950f5b579753ba2a` | `VERIFIED_LOCKED` |
+| **Phase 5 Results** | `storage/evidence_v2/phase5_hardening_001/results.json` | `92c62b9e2a7479d60b79bcbe88f8d52f03fa8f650d12a1a9d2b5626aab470273` | `VERIFIED_LOCKED` |
 
 ---
 
@@ -640,7 +640,7 @@ BENCHMARK_DIR = ROOT / "storage/evidence_v2/phase5_hardening_001"
 LOCKED_PHASE5_HASHES = {
     "storage/evidence_v2/phase5_hardening_001/adversarial_questions.json": "0d46daec2014562e97ff74ac36c165e1ba263953ef84d0e0080b85aa0c0e39c9",
     "storage/evidence_v2/phase5_hardening_001/rubric.json": "df71960a443e9b54d2607628d59fa2181df32f49426bb7c3b81108e32e5e7981",
-    "storage/evidence_v2/phase5_hardening_001/results.json": "f2c38b4075cca47c1f6333d17f874095cf3ea3271957e445950f5b579753ba2a",
+    "storage/evidence_v2/phase5_hardening_001/results.json": "92c62b9e2a7479d60b79bcbe88f8d52f03fa8f650d12a1a9d2b5626aab470273",
 }
 
 

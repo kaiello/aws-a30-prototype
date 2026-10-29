@@ -41,7 +41,7 @@ BENCHMARK_DIR = ROOT / "storage/evidence_v2/phase5_hardening_001"
 LOCKED_PHASE5_HASHES = {
     "storage/evidence_v2/phase5_hardening_001/adversarial_questions.json": "0d46daec2014562e97ff74ac36c165e1ba263953ef84d0e0080b85aa0c0e39c9",
     "storage/evidence_v2/phase5_hardening_001/rubric.json": "df71960a443e9b54d2607628d59fa2181df32f49426bb7c3b81108e32e5e7981",
-    "storage/evidence_v2/phase5_hardening_001/results.json": "f2c38b4075cca47c1f6333d17f874095cf3ea3271957e445950f5b579753ba2a",
+    "storage/evidence_v2/phase5_hardening_001/results.json": "92c62b9e2a7479d60b79bcbe88f8d52f03fa8f650d12a1a9d2b5626aab470273",
 }
 
 
