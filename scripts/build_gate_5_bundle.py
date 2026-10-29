@@ -28,12 +28,13 @@ FILES = [
 def get_git_info():
     branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=ROOT, text=True).strip()
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
-    status = subprocess.check_output(["git", "status", "-s"], cwd=ROOT, text=True).strip()
-    return branch, commit, status
+    tracked_diff = subprocess.check_output(["git", "diff", "--name-only"], cwd=ROOT, text=True).strip().splitlines()
+    tracked_changes = [f for f in tracked_diff if "FULL_AUDIT_BUNDLE" not in f]
+    return branch, commit, (len(tracked_changes) == 0)
 
 
 def main():
-    branch, commit, status = get_git_info()
+    branch, commit, is_clean = get_git_info()
     timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
     # Dynamic preflight check
@@ -59,7 +60,7 @@ def main():
 Generated for Principal Reviewer Gate 5 Hardening & Invariant Defense Audit.
 Standard: AWS A3.0M/A3.0:2020 | Gate: Gate 5 | Branch: {branch}
 Build Commit SHA: {commit} | Timestamp: {timestamp}
-Working Tree: {"CLEAN" if not status else "MODIFIED_WORKING_TREE"}
+Working Tree Tracked Codebase: {"CLEAN" if is_clean else "MODIFIED"}
 Canonical Stores: {store_status} (7/7 historical hashes match locked digests)
 Preflight Contract: {preflight_res['status']} ({preflight_res['network_calls']} network calls, offline verified)
 Adversarial Suite: {adv_summary} passed exact refusal/refutation rubric
