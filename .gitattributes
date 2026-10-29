@@ -1,0 +1,13 @@
+# Enforce LF endings across repository text files
+* text=auto eol=lf
+*.py text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.ps1 text eol=lf
+*.sh text eol=lf
+
+# Binary files
+*.pdf binary
+*.png binary
+*.jpg binary

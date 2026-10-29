@@ -1,0 +1,418 @@
+{
+  "A3-HO001-01": {
+    "required_elements": [
+      "Mechanical Fastening",
+      "Welding",
+      "Adhesive Bonding",
+      "footnote"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A3-HO001-02": {
+    "required_elements": [
+      "simplicity",
+      "footnote a",
+      "Welding"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A3-HO001-03": {
+    "required_elements": [
+      "Materials Joining",
+      "Welding",
+      "Solid-State Welding",
+      "Figure A5"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A3-HO001-04": {
+    "required_elements": [
+      "Brazing and Soldering",
+      "Figure A6",
+      "Welding"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A3-HO001-05": {
+    "required_elements": [
+      "does not include",
+      "Thermal Spraying",
+      "Thermal Cutting"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A4-HO001-01": {
+    "required_elements": [
+      "FCAW",
+      "GTAW",
+      "Arc",
+      "Flux",
+      "Gas",
+      "Electrical"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A4-HO001-02": {
+    "required_elements": [
+      "EGW",
+      "EBW",
+      "Gas",
+      "Flux"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A4-HO001-03": {
+    "required_elements": [
+      "Resistance",
+      "Pressure",
+      "Pressure normal to faying surfaces"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A4-HO001-04": {
+    "required_elements": [
+      "Conduction",
+      "atomic hydrogen welding",
+      "legend"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A4-HO001-05": {
+    "required_elements": [
+      "Flame Contact",
+      "Chemical",
+      "oxyacetylene welding",
+      "oxyhydrogen welding",
+      "pressure gas welding"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A5-HO001-01": {
+    "required_elements": [
+      "USW",
+      "CW",
+      "Friction",
+      "Pressure",
+      "Pressure Deformation",
+      "Thermal Source"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A5-HO001-02": {
+    "required_elements": [
+      "DFW",
+      "Radiation",
+      "Pressure",
+      "Gas",
+      "Vacuum"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity",
+      "Pressure Deformation -> Gas -> DFW"
+    ]
+  },
+  "A5-HO001-03": {
+    "required_elements": [
+      "CEW",
+      "FOW",
+      "ROW"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A5-HO001-04": {
+    "required_elements": [
+      "EXW",
+      "Deformation",
+      "Explosion",
+      "Chemical"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity",
+      "skips the Thermal Source"
+    ]
+  },
+  "A5-HO001-05": {
+    "required_elements": [
+      "Resistance",
+      "Pressure",
+      "Pressure Deformation",
+      "UW",
+      "RSW",
+      "RSEW"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A6-HO001-01": {
+    "required_elements": [
+      "AB",
+      "arc brazing",
+      "Arc",
+      "Gas",
+      "Flux"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity",
+      "Arc -> Pressure -> Gas -> AB"
+    ]
+  },
+  "A6-HO001-02": {
+    "required_elements": [
+      "B-CA",
+      "Induction",
+      "Radiation",
+      "Gas",
+      "Vacuum"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity",
+      "Chemical Reaction -> None -> Gas -> B-CA"
+    ]
+  },
+  "A6-HO001-03": {
+    "required_elements": [
+      "DFB",
+      "Pressure",
+      "Induction",
+      "Radiation",
+      "Gas",
+      "Vacuum"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity",
+      "Chemical -> Radiation -> Pressure -> Vacuum -> DFB"
+    ]
+  },
+  "A6-HO001-04": {
+    "required_elements": [
+      "Conduction",
+      "Flux",
+      "iron soldering",
+      "wave soldering",
+      "dip soldering"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "A6-HO001-05": {
+    "required_elements": [
+      "B-CA",
+      "EBB",
+      "EXB",
+      "LBB",
+      "controlled-atmosphere brazing",
+      "electron beam brazing",
+      "exothermic brazing",
+      "laser beam brazing"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "AT-HO001-01": {
+    "required_elements": [
+      "AB",
+      "adhesive bonding",
+      "arc brazing",
+      "Figure A6"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "AT-HO001-02": {
+    "required_elements": [
+      "USW",
+      "plastics welding",
+      "solid-state welding",
+      "69",
+      "70"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "AT-HO001-03": {
+    "required_elements": [
+      "134",
+      "133",
+      "atomic hydrogen welding",
+      "Table A5",
+      "Figure A4"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "AT-HO001-04": {
+    "required_elements": [
+      "OC-P",
+      "metal power cutting",
+      "metal powder cutting",
+      "EW-PC",
+      "RW-PC"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "AT-HO001-05": {
+    "required_elements": [
+      "PAW-AD",
+      "adaptive control",
+      "RSW-RO",
+      "robotic",
+      "EBW-HV-AU",
+      "automatic"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "AT-HO001-06": {
+    "required_elements": [
+      "CAB",
+      "TCAB",
+      "firecracker welding"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "AT-HO001-07": {
+    "required_elements": [
+      "CANDIDATE_LAYOUT_PARENT",
+      "0",
+      "IS_A",
+      "indentation"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "AT-HO001-08": {
+    "required_elements": [
+      "IW",
+      "Table A1",
+      "Figure A1",
+      "Figure A4",
+      "Figure A5",
+      "Induction",
+      "Pressure"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity",
+      "Electrical -> Resistance with Pressure"
+    ]
+  },
+  "AT-HO001-09": {
+    "required_elements": [
+      "Brazing",
+      "Soldering",
+      "Table A1",
+      "Figure A1",
+      "Figure A3",
+      "Figure A6",
+      "Welding"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  },
+  "AT-HO001-10": {
+    "required_elements": [
+      "fillet weld",
+      "preheat",
+      "abstention"
+    ],
+    "forbidden_elements": [
+      "action1_blocked",
+      "CHART_QUESTION_PLAN_",
+      "ambiguous_source_identity"
+    ]
+  }
+}

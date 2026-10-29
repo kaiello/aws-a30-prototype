@@ -51,3 +51,6 @@ src = ["evidence_chart_contract.json"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+filterwarnings = [
+  "ignore::DeprecationWarning",
+]

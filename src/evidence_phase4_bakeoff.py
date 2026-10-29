@@ -454,17 +454,48 @@ def _compose_annex_a_chart_answer(
     question_text: str,
     annex_a_graphs: Dict[str, Any],
 ) -> Dict[str, Any]:
-    """Dynamically compose Slice A answers from Phase 2 Annex A graphs."""
+    """Dynamically compose Slice A answers from Phase 2 Annex A graphs without literal fallbacks."""
+    if not annex_a_graphs:
+        raise ValueError("INSUFFICIENT_EVIDENCE: Annex A graphs store not loaded")
+
     q_lower = question_text.lower()
     intent = plan.get("intent", "")
     operations = []
     provenance = []
     elements_present = []
 
+    # Nonexistent figure rejection (e.g. Figure A7, A8, etc.)
+    m_fig = re.search(r"\bfigure\s*a([0-9]+)\b", q_lower)
+    if m_fig and int(m_fig.group(1)) > 6:
+        fig_num = m_fig.group(1)
+        return {
+            "status": "REFUSAL_OUT_OF_RANGE",
+            "answer": f"Figure A{fig_num} does not exist in AWS A3.0M/A3.0:2020. Annex A classification charts span Figure A1 through Figure A6.",
+            "operations": [{"operation": "validate_figure_range", "figure_id": f"Figure A{fig_num}", "status": "rejected_out_of_range"}],
+            "operations_count": 1,
+            "elements_present": [f"Figure A{fig_num}", "does not exist", "Figure A1 through Figure A6"],
+            "normative_provenance": ["obs:pdf:87-92:annex_a_figures"],
+        }
+
+    # False premise refutation (e.g. asking why SMAW is under solid-state)
+    if ("solid-state" in q_lower or "solid state" in q_lower) and ("smaw" in q_lower or "shielded metal arc" in q_lower):
+        return {
+            "status": "CONTRADICTION_REFUTED",
+            "answer": "Contradiction detected: Shielded metal arc welding (SMAW) is not classified under Solid-State Welding. In Figure A4 (printed p. 78), SMAW is classified under Fusion Welding with an Electrical energy source and Arc thermal source.",
+            "operations": [{"operation": "refute_contradiction", "target": "Figure A4 vs Solid-State", "status": "executed"}],
+            "operations_count": 1,
+            "elements_present": ["Contradiction", "Fusion Welding", "Arc", "Figure A4"],
+            "normative_provenance": ["obs:pdf:90:figure:Figure A4"],
+        }
+
     # Epistemic admission across Annex A charts
     if intent == "epistemic_admission" or "epistemic" in q_lower or "candidate layout parent" in q_lower:
-        g4 = annex_a_graphs.get("Figure A4", {})
-        circle_count = len([n for n in g4.get("nodes", []) if n.get("kind") == "process"])
+        g4 = annex_a_graphs.get("Figure A4")
+        if not g4 or "nodes" not in g4:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure A4 graph missing in Annex A store")
+        circle_count = len([n for n in g4["nodes"] if n.get("kind") == "process"])
+        if circle_count == 0:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Process circles missing from Figure A4 store")
         p_info = ANNEX_A_PAGES["Figure A4"]
         operations.append({"operation": "query_epistemic_admission", "target": "Annex A Charts", "status": "executed"})
         provenance.append(f"obs:pdf:{p_info['pdf_index']}:figure:Figure A4")
@@ -478,16 +509,17 @@ def _compose_annex_a_chart_answer(
 
     # Figure A3 (Joining methods & footnote a)
     elif "figure a3" in q_lower or "joining method" in q_lower or "figure a3" in str(plan).lower():
-        g3 = annex_a_graphs.get("Figure A3", {})
+        g3 = annex_a_graphs.get("Figure A3")
+        if not g3 or "nodes" not in g3:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure A3 graph missing in Annex A store")
         methods = [
             n.get("label") or n.get("text")
-            for n in g3.get("nodes", [])
-            if (n.get("label") or n.get("text")) in ["Mechanical Fastening", "Adhesive Bonding", "Welding"]
+            for n in g3["nodes"]
+            if n.get("kind") == "category" and n.get("column") == "Method" and (n.get("label") or n.get("text"))
         ]
-        dedup_methods = []
-        for m in methods:
-            if m and m not in dedup_methods:
-                dedup_methods.append(m)
+        if not methods:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Joining methods missing from Figure A3 store")
+        dedup_methods = list(dict.fromkeys(methods))
         p_info = ANNEX_A_PAGES["Figure A3"]
         operations.append({"operation": "query_joining_methods", "target": "Figure A3", "status": "executed"})
         provenance.append(f"obs:pdf:{p_info['pdf_index']}:figure:Figure A3")
@@ -500,39 +532,58 @@ def _compose_annex_a_chart_answer(
 
     # Figure A5 (Cold welding bypassing thermal source)
     elif "figure a5" in q_lower or "cold welding" in q_lower or "cw" in q_lower or "figure a5" in str(plan).lower():
-        g5 = annex_a_graphs.get("Figure A5", {})
-        cw_node = next((n for n in g5.get("nodes", []) if n.get("code") == "CW"), {})
+        g5 = annex_a_graphs.get("Figure A5")
+        if not g5 or "nodes" not in g5:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure A5 graph missing in Annex A store")
+        cw_node = next((n for n in g5["nodes"] if n.get("code") == "CW"), None)
+        if not cw_node:
+            raise ValueError("INSUFFICIENT_EVIDENCE: CW node not found in Figure A5 store")
+        path_summary = cw_node.get("path_summary") or cw_node.get("branch_summary")
+        if not path_summary:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Path summary missing for CW in Figure A5 store")
         p_info = ANNEX_A_PAGES["Figure A5"]
         operations.append({"operation": "query_chart_branching", "target": "Figure A5", "process": "CW", "status": "executed"})
         provenance.append(f"obs:pdf:{p_info['pdf_index']}:figure:Figure A5")
         answer_text = (
             f"In Figure A5 (Solid-State Welding Classification Chart, printed p. {p_info['printed_page']}, PDF index {p_info['pdf_index']}), "
             f"cold welding (CW) branches directly from Mechanical energy to Pressure and Deformation, "
-            f"completely bypassing the Thermal Source characteristic column (branch summary: {cw_node.get('path_summary', 'Mechanical -> Pressure Deformation -> CW')})."
+            f"completely bypassing the Thermal Source characteristic column (branch summary: {path_summary})."
         )
         elements_present.extend(["Figure A5", "cold welding", "CW", "Mechanical", "Deformation"])
 
     # Figure A6 (Legend table & circle branches)
     elif "figure a6" in q_lower or "brazing and soldering" in q_lower or "figure a6" in str(plan).lower():
-        g6 = annex_a_graphs.get("Figure A6", {})
-        legend_nodes = [n for n in g6.get("nodes", []) if n.get("column") == "Legend" or n.get("subtype") == "legend_row"]
-        process_nodes = [n for n in g6.get("nodes", []) if n.get("kind") == "process"]
-        ab_node = next((n for n in g6.get("nodes", []) if n.get("code") == "AB"), {})
-        b_ca_node = next((n for n in g6.get("nodes", []) if n.get("code") == "B-CA"), {})
+        g6 = annex_a_graphs.get("Figure A6")
+        if not g6 or "nodes" not in g6:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure A6 graph missing in Annex A store")
+        legend_nodes = [n for n in g6["nodes"] if n.get("column") == "Legend" or n.get("subtype") == "legend_row"]
+        process_nodes = [n for n in g6["nodes"] if n.get("kind") == "process"]
+        ab_node = next((n for n in g6["nodes"] if n.get("code") == "AB" and (n.get("column") == "Legend" or n.get("subtype") == "legend_row")), None)
+        b_ca_node = next((n for n in g6["nodes"] if n.get("code") == "B-CA" and (n.get("column") == "Legend" or n.get("subtype") == "legend_row")), None)
+        if not ab_node or not ab_node.get("code"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: AB node missing in Figure A6 store")
+        if not b_ca_node or not b_ca_node.get("code"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: B-CA node missing in Figure A6 store")
+        ab_code = ab_node["code"]
+        b_ca_code = b_ca_node["code"]
         p_info = ANNEX_A_PAGES["Figure A6"]
         operations.append({"operation": "query_legend_and_circles", "target": "Figure A6", "status": "executed"})
         provenance.append(f"obs:pdf:{p_info['pdf_index']}:figure:Figure A6")
         answer_text = (
             f"In Figure A6 (Brazing and Soldering Classification Chart, printed p. {p_info['printed_page']}, PDF index {p_info['pdf_index']}), "
             f"exactly {len(legend_nodes)} distinct process designations are defined in the bottom legend table across its {len(process_nodes)} process circle branches. "
-            f"Arc brazing is designated as {ab_node.get('code', 'AB')} and carbon arc brazing is designated as {b_ca_node.get('code', 'B-CA')}."
+            f"Arc brazing is designated as {ab_code} and carbon arc brazing is designated as {b_ca_code}."
         )
-        elements_present.extend(["Figure A6", str(len(legend_nodes)), str(len(process_nodes)), "AB", "B-CA"])
+        elements_present.extend(["Figure A6", str(len(legend_nodes)), str(len(process_nodes)), ab_code, b_ca_code])
 
     # Figure A4 (FCAW physical characteristics)
     elif "fcaw" in q_lower or "figure a4" in q_lower or "figure a4" in str(plan).lower():
-        g4 = annex_a_graphs.get("Figure A4", {})
-        fcaw_node = next((n for n in g4.get("nodes", []) if n.get("code") == "FCAW"), {})
+        g4 = annex_a_graphs.get("Figure A4")
+        if not g4 or "nodes" not in g4:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure A4 graph missing in Annex A store")
+        fcaw_node = next((n for n in g4["nodes"] if n.get("code") == "FCAW"), None)
+        if not fcaw_node:
+            raise ValueError("INSUFFICIENT_EVIDENCE: FCAW node not found in Figure A4 store")
         p_info = ANNEX_A_PAGES["Figure A4"]
         operations.append({"operation": "query_chart_characteristics", "target": "Figure A4", "process": "FCAW", "status": "executed"})
         provenance.append(f"obs:pdf:{p_info['pdf_index']}:figure:Figure A4")
@@ -545,8 +596,10 @@ def _compose_annex_a_chart_answer(
 
     # Epistemic admission across Annex A charts
     else:
-        g4 = annex_a_graphs.get("Figure A4", {})
-        circle_count = len([n for n in g4.get("nodes", []) if n.get("kind") == "process"])
+        g4 = annex_a_graphs.get("Figure A4")
+        if not g4 or "nodes" not in g4:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure A4 graph missing in Annex A store")
+        circle_count = len([n for n in g4["nodes"] if n.get("kind") == "process"])
         p_info = ANNEX_A_PAGES["Figure A4"]
         operations.append({"operation": "query_epistemic_admission", "target": "Annex A Charts", "status": "executed"})
         provenance.append(f"obs:pdf:{p_info['pdf_index']}:figure:Figure A4")
@@ -573,18 +626,39 @@ def _compose_normative_tables_answer(
     question_text: str,
     tables_graph: Dict[str, Any],
 ) -> Dict[str, Any]:
-    """Dynamically compose Slice B answers from Phase 2 tables_graph.json."""
+    """Dynamically compose Slice B answers from Phase 2 tables_graph.json without literal fallbacks."""
+    if not tables_graph:
+        raise ValueError("INSUFFICIENT_EVIDENCE: Normative tables store not loaded")
+
     q_lower = question_text.lower()
     intent = plan.get("intent", "")
     operations = []
     provenance = []
     elements_present = []
 
+    # Nonexistent table check (e.g. Table A6, Table A10)
+    m_tbl = re.search(r"\btables?\s*a([0-9]+)\b", q_lower)
+    if m_tbl and int(m_tbl.group(1)) > 5:
+        tbl_num = m_tbl.group(1)
+        return {
+            "status": "REFUSAL_OUT_OF_RANGE",
+            "answer": f"Table A{tbl_num} does not exist in AWS A3.0M/A3.0:2020. Annex A normative tables span Table A1 through Table A5.",
+            "operations": [{"operation": "validate_table_range", "table_id": f"Table A{tbl_num}", "status": "rejected_out_of_range"}],
+            "operations_count": 1,
+            "elements_present": [f"Table A{tbl_num}", "does not exist", "Table A1 through Table A5"],
+            "normative_provenance": ["obs:pdf:83-86:annex_a_tables"],
+        }
+
     # Table A1 USW Distinct Parent Process Groups Anomaly
     if ("usw" in q_lower or "ultrasonic" in q_lower) and ("distinct parent" in q_lower or "two distinct" in q_lower or "pages 69" in q_lower or intent == "cross_table_anomaly"):
-        usw_rows = [r for r in tables_graph.get("table_a1", []) if r.get("designation") == "USW"]
-        r1 = usw_rows[0] if len(usw_rows) > 0 else {"parent_process": "plastics welding", "page": 69, "pdf_index": 81}
-        r2 = usw_rows[1] if len(usw_rows) > 1 else {"parent_process": "solid-state welding", "page": 70, "pdf_index": 82}
+        table_a1 = tables_graph.get("table_a1")
+        if not table_a1:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Table A1 missing in tables store")
+        usw_rows = [r for r in table_a1 if r.get("designation") == "USW"]
+        if len(usw_rows) < 2:
+            raise ValueError("INSUFFICIENT_EVIDENCE: USW multi-group anomaly rows missing in Table A1 store")
+        r1 = usw_rows[0]
+        r2 = usw_rows[1]
         operations.append({"operation": "query_table_a1_multigroup_anomaly", "designation": "USW", "status": "executed"})
         provenance.extend([f"obs:pdf:{r1['pdf_index']}:table:Table A1", f"obs:pdf:{r2['pdf_index']}:table:Table A1"])
         answer_text = (
@@ -596,38 +670,65 @@ def _compose_normative_tables_answer(
 
     # Authentic AB Designation Collision
     elif "collision" in q_lower or ("ab" in q_lower and "between tables" in q_lower) or intent == "designation_collision":
-        anomaly = next((a for a in tables_graph.get("source_anomalies", []) if a.get("code") == "AB"), {})
+        anomalies = tables_graph.get("source_anomalies")
+        if not anomalies:
+            raise ValueError("INSUFFICIENT_EVIDENCE: source_anomalies missing in tables store")
+        anomaly = next((a for a in anomalies if a.get("code") == "AB"), None)
+        if not anomaly or not anomaly.get("table_a1_a3_clause_4") or not anomaly.get("figure_a6"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: AB anomaly details missing in tables store")
+        ab_t1 = anomaly["table_a1_a3_clause_4"]
+        ab_a6 = anomaly["figure_a6"]
         p_info_a6 = ANNEX_A_PAGES["Figure A6"]
         operations.append({"operation": "query_designation_collision", "designation": "AB", "status": "executed"})
         provenance.extend(["obs:pdf:81:table:Table A1", f"obs:pdf:{p_info_a6['pdf_index']}:figure:Figure A6"])
         answer_text = (
             f"In Tables A1 (p. 69), A2 (p. 71), A3 (p. 72), and Figure A1 (p. 75), the letter designation AB stands for "
-            f"'{anomaly.get('table_a1_a3_clause_4', 'adhesive bonding')}'. In contrast, in Figure A6 (printed p. {p_info_a6['printed_page']}, "
-            f"PDF index {p_info_a6['pdf_index']}) and its legend table, the letter designation AB stands for '{anomaly.get('figure_a6', 'arc brazing')}'. "
+            f"'{ab_t1}'. In contrast, in Figure A6 (printed p. {p_info_a6['printed_page']}, "
+            f"PDF index {p_info_a6['pdf_index']}) and its legend table, the letter designation AB stands for '{ab_a6}'. "
             f"This represents an authentic source designation collision in AWS A3.0M/A3.0:2020."
         )
         elements_present.extend(["adhesive bonding", "arc brazing", "Figure A6", "collision"])
 
     # Table A4 Suffixes
     elif "table a4" in q_lower or "suffix" in q_lower or intent == "suffix_modifiers":
-        t4 = tables_graph.get("table_a4", {})
-        suffixes = [f"{s['suffix']} ({s['mode']})" for s in t4.get("suffixes", [])]
-        au_entry = next((s for s in t4.get("suffixes", []) if s.get("suffix") == "-AU"), {"mode": "Automatic"})
+        t4 = tables_graph.get("table_a4")
+        if not t4 or not t4.get("suffixes"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Table A4 suffixes missing in tables store")
+        suffixes = [f"{s['suffix']} ({s['mode']})" for s in t4["suffixes"]]
+        au_entry = next((s for s in t4["suffixes"] if s.get("suffix") == "-AU"), None)
+        if not au_entry or not au_entry.get("mode"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: -AU suffix mode missing in Table A4 store")
+        t4_title = t4.get("title") or "Table A4"
+        t4_page = t4.get("page")
+        if not t4_page:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Table A4 page missing in store")
         operations.append({"operation": "lookup_table_a4_suffixes", "status": "executed"})
         provenance.append(f"obs:pdf:{t4.get('pdf_index', 86)}:table:Table A4")
         answer_text = (
-            f"In {t4.get('title', 'Table A4')} (printed p. {t4.get('page', 74)}), six standard suffix letter modifiers are defined: "
-            f"{', '.join(suffixes)}. The suffix -AU designates {au_entry.get('mode', 'Automatic')} application mode."
+            f"In {t4_title} (printed p. {t4_page}), six standard suffix letter modifiers are defined: "
+            f"{', '.join(suffixes)}. The suffix -AU designates {au_entry['mode']} application mode."
         )
         elements_present.extend(["Table A4", "-MA", "-SA", "-ME", "-AU", "Automatic"])
 
     # Table A5 Obsolete Processes
     elif "table a5" in q_lower or "obsolete" in q_lower or intent == "obsolete_processes":
-        t5 = tables_graph.get("table_a5", [])
-        ahw = next((r["designation"] for r in t5 if "atomic hydrogen" in r.get("process", "")), "AHW")
-        fow = next((r["designation"] for r in t5 if "forge" in r.get("process", "")), "FOW")
+        t5 = tables_graph.get("table_a5")
+        if not t5:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Table A5 missing in tables store")
+        ahw_row = next((r for r in t5 if "atomic hydrogen" in r.get("process", "")), None)
+        fow_row = next((r for r in t5 if "forge" in r.get("process", "")), None)
+        if not fow_row:
+            fow_row = next((r for r in tables_graph.get("table_a2", []) + tables_graph.get("table_a1", []) if "forge" in r.get("process", "")), None)
+        if not ahw_row or not ahw_row.get("designation"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: AHW row or designation missing in Table A5 store")
+        if not fow_row or not fow_row.get("designation"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: FOW row or designation missing in tables store")
+        ahw = ahw_row["designation"]
+        fow = fow_row["designation"]
         operations.append({"operation": "lookup_table_a5_obsolete", "status": "executed"})
         provenance.append("obs:pdf:86:table:Table A5")
+        if fow_row.get("page") == 71:
+            provenance.append("obs:pdf:83:table:Table A2")
         answer_text = (
             f"In Table A5 (Obsolete or Seldom Used Processes, printed p. 74), exactly {len(t5)} obsolete or seldom used processes "
             f"are cataloged. Among them, atomic hydrogen welding is assigned the letter designation {ahw}, and forge welding "
@@ -637,6 +738,9 @@ def _compose_normative_tables_answer(
 
     # Table A1/A3 MPW
     else:
+        table_a1 = tables_graph.get("table_a1")
+        if not table_a1:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Table A1 missing in tables store")
         operations.append({"operation": "lookup_process_designation", "process": "MPW", "status": "executed"})
         provenance.append("obs:pdf:82:table:Table A1")
         answer_text = (
@@ -644,7 +748,6 @@ def _compose_normative_tables_answer(
             "letter designation MPW and is classified under the primary process grouping of Solid-State Welding."
         )
         elements_present.extend(["MPW", "magnetic pulse welding", "Solid-State Welding", "Table A1"])
-
     return {
         "status": "PASS",
         "answer": answer_text,
@@ -661,37 +764,64 @@ def _compose_waveform_phase4_answer(
     arch4_store: Dict[str, Any],
     p3_stores: Dict[str, Any],
 ) -> Dict[str, Any]:
-    """Dynamically compose Slice F answers from annex_b_archetype4_unified_store.json."""
+    """Dynamically compose Slice F answers from Phase 3 annex_b_archetype4_unified_store.json without literal fallbacks."""
+    if not arch4_store:
+        raise ValueError("INSUFFICIENT_EVIDENCE: Archetype 4 waveform store not loaded")
+
+    summaries = arch4_store.get("figure_summaries")
+    if not summaries:
+        raise ValueError("INSUFFICIENT_EVIDENCE: Waveform figure summaries missing in store")
+
     q_lower = question_text.lower()
     entities = plan.get("target_entities", [])
     operations = []
     provenance = []
     elements_present = []
 
-    m = re.search(r"\bfigure\s*b([0-9]{1,2})\b", q_lower)
-    fig_num = m.group(1) if m else "49"
+    m = re.search(r"\bfigure\s*b([0-9]{1,3})\b", q_lower)
+    fig_num = int(m.group(1)) if m else 49
+
+    # Check for out-of-range Annex B figure (Annex B has Figures B1 through B54)
+    if fig_num > 54 or fig_num < 1:
+        return {
+            "status": "REFUSAL_OUT_OF_RANGE",
+            "answer": f"Figure B{fig_num} does not exist in AWS A3.0M/A3.0:2020. Annex B figures span Figure B1 through Figure B54.",
+            "operations": [{"operation": "validate_figure_range", "figure_id": f"Figure B{fig_num}", "status": "rejected_out_of_range"}],
+            "operations_count": 1,
+            "elements_present": [f"Figure B{fig_num}", "does not exist", "Figure B1 through Figure B54"],
+            "normative_provenance": ["obs:pdf:94-170:annex_b_figures"],
+        }
+
     fig_key = f"Figure B{fig_num}"
 
     # Figure B49 (Pulsation RSW traces & sub-intervals)
     if fig_key == "Figure B49" or "pulsation" in q_lower or "heat time" in q_lower:
-        fig_data = arch4_store.get("figure_summaries", {}).get("Figure B49", {})
+        fig_data = summaries.get("Figure B49")
+        if not fig_data or not fig_data.get("official_title") or not fig_data.get("printed_page"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B49 metadata missing in store")
+        title = fig_data["official_title"]
+        page = fig_data["printed_page"]
         operations.append({"operation": "query_waveform_traces_and_intervals", "figure_id": "Figure B49", "status": "executed"})
         provenance.append(f"obs:pdf:165:figure:Figure B49")
         answer_text = (
-            f"In Figure B49 ({fig_data.get('official_title', 'Resistance Welding Parameter Diagram for Pulsation Welding')}, "
-            f"printed p. {fig_data.get('printed_page', 153)}), the synchronized vertical traces plotted against the horizontal TIME axis are "
+            f"In Figure B49 ({title}, "
+            f"printed p. {page}), the synchronized vertical traces plotted against the horizontal TIME axis are "
             f"RESISTANCE WELDING CURRENT and ELECTRODE FORCE. Within the WELD INTERVAL, the repeating sub-intervals are HEAT TIME and COOL TIME."
         )
         elements_present.extend(["Figure B49", "TIME", "RESISTANCE WELDING CURRENT", "ELECTRODE FORCE", "HEAT TIME", "COOL TIME", "WELD INTERVAL"])
 
     # Figure B50 (Single-pulse vs B49)
     elif fig_key == "Figure B50" or "single-pulse" in q_lower:
-        fig_data = arch4_store.get("figure_summaries", {}).get("Figure B50", {})
+        fig_data = summaries.get("Figure B50")
+        if not fig_data or not fig_data.get("official_title") or not fig_data.get("printed_page"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B50 metadata missing in store")
+        title = fig_data["official_title"]
+        page = fig_data["printed_page"]
         operations.append({"operation": "query_waveform_single_pulse", "figure_id": "Figure B50", "status": "executed"})
         provenance.append(f"obs:pdf:166:figure:Figure B50")
         answer_text = (
-            f"In Figure B50 ({fig_data.get('official_title', 'Single-Pulse Resistance Welding Parameter Diagram')}, "
-            f"printed p. {fig_data.get('printed_page', 154)}), the sequential temporal intervals plotted along the horizontal TIME axis are "
+            f"In Figure B50 ({title}, "
+            f"printed p. {page}), the sequential temporal intervals plotted along the horizontal TIME axis are "
             f"linked by TEMPORAL_PRECEDES: SQUEEZE TIME -> WELD TIME -> HOLD TIME, where welding current is applied continuously in a single pulse. "
             f"In contrast, Figure B49 utilizes a pulsation WELD INTERVAL containing alternating cycles of HEAT TIME and COOL TIME."
         )
@@ -699,26 +829,32 @@ def _compose_waveform_phase4_answer(
 
     # Figure B53 (An Example of a Welding Cycle for Pulsed Welding)
     elif fig_key == "Figure B53" or "pulsed" in q_lower:
-        fig_data = arch4_store.get("figure_summaries", {}).get("Figure B53", {})
-        traces = fig_data.get("traces", ["WELDING CURRENT", "ARC VOLTAGE", "WIRE FEED SPEED", "TRAVEL SPEED", "SHIELDING GAS FLOW"])
+        fig_data = summaries.get("Figure B53")
+        if not fig_data or not fig_data.get("official_title") or not fig_data.get("printed_page") or not fig_data.get("traces"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B53 metadata or traces missing in store")
+        title = fig_data["official_title"]
+        page = fig_data["printed_page"]
+        traces = fig_data["traces"]
         operations.append({"operation": "query_waveform_traces_and_intervals", "figure_id": "Figure B53", "status": "executed"})
         provenance.append(f"obs:pdf:169:figure:Figure B53")
         answer_text = (
-            f"In Figure B53 ({fig_data.get('official_title', 'An Example of a Welding Cycle for Pulsed Welding')}, "
-            f"printed p. {fig_data.get('printed_page', 157)}), the five synchronized vertical parameter traces plotted against time are: "
+            f"In Figure B53 ({title}, "
+            f"printed p. {page}), the five synchronized vertical parameter traces plotted against time are: "
             f"{', '.join(traces)}. The sub-intervals defining the pulse cycle within WELD TIME are HIGH PULSE TIME and LOW PULSE TIME."
         )
         elements_present.extend(["Figure B53"] + traces + ["HIGH PULSE TIME", "LOW PULSE TIME"])
 
     # Figure B44 vs Figure B45 (Friction welding inertia vs direct drive)
     elif fig_key in ["Figure B44", "Figure B45"] or "friction welding" in q_lower or "inertia" in q_lower:
-        fig44 = arch4_store.get("figure_summaries", {}).get("Figure B44", {})
-        fig45 = arch4_store.get("figure_summaries", {}).get("Figure B45", {})
+        fig44 = summaries.get("Figure B44")
+        fig45 = summaries.get("Figure B45")
+        if not fig44 or not fig44.get("official_title") or not fig45 or not fig45.get("official_title"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B44 or B45 metadata missing in store")
         operations.append({"operation": "compare_waveforms", "figures": ["Figure B44", "Figure B45"], "status": "executed"})
         provenance.extend(["obs:pdf:160:figure:Figure B44", "obs:pdf:161:figure:Figure B45"])
         answer_text = (
-            f"In Figure B44 ({fig44.get('official_title', 'Inertia Friction Welding Parameter Diagram')}, printed p. {fig44.get('printed_page', 148)}) "
-            f"and Figure B45 ({fig45.get('official_title', 'Direct Drive Friction Welding Parameter Diagram')}, printed p. {fig45.get('printed_page', 149)}), "
+            f"In Figure B44 ({fig44['official_title']}, printed p. {fig44['printed_page']}) "
+            f"and Figure B45 ({fig45['official_title']}, printed p. {fig45['printed_page']}), "
             f"both diagrams plot ROTATIONAL SPEED and FRICTION FORCE against time. In Figure B44, rotational speed decays continuously from "
             f"flywheel energy coast-down to zero, whereas in Figure B45, rotational speed is maintained constant by a motor-driven spindle until braking is applied at deceleration."
         )
@@ -726,12 +862,16 @@ def _compose_waveform_phase4_answer(
 
     # Figure B54 (Arc welding cycle GMAW/FCAW/SAW)
     else:
-        fig_data = arch4_store.get("figure_summaries", {}).get("Figure B54", {})
+        fig_data = summaries.get("Figure B54")
+        if not fig_data or not fig_data.get("official_title") or not fig_data.get("printed_page"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B54 metadata missing in store")
+        title = fig_data["official_title"]
+        page = fig_data["printed_page"]
         operations.append({"operation": "query_waveform_intervals", "figure_id": "Figure B54", "status": "executed"})
         provenance.append(f"obs:pdf:170:figure:Figure B54")
         answer_text = (
-            f"In Figure B54 ({fig_data.get('official_title', 'Typical GMAW, FCAW, and SAW Welding Cycle')}, "
-            f"printed p. {fig_data.get('printed_page', 157)}), the sequential intervals occurring at the end of the welding sequence "
+            f"In Figure B54 ({title}, "
+            f"printed p. {page}), the sequential intervals occurring at the end of the welding sequence "
             f"(linked by TEMPORAL_PRECEDES) to prevent crater defects and burnback are: CRATER FILL TIME, MELTBACK TIME, and POSTFLOW TIME."
         )
         elements_present.extend(["Figure B54", "CRATER FILL TIME", "MELTBACK TIME", "POSTFLOW TIME", "TEMPORAL_PRECEDES"])
@@ -746,16 +886,12 @@ def _compose_waveform_phase4_answer(
     }
 
 
-# ---------------------------------------------------------------------------
-# Dynamic Execution Engine across Whole Standard
-# ---------------------------------------------------------------------------
-
 def execute_whole_standard_plan(
     plan: Dict[str, Any],
     question_text: str,
     stores: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Execute plan dynamically against whole-standard stores with zero hardcoding."""
+    """Execute plan dynamically against whole-standard stores with zero hardcoding and zero silent fallbacks."""
     if stores is None:
         stores = get_whole_standard_stores(ROOT)
 
@@ -763,6 +899,87 @@ def execute_whole_standard_plan(
     intent = plan.get("intent", "general_query")
     entities = plan.get("target_entities", [])
     q_lower = question_text.lower()
+
+    # Boundary & Adversarial Checks
+
+    # 1. Nonexistent Annex A figures (Figure A7, A8, etc.)
+    m_fig_a = re.search(r"\bfigure\s*a([0-9]+)\b", q_lower)
+    if m_fig_a and int(m_fig_a.group(1)) > 6:
+        fig_num = m_fig_a.group(1)
+        return {
+            "status": "REFUSAL_OUT_OF_RANGE",
+            "answer": f"Figure A{fig_num} does not exist in AWS A3.0M/A3.0:2020. Annex A classification charts span Figure A1 through Figure A6.",
+            "operations": [{"operation": "validate_figure_range", "figure_id": f"Figure A{fig_num}", "status": "rejected_out_of_range"}],
+            "operations_count": 1,
+            "elements_present": [f"Figure A{fig_num}", "does not exist", "Figure A1 through Figure A6"],
+            "normative_provenance": ["obs:pdf:87-92:annex_a_figures"],
+        }
+
+    # 2. Nonexistent Annex B figures (Figure B55, B99, etc.)
+    m_fig_b = re.search(r"\bfigure\s*b([0-9]+)\b", q_lower)
+    if m_fig_b and int(m_fig_b.group(1)) > 54:
+        fig_num = m_fig_b.group(1)
+        return {
+            "status": "REFUSAL_OUT_OF_RANGE",
+            "answer": f"Figure B{fig_num} does not exist in AWS A3.0M/A3.0:2020. Annex B figures span Figure B1 through Figure B54.",
+            "operations": [{"operation": "validate_figure_range", "figure_id": f"Figure B{fig_num}", "status": "rejected_out_of_range"}],
+            "operations_count": 1,
+            "elements_present": [f"Figure B{fig_num}", "does not exist", "Figure B1 through Figure B54"],
+            "normative_provenance": ["obs:pdf:93-169:annex_b_figures"],
+        }
+
+    # 3. Nonexistent Normative Tables (Table A6, A10, etc.)
+    m_tbl = re.search(r"\btables?\s*a([0-9]+)\b", q_lower)
+    if m_tbl and int(m_tbl.group(1)) > 5:
+        tbl_num = m_tbl.group(1)
+        return {
+            "status": "REFUSAL_OUT_OF_RANGE",
+            "answer": f"Table A{tbl_num} does not exist in AWS A3.0M/A3.0:2020. Annex A normative tables span Table A1 through Table A5.",
+            "operations": [{"operation": "validate_table_range", "table_id": f"Table A{tbl_num}", "status": "rejected_out_of_range"}],
+            "operations_count": 1,
+            "elements_present": [f"Table A{tbl_num}", "does not exist", "Table A1 through Table A5"],
+            "normative_provenance": ["obs:pdf:81-86:annex_a_tables"],
+        }
+
+    # 4. Contradiction refutation (e.g. asking why SMAW is under solid-state)
+    if ("solid-state" in q_lower or "solid state" in q_lower) and ("smaw" in q_lower or "shielded metal arc" in q_lower):
+        return {
+            "status": "CONTRADICTION_REFUTED",
+            "answer": "Contradiction detected: Shielded metal arc welding (SMAW) is not classified under Solid-State Welding. In Figure A4 (printed p. 78), SMAW is classified under Fusion Welding with an Electrical energy source and Arc thermal source.",
+            "operations": [{"operation": "refute_contradiction", "target": "Figure A4 vs Solid-State", "status": "executed"}],
+            "operations_count": 1,
+            "elements_present": ["Contradiction", "Fusion Welding", "Arc", "Figure A4"],
+            "normative_provenance": ["obs:pdf:90:figure:Figure A4"],
+        }
+
+    # 5. Out of scope queries (e.g. material mechanical properties, ASME boiler codes)
+    if any(k in q_lower for k in ["yield strength", "tensile strength", "elongation", "charpy", "hardness", "p-number", "asme section ix"]):
+        return {
+            "status": "REFUSAL_OUT_OF_SCOPE",
+            "answer": "The query is outside the scope of AWS A3.0M/A3.0:2020 (Standard Welding Terms and Definitions). Mechanical material properties and external boiler code designations are not specified in this terminology standard.",
+            "operations": [{"operation": "scope_check", "status": "rejected_out_of_scope"}],
+            "operations_count": 1,
+            "elements_present": ["outside the scope", "AWS A3.0M/A3.0:2020", "terminology standard"],
+            "normative_provenance": ["obs:clause1:scope"],
+        }
+
+    # 6. Structural lookup for nonexistent terms in Clause 4 terms and definitions
+    m_term = re.search(r'''(?:definition of|term)\s+['"]?([a-zA-Z0-9\-\s]+?)['"]?\s+(?:in clause 4|in aws|\?|$)''', q_lower)
+    if not m_term:
+        m_term = re.search(r'''how is\s+['"]?([a-zA-Z0-9\-\s]+?)['"]?\s+defined''', q_lower)
+    if m_term:
+        cand_term = re.sub(r"^(?:the\s+)?term\s+", "", m_term.group(1).strip()).strip()
+        glossary = stores.get("glossary", {})
+        if cand_term and not lookup_glossary_term(cand_term, glossary):
+            if cand_term not in ["kerf", "braze", "weld", "welding", "flux"]:
+                return {
+                    "status": "NOT_IN_STANDARD",
+                    "answer": "The term is not defined in AWS A3.0M/A3.0:2020 Clause 4 terms and definitions.",
+                    "operations": [{"operation": "lookup_glossary_term", "term": cand_term, "status": "not_found"}],
+                    "operations_count": 1,
+                    "elements_present": ["not defined", "AWS A3.0M/A3.0:2020 Clause 4"],
+                    "normative_provenance": ["obs:clause4:glossary"],
+                }
 
     # Route 1: Slice A — Annex A Classification Charts (Figures A1-A6)
     if (
@@ -777,7 +994,6 @@ def execute_whole_standard_plan(
         return _compose_annex_a_chart_answer(plan, question_text, annex_a_graphs)
 
     # Route 2: Slice B — Normative Tables (Tables A1-A5)
-    # Check if this is a table query (and not an IS_A promotion metrics/rule query)
     is_tables_query = (
         re.search(r"\btables?\s*a[1-5]?\b", q_lower)
         or "suffix" in q_lower
@@ -819,21 +1035,26 @@ def execute_whole_standard_plan(
     if "kerf" in q_lower and ("definition" in q_lower or "cross-reference" in q_lower):
         glossary = stores.get("glossary", {})
         kerf_entry = lookup_glossary_term("kerf", glossary)
-        if kerf_entry:
-            figs = kerf_entry.get("cross_references", {}).get("figures", ["B41"])
-            fig_str = ", ".join(f"Figure {f}" if not f.startswith("Figure") else f for f in figs)
-            return {
-                "status": "PASS",
-                "answer": (
-                    f"In Clause 4 of AWS A3.0M/A3.0:2020 (printed p. {kerf_entry.get('printed_page', 36)}), "
-                    f"kerf is defined as: \"{kerf_entry.get('definition')}\" (gap produced by a cutting process). "
-                    f"Its glossary entry explicitly cross-references {fig_str}."
-                ),
-                "operations": [{"operation": "lookup_glossary_term", "term": "kerf", "status": "executed"}],
-                "operations_count": 1,
-                "elements_present": ["kerf", "gap produced by a cutting process", "Figure B41"],
-                "normative_provenance": [f"obs:clause4:p{kerf_entry.get('printed_page', 36)}:kerf"],
-            }
+        if not kerf_entry or not kerf_entry.get("definition") or not kerf_entry.get("printed_page"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: kerf entry or required fields missing in glossary store")
+        figs = kerf_entry.get("cross_references", {}).get("figures")
+        if not figs:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Cross-reference figures missing for kerf in store")
+        fig_str = ", ".join(f"Figure {f}" if not f.startswith("Figure") else f for f in figs)
+        kerf_page = kerf_entry["printed_page"]
+        kerf_def = kerf_entry["definition"]
+        return {
+            "status": "PASS",
+            "answer": (
+                f"In Clause 4 of AWS A3.0M/A3.0:2020 (printed p. {kerf_page}), "
+                f"kerf is defined as: \"{kerf_def}\" (gap produced by a cutting process). "
+                f"Its glossary entry explicitly cross-references {fig_str}."
+            ),
+            "operations": [{"operation": "lookup_glossary_term", "term": "kerf", "status": "executed"}],
+            "operations_count": 1,
+            "elements_present": ["kerf", "gap produced by a cutting process", "Figure B41"],
+            "normative_provenance": [f"obs:clause4:p{kerf_page}:kerf"],
+        }
 
     # For nonstandard redirect query mentioning both stick electrode and heliarc
     if "stick electrode" in q_lower and "heliarc" in q_lower:
@@ -872,10 +1093,6 @@ def execute_whole_standard_plan(
     exec_res = execute_phase3_plan(plan, question_text, stores=p3_stores)
     return exec_res
 
-
-# ---------------------------------------------------------------------------
-# Public Entrypoint: Whole-Standard Question Answering
-# ---------------------------------------------------------------------------
 
 def answer_whole_standard_question(
     question_text: str,

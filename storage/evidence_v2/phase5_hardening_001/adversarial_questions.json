@@ -1,0 +1,52 @@
+[
+  {
+    "id": "G5-ADV01",
+    "category": "out_of_range_figure_annex_a",
+    "query": "What welding processes and physical characteristics are shown in Figure A7?"
+  },
+  {
+    "id": "G5-ADV02",
+    "category": "out_of_range_figure_annex_a",
+    "query": "Trace the energy source branch for laser beam welding in Figure A9."
+  },
+  {
+    "id": "G5-ADV03",
+    "category": "out_of_range_figure_annex_b",
+    "query": "In Figure B55, what is the pulse frequency shown on trace 2?"
+  },
+  {
+    "id": "G5-ADV04",
+    "category": "out_of_range_figure_annex_b",
+    "query": "What joint geometry is illustrated in Annex B Figure B80?"
+  },
+  {
+    "id": "G5-ADV05",
+    "category": "out_of_range_table_annex_a",
+    "query": "What are the letter designations and process categories listed in Table A6?"
+  },
+  {
+    "id": "G5-ADV06",
+    "category": "contradiction_refutation",
+    "query": "Explain why shielded metal arc welding (SMAW) is classified under Solid-State Welding in Figure A5."
+  },
+  {
+    "id": "G5-ADV07",
+    "category": "nonexistent_glossary_term",
+    "query": "What is the definition of hyper-flux welding in Clause 4?"
+  },
+  {
+    "id": "G5-ADV08",
+    "category": "nonexistent_glossary_term",
+    "query": "How is laser-quantum welding defined in Clause 4 terms and definitions?"
+  },
+  {
+    "id": "G5-ADV09",
+    "category": "out_of_scope_property",
+    "query": "What is the minimum specified yield strength and tensile strength for E7018 weld metal in AWS A3.0?"
+  },
+  {
+    "id": "G5-ADV10",
+    "category": "out_of_scope_code",
+    "query": "What P-Number grouping does 316L stainless steel receive according to ASME Section IX in AWS A3.0?"
+  }
+]
