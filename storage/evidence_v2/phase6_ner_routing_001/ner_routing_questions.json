@@ -1,0 +1,142 @@
+[
+  {
+    "id": "G60-NER01",
+    "category": "dynamic_compound_designation",
+    "slice_name": "Slice 1 — Dynamic Compound Process + Application Mode Designations",
+    "query": "What does the compound designation PAW-AU stand for according to Table A1 and Table A4?",
+    "target_source": "Table A1 (p. 69) + Table A4 (p. 74)"
+  },
+  {
+    "id": "G60-NER02",
+    "category": "dynamic_compound_designation",
+    "slice_name": "Slice 1 — Dynamic Compound Process + Application Mode Designations",
+    "query": "What does GTAW-ME stand for in AWS A3.0?",
+    "target_source": "Table A1 (p. 69) + Table A4 (p. 74)"
+  },
+  {
+    "id": "G60-NER03",
+    "category": "dynamic_compound_designation",
+    "slice_name": "Slice 1 — Dynamic Compound Process + Application Mode Designations",
+    "query": "What does the compound code FCAW-G-SA designate?",
+    "target_source": "Table A1 (p. 69) + Table A4 (p. 74)"
+  },
+  {
+    "id": "G60-NER04",
+    "category": "dynamic_compound_designation",
+    "slice_name": "Slice 1 — Dynamic Compound Process + Application Mode Designations",
+    "query": "Explain the designation OFC-A-MA according to AWS A3.0.",
+    "target_source": "Table A1 (p. 69) + Table A4 (p. 74)"
+  },
+  {
+    "id": "G60-NER05",
+    "category": "id_free_spatial_callouts",
+    "slice_name": "Slice 2 — ID-Free Annex B Spatial Diagram Callouts",
+    "query": "Which diagram illustrates theoretical throat, effective throat, and actual throat?",
+    "target_source": "Figure B25 (p. 123)"
+  },
+  {
+    "id": "G60-NER06",
+    "category": "id_free_spatial_callouts",
+    "slice_name": "Slice 2 — ID-Free Annex B Spatial Diagram Callouts",
+    "query": "Which figure illustrates crack types including underbead crack, toe crack, and crater crack?",
+    "target_source": "Figure B33 (p. 137)"
+  },
+  {
+    "id": "G60-NER07",
+    "category": "id_free_spatial_callouts",
+    "slice_name": "Slice 2 — ID-Free Annex B Spatial Diagram Callouts",
+    "query": "Which diagram shows friction stir welding terms like advancing side, retreating side, and thermomechanically affected zone?",
+    "target_source": "Figure B46 (p. 154)"
+  },
+  {
+    "id": "G60-NER08",
+    "category": "id_free_spatial_callouts",
+    "slice_name": "Slice 2 — ID-Free Annex B Spatial Diagram Callouts",
+    "query": "Which figure illustrates starting weld tab, runoff tab, and split pipe backing?",
+    "target_source": "Figure B12 (p. 101)"
+  },
+  {
+    "id": "G60-NER09",
+    "category": "homograph_and_position_disambiguation",
+    "slice_name": "Slice 3 — Homograph, Weld Position & Domain Qualifier Disambiguation",
+    "query": "What does the abbreviation AB stand for in AWS A3.0?",
+    "target_source": "Table A1 (p. 69) / Figure A6 (p. 80) / Clause 4"
+  },
+  {
+    "id": "G60-NER10",
+    "category": "homograph_and_position_disambiguation",
+    "slice_name": "Slice 3 — Homograph, Weld Position & Domain Qualifier Disambiguation",
+    "query": "What does AB stand for in the context of brazing?",
+    "target_source": "Table A1 (p. 69)"
+  },
+  {
+    "id": "G60-NER11",
+    "category": "homograph_and_position_disambiguation",
+    "slice_name": "Slice 3 — Homograph, Weld Position & Domain Qualifier Disambiguation",
+    "query": "What welding position does 6G designate for pipe groove welding?",
+    "target_source": "Figure B16C / Clause 4 (p. 1)"
+  },
+  {
+    "id": "G60-NER12",
+    "category": "homograph_and_position_disambiguation",
+    "slice_name": "Slice 3 — Homograph, Weld Position & Domain Qualifier Disambiguation",
+    "query": "What does the welding position 2F designate in plate welding?",
+    "target_source": "Figure B16B / Clause 4 (p. 1)"
+  },
+  {
+    "id": "G60-NER13",
+    "category": "multi_entity_cross_store",
+    "slice_name": "Slice 4 — Multi-Entity Cross-Store Comparative & Multi-Hop Queries",
+    "query": "What does PAW-AU designate and how is plasma arc welding classified in Figure A4?",
+    "target_source": "Table A1 / Table A4 / Figure A4 (p. 78)"
+  },
+  {
+    "id": "G60-NER14",
+    "category": "multi_entity_cross_store",
+    "slice_name": "Slice 4 — Multi-Entity Cross-Store Comparative & Multi-Hop Queries",
+    "query": "Compare the historical process atomic hydrogen welding (AHW) with gas tungsten arc welding (GTAW).",
+    "target_source": "Table A5 (p. 74) / Table A1 (p. 69)"
+  },
+  {
+    "id": "G60-NER15",
+    "category": "multi_entity_cross_store",
+    "slice_name": "Slice 4 — Multi-Entity Cross-Store Comparative & Multi-Hop Queries",
+    "query": "What is the preferred standard term for heliarc and which figure illustrates upslope and downslope intervals?",
+    "target_source": "Clause 4 (p. 32) / Figure B53 (p. 157)"
+  },
+  {
+    "id": "G60-NER16",
+    "category": "multi_entity_cross_store",
+    "slice_name": "Slice 4 — Multi-Entity Cross-Store Comparative & Multi-Hop Queries",
+    "query": "How is braze defined as both a noun and a verb in Clause 4?",
+    "target_source": "Clause 4 (p. 12)"
+  },
+  {
+    "id": "G60-NER17",
+    "category": "boundary_and_abstention",
+    "slice_name": "Slice 5 — Invalid Compound Suffix, False-Premise & Out-of-Scope NER Boundaries",
+    "query": "What does the compound designation GTAW-ZZ mean in AWS A3.0?",
+    "target_source": "Table A1 (p. 69) / Table A4 (p. 74)"
+  },
+  {
+    "id": "G60-NER18",
+    "category": "boundary_and_abstention",
+    "slice_name": "Slice 5 — Invalid Compound Suffix, False-Premise & Out-of-Scope NER Boundaries",
+    "query": "What information is provided in Figure B55?",
+    "target_source": "Annex B Scope Boundary"
+  },
+  {
+    "id": "G60-NER19",
+    "category": "boundary_and_abstention",
+    "slice_name": "Slice 5 — Invalid Compound Suffix, False-Premise & Out-of-Scope NER Boundaries",
+    "query": "How is cryo-ionic brazing defined in AWS A3.0?",
+    "target_source": "Clause 4 Lexicon Boundary"
+  },
+  {
+    "id": "G60-NER20",
+    "category": "boundary_and_abstention",
+    "slice_name": "Slice 5 — Invalid Compound Suffix, False-Premise & Out-of-Scope NER Boundaries",
+    "query": "What preheat temperature and Charpy impact toughness does AWS A3.0 specify for structural steel?",
+    "target_source": "Standard Scope Boundary"
+  }
+]

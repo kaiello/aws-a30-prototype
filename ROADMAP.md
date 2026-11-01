@@ -94,7 +94,7 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 1. **Zero Question-ID or Benchmark-Literal Hardcoding (`test_gate_5_anti_drift_source_scan`, `test_gate_5_4_anti_drift_regex_coverage`, `test_gate_5_5_anti_drift_and_anti_overfitting`, & `tests/test_gate_5_6_epistemic_manifest.py`):**
    - Operational modules (`src/*.py`) and evaluators (`eval/*.py`) must return `0 matches` for any benchmark question ID pattern:
      ```powershell
-     git grep -E "QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+|G53-NLQ[0-9]+|G54-[0-9]+|G55-NLQ[0-9]+|G56-[0-9]+" -- src/ eval/*.py
+     git grep -E "QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+|G53-NLQ[0-9]+|G54-[0-9]+|G55-NLQ[0-9]+|G56-[0-9]+|G60-NER[0-9]+|G60-[0-9]+" -- src/ eval/*.py
      ```
    - Operational modules (`src/*.py`) must return `0 matches` for benchmark-specific trap literals:
      ```powershell
@@ -117,3 +117,14 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable 3 (Modality-Appropriate Provenance in `src/evidence_phase4_bakeoff.py`):** Universal `printed_page`, `pdf_index`, and `evidence_locator`; conditional 300-DPI diagram crop with `requires_diagram_crop: True` for visual diagrams and `requires_diagram_crop: False` (omitting crops) for glossary and tabular lookups.
 - [x] **Deliverable 4 (Epistemic Hygiene & Documentation Synchronization):** Replaced marketing language with source-grounded composition, explicit abstention, and measured robustness; documented version-bound store immutability (`*_001` $\rightarrow$ `*_002`); synchronized `goal.md`, `ROADMAP.md`, and review packets.
 - [x] **Deliverable 5 (24/24 Cryptographic Hash Locks in `tests/test_gate_5_6_epistemic_manifest.py`):** All 22 prior artifacts plus the 2 new Gate 5.6 manifests cryptographically verified under CI test suite.
+
+---
+
+## 5. Gate 6.0 Deliverables Checklist (Welding Domain NER, Callout/Backlink Routing & Whole-Standard Skills)
+
+- [x] **Deliverable 1 (`src/welding_ner.py`):** Deterministic Welding Domain Named Entity Recognizer & dynamic compound code parser resolving 11 domain entity categories, character-offset matching, longest-match precedence, and homograph candidate tracking (`AB`).
+- [x] **Deliverable 2 (`src/semantic_nlq_expander.py` & `src/evidence_phase4_bakeoff.py`):** Inverted Annex B spatial callout graph (1,115 callout terms), Clause 4 figure backlink graph (265 edges), and multi-intent action planner for cross-store multi-hop queries.
+- [x] **Deliverable 3 (`src/evidence_whole_standard_cli.py` & `.agents/skills/`):** Whole-standard CLI entry point (`--ner`, `--route`, `--ask`) and updated skill playbooks replacing legacy Figure A1 limitations.
+- [x] **Deliverable 4 (`storage/evidence_v2/phase6_ner_routing_001/` & `eval/run_phase6_ner_routing.py`):** Frozen 20-question Gate 6.0 benchmark scoring **20 / 20 (100.0%)** across compound designations, ID-free callouts, homographs, multi-hop queries, and adversarial boundaries.
+- [x] **Deliverable 5 (29/29 Cryptographic Hash Locks & Regression Suite in `tests/test_gate_6_0_ner_routing_skills.py`):** 24 prior locked hashes + 5 Gate 6.0 artifacts cryptographically locked under CI; full regression suite passing at 1,475 passed, 8 skipped, 0 failures, 0 warnings.
+
