@@ -1,0 +1,107 @@
+[
+  {
+    "id": "G55-NLQ01",
+    "category": "id_free_annex_a",
+    "slice_name": "Slice 1 \u2014 ID-Free Annex A Chart & Table NLQs",
+    "query": "What are the standard letter suffixes used to designate manual, mechanized, automatic, and robotic application modes for welding processes?",
+    "target_source": "Table A4 (p. 74)"
+  },
+  {
+    "id": "G55-NLQ02",
+    "category": "id_free_annex_a",
+    "slice_name": "Slice 1 \u2014 ID-Free Annex A Chart & Table NLQs",
+    "query": "In the solid-state welding classification tree, how does cold welding branch from mechanical energy to pressure and deformation?",
+    "target_source": "Figure A5 (p. 79)"
+  },
+  {
+    "id": "G55-NLQ03",
+    "category": "id_free_annex_a",
+    "slice_name": "Slice 1 \u2014 ID-Free Annex A Chart & Table NLQs",
+    "query": "Which obsolete or discontinued process designations include atomic hydrogen welding and forge welding?",
+    "target_source": "Table A5 (p. 74)"
+  },
+  {
+    "id": "G55-NLQ04",
+    "category": "id_free_annex_b",
+    "slice_name": "Slice 2 \u2014 ID-Free Annex B Visual & Waveform NLQs",
+    "query": "Which waveform diagram illustrates upslope and downslope current intervals for pulsed welding cycles?",
+    "target_source": "Figure B53 (p. 157)"
+  },
+  {
+    "id": "G55-NLQ05",
+    "category": "id_free_annex_b",
+    "slice_name": "Slice 2 \u2014 ID-Free Annex B Visual & Waveform NLQs",
+    "query": "Which diagram illustrates standard edge shapes such as square, bevel, chamfer, and round edge preparations?",
+    "target_source": "Figure B7 (p. 90)"
+  },
+  {
+    "id": "G55-NLQ06",
+    "category": "id_free_annex_b",
+    "slice_name": "Slice 2 \u2014 ID-Free Annex B Visual & Waveform NLQs",
+    "query": "In resistance spot welding waveforms, what intervals occur during a pulsation welding cycle?",
+    "target_source": "Figure B49 (p. 153)"
+  },
+  {
+    "id": "G55-NLQ07",
+    "category": "semantic_expansion",
+    "slice_name": "Slice 3 \u2014 Historical, Nonstandard & Abbreviation Semantic Expansion",
+    "query": "What is the preferred standard term for the shop-floor term stick electrode, and what process does it relate to?",
+    "target_source": "Clause 4 (p. 57) / Annex C / Table A1 (p. 69)"
+  },
+  {
+    "id": "G55-NLQ08",
+    "category": "semantic_expansion",
+    "slice_name": "Slice 3 \u2014 Historical, Nonstandard & Abbreviation Semantic Expansion",
+    "query": "What does the abbreviation CW stand for, and under which major process group is it classified?",
+    "target_source": "Table A1 (p. 70) / Figure A5 (p. 79)"
+  },
+  {
+    "id": "G55-NLQ09",
+    "category": "semantic_expansion",
+    "slice_name": "Slice 3 \u2014 Historical, Nonstandard & Abbreviation Semantic Expansion",
+    "query": "Is atomic hydrogen welding an active process in the standard or is it obsolete, and what was its letter designation?",
+    "target_source": "Table A5 (p. 74) / Clause 4 (p. 9)"
+  },
+  {
+    "id": "G55-NLQ10",
+    "category": "conversational_morphology",
+    "slice_name": "Slice 4 \u2014 Conversational & Morphological Clause 4 + is_a NLQs",
+    "query": "How are kerfs defined in the standard, and which figure illustrates them?",
+    "target_source": "Clause 4 (p. 35) / Figure B41"
+  },
+  {
+    "id": "G55-NLQ11",
+    "category": "conversational_morphology",
+    "slice_name": "Slice 4 \u2014 Conversational & Morphological Clause 4 + is_a NLQs",
+    "query": "What does AWS A3.0 mean by undercutting, and is it classified as a weld discontinuity?",
+    "target_source": "Clause 4 (p. 61) / Figure B32"
+  },
+  {
+    "id": "G55-NLQ12",
+    "category": "conversational_morphology",
+    "slice_name": "Slice 4 \u2014 Conversational & Morphological Clause 4 + is_a NLQs",
+    "query": "Could you explain what is meant by coalescence in the context of welding processes?",
+    "target_source": "Clause 4 (p. 15)"
+  },
+  {
+    "id": "G55-NLQ13",
+    "category": "adversarial_traps",
+    "slice_name": "Slice 5 \u2014 Natural-Language Adversarial & Out-of-Scope Traps",
+    "query": "Is cryo-ionic brazing defined anywhere in AWS A3.0?",
+    "target_source": "Unstandardized Fictitious Term Boundary"
+  },
+  {
+    "id": "G55-NLQ14",
+    "category": "adversarial_traps",
+    "slice_name": "Slice 5 \u2014 Natural-Language Adversarial & Out-of-Scope Traps",
+    "query": "What preheat temperature and Charpy impact toughness are specified for structural steel?",
+    "target_source": "Out-of-Scope Fabrication & Mechanical Properties"
+  },
+  {
+    "id": "G55-NLQ15",
+    "category": "adversarial_traps",
+    "slice_name": "Slice 5 \u2014 Natural-Language Adversarial & Out-of-Scope Traps",
+    "query": "Why is shielded metal arc welding categorized under solid-state welding rather than fusion welding in AWS A3.0?",
+    "target_source": "Taxonomy False Premise Refutation"
+  }
+]

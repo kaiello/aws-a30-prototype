@@ -1,0 +1,205 @@
+{
+  "version": "phase5_5_nlq_rubric_v1.0",
+  "total_questions": 15,
+  "rubrics": {
+    "G55-NLQ01": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "Table A4",
+        "-MA",
+        "-SA",
+        "-ME",
+        "-AU"
+      ],
+      "forbidden_elements": [
+        "Table A1 designates suffixes",
+        "Figure A5 suffixes"
+      ]
+    },
+    "G55-NLQ02": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "Figure A5",
+        "cold welding",
+        "CW",
+        "Mechanical",
+        "Deformation"
+      ],
+      "forbidden_elements": [
+        "classified under Fusion Welding",
+        "Arc",
+        "Figure A4"
+      ]
+    },
+    "G55-NLQ03": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "Table A5",
+        "AHW",
+        "FOW",
+        "atomic hydrogen welding"
+      ],
+      "forbidden_elements": [
+        "active process in Table A1",
+        "Figure A4"
+      ]
+    },
+    "G55-NLQ04": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "Figure B53",
+        "UPSLOPE TIME",
+        "DOWNSLOPE TIME",
+        "HIGH PULSE TIME",
+        "LOW PULSE TIME"
+      ],
+      "forbidden_elements": [
+        "Figure B49 illustrates pulsed welding cycle",
+        "Figure B50"
+      ]
+    },
+    "G55-NLQ05": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "Figure B7",
+        "Edge Shapes",
+        "square",
+        "bevel",
+        "chamfer",
+        "round"
+      ],
+      "forbidden_elements": [
+        "Figure B1 Joint Types",
+        "Figure B12"
+      ]
+    },
+    "G55-NLQ06": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "Figure B49",
+        "RESISTANCE WELDING CURRENT",
+        "ELECTRODE FORCE",
+        "HEAT TIME",
+        "COOL TIME",
+        "WELD INTERVAL"
+      ],
+      "forbidden_elements": [
+        "continuous single pulse",
+        "Figure B54"
+      ]
+    },
+    "G55-NLQ07": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "nonstandard",
+        "covered electrode",
+        "shielded metal arc welding",
+        "SMAW"
+      ],
+      "forbidden_elements": [
+        "stick electrode is a standard term",
+        "gas tungsten arc welding is stick"
+      ]
+    },
+    "G55-NLQ08": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "CW",
+        "cold welding",
+        "Solid-State Welding",
+        "Table A1",
+        "Figure A5"
+      ],
+      "forbidden_elements": [
+        "continuous welding",
+        "Arc Welding"
+      ]
+    },
+    "G55-NLQ09": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "atomic hydrogen welding",
+        "AHW",
+        "Table A5",
+        "obsolete"
+      ],
+      "forbidden_elements": [
+        "active process in Table A1",
+        "Clause 4 active process"
+      ]
+    },
+    "G55-NLQ10": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "kerf",
+        "gap produced by a cutting process",
+        "Figure B41"
+      ],
+      "forbidden_elements": [
+        "kerfs is not defined",
+        "Figure B32"
+      ]
+    },
+    "G55-NLQ11": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "undercut",
+        "groove melted into the base metal",
+        "weld discontinuity",
+        "Figure B32"
+      ],
+      "forbidden_elements": [
+        "undercutting is not defined",
+        "standard weld profile"
+      ]
+    },
+    "G55-NLQ12": {
+      "expected_status": "PASS",
+      "required_elements": [
+        "coalescence",
+        "growing together or growth into one body"
+      ],
+      "forbidden_elements": [
+        "coalescence is not defined",
+        "mechanical fastening"
+      ]
+    },
+    "G55-NLQ13": {
+      "expected_status": "NOT_IN_STANDARD",
+      "required_elements": [
+        "not defined",
+        "AWS A3.0M/A3.0:2020 Clause 4"
+      ],
+      "forbidden_elements": [
+        "cryo-ionic brazing is defined",
+        "sub-zero flux"
+      ]
+    },
+    "G55-NLQ14": {
+      "expected_status": "REFUSAL_OUT_OF_SCOPE",
+      "required_elements": [
+        "outside the scope",
+        "AWS A3.0M/A3.0:2020",
+        "terminology standard"
+      ],
+      "forbidden_elements": [
+        "50 ft-lbs",
+        "preheat temperature of 200",
+        "20 Joules"
+      ]
+    },
+    "G55-NLQ15": {
+      "expected_status": "CONTRADICTION_REFUTED",
+      "required_elements": [
+        "Contradiction",
+        "Fusion Welding",
+        "Arc",
+        "Figure A4"
+      ],
+      "forbidden_elements": [
+        "is classified under Solid-State",
+        "mechanical energy"
+      ]
+    }
+  }
+}

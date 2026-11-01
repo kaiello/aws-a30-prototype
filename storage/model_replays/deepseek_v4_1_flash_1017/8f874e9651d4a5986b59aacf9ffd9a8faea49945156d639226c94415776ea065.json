@@ -1,0 +1,43 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "8f874e9651d4a5986b59aacf9ffd9a8faea49945156d639226c94415776ea065",
+  "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: What is the definition of shielded metal arc welding in Clause 4, what letter designation is assigned in Table A1, and which figure illustrates arc welding power source waveforms?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"target_division\": \"Multi-Hop Cross-Store\", \"intent\": \"cross_store_multihop\", \"target_entities\": [\"shielded metal arc welding\", \"SMAW\", \"Table A1\", \"Figure B50\"], \"actions\": [{\"action_type\": \"lookup_glossary\", \"target\": \"shielded metal arc welding\", \"parameters\": {\"clause\": 4}}, {\"action_type\": \"lookup_table\", \"target\": \"Table A1\", \"parameters\": {\"process\": \"shielded metal arc welding\"}}, {\"action_type\": \"lookup_figure\", \"target\": \"Figure B50\", \"parameters\": {\"topic\": \"pulsed welding cycle waveform\"}}], \"reason\": \"DeepSeek-V4.1 trace: Multi-hop hop 1 resolves Clause 4 definition, hop 2 retrieves Table A1 designation SMAW, hop 3 links Figure B50 waveform.\", \"epistemic_tag\": \"UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE\"}",
+  "parsed_plan": {
+    "target_division": "Multi-Hop Cross-Store",
+    "intent": "cross_store_multihop",
+    "target_entities": [
+      "shielded metal arc welding",
+      "SMAW",
+      "Table A1",
+      "Figure B50"
+    ],
+    "actions": [
+      {
+        "action_type": "lookup_glossary",
+        "target": "shielded metal arc welding",
+        "parameters": {
+          "clause": 4
+        }
+      },
+      {
+        "action_type": "lookup_table",
+        "target": "Table A1",
+        "parameters": {
+          "process": "shielded metal arc welding"
+        }
+      },
+      {
+        "action_type": "lookup_figure",
+        "target": "Figure B50",
+        "parameters": {
+          "topic": "pulsed welding cycle waveform"
+        }
+      }
+    ],
+    "reason": "DeepSeek-V4.1 trace: Multi-hop hop 1 resolves Clause 4 definition, hop 2 retrieves Table A1 designation SMAW, hop 3 links Figure B50 waveform.",
+    "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}

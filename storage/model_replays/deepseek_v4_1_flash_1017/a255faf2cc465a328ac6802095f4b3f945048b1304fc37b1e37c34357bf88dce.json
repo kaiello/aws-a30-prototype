@@ -1,0 +1,27 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "a255faf2cc465a328ac6802095f4b3f945048b1304fc37b1e37c34357bf88dce",
+  "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: Which processes are classified on Figure A7 and Figure B55 in AWS A3.0?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"target_division\": \"Refusal\", \"intent\": \"refusal_out_of_range\", \"target_entities\": [\"Figure A7\", \"Figure B55\"], \"actions\": [{\"action_type\": \"refuse\", \"code\": \"REFUSAL_OUT_OF_RANGE\", \"parameters\": {\"reason\": \"Annex A figures end at Figure A6 and Annex B figures end at Figure B54\"}}], \"reason\": \"DeepSeek-V4.1 trace: Figure A7 and Figure B55 exceed coordinate bounds of AWS A3.0M/A3.0:2020.\", \"epistemic_tag\": \"UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE\"}",
+  "parsed_plan": {
+    "target_division": "Refusal",
+    "intent": "refusal_out_of_range",
+    "target_entities": [
+      "Figure A7",
+      "Figure B55"
+    ],
+    "actions": [
+      {
+        "action_type": "refuse",
+        "code": "REFUSAL_OUT_OF_RANGE",
+        "parameters": {
+          "reason": "Annex A figures end at Figure A6 and Annex B figures end at Figure B54"
+        }
+      }
+    ],
+    "reason": "DeepSeek-V4.1 trace: Figure A7 and Figure B55 exceed coordinate bounds of AWS A3.0M/A3.0:2020.",
+    "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}

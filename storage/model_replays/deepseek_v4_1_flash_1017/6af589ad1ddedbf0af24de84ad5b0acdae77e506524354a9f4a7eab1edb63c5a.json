@@ -1,0 +1,32 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "6af589ad1ddedbf0af24de84ad5b0acdae77e506524354a9f4a7eab1edb63c5a",
+  "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: Which waveform diagram illustrates upslope and downslope current intervals for pulsed welding cycles?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"target_division\": \"Annex B\", \"intent\": \"waveform_lookup\", \"target_entities\": [\"Figure B53\", \"pulsed welding cycle waveform\", \"upslope\", \"downslope\"], \"actions\": [{\"action_type\": \"lookup_waveform\", \"target\": \"Figure B53\", \"parameters\": {\"intervals\": [\"upslope\", \"downslope\"]}}], \"reason\": \"DeepSeek-V4.1 trace: ID-free query matches waveform intervals upslope and downslope in Figure B53.\", \"epistemic_tag\": \"UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE\"}",
+  "parsed_plan": {
+    "target_division": "Annex B",
+    "intent": "waveform_lookup",
+    "target_entities": [
+      "Figure B53",
+      "pulsed welding cycle waveform",
+      "upslope",
+      "downslope"
+    ],
+    "actions": [
+      {
+        "action_type": "lookup_waveform",
+        "target": "Figure B53",
+        "parameters": {
+          "intervals": [
+            "upslope",
+            "downslope"
+          ]
+        }
+      }
+    ],
+    "reason": "DeepSeek-V4.1 trace: ID-free query matches waveform intervals upslope and downslope in Figure B53.",
+    "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}

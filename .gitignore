@@ -40,6 +40,7 @@ env/
 storage/*
 !storage/gate_reviews/
 !storage/evidence_v2/
+!storage/model_replays/
 storage/evidence_v2/*
 !storage/evidence_v2/phase3_holdout_001/
 !storage/evidence_v2/phase4_bakeoff_001/

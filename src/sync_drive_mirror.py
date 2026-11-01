@@ -119,6 +119,13 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
         for p in storage_root.glob("*.json"):
             collected.append(p)
 
+    # 6c. storage/model_replays/ deterministic offline replay cassettes
+    replays_dir = base_dir / "storage" / "model_replays"
+    if replays_dir.is_dir():
+        for p in replays_dir.rglob("*.json"):
+            if p.is_file():
+                collected.append(p)
+
     # 7. storage/evidence_v2/ stores and lightweight review artifacts
     ev_dir = base_dir / "storage" / "evidence_v2"
     if ev_dir.is_dir():
@@ -140,7 +147,7 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
                 # Include crops, receipts, graphs, and evaluation files
                 if (
                     p.name.endswith("_crop_300.png") or p.suffix == ".png"
-                    or p.name in ("graph.json", "questions.json", "rubric.json", "results.json", "ingest_receipt.json", "tables_graph.json", "answers.json")
+                    or p.name in ("graph.json", "questions.json", "nlq_questions.json", "adversarial_questions.json", "rubric.json", "results.json", "ingest_receipt.json", "tables_graph.json", "answers.json")
                     or p.name.endswith("_receipt.json")
                     or p.name.endswith("_store.json")
                 ):

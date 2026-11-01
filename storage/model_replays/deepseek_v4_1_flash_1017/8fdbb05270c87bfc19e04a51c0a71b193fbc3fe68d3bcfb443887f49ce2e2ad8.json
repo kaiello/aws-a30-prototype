@@ -1,0 +1,36 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "8fdbb05270c87bfc19e04a51c0a71b193fbc3fe68d3bcfb443887f49ce2e2ad8",
+  "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: Is atomic hydrogen welding an active process in the standard or is it obsolete, and what was its letter designation?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"target_division\": \"Normative Tables\", \"intent\": \"table_a5_obsolete\", \"target_entities\": [\"atomic hydrogen welding\", \"AHW\", \"Table A5\", \"Clause 4\"], \"actions\": [{\"action_type\": \"lookup_table\", \"target\": \"Table A5\", \"parameters\": {\"process\": \"atomic hydrogen welding\"}}, {\"action_type\": \"lookup_glossary\", \"target\": \"atomic hydrogen welding\", \"parameters\": {\"clause\": 4}}], \"reason\": \"DeepSeek-V4.1 trace: Resolves atomic hydrogen welding against Table A5 obsolete processes and Clause 4 historical definition.\", \"epistemic_tag\": \"UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE\"}",
+  "parsed_plan": {
+    "target_division": "Normative Tables",
+    "intent": "table_a5_obsolete",
+    "target_entities": [
+      "atomic hydrogen welding",
+      "AHW",
+      "Table A5",
+      "Clause 4"
+    ],
+    "actions": [
+      {
+        "action_type": "lookup_table",
+        "target": "Table A5",
+        "parameters": {
+          "process": "atomic hydrogen welding"
+        }
+      },
+      {
+        "action_type": "lookup_glossary",
+        "target": "atomic hydrogen welding",
+        "parameters": {
+          "clause": 4
+        }
+      }
+    ],
+    "reason": "DeepSeek-V4.1 trace: Resolves atomic hydrogen welding against Table A5 obsolete processes and Clause 4 historical definition.",
+    "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}
