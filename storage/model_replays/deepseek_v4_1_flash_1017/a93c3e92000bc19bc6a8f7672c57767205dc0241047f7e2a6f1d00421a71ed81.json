@@ -1,0 +1,35 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "a93c3e92000bc19bc6a8f7672c57767205dc0241047f7e2a6f1d00421a71ed81",
+  "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: What does FCAW-G-SA stand for and how is fusion welding classified in Figure A4?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"target_division\": \"Multi-Division\", \"intent\": \"compound_designation_and_diagram\", \"target_entities\": [\"FCAW-G-SA\", \"Figure A4\"], \"actions\": [{\"action_type\": \"lookup_compound_code\", \"target\": \"FCAW-G-SA\", \"parameters\": {\"base_process\": \"FCAW\", \"variation\": \"FCAW-G\", \"mode_suffix\": \"-SA\"}}, {\"action_type\": \"query_figure\", \"target\": \"Figure A4\", \"parameters\": {\"process_code\": \"FCAW\"}}], \"reason\": \"DeepSeek-V4.1 trace: Decompose FCAW-G-SA into base FCAW, variation FCAW-G, and suffix -SA, then query Figure A4 fusion welding classification branch.\"}",
+  "parsed_plan": {
+    "target_division": "Multi-Division",
+    "intent": "compound_designation_and_diagram",
+    "target_entities": [
+      "FCAW-G-SA",
+      "Figure A4"
+    ],
+    "actions": [
+      {
+        "action_type": "lookup_compound_code",
+        "target": "FCAW-G-SA",
+        "parameters": {
+          "base_process": "FCAW",
+          "variation": "FCAW-G",
+          "mode_suffix": "-SA"
+        }
+      },
+      {
+        "action_type": "query_figure",
+        "target": "Figure A4",
+        "parameters": {
+          "process_code": "FCAW"
+        }
+      }
+    ],
+    "reason": "DeepSeek-V4.1 trace: Decompose FCAW-G-SA into base FCAW, variation FCAW-G, and suffix -SA, then query Figure A4 fusion welding classification branch."
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}

@@ -3,10 +3,10 @@
 **Target Standard:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions Including Terms for Adhesive Bonding, Brazing, Soldering, Thermal Cutting, and Thermal Spraying*, 13th Edition, 190 PDF pages)  
 **Source PDF SHA-256:** `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d`  
 **Coordinate Formula:** $\text{printed\_page} = \text{pdf\_index} - 12 = \text{viewer\_page} - 13$ (for main text & annexes starting at Clause 1, printed p. 1 = PDF index 13)  
-**Production Release Tag:** `v1.6.0-ner-routing-skills` (merged on `main`)  
+**Production Release Tag:** `v1.6.1-ner-semantic-graph` (merged on `main`)  
 **Repository:** `https://github.com/kaiello/aws-a30-prototype`  
 **Google Drive Mirror:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)  
-**Full Regression Test Suite:** `1,475 passed, 8 skipped, 0 failures, 0 warnings`  
+**Full Regression Test Suite:** `1,482 passed, 8 skipped, 0 failures, 0 warnings`  
 
 ---
 
@@ -241,4 +241,27 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable 3 (`src/evidence_whole_standard_cli.py` & `.agents/skills/`):** Whole-standard CLI entry point (`--ner`, `--route`, `--ask`) and updated skill playbooks replacing legacy Figure A1 limitations.
 - [x] **Deliverable 4 (`storage/evidence_v2/phase6_ner_routing_001/` & `eval/run_phase6_ner_routing.py`):** Frozen 20-question Gate 6.0 benchmark scoring **20 / 20 (100.0%)** across compound designations, ID-free callouts, homographs, multi-hop queries, and adversarial boundaries.
 - [x] **Deliverable 5 (29/29 Cryptographic Hash Locks & Regression Suite in `tests/test_gate_6_0_ner_routing_skills.py`):** 24 prior locked hashes + 5 Gate 6.0 artifacts cryptographically locked under CI; full regression suite passing at 1,475 passed, 8 skipped, 0 failures, 0 warnings.
+
+---
+
+## 7. Gate 6.1 Polysemous NER, 3-Tier Compound Grammar & Store-Compiled Semantic Graph Expansion
+
+### Benchmark Slices ([`storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json))
+
+| Slice | Category / Focus | Query IDs | Target Stores & Coverage | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Slice 1** | Polysemous Callout & Definitional Intent Spans | `G61-SEM01` – `G61-SEM03` | Clause 4 + Annex B (`theoretical throat`, `crater crack`, `advancing side`) | `100.0% PASS (3/3)` |
+| **Slice 2** | 3-Tier Compound Designation Decompositions | `G61-SEM04` – `G61-SEM06` | Table A1 + Table A4 (`FCAW-G-SA`, `GMAW-P-AU`, `OFC-A-MA` vs `FCAW-Z-SA` / `PAW-AU-ME`) | `100.0% PASS (3/3)` |
+| **Slice 3** | Contextual Sense & Qualifier Resolution | `G61-SEM07` – `G61-SEM09` | Figures B17 vs B19 (`1G, plate` vs `1G, pipe`), Table A1 vs Figure A6 (`AB` + `2F`) | `100.0% PASS (3/3)` |
+| **Slice 4** | See also & Taxonomy Sibling Expansion | `G61-SEM10` – `G61-SEM12` | Clause 4 cross-references (`throat of a fillet weld`, `FCAW` variations, `travel angle` family) | `100.0% PASS (3/3)` |
+| **Slice 5** | CLI `--expand` & Offline Replay Verification | `G61-SEM13` – `G61-SEM15` | Whole-standard CLI JSON expand contract & DeepSeek-V4.1 offline replay cassettes | `100.0% PASS (3/3)` |
+
+### Deliverables Checklist
+
+- [x] **Deliverable 1 (`src/welding_ner.py`):** Extended `WeldingEntitySpan` with `secondary_entity_types`, `linked_clause4_terms`, `linked_figures`, `linked_tables`, and `ambiguous_senses`; dual-role routing for definitional intent queries.
+- [x] **Deliverable 2 (`src/welding_ner.py`):** 3-tier compound designation parser `<BASE>[-<VAR>][-<MODE>]` with process variations (`FCAW-G-SA`, `OFC-A-MA`), invalid code detection (`FCAW-Z-SA`, `PAW-AU-ME`), and contextual sense resolution for weld positions (`1G`, `1F`) and homographs (`AB`).
+- [x] **Deliverable 3 (`src/semantic_nlq_expander.py`):** Deterministic in-memory `SemanticConceptGraph` tracking `see_also_edges`, `is_a_subtypes`, `sibling_variations`, and diagram co-callouts; bidirectional expansion for throat and angle clusters.
+- [x] **Deliverable 4 (`src/evidence_whole_standard_cli.py` & `src/evidence_phase4_bakeoff.py`):** CLI `--expand` flag returning structured neighborhood, NER receipt, and ranked figures; multi-hop execution branch for compound validation, test positions, disambiguation, and see-also cross references.
+- [x] **Deliverable 5 (34/34 Cryptographic Hash Locks & Regression Suite in `tests/test_gate_6_1_semantic_graph.py`):** 29 prior locked hashes + 3 Gate 6.1 benchmark files + 2 new DeepSeek-V4.1 replay cassettes locked under CI; full regression suite passing at 1,482 passed, 8 skipped, 0 failures, 0 warnings.
+
 

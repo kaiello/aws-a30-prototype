@@ -7,8 +7,8 @@
 ## 1. Project Overview & Gate Status Summary
 
 - **Standard Document:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions*, 190 PDF pages / 162 ingested canonical store pages)
-- **Current Test Suite Baseline:** `1,475 passed, 8 skipped, 0 failures, 0 warnings`
-- **Active Milestone:** **Gate 6.0 — GitOps Branch Reconciliation, Deterministic Welding NER, Callout/Backlink Multi-Intent Router & Whole-Standard Agent Skills** (`feat/gate-6-0-ner-routing-skills` $\rightarrow$ `main`, tagged `v1.6.0-ner-routing-skills`)
+- **Current Test Suite Baseline:** `1,482 passed, 8 skipped, 0 failures, 0 warnings`
+- **Active Milestone:** **Gate 6.1 — Polysemous Welding NER, 3-Tier Compound Grammar & Store-Compiled Semantic Graph Expansion** (`feat/gate-6-1-ner-semantic-graph-expansion` $\rightarrow$ `main`, tagged `v1.6.1-ner-semantic-graph`)
 - **Canonical Repository:** `C:\Users\kenai\Documents\Codex\2026-10-21\task\aws-a2-source-aware-ingest`
 - **Mirror Destination:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)
 
@@ -30,13 +30,14 @@
 | **Gate 5.4** | DeepSeek-V4.1-Flash-1017 Planner Adapter & Offline Replay Harness | `feat/gate-5-4-deepseek-planner-replay` | `PASSED` — Layer 4 planner adapter, Layer 1/2 multimodal visual verifier stub, strict epistemic quarantine (`UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE`), 5 locked offline replay fixtures (`0` network calls). |
 | **Gate 5.5** | Unified Final Production Release: Semantic NLQ Expansion, ID-Free Routing, and DeepSeek-V4.1 Integration | `feat/gate-5-5-semantic-nlq` $\rightarrow$ `main` (`e31b8e2`) | `PASSED & MERGED` — Store-derived Semantic Expansion Engine, ID-free `Figure`/`Table` routing, conversational noun-phrase extraction, generalized out-of-scope refusal (`HK-5-1`), 8 locked DeepSeek replay cassettes, 15/15 (100.0%) NLQ benchmark. |
 | **Gate 5.6** | Epistemic Claims Calibration, Coverage Manifest, Latency Telemetry & Conditional Visual Provenance | `feat/gate-5-6-epistemic-manifest-calibration` $\rightarrow$ `main` (`dd22331`, `v1.5.6-gate-5-6-calibrated`) | `PASSED & MERGED` — Whole-standard 190-page coverage manifest (`162` ingested, `28` excluded), empirical latency telemetry ($p_{50}: 55.5\text{ ms}$ offline det, $54.0\text{ ms}$ replay), conditional diagram crop requirement, calibrated epistemic claims, 24/24 locked artifacts. |
-| **Gate 6.0** | **GitOps Branch Reconciliation, Deterministic Welding NER, Callout/Backlink Multi-Intent Router & Whole-Standard Agent Skills** | `feat/gate-6-0-ner-routing-skills` $\rightarrow$ `main` (`v1.6.0-ner-routing-skills`) | **`PASSED & MERGED`** — `origin` pruned `10` $\rightarrow$ `1` clean `main`, character-offset `WeldingNER` (`11` entity types, dynamic `<BASE>-<SUFFIX>` parser, multi-POS/homograph tracking), `1,115`-node Annex B + `96`+ Annex A circle + `492`-edge Clause 4 backlink IDF router, `src.evidence_whole_standard_cli`, modernized `.agents/skills/`, `20/20` (`100.0%`) Gate 6.0 benchmark, `29/29` locked SHA-256 artifacts, `1,475 passed, 8 skipped`. |
+| **Gate 6.0** | GitOps Branch Reconciliation, Deterministic Welding NER, Callout/Backlink Multi-Intent Router & Whole-Standard Agent Skills | `feat/gate-6-0-ner-routing-skills` $\rightarrow$ `main` (`v1.6.0-ner-routing-skills`) | `PASSED & MERGED` — `origin` pruned `10` $\rightarrow$ `1` clean `main`, character-offset `WeldingNER` (`11` entity types, dynamic `<BASE>-<SUFFIX>` parser, multi-POS/homograph tracking), `1,115`-node Annex B + `96`+ Annex A circle + `492`-edge Clause 4 backlink IDF router, `src.evidence_whole_standard_cli`, modernized `.agents/skills/`, `20/20` (`100.0%`) Gate 6.0 benchmark, `29/29` locked SHA-256 artifacts, `1,475 passed, 8 skipped`. |
+| **Gate 6.1** | **Polysemous Welding NER, 3-Tier Compound Grammar & Store-Compiled Semantic Graph Expansion** | `feat/gate-6-1-ner-semantic-graph-expansion` $\rightarrow$ `main` (`v1.6.1-ner-semantic-graph`) | **`PASSED & READY TO MERGE`** — Character-offset polysemous spans (`secondary_entity_types`, `linked_clause4_terms`, `linked_figures`, `linked_tables`), 3-tier compound grammar `<BASE>[-<VAR>][-<MODE>]` (`FCAW-G-SA`, `OFC-A-MA`, invalid code rejection), in-memory `SemanticConceptGraph` (see-also, IS_A subtypes, sibling variations, co-callouts), whole-standard CLI `--expand`, `15/15` (`100.0%`) Gate 6.1 benchmark, `34/34` locked SHA-256 artifacts, `1,482 passed, 8 skipped`. |
 
 ---
 
-## 2. Cryptographic Immutability Ledger (29 Locked Repository Artifacts)
+## 2. Cryptographic Immutability Ledger (34 Locked Repository Artifacts)
 
-All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. `tests/test_gate_5_hardening.py`, `tests/test_gate_5_4_deepseek_adapter.py`, `tests/test_gate_5_5_semantic_nlq.py`, `tests/test_gate_5_6_epistemic_manifest.py`, and `tests/test_gate_6_0_ner_routing_skills.py` enforce exact SHA-256 verification across all 29 locked files:
+All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. `tests/test_gate_5_hardening.py`, `tests/test_gate_5_4_deepseek_adapter.py`, `tests/test_gate_5_5_semantic_nlq.py`, `tests/test_gate_5_6_epistemic_manifest.py`, `tests/test_gate_6_0_ner_routing_skills.py`, and `tests/test_gate_6_1_semantic_graph.py` enforce exact SHA-256 verification across all 34 locked files:
 
 ### Part A: 14 Core Repository & Benchmark Artifacts
 
@@ -86,6 +87,21 @@ All operational, evaluation, and semantic expansion code must treat the canonica
 | 27 | **Gate 6.0 Results** | `storage/evidence_v2/phase6_ner_routing_001/results.json` | `4023b5c13b8265f9a6085399e0176644df8119366ccc3ea920c098159f6ef8a8` | `VERIFIED_LOCKED` |
 | 28 | **Gate 6.0 Compound + Chart Cassette** | `storage/model_replays/deepseek_v4_1_flash_1017/4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed.json` | `b5c11233c5389651c5ff6730ebb56b51e910042d8aada8f5b9ec7752f2c7d057` | `VERIFIED_LOCKED` |
 | 29 | **Gate 6.0 Spatial Callout Cassette** | `storage/model_replays/deepseek_v4_1_flash_1017/7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0.json` | `178e40f106af85fd17e9a949877cf6b0ea3c469516e102efdc017d043635df42` | `VERIFIED_LOCKED` |
+
+### Part E: 3 Gate 6.1 Benchmark Artifacts (Semantic Graph Benchmark)
+
+| # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 30 | **Gate 6.1 Questions** | `storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json` | `aa16b7fcc444ca4c54bed8eb758a35bde3d9e8c3f64afbb7b75b0112ed0f45d7` | `VERIFIED_LOCKED` |
+| 31 | **Gate 6.1 Rubric** | `storage/evidence_v2/phase6_1_semantic_graph_001/rubric.json` | `42e4e8c3d3fa9e7c32b61d1deafa3a5d42a36b72ab0ec2c4465268d3977457d5` | `VERIFIED_LOCKED` |
+| 32 | **Gate 6.1 Results** | `storage/evidence_v2/phase6_1_semantic_graph_001/results.json` | `48b4dc84db39dfe0aa68f0e1610bb3fa8e27be546f0294319a11c9af1cafbccf` | `VERIFIED_LOCKED` |
+
+### Part F: 2 Gate 6.1 DeepSeek Replay Cassettes
+
+| # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 33 | **Gate 6.1 3-Tier + Fusion Cassette** | `storage/model_replays/deepseek_v4_1_flash_1017/a93c3e92000bc19bc6a8f7672c57767205dc0241047f7e2a6f1d00421a71ed81.json` | `22bcf1de364e9ba87b604da2ee3e817516570d972b858616cd80018c9acbf432` | `VERIFIED_LOCKED` |
+| 34 | **Gate 6.1 Compound + Throat Cassette** | `storage/model_replays/deepseek_v4_1_flash_1017/b1548f09c2320a74d640678cd729af098402a7685f4d160f66b0781ccd6d80a1.json` | `72f97e7f8aae9bcef96b16d2f55fea24b9c99ae2068fed3dc8cae8a69efc4993` | `VERIFIED_LOCKED` |
 
 ### Version-Bound Store Immutability Policy
 Cryptographic SHA-256 digests lock each released store version (`*_001`). Verified content corrections or spatial refinements produce a successor version (`*_002`) with a documented migration ledger rather than mutating locked releases in place.
@@ -138,4 +154,15 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable 3 (`src/evidence_whole_standard_cli.py` & `.agents/skills/`):** Whole-standard CLI entry point (`--ner`, `--route`, `--ask`) and updated skill playbooks replacing legacy Figure A1 limitations.
 - [x] **Deliverable 4 (`storage/evidence_v2/phase6_ner_routing_001/` & `eval/run_phase6_ner_routing.py`):** Frozen 20-question Gate 6.0 benchmark scoring **20 / 20 (100.0%)** across compound designations, ID-free callouts, homographs, multi-hop queries, and adversarial boundaries.
 - [x] **Deliverable 5 (29/29 Cryptographic Hash Locks & Regression Suite in `tests/test_gate_6_0_ner_routing_skills.py`):** 24 prior locked hashes + 5 Gate 6.0 artifacts cryptographically locked under CI; full regression suite passing at 1,475 passed, 8 skipped, 0 failures, 0 warnings.
+
+---
+
+## 6. Gate 6.1 Deliverables Checklist (Polysemous NER, 3-Tier Compound Grammar & Semantic Concept Graph Expansion)
+
+- [x] **Deliverable 1 (`src/welding_ner.py`):** Extended `WeldingEntitySpan` with `secondary_entity_types`, `linked_clause4_terms`, `linked_figures`, `linked_tables`, and `ambiguous_senses`; dual-role routing for definitional intent queries.
+- [x] **Deliverable 2 (`src/welding_ner.py`):** 3-tier compound designation parser `<BASE>[-<VAR>][-<MODE>]` with process variations (`FCAW-G-SA`, `OFC-A-MA`), invalid code detection (`FCAW-Z-SA`, `PAW-AU-ME`), and contextual sense resolution for weld positions (`1G`, `1F`) and homographs (`AB`).
+- [x] **Deliverable 3 (`src/semantic_nlq_expander.py`):** Deterministic in-memory `SemanticConceptGraph` tracking `see_also_edges`, `is_a_subtypes`, `sibling_variations`, and diagram co-callouts; bidirectional expansion for throat and angle clusters.
+- [x] **Deliverable 4 (`src/evidence_whole_standard_cli.py` & `src/evidence_phase4_bakeoff.py`):** CLI `--expand` flag returning structured neighborhood, NER receipt, and ranked figures; multi-hop execution branch for compound validation, test positions, disambiguation, and see-also cross references.
+- [x] **Deliverable 5 (34/34 Cryptographic Hash Locks & Regression Suite in `tests/test_gate_6_1_semantic_graph.py`):** 29 prior locked hashes + 3 Gate 6.1 benchmark files + 2 new DeepSeek-V4.1 replay cassettes locked under CI; full regression suite passing at 1,482 passed, 8 skipped, 0 failures, 0 warnings.
+
 

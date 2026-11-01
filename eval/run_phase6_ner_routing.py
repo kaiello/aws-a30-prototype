@@ -31,6 +31,7 @@ from src.evidence_phase4_bakeoff import (
 def evaluate_ner_routing_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
+    write_results: bool = True,
 ) -> Dict[str, Any]:
     """Execute Gate 6.0 20-query NER and routing benchmark against public QA entrypoint."""
     if root is None:
@@ -122,13 +123,15 @@ def evaluate_ner_routing_benchmark(
         "results": results,
     }
 
-    res_file = output_dir / "results.json"
-    res_bytes = json.dumps(output_payload, indent=2).encode("utf-8")
-    res_file.write_bytes(res_bytes)
-    res_sha = hashlib.sha256(res_bytes).hexdigest()
-
-    print(f"Gate 6.0 NER & Routing Benchmark: {passed_count}/{total_q} passed ({pass_rate:.1f}%)")
-    print(f"Results written to: {res_file.relative_to(root)} (SHA-256: {res_sha})")
+    if write_results:
+        res_file = output_dir / "results.json"
+        res_bytes = json.dumps(output_payload, indent=2).encode("utf-8")
+        res_file.write_bytes(res_bytes)
+        res_sha = hashlib.sha256(res_bytes).hexdigest()
+        print(f"Gate 6.0 NER & Routing Benchmark: {passed_count}/{total_q} passed ({pass_rate:.1f}%)")
+        print(f"Results written to: {res_file.relative_to(root)} (SHA-256: {res_sha})")
+    else:
+        print(f"Gate 6.0 NER & Routing Benchmark: {passed_count}/{total_q} passed ({pass_rate:.1f}%) [in-memory]")
 
     return output_payload
 
