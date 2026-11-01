@@ -73,13 +73,20 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
         "docs/roadmap.md",
         "docs/architecture.md",
         "docs/gemini_3_8_flash_gate_review_protocol.md",
+        "GATE_6_1_CHECKOUT_CARD.md",
+        "GATE_6_FULL_AUDIT_BUNDLE.md",
         "GATE_6_0_CHECKOUT_CARD.md",
         "GATE_6_0_NER_ROUTING_SKILLS_CARD.md",
         "GATE_5_FULL_AUDIT_BUNDLE.md",
+        "GATE_4_FULL_AUDIT_BUNDLE.md",
     ]
     for rel in top_level_candidates:
         p = base_dir / rel
         if p.is_file():
+            collected.append(p)
+
+    for p in base_dir.glob("GATE_*.md"):
+        if p.is_file() and p not in collected:
             collected.append(p)
 
     # 2. src/ (.py and .json files, excluding __pycache__)
