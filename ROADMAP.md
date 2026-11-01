@@ -1,43 +1,42 @@
-# AWS A3.0M/A3.0:2020 Figure-by-Figure Multimodal RAG Master Roadmap (`ROADMAP.md`)
+# AWS A3.0M/A3.0:2020 Multimodal RAG Master Roadmap & Cryptographic Invariant Ledger
 
-- **Lead Developing Agent:** `gemini-3.8-flash` (Antigravity Local Execution)
-- **Principal Reviewer & Systems Architect:** Principal Audit Loop (`aws-a30-gate-review` & `aws-a30-lead-developer`)
-- **Target Standard:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions*, 13th Edition, 190 PDF pages)
-- **Source PDF SHA-256:** `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d`
-- **Repository:** `https://github.com/kaiello/aws-a30-prototype`
-- **Google Drive Mirror:** `G:\My Drive\git_projects\aws-a30-prototype` (synced via `python -B -m src.sync_drive_mirror`)
-- **Current Test Suite Baseline:** `1,449 passed, 8 skipped, 0 failures, 0 warnings` (advancing to `1,455+` in Gate 5.3)
-- **Active Milestone:** **Gate 5.3 — Deterministic Store-Derived Semantic Expansion & ID-Free NLQ Hardening** (Final Pre-Merge Extension on `feat/gate-5-production-hardening` $\rightarrow$ `main`)
+**Document Purpose:** Living architectural contract, milestone roadmap, and cryptographic provenance ledger for the AWS A3.0M/A3.0:2020 source-aware multimodal graph ingestion and retrieval system.
 
 ---
 
-## 1. Master Gate Progression & Checkpoint Ledger (Gates 0 $\rightarrow$ 5.3)
+## 1. Project Overview & Gate Status Summary
 
-| Phase / Gate | Target Scope & AWS A3.0 Coordinates | Branch / Merge SHA | Status & Key Verification Metrics |
+- **Standard Document:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions*, 190 PDF pages)
+- **Current Test Suite Baseline:** `1,455+ passed, 8 skipped, 0 failures, 0 warnings`
+- **Active Milestone:** **Gate 5.5 — Unified Final Production Gate: Store-Derived Semantic NLQ Expansion, ID-Free Routing, and DeepSeek-V4.1 Integration** (`feat/gate-5-5-semantic-nlq` $\rightarrow$ `main`)
+- **Canonical Repository:** `C:\Users\kenai\Documents\Codex\2026-10-21\task\aws-a2-source-aware-ingest`
+- **Mirror Destination:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)
+
+### Milestone Progression Register
+
+| Phase / Gate | Milestone Scope & Description | Target Branch / Commit | Review Verdict & Verification Status |
 | :--- | :--- | :--- | :--- |
-| **Gate 0** | Environment, PDF Lock & Coordinate Formula ($\text{printed} = \text{pdf\_index} - 12$) | `43bde2e5` | `PASSED & MERGED` — Locked 190-page PDF SHA-256 (`205fa58e...`). |
-| **Gate 1A** | Archetype 1 Calibration: `Figure A1` (p. 75, PDF 87) & `Figure A2` (p. 76, PDF 88) | `4bc7ab31` | `PASSED & MERGED` — 99 A1 nodes, 127 edges; offline graph & preflight verified. |
-| **Gate 1B** | Phase 1 Live LLM Holdout Closeout (`Figures A1 & A2`) | `11aa384b` $\rightarrow$ `main` `2fbaabd8` | `PASSED & MERGED` — 67/67 live planner calls PASS (51/51 A1, 16/16 A2). |
-| **Gate 2A** | `Figure A3` — Joining Method Chart (p. 76, PDF 88) | `66317d41` $\rightarrow$ `main` `66937d94` | `PASSED & MERGED` — 11 nodes, 10 edges, 0 cycles, 0 `IS_A`; 114/114 unit tests. |
-| **Gate 2B** | `Figure A4` — Fusion Welding Classification Chart (p. 77, PDF 89) | `d1dbf994` $\rightarrow$ `main` `5108cba3` | `PASSED & MERGED` — 66 nodes, 42 edges, 26 process circles, 23 legend rows. |
-| **Gate 2C** | `Figure A5` — Solid-State Welding Classification Chart (p. 78, PDF 90) | `6b2d6265` $\rightarrow$ `main` `e080a709` | `PASSED & MERGED` — 68 nodes, 66 edges, 22 process circles, 15 legend rows; CW/USW/EXW verified. |
-| **Gate 2D** | `Figure A6` — Brazing and Soldering Classification Chart (p. 79, PDF 91) | `47922e81` $\rightarrow$ `main` `e86157c4` | `PASSED & MERGED` — 104 nodes, 102 edges, 48 process circles, 21 legend rows; `AB` collision logged. |
-| **Gate 2E** | Normative `Tables A1–A5` Join & Tier 1/2 Exhaustive Closure (pp. 69–74, PDF 81–86) | `d55eba2` $\rightarrow$ `main` `4bd5d0b` | `PASSED & MERGED` — 138 A1, 133 A2, 134 A3, 6 A4, 13 A5 rows; 564/564 unit tests. |
-| **Gate 2F** | Annex A Live LLM Holdout Closeout (`Figures A1–A6` + `Tables A1–A5`) | `7e48e52` $\rightarrow$ `main` `6fa2cde` | `PASSED & MERGED` — 30/30 (100.0%) unseen holdout PASS, 127 executed ops, 0 blocked actions. |
-| **Gate 3A** | `Clause 4` Glossary + Dual-Provenance `IS_A` + `Annex C/D` (pp. 5–67, 159–170) | `728ceed` $\rightarrow$ `main` `f9ec225` | `PASSED & MERGED` — 1,607 glossary terms, 311 `NONSTANDARD_SYNONYM_OF`, 35 `IS_A` promoted / 83 retained, 21 Annex C clauses, 591 Annex D rows. |
-| **Gate 3B** | Archetype 3 Spatial Callout Calibration: `Figures B1–B6` (pp. 82–89, PDF 94–101) | `d8fb23d` $\rightarrow$ `main` `31d7d65` | `PASSED & MERGED` — 6 figures across 8 pages (34 sub-panels), 55 B1 applicable welds, 86 nodes, 210 edges. |
-| **Gate 3C** | Archetype 4 Waveforms (`B44–B45, B49–B51, B53–B54`) + Complete `Annex B` (`B1–B54`) | `937dad7` $\rightarrow$ `main` | `PASSED & MERGED` — 56 figure units across 76 pages, 80/80 300-DPI crops, 1,115 nodes, 1,917 edges, 265/265 Clause 4 figure back-links. |
+| **Phase 0** | Clause 4 Terms & Definitions (1,607 terms, 61 printed pages) | `feat/gate-3a-clause4-glossary-is-a` | `PASSED & MERGED` — 1,607/1,607 terms parsed; 0 truncation; 100% letter-section coverage. |
+| **Phase 1** | Annex C (Nonstandard Terms) & Annex D (Historical Terms) | `feat/gate-3a-clause4-glossary-is-a` | `PASSED & MERGED` — 100% of nonstandard/historical entries indexed with bidirectional pointers. |
+| **Phase 2** | `IS_A` Semantic Hierarchy Generation (BFO-Lite) | `feat/gate-3a-clause4-glossary-is-a` | `PASSED & MERGED` — 1,607 taxonomy links verified against printed definitions. |
+| **Phase 2F** | Annex A Holdout Evaluation (6 Charts + 5 Tables) | `263bfdb` $\rightarrow$ `main` | `PASSED & MERGED` — 25/25 (100.0%) holdout query PASS across Figures A1–A6 and Tables A1–A5. |
+| **Phase 3A** | Annex B Archetype 3 (B1–B6 Joint Types & Grooves) | `feat/gate-3b-annex-b-archetype3-b1-b6` | `PASSED & MERGED` — Spatial callouts, 180 DPI chips, and 100% coordinate provenance verified. |
+| **Phase 3B** | Annex B Complete Unified Store (B7–B54) | `263bfdb` $\rightarrow$ `main` | `PASSED & MERGED` — 54 figures indexed with Loud-and-Clear multimodal representations. |
+| **Phase 3C** | Annex B Archetype 4 Waveforms (B44–B45, B49–B51, B53–B54) | `263bfdb` $\rightarrow$ `main` | `PASSED & MERGED` — Mathematical parameterization and cycle-interval parsing complete. |
 | **Gate 3D** | Phase 3 Live Holdout Closeout (`Clause 4` + `Annex B` + `Annex C/D` Cross-Modal Suite) | `263bfdb` $\rightarrow$ `main` | `PASSED & MERGED` — 40/40 (100.0%) unseen holdout PASS across 4 balanced 10-question slices (`P3-S1` to `P3-S4`). |
 | **Gate 4** | Whole-Standard Production Bakeoff (`Clause 4` + `Annex A/B/C/D`) | `8dff8b6` $\rightarrow$ `main` `42e9658` | `PASSED & MERGED` — 35/35 (100.0%) production bakeoff PASS across all 5 evaluation dimensions; 1,442 unit tests. |
 | **Gate 4B** | Multi-Hop Cross-Store Retrieval Stress Test (`2–4` Sequential Store Hops) | `feat/gate-4b-multihop-retrieval-stress-test` | `PASSED` — Chained 2–4 sequential store operations with verified `hop_trace` provenance across stores. |
 | **Gate 5.0–5.2** | Production Hardening, AST Zero-Fallback Guard, Adversarial Benchmark & Audit Remediation (`DRIFT-5-1..5-5`) | `e9a5621` (+ `DRIFT-5-1..5-5` fixes on `feat/gate-5-production-hardening`) | `VERIFIED_READY` — 10/10 (`100.0%`) adversarial benchmark (`G5-ADV01..10`), AST zero-fallback guard, 7-target store mutation test, socket-isolated preflight (`CLEAR_WHOLE_STANDARD_CONTRACT`), `1,449 passed, 8 skipped, 0 warnings`. |
-| **Gate 5.3** | **Semantic Query Expansion & ID-Free NLQ Hardening (`src/semantic_nlq_expander.py`)** | `feat/gate-5-production-hardening` $\rightarrow$ `main` | **`ACTIVE FINAL GATE`** — Offline store-derived synonym/alias/abbreviation expansion, ID-free `Figure`/`Table` routing, conversational term extraction, generalized out-of-scope boundary classifier, and 15-query NLQ benchmark (`G53-NLQ01..15`). |
+| **Gate 5.4** | DeepSeek-V4.1-Flash-1017 Planner Adapter & Offline Replay Harness | `feat/gate-5-4-deepseek-planner-replay` | `PASSED` — Layer 4 planner adapter, Layer 1/2 multimodal visual verifier stub, strict epistemic quarantine (`UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE`), 5 locked offline replay fixtures (`0` network calls). |
+| **Gate 5.5** | **Unified Final Production Release: Semantic NLQ Expansion, ID-Free Routing, and DeepSeek-V4.1 Integration** | `feat/gate-5-5-semantic-nlq` $\rightarrow$ `main` | **`FINAL PRODUCTION RELEASE`** — Offline store-derived synonym/alias/abbreviation expansion, ID-free `Figure`/`Table` routing, conversational term extraction, generalized out-of-scope boundary classifier, 3 new DeepSeek NLQ replay fixtures, and 15-query NLQ benchmark (`G55-NLQ01..15`). |
 
 ---
 
-## 2. Cryptographic Immutability Ledger (14 Locked Repository Artifacts)
+## 2. Cryptographic Immutability Ledger (22 Locked Repository Artifacts)
 
-All operational, evaluation, and semantic expansion code in Gate 5 / Gate 5.3 must treat the canonical Phase 0–3 stores and frozen benchmark suites as **100% read-only**. `tests/test_gate_5_hardening.py` and `tests/test_gate_5_3_semantic_nlq.py` enforce exact SHA-256 verification across all 14 locked files:
+All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, and offline model replay cassettes as **100% read-only**. `tests/test_gate_5_hardening.py`, `tests/test_gate_5_4_deepseek_adapter.py`, and `tests/test_gate_5_5_semantic_nlq.py` enforce exact SHA-256 verification across all 22 locked files:
+
+### Part A: 14 Core Repository & Benchmark Artifacts
 
 | # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
 | :---: | :--- | :--- | :--- | :--- |
@@ -52,47 +51,62 @@ All operational, evaluation, and semantic expansion code in Gate 5 / Gate 5.3 mu
 | 9 | **Phase 5 Adversarial Qs** | `storage/evidence_v2/phase5_hardening_001/adversarial_questions.json` | `0d46daec2014562e97ff74ac36c165e1ba263953ef84d0e0080b85aa0c0e39c9` | `VERIFIED_LOCKED` |
 | 10 | **Phase 5 Adversarial Rubric** | `storage/evidence_v2/phase5_hardening_001/rubric.json` | `df71960a443e9b54d2607628d59fa2181df32f49426bb7c3b81108e32e5e7981` | `VERIFIED_LOCKED` |
 | 11 | **Phase 5 Adversarial Results** | `storage/evidence_v2/phase5_hardening_001/results.json` | `92c62b9e2a7479d60b79bcbe88f8d52f03fa8f650d12a1a9d2b5626aab470273` | `VERIFIED_LOCKED` |
-| 12 | **Phase 5.3 NLQ Questions** | `storage/evidence_v2/phase5_3_nlq_001/nlq_questions.json` | `ce97f7a4628d2df9d8a40b29357325696c8299f8ebca53be562ce593e337a641` | `VERIFIED_LOCKED` |
-| 13 | **Phase 5.3 NLQ Rubric** | `storage/evidence_v2/phase5_3_nlq_001/rubric.json` | `824a97cd67faa0ae91cc07cb3d5b4d6d0c8a30c9970566ee2b10fd780c8e60a7` | `VERIFIED_LOCKED` |
-| 14 | **Phase 5.3 NLQ Results** | `storage/evidence_v2/phase5_3_nlq_001/results.json` | `7c42dbbe6272f61bcb07e2f17e5cbd89d64d4e8900c21310fcace84c4994fbcd` | `VERIFIED_LOCKED` |
+| 12 | **Phase 5.5 NLQ Questions** | `storage/evidence_v2/phase5_5_nlq_001/nlq_questions.json` | `ad789f44f36dc60bdf041031e2cddd78b6b92e4750f171af41cb7c63f8769e57` | `VERIFIED_LOCKED` |
+| 13 | **Phase 5.5 NLQ Rubric** | `storage/evidence_v2/phase5_5_nlq_001/rubric.json` | `68cbbdcf4ba8595c15e9c41dd7985d9c65b13d614c18357e9f6ccc4f1af8e77b` | `VERIFIED_LOCKED` |
+| 14 | **Phase 5.5 NLQ Results** | `storage/evidence_v2/phase5_5_nlq_001/results.json` | `df931bfebd19449393444f32cf86e2cd8ff26a2319c6a2e580538840e6128e74` | `VERIFIED_LOCKED` |
+
+### Part B: 8 DeepSeek-V4.1-Flash-1017 Offline Replay Cassettes
+
+| # | Query Topic / Type | Replay Key & Cassette File | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 15 | **Gate 5.4 Figure A2 Query** | `33f775db13a0587d65dd170de053553322749cbf7b4522305cf8602daabc57ef.json` | `59e763ee6dbe1c21c5f90c160e7b6a9d7474c356b4a6606bde801d1684a45d2f` | `VERIFIED_LOCKED` |
+| 16 | **Gate 5.4 Multi-Hop Query** | `8f874e9651d4a5986b59aacf9ffd9a8faea49945156d639226c94415776ea065.json` | `e9b8213dafe57b970f83eb70ba97430d8acf60c75bf325320175df63b7f19079` | `VERIFIED_LOCKED` |
+| 17 | **Gate 5.4 Out-of-Range Rejection** | `a255faf2cc465a328ac6802095f4b3f945048b1304fc37b1e37c34357bf88dce.json` | `5c9d8f18688658d225f6d056dee64d1bf6f75a649854cebbf1277edff59a879d` | `VERIFIED_LOCKED` |
+| 18 | **Gate 5.4 False Premise Refutation** | `afca5b807cf1cf10dd4fca5ed3f174f00a84208f13c2134d93cb9bfcc65a06ce.json` | `6af858c6928ae940966e7f7ef768763eb570ead41cc595caab07005bb1ff4d4a` | `VERIFIED_LOCKED` |
+| 19 | **Gate 5.4 Figure A1 Query** | `b84e96a090b80d799a7d28127ec9304edd116bcec6976f7f7bf69ae0f4e590ea.json` | `d50b483130b30a268433d8c627a78017fe707f9cd0180e2cba6dacb7c7984592` | `VERIFIED_LOCKED` |
+| 20 | **Gate 5.5 ID-Free Waveform (B53)** | `6af589ad1ddedbf0af24de84ad5b0acdae77e506524354a9f4a7eab1edb63c5a.json` | `ae0625dacb0a7541955f46d73cb6a85e2234363bc89a7c5771608d71feb069f2` | `VERIFIED_LOCKED` |
+| 21 | **Gate 5.5 Historical Multi-Hop (AHW)** | `8fdbb05270c87bfc19e04a51c0a71b193fbc3fe68d3bcfb443887f49ce2e2ad8.json` | `e7114838a52b3d965c0c32cd8977f4e1c998bdad0ab07f5987d9b7825ddb134e` | `VERIFIED_LOCKED` |
+| 22 | **Gate 5.5 Out-of-Scope Refusal** | `f02ce6be7d824f18618917bed89d5ef0cc89f93a70afa8ea3d3ec026321870cf.json` | `0513f4d16b5d6f72ae66688414ffce809000cd0e3444a8bea9db8e6ac6420621` | `VERIFIED_LOCKED` |
 
 ---
 
 ## 3. Core Architectural Invariants & Anti-Drift Rules (Enforced in CI)
 
-1. **Zero Question-ID or Benchmark-Literal Hardcoding (`test_gate_5_anti_drift_source_scan` & `test_gate_5_3_anti_drift_and_anti_overfitting`):**
+1. **Zero Question-ID or Benchmark-Literal Hardcoding (`test_gate_5_anti_drift_source_scan`, `test_gate_5_4_anti_drift_regex_coverage`, & `test_gate_5_5_anti_drift_and_anti_overfitting`):**
    - Operational modules (`src/*.py`) and evaluators (`eval/*.py`) must return `0 matches` for any benchmark question ID pattern:
      ```powershell
-     git grep -E "QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+|G53-NLQ[0-9]+" -- src/ eval/*.py
+     git grep -E "QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+|G53-NLQ[0-9]+|G54-[0-9]+|G55-NLQ[0-9]+" -- src/ eval/*.py
      ```
    - Operational modules (`src/*.py`) must return `0 matches` for benchmark-specific trap literals:
      ```powershell
      git grep -Ei "hyper-flux|laser-quantum|cryo-ionic|ASME Section IX|yield strength|E7018" -- src/
      ```
-2. **AST Zero Silent Fallback Guarantee (`test_gate_5_composer_ast_no_silent_string_fallbacks`):**
+2. **Epistemic Quarantine of Model Traces (`src/deepseek_v41_adapter.py`):**
+   - Every `part.reason` emitted by `DeepSeek-V4.1-Flash-1017` is lowered to `PLANNED_REASON` (`""`) in internal wire plans and quarantined in `model_part_metadata` with `authority: "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"`. It never enters final answers or provenance citations.
+   - Multimodal visual candidate observations emitted by `DeepSeekV41VisualCandidateVerifier` strictly carry `verification="candidate"` and `knowledge_eligible=False`.
+3. **AST Zero Silent Fallback Guarantee (`test_gate_5_composer_ast_no_silent_string_fallbacks`):**
    - No composer function may call `.get(key, "non_empty_literal")` to mask missing store data. Missing or corrupted store structures must raise `ValueError("INSUFFICIENT_EVIDENCE: ...")`.
-3. **Whole-Standard Offline Preflight Contract (`src/evidence_whole_standard_preflight.py`):**
-   - `answer_whole_standard_question` executes under `socket.socket` interception (`0` network calls), verifies input immutability, delivers normative page/crop provenance, and confirms all canonical store hashes remain untouched (`CLEAR_WHOLE_STANDARD_CONTRACT`).
+4. **Strict Offline Test & Preflight Isolation (`src/evidence_whole_standard_preflight.py`):**
+   - `answer_whole_standard_question` and `run_deepseek_replay_preflight` execute under `socket.socket` interception (`0` network calls), reading deterministic content-addressed replay fixtures, verifying input immutability, and confirming all canonical store hashes remain untouched (`CLEAR_WHOLE_STANDARD_CONTRACT` / `CLEAR_DEEPSEEK_REPLAY_PREFLIGHT`).
 
 ---
 
-## 4. Gate 5.3 Deliverables & Final Production Closeout Checklist
+## 4. Gate 5.5 Benchmark Slices & Deliverables Checklist
 
-### Gate 5.3 Benchmark Slices (`storage/evidence_v2/phase5_3_nlq_001/nlq_questions.json`)
+### Gate 5.5 Benchmark Slices (`storage/evidence_v2/phase5_5_nlq_001/nlq_questions.json`)
 
 | Slice | Category / Focus | Query IDs | Target Stores & Coverage | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Slice 1** | ID-Free Annex A Chart & Table NLQs | `G53-NLQ01` – `G53-NLQ03` | Table A4, Figure A5, Annex D (Modes, Classification Tree, Obsolete Codes) | `100.0% PASS (3/3)` |
-| **Slice 2** | ID-Free Annex B Visual & Waveform NLQs | `G53-NLQ04` – `G53-NLQ06` | Figures B50, B33, B49 (Pulsed cycles, Edge shapes, Resistance spot waveforms) | `100.0% PASS (3/3)` |
-| **Slice 3** | Historical, Nonstandard & Abbreviation Semantic Expansion | `G53-NLQ07` – `G53-NLQ09` | Clause 4, Annex C/D, Table A1 (`stick electrode` $\rightarrow$ `covered electrode`, `CW` $\rightarrow$ `cold welding`, `AHW` obsolete) | `100.0% PASS (3/3)` |
-| **Slice 4** | Conversational & Morphological Clause 4 + `is_a` NLQs | `G53-NLQ10` – `G53-NLQ12` | Clause 4 glossary + Figure B38 (`kerfs` $\rightarrow$ `kerf`, `undercutting` $\rightarrow$ `undercut`, `coalescence`) | `100.0% PASS (3/3)` |
-| **Slice 5** | Natural-Language Adversarial & Out-of-Scope Traps | `G53-NLQ13` – `G53-NLQ15` | Refusal boundaries (`cryo-ionic` $\rightarrow$ `NOT_IN_STANDARD`, preheat/Charpy $\rightarrow$ `OUT_OF_SCOPE`, SMAW $\rightarrow$ `REFUTED`) | `100.0% PASS (3/3)` |
+| **Slice 1** | ID-Free Annex A Chart & Table NLQs | `G55-NLQ01` – `G55-NLQ03` | Table A4, Figure A5, Table A5 (Application Modes, Classification Tree, Obsolete Codes) | `100.0% PASS (3/3)` |
+| **Slice 2** | ID-Free Annex B Visual & Waveform NLQs | `G55-NLQ04` – `G55-NLQ06` | Figures B53, B7, B49 (Pulsed cycles, Edge shapes, Resistance spot waveforms) | `100.0% PASS (3/3)` |
+| **Slice 3** | Historical, Nonstandard & Abbreviation Semantic Expansion | `G55-NLQ07` – `G55-NLQ09` | Clause 4, Annex C/D, Table A1 (`stick electrode` $\rightarrow$ `covered electrode`, `CW` $\rightarrow$ `cold welding`, `AHW` obsolete) | `100.0% PASS (3/3)` |
+| **Slice 4** | Conversational & Morphological Clause 4 + `is_a` NLQs | `G55-NLQ10` – `G55-NLQ12` | Clause 4 glossary + Figures B41, B32 (`kerfs` $\rightarrow$ `kerf`, `undercutting` $\rightarrow$ `undercut`, `coalescence`) | `100.0% PASS (3/3)` |
+| **Slice 5** | Natural-Language Adversarial & Out-of-Scope Traps | `G55-NLQ13` – `G55-NLQ15` | Refusal boundaries (`cryo-ionic` $\rightarrow$ `NOT_IN_STANDARD`, preheat/Charpy $\rightarrow$ `REFUSAL_OUT_OF_SCOPE`, SMAW $\rightarrow$ `CONTRADICTION_REFUTED`) | `100.0% PASS (3/3)` |
 
-### Gate 5.3 Deliverables Checklist
+### Gate 5.5 Deliverables Checklist
 
-To complete Gate 5.3 and merge `feat/gate-5-production-hardening` into `main`:
-
-- [x] **Deliverable 1 (`src/semantic_nlq_expander.py`):** Build the deterministic, store-derived Semantic Expansion Engine mapping process codes (`Tables A1/A2/A4/A5`), nonstandard terms (`Annex C`), historical terms (`Annex D`), morphological variants (`Clause 4`), and inverted `Figure`/`Table` concept signatures (`Annex A` & `Annex B`) with auditable `semantic_expansion_trace` output.
-- [x] **Deliverable 2 (ID-Free Routing & Conversational Extractor in `src/evidence_phase4_bakeoff.py`):** Enable ID-free routing to `Figures A1–A6`, `Tables A1–A5`, and `Figures B1–B54`; replace `"the term "` prefix stripping with general conversational noun-phrase extraction; generalize out-of-scope refusal logic (`HK-5-1`).
-- [x] **Deliverable 3 (Frozen 15-Query Gate 5.3 NLQ Benchmark):** Create `storage/evidence_v2/phase5_3_nlq_001/{nlq_questions.json, rubric.json, results.json}` and `eval/run_phase5_3_nlq.py`, achieving **15 / 15 (100.0%)** across all 5 NLQ slices (`G53-NLQ01` through `G53-NLQ15`).
-- [ ] **Deliverable 4 (14/14 Artifact Hash Locks & Full Test Suite):** Lock all 14 SHA-256 hashes in `tests/test_gate_5_3_semantic_nlq.py`, verify `0` failures and `0` warnings across all `1,455+` repository tests, rebuild `GATE_5_FULL_AUDIT_BUNDLE.md` via `python -B scripts/build_gate_5_bundle.py`, merge `--no-ff` to `main`, push to `origin`, and run `python -B -m src.sync_drive_mirror`.
+- [x] **Deliverable 1 (`src/semantic_nlq_expander.py`):** Deterministic, store-derived Semantic Expansion Engine mapping process codes (`Tables A1/A2/A4/A5`), nonstandard terms (`Annex C`), historical terms (`Annex D`), morphological variants (`Clause 4`), and inverted `Figure`/`Table` concept signatures (`Annex A` & `Annex B`) with auditable `semantic_expansion_trace` output.
+- [x] **Deliverable 2 (ID-Free Routing & Conversational Extractor in `src/evidence_phase4_bakeoff.py`):** ID-free routing to `Figures A1–A6`, `Tables A1–A5`, and `Figures B1–B54`; conversational noun-phrase extraction; generalized out-of-scope refusal logic (`HK-5-1`).
+- [x] **Deliverable 3 (DeepSeek-V4.1-Flash-1017 Integration in `src/deepseek_v41_adapter.py`):** Full offline replay integration with `plan_with_semantic_expansion`, epistemic quarantine, and 8 content-addressed replay cassettes in `storage/model_replays/deepseek_v4_1_flash_1017/`.
+- [x] **Deliverable 4 (Frozen 15-Query Gate 5.5 NLQ Benchmark):** `storage/evidence_v2/phase5_5_nlq_001/{nlq_questions.json, rubric.json, results.json}` and `eval/run_phase5_5_nlq.py`, achieving **15 / 15 (100.0%)** across all 5 NLQ slices (`G55-NLQ01` through `G55-NLQ15`).
+- [x] **Deliverable 5 (22/22 Artifact Hash Locks & Full Test Suite):** Lock all 14 core project hashes and all 8 DeepSeek replay hashes in `tests/test_gate_5_4_deepseek_adapter.py` and `tests/test_gate_5_5_semantic_nlq.py`, verifying `0` failures and `0` warnings across all `1,455+` repository tests.

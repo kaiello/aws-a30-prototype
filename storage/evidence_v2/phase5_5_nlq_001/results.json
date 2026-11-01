@@ -1,0 +1,847 @@
+{
+  "version": "phase5_5_nlq_results_v1.0",
+  "benchmark_name": "Gate 5.5 Semantic Expansion & ID-Free NLQ Benchmark",
+  "total_queries": 15,
+  "passed": 15,
+  "failed": 0,
+  "pass_rate_percent": 100.0,
+  "results": [
+    {
+      "id": "G55-NLQ01",
+      "category": "id_free_annex_a",
+      "slice_name": "Slice 1 \u2014 ID-Free Annex A Chart & Table NLQs",
+      "query": "What are the standard letter suffixes used to designate manual, mechanized, automatic, and robotic application modes for welding processes?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Table A4\u2014Suffixes for Application Mode of Welding, Joining, and Allied Processes (printed p. 74), six standard suffix letter modifiers are defined: -AD (Adaptive control), -AU (Automatic), -MA (Manual), -ME (Mechanized), -RO (Robotic), -SA (Semiautomatic). The suffix -AU designates Automatic application mode.",
+      "elements_present": [
+        "Table A4",
+        "-MA",
+        "-SA",
+        "-ME",
+        "-AU",
+        "Automatic"
+      ],
+      "normative_provenance": [
+        "obs:pdf:86:table:Table A4"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "suffix_modifiers",
+      "semantic_expansion_trace": {
+        "raw_query": "What are the standard letter suffixes used to designate manual, mechanized, automatic, and robotic application modes for welding processes?",
+        "normalized_query": "what are the standard letter suffixes used to designate manual mechanized automatic and robotic application modes for welding processes",
+        "extracted_candidate_terms": [
+          "the",
+          "mechanized",
+          "automatic",
+          "robotic",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "mechanized",
+            "canonical_term": "mechanized",
+            "source_authority": "Table D2 (p. 168)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "robotic",
+            "canonical_term": "robotic",
+            "source_authority": "Table D3 (p. 169)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "suffixes for application mode",
+            "canonical_term": "Table A4",
+            "source_authority": "Annex A (Table A4)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [
+            "Table A4"
+          ],
+          "clause4_terms": [
+            "mechanized",
+            "automatic",
+            "robotic",
+            "welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ02",
+      "category": "id_free_annex_a",
+      "slice_name": "Slice 1 \u2014 ID-Free Annex A Chart & Table NLQs",
+      "query": "In the solid-state welding classification tree, how does cold welding branch from mechanical energy to pressure and deformation?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Figure A5 (Solid-State Welding Classification Chart, printed p. 79, PDF index 91), cold welding (CW) branches directly from Mechanical energy to Pressure and Deformation, completely bypassing the Thermal Source characteristic column (branch summary: Mechanical -> [No Thermal Source Box] -> Pressure Deformation -> [No Shielding] -> CW).",
+      "elements_present": [
+        "Figure A5",
+        "cold welding",
+        "CW",
+        "Mechanical",
+        "Deformation"
+      ],
+      "normative_provenance": [
+        "obs:pdf:91:figure:Figure A5"
+      ],
+      "target_division": "Annex A Charts",
+      "intent": "branching",
+      "semantic_expansion_trace": {
+        "raw_query": "In the solid-state welding classification tree, how does cold welding branch from mechanical energy to pressure and deformation?",
+        "normalized_query": "in the solid-state welding classification tree how does cold welding branch from mechanical energy to pressure and deformation",
+        "extracted_candidate_terms": [
+          "solid-state welding",
+          "cold welding",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "solid-state welding classification tree",
+            "canonical_term": "Figure A5",
+            "source_authority": "Annex A (Figure A5)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure A5"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "solid-state welding",
+            "cold welding",
+            "welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ03",
+      "category": "id_free_annex_a",
+      "slice_name": "Slice 1 \u2014 ID-Free Annex A Chart & Table NLQs",
+      "query": "Which obsolete or discontinued process designations include atomic hydrogen welding and forge welding?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Table A5 (Obsolete or Seldom Used Processes, printed p. 74), exactly 13 obsolete or seldom used processes are cataloged. Among them, atomic hydrogen welding is assigned the letter designation AHW, and forge welding is assigned the letter designation FOW.",
+      "elements_present": [
+        "Table A5",
+        "13",
+        "AHW",
+        "FOW",
+        "atomic hydrogen welding"
+      ],
+      "normative_provenance": [
+        "obs:pdf:86:table:Table A5",
+        "obs:pdf:83:table:Table A2"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "obsolete_processes",
+      "semantic_expansion_trace": {
+        "raw_query": "Which obsolete or discontinued process designations include atomic hydrogen welding and forge welding?",
+        "normalized_query": "which obsolete or discontinued process designations include atomic hydrogen welding and forge welding",
+        "extracted_candidate_terms": [
+          "atomic hydrogen welding",
+          "forge welding",
+          "welding",
+          "process"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "atomic hydrogen welding",
+            "canonical_term": "atomic hydrogen welding",
+            "source_authority": "Table A5 (p. 74)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "obsolete process designations",
+            "canonical_term": "Table A5",
+            "source_authority": "Annex A (Table A5)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [
+            "Table A5"
+          ],
+          "clause4_terms": [
+            "atomic hydrogen welding",
+            "forge welding",
+            "welding",
+            "process"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ04",
+      "category": "id_free_annex_b",
+      "slice_name": "Slice 2 \u2014 ID-Free Annex B Visual & Waveform NLQs",
+      "query": "Which waveform diagram illustrates upslope and downslope current intervals for pulsed welding cycles?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Figure B53 (An Example of a Welding Cycle for Pulsed Welding, printed p. 157), the diagram illustrates an example of a welding cycle for pulsed welding. Its parameter traces plotted against time include: WELDING CURRENT, ARC VOLTAGE, WIRE FEED SPEED, TRAVEL SPEED, SHIELDING GAS FLOW. The upslope and downslope current intervals define transition timing: UPSLOPE TIME transitions current up to WELD TIME (comprising HIGH PULSE TIME and LOW PULSE TIME), while DOWNSLOPE TIME transitions current down toward crater fill and POSTFLOW TIME.",
+      "elements_present": [
+        "Figure B53",
+        "WELDING CURRENT",
+        "ARC VOLTAGE",
+        "WIRE FEED SPEED",
+        "TRAVEL SPEED",
+        "SHIELDING GAS FLOW",
+        "HIGH PULSE TIME",
+        "LOW PULSE TIME",
+        "UPSLOPE TIME",
+        "DOWNSLOPE TIME"
+      ],
+      "normative_provenance": [
+        "obs:pdf:169:figure:Figure B53"
+      ],
+      "target_division": "Figure B53",
+      "intent": "waveform",
+      "semantic_expansion_trace": {
+        "raw_query": "Which waveform diagram illustrates upslope and downslope current intervals for pulsed welding cycles?",
+        "normalized_query": "which waveform diagram illustrates upslope and downslope current intervals for pulsed welding cycles",
+        "extracted_candidate_terms": [
+          "pulsed welding",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "pulsed welding",
+            "canonical_term": "pulsed welding",
+            "source_authority": "Table D1 (p. 166)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "pulsed welding",
+            "canonical_term": "Figure B53",
+            "source_authority": "Annex B (Figure B53)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure B53"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "pulsed welding",
+            "welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ05",
+      "category": "id_free_annex_b",
+      "slice_name": "Slice 2 \u2014 ID-Free Annex B Visual & Waveform NLQs",
+      "query": "Which diagram illustrates standard edge shapes such as square, bevel, chamfer, and round edge preparations?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Figure B7 (Edge Shapes, printed p. 90, PDF index 102), AWS A3.0M/A3.0:2020 illustrates standard edge shapes for joint preparation prior to welding, including square edge shape, bevel edge shape, chamfer edge shape, flanged edge shape, and round edge shape across workpiece configurations.",
+      "elements_present": [
+        "Figure B7",
+        "Edge Shapes",
+        "square",
+        "bevel",
+        "chamfer",
+        "round"
+      ],
+      "normative_provenance": [
+        "obs:pdf:102:figure:Figure B7"
+      ],
+      "target_division": "Figure B7",
+      "intent": "spatial_callout",
+      "semantic_expansion_trace": {
+        "raw_query": "Which diagram illustrates standard edge shapes such as square, bevel, chamfer, and round edge preparations?",
+        "normalized_query": "which diagram illustrates standard edge shapes such as square bevel chamfer and round edge preparations",
+        "extracted_candidate_terms": [
+          "bevel"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "edge shapes",
+            "canonical_term": "Figure B7",
+            "source_authority": "Annex B (Figure B7)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure B7"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "bevel"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ06",
+      "category": "id_free_annex_b",
+      "slice_name": "Slice 2 \u2014 ID-Free Annex B Visual & Waveform NLQs",
+      "query": "In resistance spot welding waveforms, what intervals occur during a pulsation welding cycle?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Figure B49 (Example of a Pulsation Welding Waveform for Resistance Spot Welding, printed p. 153), the synchronized vertical traces plotted against the horizontal TIME axis are RESISTANCE WELDING CURRENT and ELECTRODE FORCE. During the resistance spot pulsation welding cycle, the intervals include SQUEEZE TIME, PREHEAT TIME, UPSLOPE TIME, WELD INTERVAL (containing repeating HEAT TIME and COOL TIME cycles), DOWNSLOPE TIME, QUENCH TIME, TEMPER TIME, HOLD TIME, and OFF TIME.",
+      "elements_present": [
+        "Figure B49",
+        "TIME",
+        "RESISTANCE WELDING CURRENT",
+        "ELECTRODE FORCE",
+        "HEAT TIME",
+        "COOL TIME",
+        "WELD INTERVAL",
+        "HOLD TIME"
+      ],
+      "normative_provenance": [
+        "obs:pdf:165:figure:Figure B49"
+      ],
+      "target_division": "Figure B49",
+      "intent": "waveform",
+      "semantic_expansion_trace": {
+        "raw_query": "In resistance spot welding waveforms, what intervals occur during a pulsation welding cycle?",
+        "normalized_query": "in resistance spot welding waveforms what intervals occur during a pulsation welding cycle",
+        "extracted_candidate_terms": [
+          "resistance spot welding",
+          "pulsation welding",
+          "welding cycle",
+          "welding",
+          "cycle"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "pulsation welding",
+            "canonical_term": "pulsation welding",
+            "source_authority": "Table D1 (p. 166)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "cycle",
+            "canonical_term": "cycle",
+            "source_authority": "Table D1 (p. 165)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "pulsation welding",
+            "canonical_term": "Figure B49",
+            "source_authority": "Annex B (Figure B49)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure B49"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "resistance spot welding",
+            "pulsation welding",
+            "welding cycle",
+            "welding",
+            "cycle"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ07",
+      "category": "semantic_expansion",
+      "slice_name": "Slice 3 \u2014 Historical, Nonstandard & Abbreviation Semantic Expansion",
+      "query": "What is the preferred standard term for the shop-floor term stick electrode, and what process does it relate to?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Clause 4 and Annex C of AWS A3.0M/A3.0:2020, 'stick electrode' is a nonstandard shop-floor term printed in lightface type that redirects to the preferred standard term covered electrode. In the context of welding processes, 'stick electrode welding' redirects to the preferred standard term shielded metal arc welding (SMAW).",
+      "elements_present": [
+        "nonstandard",
+        "covered electrode",
+        "shielded metal arc welding",
+        "SMAW"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p57:stick_electrode",
+        "obs:table_a1:p69:smaw"
+      ],
+      "target_division": "Clause 4",
+      "intent": "nonstandard_term",
+      "semantic_expansion_trace": {
+        "raw_query": "What is the preferred standard term for the shop-floor term stick electrode, and what process does it relate to?",
+        "normalized_query": "what is the preferred standard term for the shop-floor term stick electrode and what process does it relate to",
+        "extracted_candidate_terms": [
+          "preferred",
+          "stick electrode",
+          "electrode",
+          "process"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "stick electrode",
+            "canonical_term": "covered electrode",
+            "source_authority": "Clause 4 (p. 57) / Annex C",
+            "resolution_type": "NONSTANDARD_TERM"
+          },
+          {
+            "surface_span": "electrode",
+            "canonical_term": "electrode",
+            "source_authority": "Table D3 (p. 169)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "covered electrode",
+            "stick electrode",
+            "electrode",
+            "process"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ08",
+      "category": "semantic_expansion",
+      "slice_name": "Slice 3 \u2014 Historical, Nonstandard & Abbreviation Semantic Expansion",
+      "query": "What does the abbreviation CW stand for, and under which major process group is it classified?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "Per Table A1 (printed p. 70) and Figure A5 (printed p. 79) of AWS A3.0M/A3.0:2020, the letter designation 'CW' stands for cold welding. Cold welding is classified under the Solid-State Welding major process group, where it branches directly from mechanical energy to pressure and deformation.",
+      "elements_present": [
+        "CW",
+        "cold welding",
+        "Solid-State Welding",
+        "Table A1",
+        "Figure A5"
+      ],
+      "normative_provenance": [
+        "obs:pdf:82:table:Table A1",
+        "obs:pdf:91:figure:Figure A5"
+      ],
+      "target_division": "Clause 4",
+      "intent": "definition",
+      "semantic_expansion_trace": {
+        "raw_query": "What does the abbreviation CW stand for, and under which major process group is it classified?",
+        "normalized_query": "what does the abbreviation cw stand for and under which major process group is it classified",
+        "extracted_candidate_terms": [
+          "cw",
+          "process"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "CW",
+            "canonical_term": "cold welding",
+            "source_authority": "Table A1 (p. 70)",
+            "resolution_type": "ABBREVIATION"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "cold welding",
+            "process"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ09",
+      "category": "semantic_expansion",
+      "slice_name": "Slice 3 \u2014 Historical, Nonstandard & Abbreviation Semantic Expansion",
+      "query": "Is atomic hydrogen welding an active process in the standard or is it obsolete, and what was its letter designation?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Table A5 (Obsolete or Seldom Used Processes, printed p. 74), exactly 13 obsolete or seldom used processes are cataloged. Among them, atomic hydrogen welding is assigned the letter designation AHW, and forge welding is assigned the letter designation FOW.",
+      "elements_present": [
+        "Table A5",
+        "13",
+        "AHW",
+        "FOW",
+        "atomic hydrogen welding"
+      ],
+      "normative_provenance": [
+        "obs:pdf:86:table:Table A5",
+        "obs:pdf:83:table:Table A2"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "obsolete_processes",
+      "semantic_expansion_trace": {
+        "raw_query": "Is atomic hydrogen welding an active process in the standard or is it obsolete, and what was its letter designation?",
+        "normalized_query": "is atomic hydrogen welding an active process in the standard or is it obsolete and what was its letter designation",
+        "extracted_candidate_terms": [
+          "atomic hydrogen welding",
+          "welding",
+          "process"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "atomic hydrogen welding",
+            "canonical_term": "atomic hydrogen welding",
+            "source_authority": "Table A5 (p. 74)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "atomic hydrogen welding",
+            "welding",
+            "process"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ10",
+      "category": "conversational_morphology",
+      "slice_name": "Slice 4 \u2014 Conversational & Morphological Clause 4 + is_a NLQs",
+      "query": "How are kerfs defined in the standard, and which figure illustrates them?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Clause 4 (printed p. 35), 'kerf' is defined as: \"The gap produced by a cutting process. See Figure B41.\" (printed p. 35). It cross-references Figure B41.",
+      "elements_present": [
+        "kerf",
+        "kerf",
+        "Figure B41",
+        "B41"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p35:kerf"
+      ],
+      "target_division": "Clause 4",
+      "intent": "figure_cross_reference",
+      "semantic_expansion_trace": {
+        "raw_query": "How are kerfs defined in the standard, and which figure illustrates them?",
+        "normalized_query": "how are kerfs defined in the standard and which figure illustrates them",
+        "extracted_candidate_terms": [
+          "kerfs"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "kerfs",
+            "canonical_term": "kerf",
+            "source_authority": "Clause 4 (Lexicon Morphology)",
+            "resolution_type": "MORPHOLOGICAL"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "kerf"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ11",
+      "category": "conversational_morphology",
+      "slice_name": "Slice 4 \u2014 Conversational & Morphological Clause 4 + is_a NLQs",
+      "query": "What does AWS A3.0 mean by undercutting, and is it classified as a weld discontinuity?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Clause 4 (printed p. 61) of AWS A3.0M/A3.0:2020, undercutting refers to the standard term undercut, defined as: 'A groove melted into the base metal adjacent to the weld toe or weld root and left unfilled by weld metal. See Figures B32(C) and B32(D).' Undercut is classified as a weld discontinuity and cross-references Figure B32.",
+      "elements_present": [
+        "undercut",
+        "groove melted into the base metal",
+        "weld discontinuity",
+        "Figure B32"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p61:undercut"
+      ],
+      "target_division": "Clause 4",
+      "intent": "definition",
+      "semantic_expansion_trace": {
+        "raw_query": "What does AWS A3.0 mean by undercutting, and is it classified as a weld discontinuity?",
+        "normalized_query": "what does aws a3 0 mean by undercutting and is it classified as a weld discontinuity",
+        "extracted_candidate_terms": [
+          "discontinuity",
+          "weld"
+        ],
+        "alias_expansions": [],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "discontinuity",
+            "weld"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ12",
+      "category": "conversational_morphology",
+      "slice_name": "Slice 4 \u2014 Conversational & Morphological Clause 4 + is_a NLQs",
+      "query": "Could you explain what is meant by coalescence in the context of welding processes?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Clause 4 (printed p. 15) of AWS A3.0M/A3.0:2020, coalescence is defined as: 'The growing together or growth into one body of the materials being joined.' Coalescence is the fundamental physical criterion defining welding, brazing, and solid-state joining processes.",
+      "elements_present": [
+        "coalescence",
+        "growing together or growth into one body"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p15:coalescence"
+      ],
+      "target_division": "Clause 4",
+      "intent": "definition",
+      "semantic_expansion_trace": {
+        "raw_query": "Could you explain what is meant by coalescence in the context of welding processes?",
+        "normalized_query": "could you explain what is meant by coalescence in the context of welding processes",
+        "extracted_candidate_terms": [
+          "coalescence",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "coalescence",
+            "welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ13",
+      "category": "adversarial_traps",
+      "slice_name": "Slice 5 \u2014 Natural-Language Adversarial & Out-of-Scope Traps",
+      "query": "Is cryo-ionic brazing defined anywhere in AWS A3.0?",
+      "actual_status": "NOT_IN_STANDARD",
+      "expected_status": "NOT_IN_STANDARD",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "The term is not defined in AWS A3.0M/A3.0:2020 Clause 4 terms and definitions.",
+      "elements_present": [
+        "not defined",
+        "AWS A3.0M/A3.0:2020 Clause 4"
+      ],
+      "normative_provenance": [
+        "obs:clause4:glossary"
+      ],
+      "target_division": "Clause 4",
+      "intent": "definition",
+      "semantic_expansion_trace": {
+        "raw_query": "Is cryo-ionic brazing defined anywhere in AWS A3.0?",
+        "normalized_query": "is cryo-ionic brazing defined anywhere in aws a3 0",
+        "extracted_candidate_terms": [
+          "cryo-ionic brazing",
+          "brazing"
+        ],
+        "alias_expansions": [],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "brazing"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ14",
+      "category": "adversarial_traps",
+      "slice_name": "Slice 5 \u2014 Natural-Language Adversarial & Out-of-Scope Traps",
+      "query": "What preheat temperature and Charpy impact toughness are specified for structural steel?",
+      "actual_status": "REFUSAL_OUT_OF_SCOPE",
+      "expected_status": "REFUSAL_OUT_OF_SCOPE",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "The query is outside the scope of AWS A3.0M/A3.0:2020 (Standard Welding Terms and Definitions). Mechanical material properties and external boiler code designations are not specified in this terminology standard. Quantitative mechanical properties (tensile and yield values, elongation, Charpy V-notch toughness, hardness) and filler metal chemical composition limits are material specification requirements governed by filler metal and base material standards (e.g., AWS A5 series, ASTM), not terminology definitions.",
+      "elements_present": [
+        "outside the scope",
+        "AWS A3.0M/A3.0:2020",
+        "terminology standard"
+      ],
+      "normative_provenance": [
+        "obs:clause1:scope"
+      ],
+      "target_division": "Clause 4",
+      "intent": "definition",
+      "semantic_expansion_trace": {
+        "raw_query": "What preheat temperature and Charpy impact toughness are specified for structural steel?",
+        "normalized_query": "what preheat temperature and charpy impact toughness are specified for structural steel",
+        "extracted_candidate_terms": [
+          "preheat temperature",
+          "preheat"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "preheat temperature",
+            "canonical_term": "preheat temperature",
+            "source_authority": "Table D2 (p. 168)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "preheat temperature",
+            "preheat"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G55-NLQ15",
+      "category": "adversarial_traps",
+      "slice_name": "Slice 5 \u2014 Natural-Language Adversarial & Out-of-Scope Traps",
+      "query": "Why is shielded metal arc welding categorized under solid-state welding rather than fusion welding in AWS A3.0?",
+      "actual_status": "CONTRADICTION_REFUTED",
+      "expected_status": "CONTRADICTION_REFUTED",
+      "status_match": true,
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "Contradiction detected: Shielded metal arc welding (SMAW) is not classified under Solid-State Welding. In Figure A4 (printed p. 78), SMAW is classified under Fusion Welding with an Electrical energy source and Arc thermal source.",
+      "elements_present": [
+        "Contradiction",
+        "Fusion Welding",
+        "Arc",
+        "Figure A4"
+      ],
+      "normative_provenance": [
+        "obs:pdf:90:figure:Figure A4"
+      ],
+      "target_division": "Clause 4",
+      "intent": "definition",
+      "semantic_expansion_trace": {
+        "raw_query": "Why is shielded metal arc welding categorized under solid-state welding rather than fusion welding in AWS A3.0?",
+        "normalized_query": "why is shielded metal arc welding categorized under solid-state welding rather than fusion welding in aws a3 0",
+        "extracted_candidate_terms": [
+          "shielded metal arc welding",
+          "solid-state welding",
+          "fusion welding",
+          "arc welding",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "shielded metal arc welding",
+            "solid-state welding",
+            "fusion welding",
+            "arc welding",
+            "welding"
+          ]
+        }
+      }
+    }
+  ]
+}

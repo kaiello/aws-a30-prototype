@@ -188,3 +188,43 @@ def test_deepseek_v41_canonical_stores_unmutated():
                 h.update(chunk)
         actual_hash = h.hexdigest()
         assert actual_hash == expected_hash, f"Canonical store mutated: {rel_path}"
+
+
+LOCKED_GATE_5_4_REPLAY_HASHES = {
+    "storage/model_replays/deepseek_v4_1_flash_1017/33f775db13a0587d65dd170de053553322749cbf7b4522305cf8602daabc57ef.json": "59e763ee6dbe1c21c5f90c160e7b6a9d7474c356b4a6606bde801d1684a45d2f",
+    "storage/model_replays/deepseek_v4_1_flash_1017/8f874e9651d4a5986b59aacf9ffd9a8faea49945156d639226c94415776ea065.json": "e9b8213dafe57b970f83eb70ba97430d8acf60c75bf325320175df63b7f19079",
+    "storage/model_replays/deepseek_v4_1_flash_1017/a255faf2cc465a328ac6802095f4b3f945048b1304fc37b1e37c34357bf88dce.json": "5c9d8f18688658d225f6d056dee64d1bf6f75a649854cebbf1277edff59a879d",
+    "storage/model_replays/deepseek_v4_1_flash_1017/afca5b807cf1cf10dd4fca5ed3f174f00a84208f13c2134d93cb9bfcc65a06ce.json": "6af858c6928ae940966e7f7ef768763eb570ead41cc595caab07005bb1ff4d4a",
+    "storage/model_replays/deepseek_v4_1_flash_1017/b84e96a090b80d799a7d28127ec9304edd116bcec6976f7f7bf69ae0f4e590ea.json": "d50b483130b30a268433d8c627a78017fe707f9cd0180e2cba6dacb7c7984592",
+}
+
+
+def test_deepseek_v41_replay_cassettes_locked():
+    """Verify all 5 Gate 5.4 DeepSeek replay cassettes match locked SHA-256 digests."""
+    for rel_path, expected_hash in LOCKED_GATE_5_4_REPLAY_HASHES.items():
+        file_path = ROOT / rel_path
+        assert file_path.exists(), f"Replay cassette missing: {rel_path}"
+        actual_hash = hashlib.sha256(file_path.read_bytes()).hexdigest()
+        assert actual_hash == expected_hash, f"Replay cassette mutated: {rel_path}"
+
+
+def test_deepseek_v41_anti_drift_regex_coverage():
+    """Verify anti-drift pattern scans all question ID families including Gate 5.4 and Gate 5.5."""
+    import re
+    regex_pattern = r"QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+|G53-NLQ[0-9]+|G54-[0-9]+|G55-NLQ[0-9]+"
+    forbidden_literals_re = re.compile(
+        r"hyper-flux|laser-quantum|cryo-ionic|ASME\s+Section\s+IX|yield\s+strength|E7018",
+        re.IGNORECASE,
+    )
+
+    targets = [ROOT / "src/deepseek_v41_adapter.py"]
+    violations = []
+    for target in targets:
+        text = target.read_text(encoding="utf-8", errors="ignore")
+        for i, line in enumerate(text.splitlines(), 1):
+            if re.search(regex_pattern, line):
+                violations.append(f"{target.relative_to(ROOT)}:{i}: {line.strip()}")
+            if forbidden_literals_re.search(line):
+                violations.append(f"Forbidden literal in {target.relative_to(ROOT)}:{i}: {line.strip()}")
+
+    assert not violations, "Anti-drift or anti-overfitting violations in DeepSeek adapter:\n" + "\n".join(violations)

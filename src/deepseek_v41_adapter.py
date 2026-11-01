@@ -195,6 +195,14 @@ class DeepSeekV41PlannerAdapter:
             raise ValueError(f"INSUFFICIENT_EVIDENCE: Replay payload for {replay_key} is not a valid JSON plan")
 
         plan = deepcopy(parsed_plan)
+        if "reason" in plan and plan.get("epistemic_tag") != EPISTEMIC_TAG:
+            plan["epistemic_tag"] = EPISTEMIC_TAG
+
+        from src.semantic_nlq_expander import get_semantic_expander
+        expander = get_semantic_expander(stores=stores, root=self.root)
+        trace = expander.expand_query(question_text)
+        plan["semantic_expansion_trace"] = trace.to_dict()
+
         plan["receipt_metadata"] = {
             "planner": "DeepSeekV41PlannerAdapter",
             "model": self.config.model_id,
@@ -208,6 +216,15 @@ class DeepSeekV41PlannerAdapter:
         }
         self.calls.append(plan["receipt_metadata"])
         return plan
+
+    def plan_with_semantic_expansion(
+        self,
+        query: str,
+        req_dir: Optional[Path] = None,
+        stores: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """Enrich query planning with semantic expansion trace while quarantining model trace reason."""
+        return self.plan_whole_standard_question(query, req_dir=req_dir, stores=stores)
 
 
 class DeepSeekV41LocalQuestionPlanner(LocalQuestionPlanner):

@@ -1,4 +1,4 @@
-"""Script to generate GATE_5_FULL_AUDIT_BUNDLE.md dynamically for Gate 5 review."""
+"""Script to generate GATE_5_FULL_AUDIT_BUNDLE.md dynamically for Gate 5 / 5.4 / 5.5 review."""
 import datetime
 import hashlib
 import json
@@ -9,7 +9,11 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from src.evidence_whole_standard_preflight import run_whole_standard_preflight, LOCKED_STORE_HASHES
+from src.evidence_whole_standard_preflight import (
+    run_whole_standard_preflight,
+    run_deepseek_replay_preflight,
+    LOCKED_STORE_HASHES,
+)
 
 FILES = [
     "storage/gate_reviews/gate_5_review_packet.md",
@@ -17,10 +21,18 @@ FILES = [
     "storage/evidence_v2/phase5_hardening_001/adversarial_questions.json",
     "storage/evidence_v2/phase5_hardening_001/rubric.json",
     "storage/evidence_v2/phase5_hardening_001/results.json",
+    "storage/evidence_v2/phase5_5_nlq_001/nlq_questions.json",
+    "storage/evidence_v2/phase5_5_nlq_001/rubric.json",
+    "storage/evidence_v2/phase5_5_nlq_001/results.json",
     "src/evidence_whole_standard_preflight.py",
-    "tests/test_gate_5_hardening.py",
-    "eval/run_phase5_hardening.py",
+    "src/deepseek_v41_adapter.py",
+    "src/semantic_nlq_expander.py",
     "src/evidence_phase4_bakeoff.py",
+    "eval/run_phase5_hardening.py",
+    "eval/run_phase5_5_nlq.py",
+    "tests/test_gate_5_hardening.py",
+    "tests/test_gate_5_4_deepseek_adapter.py",
+    "tests/test_gate_5_5_semantic_nlq.py",
     "tests/test_gate_4_production_bakeoff.py",
     "docs/FULL_PROMPT.md",
 ]
@@ -38,8 +50,11 @@ def main():
     branch, commit, is_clean = get_git_info()
     timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
-    # Dynamic preflight check
+    # Dynamic whole-standard preflight check
     preflight_res = run_whole_standard_preflight(ROOT)
+
+    # Dynamic deepseek replay preflight check
+    deepseek_preflight = run_deepseek_replay_preflight(ROOT)
 
     # Dynamic adversarial benchmark summary
     adv_res_file = ROOT / "storage/evidence_v2/phase5_hardening_001/results.json"
@@ -49,6 +64,14 @@ def main():
     else:
         adv_summary = "N/A"
 
+    # Dynamic NLQ benchmark summary
+    nlq_res_file = ROOT / "storage/evidence_v2/phase5_5_nlq_001/results.json"
+    if nlq_res_file.exists():
+        nlq_data = json.loads(nlq_res_file.read_text(encoding="utf-8"))
+        nlq_summary = f"{nlq_data['passed']} / {nlq_data['total_queries']} ({nlq_data['pass_rate_percent']:.1f}%)"
+    else:
+        nlq_summary = "N/A"
+
     # Dynamic canonical store check
     store_status = "ALL_7_VERIFIED_LOCKED"
     for rel_p, exp_h in LOCKED_STORE_HASHES.items():
@@ -57,14 +80,16 @@ def main():
             store_status = f"CORRUPTED_{rel_p}"
             break
 
-    header = f"""# GATE 5 CONSOLIDATED FULL AUDIT BUNDLE (PRODUCTION HARDENING & SUGGESTION REMEDIATION)
-Generated for Principal Reviewer Gate 5 Hardening & Invariant Defense Audit.
-Standard: AWS A3.0M/A3.0:2020 | Gate: Gate 5 | Branch: {branch}
+    header = f"""# GATE 5 CONSOLIDATED FULL AUDIT BUNDLE (FINAL PRODUCTION RELEASE: HARDENING, DEEPSEEK V4.1 & SEMANTIC NLQ)
+Generated for Principal Reviewer Gate 5 / 5.4 / 5.5 Production Release Audit.
+Standard: AWS A3.0M/A3.0:2020 | Gate: Gate 5.5 | Branch: {branch}
 Build Commit SHA: {commit} | Timestamp: {timestamp}
 Working Tree Tracked Codebase: {"CLEAN" if is_clean else "MODIFIED"}
 Canonical Stores: {store_status} (7/7 historical hashes match locked digests)
-Preflight Contract: {preflight_res['status']} ({preflight_res['network_calls']} network calls, offline verified)
+Whole-Standard Preflight Contract: {preflight_res['status']} ({preflight_res['network_calls']} network calls, offline verified)
+DeepSeek-V4.1 Replay Preflight: {deepseek_preflight['status']} ({deepseek_preflight['network_calls']} network calls, epistemic quarantine verified)
 Adversarial Suite: {adv_summary} passed exact refusal/refutation rubric
+NLQ Benchmark Suite: {nlq_summary} passed exact store-derived semantic expansion rubric
 """
 
     lines = [header.strip(), ""]

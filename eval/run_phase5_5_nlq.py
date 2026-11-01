@@ -1,4 +1,4 @@
-"""Evaluation runner for Gate 5.3: Semantic Expansion & ID-Free NLQ Hardening.
+"""Evaluation runner for Gate 5.5: Semantic Expansion & ID-Free NLQ Hardening.
 
 Runs 15 natural language queries across 5 distinct slices against
 answer_whole_standard_question to prove deterministic semantic query expansion,
@@ -28,11 +28,11 @@ def evaluate_nlq_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
 ) -> Dict[str, Any]:
-    """Execute Gate 5.3 15-query NLQ benchmark against public QA entrypoint."""
+    """Execute Gate 5.5 15-query NLQ benchmark against public QA entrypoint."""
     if root is None:
         root = ROOT
     if output_dir is None:
-        output_dir = root / "storage/evidence_v2/phase5_3_nlq_001"
+        output_dir = root / "storage/evidence_v2/phase5_5_nlq_001"
 
     q_file = output_dir / "nlq_questions.json"
     r_file = output_dir / "rubric.json"
@@ -97,8 +97,8 @@ def evaluate_nlq_benchmark(
     pass_rate = (passed_count / total_q) * 100.0 if total_q > 0 else 0.0
 
     output_payload = {
-        "version": "phase5_3_nlq_results_v1.0",
-        "benchmark_name": "Gate 5.3 Semantic Expansion & ID-Free NLQ Benchmark",
+        "version": "phase5_5_nlq_results_v1.0",
+        "benchmark_name": "Gate 5.5 Semantic Expansion & ID-Free NLQ Benchmark",
         "total_queries": total_q,
         "passed": passed_count,
         "failed": total_q - passed_count,
@@ -118,14 +118,14 @@ def evaluate_nlq_benchmark(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run Gate 5.3 NLQ Benchmark")
+    parser = argparse.ArgumentParser(description="Run Gate 5.5 NLQ Benchmark")
     parser.add_argument("--root", type=Path, default=ROOT, help="Project root directory")
     parser.add_argument("--output-dir", type=Path, default=None, help="Output benchmark directory")
     args = parser.parse_args()
 
     payload = evaluate_nlq_benchmark(root=args.root, output_dir=args.output_dir)
-    print(f"Gate 5.3 NLQ Benchmark: {payload['passed']}/{payload['total_queries']} passed ({payload['pass_rate_percent']:.1f}%)")
-    print(f"Results written to: storage/evidence_v2/phase5_3_nlq_001/results.json (SHA-256: {payload['results_sha256']})")
+    print(f"Gate 5.5 NLQ Benchmark: {payload['passed']}/{payload['total_queries']} passed ({payload['pass_rate_percent']:.1f}%)")
+    print(f"Results written to: storage/evidence_v2/phase5_5_nlq_001/results.json (SHA-256: {payload['results_sha256']})")
 
     if payload["failed"] > 0:
         sys.exit(1)

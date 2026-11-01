@@ -147,7 +147,7 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
                 # Include crops, receipts, graphs, and evaluation files
                 if (
                     p.name.endswith("_crop_300.png") or p.suffix == ".png"
-                    or p.name in ("graph.json", "questions.json", "rubric.json", "results.json", "ingest_receipt.json", "tables_graph.json", "answers.json")
+                    or p.name in ("graph.json", "questions.json", "nlq_questions.json", "adversarial_questions.json", "rubric.json", "results.json", "ingest_receipt.json", "tables_graph.json", "answers.json")
                     or p.name.endswith("_receipt.json")
                     or p.name.endswith("_store.json")
                 ):

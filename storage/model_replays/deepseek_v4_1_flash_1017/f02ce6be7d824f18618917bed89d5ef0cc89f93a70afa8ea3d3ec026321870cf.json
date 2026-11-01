@@ -1,0 +1,28 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "f02ce6be7d824f18618917bed89d5ef0cc89f93a70afa8ea3d3ec026321870cf",
+  "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: What preheat temperature and Charpy impact toughness are specified for structural steel?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"target_division\": \"Refusal\", \"intent\": \"refusal_out_of_scope\", \"target_entities\": [\"preheat temperature\", \"Charpy impact toughness\", \"structural steel\"], \"actions\": [{\"action_type\": \"refuse\", \"code\": \"REFUSAL_OUT_OF_SCOPE\", \"parameters\": {\"reason\": \"Preheat temperature and Charpy impact toughness specifications are outside the scope of AWS A3.0 terminology.\"}}], \"reason\": \"DeepSeek-V4.1 trace: Mechanical properties and welding parameters are fabrication requirements outside the scope of AWS A3.0.\", \"epistemic_tag\": \"UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE\"}",
+  "parsed_plan": {
+    "target_division": "Refusal",
+    "intent": "refusal_out_of_scope",
+    "target_entities": [
+      "preheat temperature",
+      "Charpy impact toughness",
+      "structural steel"
+    ],
+    "actions": [
+      {
+        "action_type": "refuse",
+        "code": "REFUSAL_OUT_OF_SCOPE",
+        "parameters": {
+          "reason": "Preheat temperature and Charpy impact toughness specifications are outside the scope of AWS A3.0 terminology."
+        }
+      }
+    ],
+    "reason": "DeepSeek-V4.1 trace: Mechanical properties and welding parameters are fabrication requirements outside the scope of AWS A3.0.",
+    "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}

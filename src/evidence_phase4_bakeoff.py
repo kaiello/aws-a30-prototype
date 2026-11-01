@@ -208,6 +208,15 @@ class DeterministicQuestionPlanner:
             self._expander = get_semantic_expander(stores=stores, root=self.root)
         return self._expander
 
+    def plan_with_semantic_expansion(
+        self,
+        query: str,
+        req_dir: Optional[Path] = None,
+        stores: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """Produce a structured JSON plan with semantic expansion trace."""
+        return self.plan_whole_standard_question(query, req_dir=req_dir)
+
     def plan_whole_standard_question(
         self,
         question_text: str,
@@ -1260,7 +1269,9 @@ def answer_whole_standard_question(
         planner = DeterministicQuestionPlanner()
 
     # Dynamic plan generation from question text alone
-    if hasattr(planner, "plan_whole_standard_question"):
+    if hasattr(planner, "plan_with_semantic_expansion"):
+        plan = planner.plan_with_semantic_expansion(question_text, req_dir=req_dir, stores=stores)
+    elif hasattr(planner, "plan_whole_standard_question"):
         plan = planner.plan_whole_standard_question(question_text, req_dir=req_dir)
     elif hasattr(planner, "plan_phase3_question"):
         plan = planner.plan_phase3_question(question_text, req_dir=req_dir)
