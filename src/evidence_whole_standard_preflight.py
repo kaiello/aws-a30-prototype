@@ -6,6 +6,7 @@ Exercises answer_whole_standard_question offline, guaranteeing:
 - Planner returns valid, schema-conforming plan
 - Execution engine delivers normative provenance and executed operations
 - Source stores remain unmutated and verified
+- DeepSeek-V4.1-Flash-1017 offline replay harness verified under network isolation
 """
 from __future__ import annotations
 
@@ -14,6 +15,8 @@ import hashlib
 import json
 from pathlib import Path
 import socket
+import sys
+import tempfile
 from typing import Any, Dict, Optional
 from unittest.mock import patch
 
@@ -133,6 +136,108 @@ def run_whole_standard_preflight(
     }
 
 
+def run_deepseek_replay_preflight(
+    root: Optional[Path] = None,
+) -> Dict[str, Any]:
+    """Execute preflight verification of DeepSeek-V4.1-Flash-1017 replay harness under network isolation."""
+    if root is None:
+        root = Path(__file__).resolve().parent.parent
+
+    # 1. Verify canonical store SHA-256 hashes before execution
+    store_digests = {}
+    for rel_path, expected_hash in LOCKED_STORE_HASHES.items():
+        full_path = root / rel_path
+        if not full_path.exists():
+            raise FileNotFoundError(f"Missing canonical store: {rel_path}")
+        actual_hash = _sha(full_path)
+        if actual_hash != expected_hash:
+            raise ValueError(f"Store hash mismatch for {rel_path}: expected {expected_hash}, got {actual_hash}")
+        store_digests[rel_path] = actual_hash
+
+    from src.deepseek_v41_adapter import DeepSeekV41PlannerAdapter, DeepSeekV41LocalQuestionPlanner
+    adapter = DeepSeekV41PlannerAdapter(root=root)
+    stores = get_whole_standard_stores(root)
+
+    replayed = []
+
+    with patch("socket.socket", side_effect=_guard_socket), \
+         patch("socket.create_connection", side_effect=_guard_socket):
+
+        # Replay 1: Whole-Standard Multi-Hop Cross-Store
+        q_mh = (
+            "What is the definition of shielded metal arc welding in Clause 4, "
+            "what letter designation is assigned in Table A1, and which figure illustrates arc welding power source waveforms?"
+        )
+        plan_mh = adapter.plan_whole_standard_question(q_mh, stores=stores)
+        if plan_mh.get("intent") != "cross_store_multihop":
+            raise ValueError("DeepSeek replay plan intent mismatch for multi-hop query")
+        if plan_mh.get("receipt_metadata", {}).get("epistemic_tag") != "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE":
+            raise ValueError("Epistemic quarantine tag missing on whole-standard plan")
+        res_mh = answer_whole_standard_question(q_mh, planner=adapter, stores=stores)
+        if res_mh.get("execution", {}).get("status") != "PASS":
+            raise ValueError("Whole-standard multi-hop execution did not PASS under DeepSeek planner")
+        replayed.append("multi_hop_cross_store")
+
+        # Replay 2: Adversarial Out-of-Range Query
+        q_oor = "Which processes are classified on Figure A7 and Figure B55 in AWS A3.0?"
+        plan_oor = adapter.plan_whole_standard_question(q_oor, stores=stores)
+        if plan_oor.get("intent") != "refusal_out_of_range":
+            raise ValueError("DeepSeek replay plan intent mismatch for out-of-range query")
+        replayed.append("adversarial_out_of_range")
+
+        # Replay 3: Adversarial False-Premise Query
+        q_fp = "Why is shielded metal arc welding categorized under solid-state welding in AWS A3.0?"
+        plan_fp = adapter.plan_whole_standard_question(q_fp, stores=stores)
+        if plan_fp.get("intent") != "refusal_false_premise":
+            raise ValueError("DeepSeek replay plan intent mismatch for false-premise query")
+        replayed.append("adversarial_false_premise")
+
+        # Replay 4: Figure A2 Chart Planning through LocalQuestionPlanner interface
+        tests_dir = root / "tests"
+        if str(tests_dir) not in sys.path:
+            sys.path.insert(0, str(tests_dir))
+
+        from test_evidence_a1_graph_qa import toy_graph as _toy_fixture
+        from test_evidence_a2_core import bind as _bind, nested as _nested
+
+        with tempfile.TemporaryDirectory() as td:
+            local_planner = DeepSeekV41LocalQuestionPlanner(root=root, directory=td)
+            raw_toy = _toy_fixture.__wrapped__() if hasattr(_toy_fixture, "__wrapped__") else _toy_fixture()
+            src_a2 = _bind(_nested(raw_toy))
+            q_a2 = "Give the name, acronym and group for ZZRP in Figure A2."
+            chart_plan = local_planner(src_a2, q_a2)
+            if chart_plan.get("status") != "ready":
+                raise ValueError("DeepSeek chart plan status is not ready")
+            meta = chart_plan.get("model_part_metadata", [{}])[0]
+            if meta.get("authority") != "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE":
+                raise ValueError("Model trace authority quarantine failed in chart plan")
+            if chart_plan.get("lowered_plan", {}).get("parts", [{}])[0].get("reason") != "":
+                raise ValueError("Lowered wire plan reason is not empty")
+            replayed.append("chart_figure_a2_local_planner")
+
+    # Verify stores were not mutated in place
+    for rel_path, expected_hash in LOCKED_STORE_HASHES.items():
+        actual_hash = _sha(root / rel_path)
+        if actual_hash != expected_hash:
+            raise ValueError(f"Post-execution mutation detected on {rel_path}")
+
+    return {
+        "status": "CLEAR_DEEPSEEK_REPLAY_PREFLIGHT",
+        "preflight_version": PREFLIGHT_VERSION,
+        "adapter_model": adapter.config.model_id,
+        "api_model_name": adapter.config.api_model_name,
+        "replayed_queries_count": len(replayed),
+        "replayed_queries": replayed,
+        "network_calls": 0,
+        "epistemic_quarantine_verified": True,
+        "canonical_stores_verified": len(store_digests),
+    }
+
+
 if __name__ == "__main__":
-    res = run_whole_standard_preflight()
-    print(json.dumps(res, indent=2))
+    res_whole = run_whole_standard_preflight()
+    res_ds = run_deepseek_replay_preflight()
+    print(json.dumps({
+        "whole_standard": res_whole,
+        "deepseek_replay": res_ds,
+    }, indent=2))

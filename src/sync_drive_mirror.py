@@ -119,6 +119,13 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
         for p in storage_root.glob("*.json"):
             collected.append(p)
 
+    # 6c. storage/model_replays/ deterministic offline replay cassettes
+    replays_dir = base_dir / "storage" / "model_replays"
+    if replays_dir.is_dir():
+        for p in replays_dir.rglob("*.json"):
+            if p.is_file():
+                collected.append(p)
+
     # 7. storage/evidence_v2/ stores and lightweight review artifacts
     ev_dir = base_dir / "storage" / "evidence_v2"
     if ev_dir.is_dir():

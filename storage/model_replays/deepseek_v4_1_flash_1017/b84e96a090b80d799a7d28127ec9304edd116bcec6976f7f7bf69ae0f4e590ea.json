@@ -1,0 +1,44 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "b84e96a090b80d799a7d28127ec9304edd116bcec6976f7f7bf69ae0f4e590ea",
+  "normalized_prompt": "chart-question-actions-instructions-1.1\nEnvelope={schema_version,source_element,query,parts,actions}.\nAction={id,kind,query_layer,subjects,targets,subjects_from,targets_from,fields,mode,information_fields,scope}.\nPart={id,quote,status,action_ids,reason}.\nAt most 16 parts and 16 total lowered operations; retain every request.\nPer-action literal selector budget=32, prior-result reference budget=16; information_fields budget=16. Limits reject, never truncate.\nFields=name/acronym/group/evidence/source_limits; scopes=selected/chart.\nlookup_term modes=[\"\"].\nlist_members modes=[\"direct\", \"descendants\", \"parents\", \"row_partition\", \"physical_neighbors\"].\ncheck_relationship modes=[\"membership\", \"layout\", \"semantic_subtype\", \"source_limits\"].\nexplain_path modes=[\"from_to\"].\npart.reason: for planned parts, an optional bounded rationale (including an empty string) is unverified trace metadata only. The adapter preserves it separately and maps the internal reason to part_rules.planned_reason; it never changes actions, selectors or evidence. Unresolved parts require a nonblank reason and action_ids=[]; that explanation is forwarded unchanged. Planned parts require existing action_ids. Never use a rationale as a source fact, admission decision or proof of answer completeness.\nReturn only this question-action JSON, not answers, SQL, graph facts or new identities. Copy the query and source_element. Capture every requested subquestion, property, alternative and follow-up in parts/actions. Parts label requests; they are not a character-partition proof. Unresolved parts need a reason; never silently omit them.\nResolve subjects/targets using catalog IDs or exact printed names, codes or verified aliases. Prelinked mentions are dictionary observations, not answers. A source-present printed name/code must not be declared absent. Ambiguous fragments (such as 'resistance' or 'laser beam') require clarification; never guess an identity or invent a synonym.\nlookup_term returns identity and the requested fields for every selected term. name/acronym are printed identity; group means the positive enclosing category of a process. information_fields names literal requested operating information; absent values become a source limitation, never invented data.\nlist_members modes: direct=immediate displayed children; descendants=recursive set including intermediates; parents=direct displayed parents; row_partition=unindented versus indented process rows; physical_neighbors=incident physical connectors. Choose the requested depth explicitly: when asked for 'all processes' in a category (such as brazing), use mode=descendants to capture recursive entries. List rows already carry printed names/codes; fields adds other requested information for returned records.\ncheck_relationship requires a subject and explicit targets. membership asks a process's direct category-box enclosure; layout reports qualified displayed process ancestry or enclosure. semantic_subtype requests an endpoint-specific displayed relation plus the source's semantic-authority limit. When checking whether a process is directly indented under another process, use mode=layout or mode=parents. Neither missing edges nor shared words prove a universal negative. Candidate indentation is not admitted semantic IS_A.\ncheck_relationship mode source_limits with scope=chart explicitly asks what the selected complete chart observations establish. It alone may use no selectors. evidence/source_limits fields never turn accidental empty selectors into all graph nodes. Actual source visual observations may remain candidate and qualified.\nexplain_path mode from_to preserves subject=start and targets=ends, returning intermediate source support. A physical/chart path is not a relationship verdict or semantic subtype proof. When both verdict and route are requested, retain separate actions.\nFor follow-ups use subjects_from/targets_from with prior action IDs: lookup returns selected identities; list returns its actual listed entries (parents selects parents; direct/descendants/physical_neighbors select groups; row_partition selects rows). Only prior lookup/list actions are reference producers. Failed or empty results block dependents. Do not reuse the original group when the follow-up asks about returned entries; do not guess a global last entity.\nEach action requires every key; unused arrays are [], mode for lookup_term is an empty string. scope=selected for term/list/endpoint actions; scope=chart only for explicit chart source limits. Literal selectors and prior-action references are mutually exclusive per side. Use fields only for requested projections; evidence does not replace a relation action.\nquery_layer=evidence returns qualified source observations; knowledge uses accepted assertions only. Layout/subtype/source-limit actions are evidence-only. Recognizing a dictionary identity never promotes a candidate relationship or supplies an admission decision.\nUse one action for equivalent repeated requests while preserving every part mapping and requested field. Independent valid actions may execute even when another is invalid; failed producers block dependent actions. Validation and execution coverage are separate from semantic answer completeness, which remains MODEL_PROPOSED_UNVERIFIED until independently checked.\nINPUT={\"schema_version\":\"chart-question-actions-1.0\",\"query\":\"Provide all processes under arc welding (aw)- include the process and the acronym.\",\"source_element\":\"Figure A1\",\"catalog_columns\":[\"id\",\"kind\",\"printed_label\",\"printed_code\",\"verified_aliases\"],\"catalog\":[[\"n1\",\"root\",\"Toy chart\",\"\",[]],[\"n2\",\"category\",\"ALPHA\",\"AF\",[\"Toy chart\"]],[\"n3\",\"process\",\"Ribbon fold\",\"ZZR\",[\"Toy chart -> ALPHA (AF)\"]],[\"n4\",\"process\",\"Pulsed fold\",\"ZZP\",[\"Toy chart -> ALPHA (AF)\"]]],\"linked_mentions\":[]}",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"schema_version\": \"chart-question-actions-1.0\", \"source_element\": \"Figure A1\", \"query\": \"Provide all processes under arc welding (aw)- include the process and the acronym.\", \"parts\": [{\"id\": \"part_1\", \"quote\": \"Provide all processes under arc welding (aw)- include the process and the acronym.\", \"status\": \"planned\", \"action_ids\": [\"action_1\"], \"reason\": \"DeepSeek-V4.1 trace: Traverse descendants of arc welding (aw) to extract all child processes with names and acronyms.\"}], \"actions\": [{\"id\": \"action_1\", \"kind\": \"list_members\", \"query_layer\": \"evidence\", \"subjects\": [\"n2\"], \"targets\": [], \"subjects_from\": [], \"targets_from\": [], \"fields\": [\"name\", \"acronym\"], \"mode\": \"descendants\", \"information_fields\": [], \"scope\": \"selected\"}]}",
+  "parsed_plan": {
+    "schema_version": "chart-question-actions-1.0",
+    "source_element": "Figure A1",
+    "query": "Provide all processes under arc welding (aw)- include the process and the acronym.",
+    "parts": [
+      {
+        "id": "part_1",
+        "quote": "Provide all processes under arc welding (aw)- include the process and the acronym.",
+        "status": "planned",
+        "action_ids": [
+          "action_1"
+        ],
+        "reason": "DeepSeek-V4.1 trace: Traverse descendants of arc welding (aw) to extract all child processes with names and acronyms."
+      }
+    ],
+    "actions": [
+      {
+        "id": "action_1",
+        "kind": "list_members",
+        "query_layer": "evidence",
+        "subjects": [
+          "n2"
+        ],
+        "targets": [],
+        "subjects_from": [],
+        "targets_from": [],
+        "fields": [
+          "name",
+          "acronym"
+        ],
+        "mode": "descendants",
+        "information_fields": [],
+        "scope": "selected"
+      }
+    ]
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}
