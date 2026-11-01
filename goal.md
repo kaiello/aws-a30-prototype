@@ -156,6 +156,16 @@ All operational, evaluation, and semantic expansion code must treat the canonica
 | 23 | **Coverage Manifest** | `storage/manifests/coverage_manifest.json` | `8fa510a5d4880f88e05fbf3c295992b9c5ae5274c65e46086ad08fee7c2d553e` | `VERIFIED_LOCKED` |
 | 24 | **Latency Benchmark** | `storage/manifests/latency_benchmark.json` | `bc4bb0edfd67bbea0d5204a6430ce6be5af508b07f2874a779a0c2bf230c614c` | `VERIFIED_LOCKED` |
 
+### Part D: 5 Gate 6.0 Artifacts (NER/Routing Benchmark & DeepSeek Replay Cassettes)
+
+| # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 25 | **Gate 6.0 Questions** | `storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json` | `bf2fd3b05532cb76a0584cd1d6db8d3f1fe038ba632d539d8be94a4feb4f23ac` | `VERIFIED_LOCKED` |
+| 26 | **Gate 6.0 Rubric** | `storage/evidence_v2/phase6_ner_routing_001/rubric.json` | `602f37e0194a99ee6b3e52c95c1c76d9e57a3950a50ea7a5efd15c336645b427` | `VERIFIED_LOCKED` |
+| 27 | **Gate 6.0 Results** | `storage/evidence_v2/phase6_ner_routing_001/results.json` | `a0f9b3b3005276b0c6d74a45c9e8a0db5ad6b00ae8fb5fb7d79c4a9cf3a3626b` | `VERIFIED_LOCKED` |
+| 28 | Gate 6.0 Multi-Intent Cassette | `storage/model_replays/deepseek_v4_1_flash_1017/a56878be1a109cb0e9cc69d24e5bd3943cf1b49e12911fdf6d6d5957c365ca0e.json` | `5c4b63a9ee87339881afd99a91bfb273046531423107b4acf52069cd8e64e3da` | `VERIFIED_LOCKED` |
+| 29 | Gate 6.0 Waveform Cassette | `storage/model_replays/deepseek_v4_1_flash_1017/890dfe6113a45a4e8fe173be3e502a44b034dc82613f5b02c4ef84a45688f971.json` | `0c3ff8a6fae4f475550a8bad452728be1f29dfa28f916e6e1d5a6369782b84f0` | `VERIFIED_LOCKED` |
+
 ### Version-Bound Store Immutability Policy
 Cryptographic SHA-256 digests lock each released store version (`*_001`). Verified content corrections or spatial refinements produce a successor version (`*_002`) with a documented migration ledger rather than mutating locked releases in place.
 
@@ -174,7 +184,7 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 1. **Zero Question-ID or Benchmark-Literal Hardcoding:**
    - Operational modules (`src/*.py`) and evaluators (`eval/*.py`) must return `0 matches` for any benchmark question ID pattern:
      ```powershell
-     git grep -E "QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+|G53-NLQ[0-9]+|G54-[0-9]+|G55-NLQ[0-9]+" -- src/ eval/*.py
+     git grep -E "QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+|G53-NLQ[0-9]+|G54-[0-9]+|G55-NLQ[0-9]+|G56-[0-9]+|G60-NER[0-9]+|G60-[0-9]+" -- src/ eval/*.py
      ```
    - Operational modules (`src/*.py`) must return `0 matches` for benchmark-specific trap literals:
      ```powershell
@@ -209,3 +219,26 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable 3 (DeepSeek-V4.1-Flash-1017 Integration in `src/deepseek_v41_adapter.py`):** Full offline replay integration with `plan_with_semantic_expansion`, epistemic quarantine, and 8 content-addressed replay cassettes in `storage/model_replays/deepseek_v4_1_flash_1017/`.
 - [x] **Deliverable 4 (Frozen 15-Query Gate 5.5 NLQ Benchmark):** `storage/evidence_v2/phase5_5_nlq_001/{nlq_questions.json, rubric.json, results.json}` and `eval/run_phase5_5_nlq.py`, achieving **15 / 15 (100.0%)** across all 5 NLQ slices (`G55-NLQ01` through `G55-NLQ15`).
 - [x] **Deliverable 5 (22/22 Artifact Hash Locks & Full Test Suite):** Lock all 14 core project hashes and all 8 DeepSeek replay hashes in `tests/test_gate_5_4_deepseek_adapter.py` and `tests/test_gate_5_5_semantic_nlq.py`, verifying `0` failures and `0` warnings across all `1,463` repository tests.
+
+---
+
+## 6. Gate 6.0 NER & Multi-Intent Benchmark Slices & Deliverables Summary
+
+### Benchmark Slices ([`storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json))
+
+| Slice | Category / Focus | Query IDs | Target Stores & Coverage | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Slice 1** | Dynamic Compound Process + Mode Designations | `G60-NER01` – `G60-NER04` | Table A1 + Table A4 (`PAW-AU`, `GTAW-ME`, `FCAW-G-SA`, `OFC-A-MA`) | `100.0% PASS (4/4)` |
+| **Slice 2** | ID-Free Annex B Spatial Diagram Callouts | `G60-NER05` – `G60-NER08` | Figures B25, B33, B46, B12 (Throat terms, Crack types, FSW zones, Joint backing) | `100.0% PASS (4/4)` |
+| **Slice 3** | Homographs & Weld Test Position Disambiguation | `G60-NER09` – `G60-NER12` | Table A1 / Figure A6 (`AB`), Figures B16A–C (`6G`, `2F` positions) | `100.0% PASS (4/4)` |
+| **Slice 4** | Multi-Entity Cross-Store Comparative & Multi-Hop | `G60-NER13` – `G60-NER16` | Table A1/A4 + Figure A4, Table A5 vs A1 (`AHW`/`GTAW`), Figure B53 + Clause 4 (`heliarc`), Clause 4 (`braze` POS) | `100.0% PASS (4/4)` |
+| **Slice 5** | Suffix Verification, Out-of-Range & Out-of-Scope Boundaries | `G60-NER17` – `G60-NER20` | Invalid suffix (`GTAW-ZZ`), Figure B55 refusal, coined term refusal, WPS parameter refusal | `100.0% PASS (4/4)` |
+
+### Deliverables Checklist
+
+- [x] **Deliverable 1 (`src/welding_ner.py`):** Deterministic Welding Named Entity Recognizer & dynamic compound code parser resolving 11 domain entity categories, character-offset matching, longest-match precedence, and homograph candidate tracking (`AB`).
+- [x] **Deliverable 2 (`src/semantic_nlq_expander.py` & `src/evidence_phase4_bakeoff.py`):** Inverted Annex B spatial callout graph (1,115 callout terms), Clause 4 figure backlink graph (265 edges), and multi-intent action planner for cross-store multi-hop queries.
+- [x] **Deliverable 3 (`src/evidence_whole_standard_cli.py` & `.agents/skills/`):** Whole-standard CLI entry point (`--ner`, `--route`, `--ask`) and updated skill playbooks replacing legacy Figure A1 limitations.
+- [x] **Deliverable 4 (`storage/evidence_v2/phase6_ner_routing_001/` & `eval/run_phase6_ner_routing.py`):** Frozen 20-question Gate 6.0 benchmark scoring **20 / 20 (100.0%)** across compound designations, ID-free callouts, homographs, multi-hop queries, and adversarial boundaries.
+- [x] **Deliverable 5 (29/29 Cryptographic Hash Locks & Regression Suite in `tests/test_gate_6_0_ner_routing_skills.py`):** 24 prior locked hashes + 5 Gate 6.0 artifacts cryptographically locked under CI; full regression suite passing at 1,475 passed, 8 skipped, 0 failures, 0 warnings.
+
