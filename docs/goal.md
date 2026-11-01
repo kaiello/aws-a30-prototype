@@ -12,7 +12,7 @@
 
 ## 1. What the End Product Is
 
-The end product is a **hardened, zero-hallucination, multimodal Question-Answering (QA) and Reference System** for the complete `AWS A3.0M/A3.0:2020` standard. Instead of a conventional vector-chunk RAG chatbot that guesses answers from fragmented text snippets, this system transforms every word, normative table, decision tree, spatial callout diagram, and cycle waveform in the 190-page PDF into a **cryptographically locked, cross-linked Knowledge Graph**.
+The end product is a **hardened, source-grounded multimodal Question-Answering (QA) and Reference System with explicit abstention** for the complete `AWS A3.0M/A3.0:2020` standard. Instead of a conventional vector-chunk RAG chatbot that guesses answers from fragmented text snippets, this system transforms every word, normative table, decision tree, spatial callout diagram, and cycle waveform in the 190-page PDF into a **cryptographically locked, cross-linked Knowledge Graph**.
 
 When an engineer, welding inspector, researcher, or autonomous AI agent asks a question—whether phrased using formal standard terminology, shop-floor slang, historical nomenclature, process abbreviations, or ID-free natural language—the system delivers:
 
@@ -31,13 +31,13 @@ When an engineer, welding inspector, researcher, or autonomous AI agent asks a q
    - Integrates `deepseek-ai/DeepSeek-V4.1-Flash-1017` at Layer 4 (Question Planning & Multi-Hop Decomposition) and Layer 1/2 (Candidate Visual Verification Stub) via [`src/deepseek_v41_adapter.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/src/deepseek_v41_adapter.py).
    - Operates with **0 network calls** in automated testing and preflight by utilizing 8 content-addressed replay cassettes in [`storage/model_replays/deepseek_v4_1_flash_1017/`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/model_replays/deepseek_v4_1_flash_1017/).
    - Enforces strict epistemic quarantine: every `part.reason` emitted by the model is tagged `UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE` and lowered to `PLANNED_REASON` (`""`) in internal wire plans.
-6. **Adversarial & Scope-Boundary Immunity (Gate 5):**
+6. **Adversarial & Scope-Boundary Robustness with Explicit Abstention (Gate 5):**
    - Out-of-range coordinates (e.g., `Figure A7`, `Figure B55`, `Table A6`) are deterministically rejected with `REFUSAL_OUT_OF_RANGE`.
    - Taxonomic false premises (e.g., claiming `SMAW` is a Solid-State Welding process) are refuted with exact chart provenance (`CONTRADICTION_REFUTED`).
    - Unstandardized or fabricated terms (e.g., *"hyper-flux welding"*, *"cryo-ionic brazing"*) return `NOT_IN_STANDARD`.
    - Out-of-scope engineering queries (e.g., filler metal tensile/yield strength values, Charpy impact toughness, preheat schedules, or external ASME/AWS D1.1 construction codes) are cleanly refused with `REFUSAL_OUT_OF_SCOPE` via a generalized structural classifier (`HK-5-1`).
 7. **Two Operating Speeds:**
-   - **Offline Deterministic Route (`DeterministicQuestionPlanner` + `SemanticNLQExpander`):** Answers structured, paraphrased, and multi-hop natural language queries in $< 1\text{ ms}$ at $\$0.00$ cost with socket-guarded zero network access (`CLEAR_WHOLE_STANDARD_CONTRACT`).
+   - **Offline Deterministic Route (`DeterministicQuestionPlanner` + `SemanticNLQExpander`):** Answers structured, paraphrased, and multi-hop natural language queries with measured low latency ($p_{50}: 55.5\text{ ms}$, $p_{95}: 70.2\text{ ms}$ per [`storage/manifests/latency_benchmark.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/manifests/latency_benchmark.json)) and no per-query external API charge under socket-guarded zero network access (`CLEAR_WHOLE_STANDARD_CONTRACT`).
    - **DeepSeek-V4.1 Planner Route (`DeepSeekV41PlannerAdapter`):** Translates complex, open-ended conversational questions into schema-constrained AST lookup plans (`temperature=0`, `0` retries) executed against the same immutable stores under full epistemic quarantine (`CLEAR_DEEPSEEK_REPLAY_PREFLIGHT`).
 
 ---
@@ -53,7 +53,7 @@ The 190-page standard is partitioned into **4 Visual Archetypes** plus the **Cla
 | **Archetype 1: Box Indentation Charts** | `Figures A1, A2, A3` | pp. 75–76 (PDF 87–88) | Enclosing boxes, physical vector connectors, candidate row indentations, footnotes, and explicit cross-chart pointers (`See Figure A4/A5/A6`). |
 | **Archetype 2: Characteristic Decision Trees** | `Figures A4, A5, A6` | pp. 77–79 (PDF 89–91) | 5-column characteristic classification trees (`Energy Source` $\rightarrow$ `Thermal Source` $\rightarrow$ `Loading` $\rightarrow$ `Shielding/Flux` $\rightarrow$ `Process`), `96` numbered process circles, `59` bottom legend rows, and multi-branch process paths. |
 | **Normative Process Tables** | `Tables A1–A5` | pp. 69–74 (PDF 81–86) | `138` Table A1 rows, `133` Table A2 rows, `134` Table A3 matrix rows, `6` Table A4 adaptive/mechanized/automatic/robotic/manual letter suffixes, and `13` Table A5 obsolete designations, plus 4 documented source anomalies (including `AB` = arc brazing vs. adhesive bonding). |
-| **Clause 4 Glossary & Dual-Provenance `IS_A`** | `Clause 4` + `Annex C` + `Annex D` | pp. 5–67, 159–170 (PDF 17–79, 171–182) | `1,607` glossary entries (`1,345` standard boldface, `262` nonstandard lightface), `311` `NONSTANDARD_SYNONYM_OF` edges, `378` underline & `458` margin-bar 2020 revision markers, `21` Annex C clauses (`8` editorial decisions), `591` Annex D historical rows, and `35` dual-provenance `IS_A_PROCESS_VARIATION_OF` promotions. |
+| **Clause 4 Glossary & Dual-Provenance `IS_A`** | `Clause 4` + `Annex C` + `Annex D` | pp. 5–67, 159–170 (PDF 17–79, 171–182) | `1,607` glossary entries (`1,345` standard boldface, `262` nonstandard lightface), `311` `NONSTANDARD_SYNONYM_OF` edges, `378` underline & `458` margin-bar 2020 revision markers, `21` Annex C clauses (`8` editorial decisions), `491` Annex D historical rows across Tables D1–D6 (rectifying an uncalibrated historical claim of 591), and `35` dual-provenance `IS_A_PROCESS_VARIATION_OF` promotions. |
 | **Archetype 3: Spatial Callout Diagrams** | `Figures B1–B43, B46–B48, B52` (`49` figure units) | pp. 82–147, 151–152, 156 (PDF 94–159, 163–164, 168) | Multi-panel weld joint/groove/crack/position drawings (`80` high-res 300-DPI crops), sub-panels `(A)–(G)`, arrow/leader-line callouts, numbered key legends (e.g., `B33` 1–13 crack keys, `B46` 1–10 FSW keys), and multi-page continuations (`B6`, `B8`, `B17`, `B19`, `B20`, `B22`). |
 | **Archetype 4: Cycle & Waveform Plots** | `Figures B44–B45, B49–B51, B53–B54` (`7` figure units) | pp. 148–150, 153–155, 157 (PDF 160–162, 165–167, 169) | Temporal cycle sequences (`SQUEEZE` $\rightarrow$ `WELD` $\rightarrow$ `HOLD` $\rightarrow$ `OFF`, upslope/downslope, pulsed spray waveforms) and physical trace relationships (`CURRENT`, `FORCE`, `VOLTAGE` vs. `TIME`). |
 
@@ -113,9 +113,9 @@ When a user submits a natural language question at runtime, the system executes 
 
 ---
 
-## 3. Cryptographic Immutability Ledger (22 Locked Repository Artifacts)
+## 3. Cryptographic Immutability Ledger (24 Locked Repository Artifacts)
 
-All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, and offline model replay cassettes as **100% read-only**. [`tests/test_gate_5_hardening.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_hardening.py), [`tests/test_gate_5_4_deepseek_adapter.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_4_deepseek_adapter.py), and [`tests/test_gate_5_5_semantic_nlq.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_5_semantic_nlq.py) enforce exact SHA-256 verification across all 22 locked files:
+All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. [`tests/test_gate_5_hardening.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_hardening.py), [`tests/test_gate_5_4_deepseek_adapter.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_4_deepseek_adapter.py), [`tests/test_gate_5_5_semantic_nlq.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_5_semantic_nlq.py), and [`tests/test_gate_5_6_epistemic_manifest.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_6_epistemic_manifest.py) enforce exact SHA-256 verification across all 24 locked files:
 
 ### Part A: 14 Core Repository & Benchmark Artifacts
 
@@ -148,6 +148,24 @@ All operational, evaluation, and semantic expansion code must treat the canonica
 | 20 | Gate 5.5 ID-Free Waveform (B53) | `storage/model_replays/deepseek_v4_1_flash_1017/6af589ad1ddedbf0af24de84ad5b0acdae77e506524354a9f4a7eab1edb63c5a.json` | `ae0625dacb0a7541955f46d73cb6a85e2234363bc89a7c5771608d71feb069f2` | `VERIFIED_LOCKED` |
 | 21 | Gate 5.5 Historical Multi-Hop (AHW) | `storage/model_replays/deepseek_v4_1_flash_1017/8fdbb05270c87bfc19e04a51c0a71b193fbc3fe68d3bcfb443887f49ce2e2ad8.json` | `e7114838a52b3d965c0c32cd8977f4e1c998bdad0ab07f5987d9b7825ddb134e` | `VERIFIED_LOCKED` |
 | 22 | Gate 5.5 Out-of-Scope Refusal | `storage/model_replays/deepseek_v4_1_flash_1017/f02ce6be7d824f18618917bed89d5ef0cc89f93a70afa8ea3d3ec026321870cf.json` | `0513f4d16b5d6f72ae66688414ffce809000cd0e3444a8bea9db8e6ac6420621` | `VERIFIED_LOCKED` |
+
+### Part C: 2 Gate 5.6 Manifests (Whole-Standard Coverage & Latency Telemetry)
+
+| # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 23 | **Coverage Manifest** | `storage/manifests/coverage_manifest.json` | `8fa510a5d4880f88e05fbf3c295992b9c5ae5274c65e46086ad08fee7c2d553e` | `VERIFIED_LOCKED` |
+| 24 | **Latency Benchmark** | `storage/manifests/latency_benchmark.json` | `bc4bb0edfd67bbea0d5204a6430ce6be5af508b07f2874a779a0c2bf230c614c` | `VERIFIED_LOCKED` |
+
+### Version-Bound Store Immutability Policy
+Cryptographic SHA-256 digests lock each released store version (`*_001`). Verified content corrections or spatial refinements produce a successor version (`*_002`) with a documented migration ledger rather than mutating locked releases in place.
+
+### Machine-Verifiable 190-Page Coverage Manifest
+[`storage/manifests/coverage_manifest.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/manifests/coverage_manifest.json) accounts for all 190 PDF pages:
+- **162 Ingested Pages:** Clause 4 (PDF 17–79), Tables A1–A5 (PDF 81–86), Figures A1–A6 (PDF 87–91), Annex B Figures B1–B54 (PDF 94–169), Annex C Decisions (PDF 171–176), Annex D Tables D1–D6 (PDF 177–182).
+- **28 Excluded Pages:** Front matter and TOC (PDF 1–12), introductory administrative scope (PDF 13–16), section dividers / blank pages (PDF 80, 92–93, 170), and Informative Index / back matter (PDF 183–190).
+
+### Modality-Appropriate Conditional Crop Provenance
+Every non-refusal answer includes universal page coordinates (`printed_page`, `pdf_index`) and structured `evidence_locator`. A 300-DPI diagram crop (`crop_path`) is attached with `requires_diagram_crop: True` **when and only when** the answer depends on a visual diagram (`Figures A1–A6` or `Figures B1–B54`). For text-only and tabular lookups (`Clause 4`, `Annex C/D`, `Tables A1–A5`), `requires_diagram_crop: False` is set and spurious diagram crops are omitted.
 
 ---
 
