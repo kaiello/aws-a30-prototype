@@ -46,9 +46,10 @@ class SemanticExpansionTrace:
     inferred_targets: Dict[str, List[str]] = field(
         default_factory=lambda: {"figures": [], "tables": [], "clause4_terms": []}
     )
+    ner_receipt: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        d = {
             "raw_query": self.raw_query,
             "normalized_query": self.normalized_query,
             "extracted_candidate_terms": list(self.extracted_candidate_terms),
@@ -61,6 +62,7 @@ class SemanticExpansionTrace:
                 "clause4_terms": list(self.inferred_targets.get("clause4_terms", [])),
             },
         }
+        return d
 
 
 # ---------------------------------------------------------------------------
@@ -84,6 +86,8 @@ class SemanticExpander:
         self.table_concept_signatures: Dict[str, List[str]] = {}
         self.waveform_intervals_index: Dict[str, List[str]] = {}
         self.annex_b_titles_index: Dict[str, str] = {}
+        self.callouts_to_figures: Dict[str, Set[str]] = {}
+        self.clause4_figure_backlinks: Dict[str, Set[str]] = {}
         self.all_recognized_lexicon: Set[str] = set()
 
         self._initialized = False
@@ -93,6 +97,9 @@ class SemanticExpander:
             return
         if stores:
             self.stores = stores
+        elif not self.stores:
+            from src.evidence_phase4_bakeoff import get_whole_standard_stores
+            self.stores = get_whole_standard_stores()
         self._build_graph()
         self._initialized = True
 
@@ -118,6 +125,14 @@ class SemanticExpander:
             term_lower = term.lower()
             self.clause4_lexicon[term_lower] = e
             self.all_recognized_lexicon.add(term_lower)
+
+            # Record clause 4 figure back-links
+            figs = e.get("cross_references", {}).get("figures", [])
+            for f in figs:
+                m_fig = re.search(r"B([0-9]{1,2}[A-C]?)", str(f))
+                if m_fig:
+                    fig_key = f"Figure B{m_fig.group(1).upper()}"
+                    self.clause4_figure_backlinks.setdefault(term_lower, set()).add(fig_key)
 
             # Record nonstandard redirect if present
             if e.get("term_status") == "nonstandard" or not e.get("is_standard", True):
@@ -476,6 +491,42 @@ class SemanticExpander:
         }
         self.waveform_intervals_index = waveform_intervals
 
+        # 11. Annex B Spatial Callout & Numbered Key Inverted Index
+        annex_b_spatial_callouts = {
+            "Figure B25": [
+                "theoretical throat", "effective throat", "actual throat",
+                "convex fillet weld size", "concave fillet weld size", "groove weld size",
+                "weld sizes", "fillet weld throat", "weld throat",
+            ],
+            "Figure B33": [
+                "crater crack", "face crack", "heat-affected zone crack",
+                "longitudinal crack", "root crack", "root surface crack",
+                "throat crack", "toe crack", "underbead crack", "transverse crack",
+                "lamellar tear", "crack types",
+            ],
+            "Figure B46": [
+                "advancing side", "retreating side", "thermomechanically affected zone",
+                "tmaz", "tool shoulder", "probe", "weld nugget", "exit hole",
+                "friction stir welding", "fsw",
+            ],
+            "Figure B12": [
+                "starting weld tab", "runoff tab", "runoff weld tab", "sump",
+                "split pipe backing", "end dam", "shelf bar",
+            ],
+            "Figure B7": [
+                "edge shape", "edge shapes", "bevel edge shape", "chamfer edge shape",
+                "flanged edge shape", "round edge shape", "square edge shape",
+            ],
+            "Figure B16A": ["groove welds in plate", "surfacing welds in plate", "1g", "2g", "3g", "4g"],
+            "Figure B16B": ["fillet welds in plate", "1f", "2f", "3f", "4f"],
+            "Figure B16C": ["groove welds in pipe", "surfacing welds in pipe", "5g", "6g", "6gr"],
+            "Figure B1": ["joint types", "butt joint", "corner joint", "edge joint", "lap joint", "t-joint"],
+        }
+        for fig_id, callouts in annex_b_spatial_callouts.items():
+            for c in callouts:
+                self.callouts_to_figures.setdefault(c, set()).add(fig_id)
+                self.all_recognized_lexicon.add(c)
+
     # -----------------------------------------------------------------------
     # Query Analysis, Candidate Extraction & Normalization
     # -----------------------------------------------------------------------
@@ -694,9 +745,42 @@ class SemanticExpander:
                         })
                     break
 
-        # Specific conceptual routing for edge shapes (Figure B7)
-        if ("edge shape" in q_lower or "edge shapes" in q_lower) and "Figure B7" not in inferred_figures:
-            inferred_figures.append("Figure B7")
+        # E. Annex B Spatial Callouts & Clause 4 Figure Backlinks Inverted Match
+        figure_scores: Dict[str, float] = {}
+        stop_callouts = {
+            "welding", "process", "cycle", "joint", "weld", "standard", "figure", "table",
+            "square", "bevel", "interval", "waveform", "edge", "round", "plate", "pipe",
+        }
+        for callout, fig_set in self.callouts_to_figures.items():
+            if callout in stop_callouts:
+                continue
+            if len(callout) >= 3 and re.search(r"\b" + re.escape(callout) + r"\b", q_lower):
+                words = callout.split()
+                if len(words) < 2 and len(fig_set) > 2:
+                    continue
+                weight = len(words) * 2.0 + len(callout) * 0.1
+                for f in sorted(fig_set):
+                    figure_scores[f] = figure_scores.get(f, 0.0) + weight
+
+        sorted_figs = sorted([f for f, sc in figure_scores.items() if sc >= 4.0], key=lambda x: (-figure_scores[x], x))
+        for sf in sorted_figs:
+            if sf not in inferred_figures:
+                inferred_figures.append(sf)
+
+        # Step 3: Run WeldingNER and integrate entity spans & compound codes
+        from src.welding_ner import get_welding_ner
+        ner = get_welding_ner(stores=self.stores, root=self.root)
+        ner_receipt = ner.recognize_entities(raw_query)
+
+        for span in ner_receipt.spans:
+            if span.entity_type in ["COMPOUND_DESIGNATION", "INVALID_COMPOUND_DESIGNATION"]:
+                alias_expansions.append({
+                    "surface_span": span.surface_text,
+                    "canonical_term": span.canonical_term,
+                    "source_authority": span.source_authority,
+                    "resolution_type": span.entity_type,
+                    "sub_components": list(span.sub_components),
+                })
 
         return SemanticExpansionTrace(
             raw_query=raw_query,
@@ -708,6 +792,7 @@ class SemanticExpander:
                 "tables": inferred_tables,
                 "clause4_terms": inferred_clause4_terms,
             },
+            ner_receipt=ner_receipt.to_dict(),
         )
 
     # -----------------------------------------------------------------------
@@ -827,33 +912,6 @@ class SemanticExpander:
             return None
 
         # Check against full standard lexicon and alias mappings
-        target_lower = target_term.lower()
-
-        # If it's a known term or canonical target, not unknown
-        if (
-            target_lower in self.clause4_lexicon
-            or target_lower in self.alias_pivot_map
-            or target_term.upper() in self.abbrev_to_canonical
-            or target_lower in self.morphology_map
-            or any(target_lower in t for t in self.annex_b_titles_index)
-        ):
-            return None
-
-        # Common stopwords / general terms to skip
-        if target_lower in ["kerf", "braze", "weld", "welding", "flux", "joint", "arc"]:
-            return None
-
-        # Unrecognized term absent from all standard divisions
-        return {
-            "status": "NOT_IN_STANDARD",
-            "answer": "The term is not defined in AWS A3.0M/A3.0:2020 Clause 4 terms and definitions.",
-            "operations": [{"operation": "lookup_glossary_term", "term": target_term, "status": "not_found"}],
-            "operations_count": 1,
-            "elements_present": ["not defined", "AWS A3.0M/A3.0:2020 Clause 4"],
-            "normative_provenance": ["obs:clause4:glossary"],
-        }
-
-        # Check against full standard lexicon
         target_lower = target_term.lower()
 
         # If it's a known term or canonical target, not unknown

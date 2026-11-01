@@ -1,0 +1,289 @@
+{
+  "version": "phase6_ner_routing_rubric_v1.0",
+  "total_questions": 20,
+  "rubrics": {
+    "G60-NER01": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "Table A1",
+        "Table A4",
+        "automatic",
+        "plasma arc welding",
+        "PAW-AU",
+        "-AU"
+      ],
+      "forbidden_elements": [
+        "Figure B",
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G60-NER02": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "Table A1",
+        "Table A4",
+        "mechanized",
+        "gas tungsten arc welding",
+        "GTAW-ME",
+        "-ME"
+      ],
+      "forbidden_elements": [
+        "Figure B",
+        "Figure A"
+      ]
+    },
+    "G60-NER03": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "Table A1",
+        "Table A4",
+        "semiautomatic",
+        "gas shielded flux cored arc welding",
+        "FCAW-G-SA",
+        "-SA"
+      ],
+      "forbidden_elements": [
+        "Figure B",
+        "Figure A"
+      ]
+    },
+    "G60-NER04": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "Table A1",
+        "Table A4",
+        "manual",
+        "oxyacetylene cutting",
+        "OFC-A-MA",
+        "-MA"
+      ],
+      "forbidden_elements": [
+        "Figure B",
+        "Figure A"
+      ]
+    },
+    "G60-NER05": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B25",
+        "Weld Sizes",
+        "theoretical throat",
+        "effective throat",
+        "actual throat"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "Table A"
+      ]
+    },
+    "G60-NER06": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B33",
+        "Crack Types",
+        "toe crack",
+        "underbead crack",
+        "crater crack"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "Figure B25"
+      ]
+    },
+    "G60-NER07": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B46",
+        "Friction Stir",
+        "advancing side",
+        "retreating side",
+        "thermomechanically affected zone"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "Figure B33"
+      ]
+    },
+    "G60-NER08": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B12",
+        "runoff tab",
+        "starting weld tab",
+        "split pipe backing"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "Figure B33"
+      ]
+    },
+    "G60-NER09": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Table A1",
+        "arc brazing",
+        "adhesive bonding",
+        "Figure A6"
+      ],
+      "forbidden_elements": [
+        "atomic hydrogen"
+      ]
+    },
+    "G60-NER10": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Table A1",
+        "arc brazing",
+        "adhesive bonding"
+      ],
+      "forbidden_elements": [
+        "atomic hydrogen"
+      ]
+    },
+    "G60-NER11": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B16C",
+        "6G",
+        "pipe",
+        "groove"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "Table A5"
+      ]
+    },
+    "G60-NER12": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B16B",
+        "2F",
+        "plate",
+        "fillet"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "Table A5"
+      ]
+    },
+    "G60-NER13": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "PAW-AU",
+        "automatic plasma arc welding",
+        "Figure A4",
+        "Fusion Welding",
+        "Arc"
+      ],
+      "forbidden_elements": [
+        "Figure B"
+      ]
+    },
+    "G60-NER14": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "atomic hydrogen welding",
+        "AHW",
+        "Table A5",
+        "gas tungsten arc welding",
+        "GTAW"
+      ],
+      "forbidden_elements": [
+        "Table A6"
+      ]
+    },
+    "G60-NER15": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B53",
+        "pulsed",
+        "heliarc",
+        "gas tungsten arc welding",
+        "upslope",
+        "downslope"
+      ],
+      "forbidden_elements": [
+        "Figure A5"
+      ]
+    },
+    "G60-NER16": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "Clause 4",
+        "braze",
+        "noun",
+        "verb"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "Table A1"
+      ]
+    },
+    "G60-NER17": {
+      "expected_status": "NOT_IN_STANDARD",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "GTAW",
+        "gas tungsten arc welding",
+        "-ZZ",
+        "not among",
+        "Table A4"
+      ],
+      "forbidden_elements": [
+        "valid compound designation",
+        "Figure B"
+      ]
+    },
+    "G60-NER18": {
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "Figure B55 does not exist",
+        "Figure B1 through Figure B54"
+      ],
+      "forbidden_elements": [
+        "Figure B55 illustrates",
+        "Table A1"
+      ]
+    },
+    "G60-NER19": {
+      "expected_status": "NOT_IN_STANDARD",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "not defined in AWS A3.0M/A3.0:2020 Clause 4"
+      ],
+      "forbidden_elements": [
+        "coalescence is",
+        "Figure B"
+      ]
+    },
+    "G60-NER20": {
+      "expected_status": "REFUSAL_OUT_OF_SCOPE",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "outside the scope of AWS A3.0M/A3.0:2020"
+      ],
+      "forbidden_elements": [
+        "preheat temperature is",
+        "Table A1"
+      ]
+    }
+  }
+}

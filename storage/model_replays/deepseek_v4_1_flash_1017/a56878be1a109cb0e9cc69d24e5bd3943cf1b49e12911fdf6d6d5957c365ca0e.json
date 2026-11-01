@@ -1,0 +1,37 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "a56878be1a109cb0e9cc69d24e5bd3943cf1b49e12911fdf6d6d5957c365ca0e",
+  "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-interface-1.0\nQuestion: What does PAW-AU designate and which diagram illustrates theoretical throat and effective throat?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"target_division\": \"Multi-Division\", \"intent\": \"compound_designation_and_diagram\", \"target_entities\": [\"PAW-AU\", \"Figure B25\"], \"actions\": [{\"action_type\": \"lookup_compound_code\", \"target\": \"PAW-AU\", \"parameters\": {\"process_code\": \"PAW\", \"mode_suffix\": \"-AU\"}}, {\"action_type\": \"query_figure\", \"target\": \"Figure B25\", \"parameters\": {\"callouts\": [\"theoretical throat\", \"effective throat\"]}}], \"reason\": \"DeepSeek-V4.1 trace: Decompose PAW-AU to Table A1 plasma arc welding and Table A4 automatic mode, then query Figure B25 for throat dimensions.\"}",
+  "parsed_plan": {
+    "target_division": "Multi-Division",
+    "intent": "compound_designation_and_diagram",
+    "target_entities": [
+      "PAW-AU",
+      "Figure B25"
+    ],
+    "actions": [
+      {
+        "action_type": "lookup_compound_code",
+        "target": "PAW-AU",
+        "parameters": {
+          "process_code": "PAW",
+          "mode_suffix": "-AU"
+        }
+      },
+      {
+        "action_type": "query_figure",
+        "target": "Figure B25",
+        "parameters": {
+          "callouts": [
+            "theoretical throat",
+            "effective throat"
+          ]
+        }
+      }
+    ],
+    "reason": "DeepSeek-V4.1 trace: Decompose PAW-AU to Table A1 plasma arc welding and Table A4 automatic mode, then query Figure B25 for throat dimensions."
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}

@@ -1,0 +1,1293 @@
+{
+  "version": "phase6_ner_routing_results_v1.0",
+  "benchmark_name": "Gate 6.0 Deterministic Welding NER & Multi-Intent Routing Benchmark",
+  "total_questions": 20,
+  "passed_count": 20,
+  "pass_rate_percent": 100.0,
+  "gate_status": "PASS",
+  "results": [
+    {
+      "id": "G60-NER01",
+      "category": "dynamic_compound_designation",
+      "slice_name": "Slice 1 \u2014 Dynamic Compound Process + Application Mode Designations",
+      "query": "What does the compound designation PAW-AU stand for according to Table A1 and Table A4?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 69,
+      "pdf_index": 81,
+      "evidence_locator": "table_a1:process_letter_designations",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, PAW-AU designates automatic plasma arc welding. Per Table A1 (printed p. 69), the letter designation PAW designates plasma arc welding. Per Table A4 (printed p. 74), the letter suffix -AU designates automatic application mode per Note format XXXX-YY.",
+      "elements_present": [
+        "PAW-AU",
+        "automatic plasma arc welding",
+        "plasma arc welding",
+        "Automatic",
+        "Table A1",
+        "Table A4"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:86:table:Table A4"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "compound_designation",
+      "semantic_expansion_trace": {
+        "raw_query": "What does the compound designation PAW-AU stand for according to Table A1 and Table A4?",
+        "normalized_query": "what does the compound designation paw-au stand for according to table a1 and table a4",
+        "extracted_candidate_terms": [],
+        "alias_expansions": [
+          {
+            "surface_span": "PAW-AU",
+            "canonical_term": "automatic plasma arc welding",
+            "source_authority": "Table A1 (p. 69) + Table A4 (p. 74)",
+            "resolution_type": "COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "PAW",
+                "canonical_term": "plasma arc welding",
+                "source_authority": "Table A1 (p. 69)"
+              },
+              {
+                "type": "APPLICATION_MODE",
+                "suffix": "-AU",
+                "canonical_term": "Automatic",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": []
+        }
+      }
+    },
+    {
+      "id": "G60-NER02",
+      "category": "dynamic_compound_designation",
+      "slice_name": "Slice 1 \u2014 Dynamic Compound Process + Application Mode Designations",
+      "query": "What does GTAW-ME stand for in AWS A3.0?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 69,
+      "pdf_index": 81,
+      "evidence_locator": "table_a1:process_letter_designations",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, GTAW-ME designates mechanized gas tungsten arc welding. Per Table A1 (printed p. 69), the letter designation GTAW designates gas tungsten arc welding. Per Table A4 (printed p. 74), the letter suffix -ME designates mechanized application mode per Note format XXXX-YY.",
+      "elements_present": [
+        "GTAW-ME",
+        "mechanized gas tungsten arc welding",
+        "gas tungsten arc welding",
+        "Mechanized",
+        "Table A1",
+        "Table A4"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:86:table:Table A4"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "compound_designation",
+      "semantic_expansion_trace": {
+        "raw_query": "What does GTAW-ME stand for in AWS A3.0?",
+        "normalized_query": "what does gtaw-me stand for in aws a3 0",
+        "extracted_candidate_terms": [
+          "gtaw-me"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "GTAW-ME",
+            "canonical_term": "mechanized gas tungsten arc welding",
+            "source_authority": "Table A1 (p. 69) + Table A4 (p. 74)",
+            "resolution_type": "COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "GTAW",
+                "canonical_term": "gas tungsten arc welding",
+                "source_authority": "Table A1 (p. 69)"
+              },
+              {
+                "type": "APPLICATION_MODE",
+                "suffix": "-ME",
+                "canonical_term": "Mechanized",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": []
+        }
+      }
+    },
+    {
+      "id": "G60-NER03",
+      "category": "dynamic_compound_designation",
+      "slice_name": "Slice 1 \u2014 Dynamic Compound Process + Application Mode Designations",
+      "query": "What does the compound code FCAW-G-SA designate?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 69,
+      "pdf_index": 81,
+      "evidence_locator": "table_a1:process_letter_designations",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, FCAW-G-SA designates semiautomatic gas shielded flux cored arc welding. Per Table A1 (printed p. 69), the letter designation FCAW-G designates gas shielded flux cored arc welding. Per Table A4 (printed p. 74), the letter suffix -SA designates semiautomatic application mode per Note format XXXX-YY.",
+      "elements_present": [
+        "FCAW-G-SA",
+        "semiautomatic gas shielded flux cored arc welding",
+        "gas shielded flux cored arc welding",
+        "Semiautomatic",
+        "Table A1",
+        "Table A4"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:86:table:Table A4"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "compound_designation",
+      "semantic_expansion_trace": {
+        "raw_query": "What does the compound code FCAW-G-SA designate?",
+        "normalized_query": "what does the compound code fcaw-g-sa designate",
+        "extracted_candidate_terms": [
+          "fcaw-g-sa"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "FCAW-G-SA",
+            "canonical_term": "semiautomatic gas shielded flux cored arc welding",
+            "source_authority": "Table A1 / IS_A Promotions + Table A4 (p. 74)",
+            "resolution_type": "COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "FCAW-G",
+                "canonical_term": "gas shielded flux cored arc welding",
+                "source_authority": "Table A1 / IS_A Promotions"
+              },
+              {
+                "type": "APPLICATION_MODE",
+                "suffix": "-SA",
+                "canonical_term": "Semiautomatic",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": []
+        }
+      }
+    },
+    {
+      "id": "G60-NER04",
+      "category": "dynamic_compound_designation",
+      "slice_name": "Slice 1 \u2014 Dynamic Compound Process + Application Mode Designations",
+      "query": "Explain the designation OFC-A-MA according to AWS A3.0.",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 69,
+      "pdf_index": 81,
+      "evidence_locator": "table_a1:process_letter_designations",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, OFC-A-MA designates manual oxyacetylene cutting. Per Table A1 (printed p. 69), the letter designation OFC-A designates oxyacetylene cutting. Per Table A4 (printed p. 74), the letter suffix -MA designates manual application mode per Note format XXXX-YY.",
+      "elements_present": [
+        "OFC-A-MA",
+        "manual oxyacetylene cutting",
+        "oxyacetylene cutting",
+        "Manual",
+        "Table A1",
+        "Table A4"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:86:table:Table A4"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "compound_designation",
+      "semantic_expansion_trace": {
+        "raw_query": "Explain the designation OFC-A-MA according to AWS A3.0.",
+        "normalized_query": "explain the designation ofc-a-ma according to aws a3 0",
+        "extracted_candidate_terms": [],
+        "alias_expansions": [
+          {
+            "surface_span": "OFC-A-MA",
+            "canonical_term": "manual oxyacetylene cutting",
+            "source_authority": "Table A1 / IS_A Promotions + Table A4 (p. 74)",
+            "resolution_type": "COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "OFC-A",
+                "canonical_term": "oxyacetylene cutting",
+                "source_authority": "Table A1 / IS_A Promotions"
+              },
+              {
+                "type": "APPLICATION_MODE",
+                "suffix": "-MA",
+                "canonical_term": "Manual",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": []
+        }
+      }
+    },
+    {
+      "id": "G60-NER05",
+      "category": "id_free_spatial_callouts",
+      "slice_name": "Slice 2 \u2014 ID-Free Annex B Spatial Diagram Callouts",
+      "query": "Which diagram illustrates theoretical throat, effective throat, and actual throat?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b25_p123_crop_300.png",
+      "printed_page": 123,
+      "pdf_index": 135,
+      "evidence_locator": "figure_b25:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Figure B25 (Weld Sizes, printed p. 123, PDF index 135) of AWS A3.0M/A3.0:2020, fillet weld throat dimensions are illustrated: theoretical throat is the distance from the beginning of the joint root perpendicular to the hypotenuse of the largest right triangle inscribed within the fillet weld cross section; effective throat is the minimum distance minus any convexity between the fillet weld face and the weld root; and actual throat is the shortest distance between the weld root and the face of a fillet weld.",
+      "elements_present": [
+        "Figure B25",
+        "Weld Sizes",
+        "theoretical throat",
+        "effective throat",
+        "actual throat"
+      ],
+      "normative_provenance": [
+        "obs:pdf:135:figure:Figure B25",
+        "obs:clause4:p58:theoretical_throat"
+      ],
+      "target_division": "Figure B25",
+      "intent": "spatial_callout",
+      "semantic_expansion_trace": {
+        "raw_query": "Which diagram illustrates theoretical throat, effective throat, and actual throat?",
+        "normalized_query": "which diagram illustrates theoretical throat effective throat and actual throat",
+        "extracted_candidate_terms": [
+          "theoretical throat",
+          "effective throat",
+          "actual throat"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "theoretical throat",
+            "canonical_term": "theoretical throat",
+            "source_authority": "Table D2 (p. 168)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "effective throat",
+            "canonical_term": "effective throat",
+            "source_authority": "Table D2 (p. 167)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure B25"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "theoretical throat",
+            "effective throat",
+            "actual throat"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER06",
+      "category": "id_free_spatial_callouts",
+      "slice_name": "Slice 2 \u2014 ID-Free Annex B Spatial Diagram Callouts",
+      "query": "Which figure illustrates crack types including underbead crack, toe crack, and crater crack?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b33_p139_crop_300.png",
+      "printed_page": 139,
+      "pdf_index": 151,
+      "evidence_locator": "figure_b33:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Figure B33 (Crack Types, printed p. 137, PDF index 149) of AWS A3.0M/A3.0:2020, standard crack types and locations in and adjacent to welds are illustrated: including crater crack (crack in weld crater), face crack, heat-affected zone crack, lamellar tear, longitudinal crack, root crack, root surface crack, throat crack, toe crack (crack in base metal at weld toe), underbead crack (crack in heat-affected zone under weld metal), and transverse crack.",
+      "elements_present": [
+        "Figure B33",
+        "Crack Types",
+        "toe crack",
+        "underbead crack",
+        "crater crack",
+        "throat crack",
+        "root crack"
+      ],
+      "normative_provenance": [
+        "obs:pdf:149:figure:Figure B33"
+      ],
+      "target_division": "Figure B33",
+      "intent": "crack_keys",
+      "semantic_expansion_trace": {
+        "raw_query": "Which figure illustrates crack types including underbead crack, toe crack, and crater crack?",
+        "normalized_query": "which figure illustrates crack types including underbead crack toe crack and crater crack",
+        "extracted_candidate_terms": [
+          "underbead crack",
+          "crater crack",
+          "toe crack",
+          "crater",
+          "crack"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "crack types",
+            "canonical_term": "Figure B33",
+            "source_authority": "Annex B (Figure B33)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure B33"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "underbead crack",
+            "crater crack",
+            "toe crack",
+            "crater",
+            "crack"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER07",
+      "category": "id_free_spatial_callouts",
+      "slice_name": "Slice 2 \u2014 ID-Free Annex B Spatial Diagram Callouts",
+      "query": "Which diagram shows friction stir welding terms like advancing side, retreating side, and thermomechanically affected zone?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b46_p150_crop_300.png",
+      "printed_page": 150,
+      "pdf_index": 162,
+      "evidence_locator": "figure_b46:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Figure B46 (Schematic of the Friction Stir Welding Process, printed p. 154, PDF index 166) of AWS A3.0M/A3.0:2020, the schematic illustrates key components and zones: advancing side (the side of the weld in which tool rotation direction is the same as travel direction), retreating side (the side of the weld in which tool rotation direction opposes travel direction), tool shoulder, probe (weld tool pin), weld face, exit hole, axial force, direction of tool rotation, heat-affected zone (HAZ), and thermomechanically affected zone (TMAZ).",
+      "elements_present": [
+        "Figure B46",
+        "Friction Stir Welding",
+        "advancing side",
+        "retreating side",
+        "thermomechanically affected zone",
+        "tool shoulder",
+        "probe",
+        "HAZ",
+        "TMAZ"
+      ],
+      "normative_provenance": [
+        "obs:pdf:166:figure:Figure B46"
+      ],
+      "target_division": "Figure B46",
+      "intent": "fsw_components_zones",
+      "semantic_expansion_trace": {
+        "raw_query": "Which diagram shows friction stir welding terms like advancing side, retreating side, and thermomechanically affected zone?",
+        "normalized_query": "which diagram shows friction stir welding terms like advancing side retreating side and thermomechanically affected zone",
+        "extracted_candidate_terms": [
+          "friction stir welding",
+          "retreating side",
+          "advancing side",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "retreating side",
+            "canonical_term": "retreating side",
+            "source_authority": "Table D1 (p. 166)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "advancing side",
+            "canonical_term": "advancing side",
+            "source_authority": "Table D1 (p. 165)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure B46"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "friction stir welding",
+            "retreating side",
+            "advancing side",
+            "welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER08",
+      "category": "id_free_spatial_callouts",
+      "slice_name": "Slice 2 \u2014 ID-Free Annex B Spatial Diagram Callouts",
+      "query": "Which figure illustrates starting weld tab, runoff tab, and split pipe backing?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b12_p98_crop_300.png",
+      "printed_page": 98,
+      "pdf_index": 110,
+      "evidence_locator": "figure_b12:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Figure B12 (End Dam, Shelf, Split Pipe Backing, Sump, Starting Weld Tab, and Runoff Tab, printed p. 101, PDF index 113) of AWS A3.0M/A3.0:2020, auxiliary weld joint configurations are illustrated: starting weld tab (additional material facilitating weld initiation with sound metal), runoff tab (material extending beyond joint end to receive weld crater), sump (cavity for runout in electroslag/electrogas welding), split pipe backing, end dam, and shelf bar.",
+      "elements_present": [
+        "Figure B12",
+        "starting weld tab",
+        "runoff tab",
+        "sump",
+        "split pipe backing",
+        "end dam"
+      ],
+      "normative_provenance": [
+        "obs:pdf:113:figure:Figure B12"
+      ],
+      "target_division": "Figure B12",
+      "intent": "spatial_callout",
+      "semantic_expansion_trace": {
+        "raw_query": "Which figure illustrates starting weld tab, runoff tab, and split pipe backing?",
+        "normalized_query": "which figure illustrates starting weld tab runoff tab and split pipe backing",
+        "extracted_candidate_terms": [
+          "split pipe backing",
+          "starting weld tab",
+          "weld tab",
+          "backing",
+          "weld"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "starting weld tab",
+            "canonical_term": "starting weld tab",
+            "source_authority": "Table D2 (p. 168)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "weld tab",
+            "canonical_term": "weld tab",
+            "source_authority": "Table D2 (p. 168)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure B12"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "split pipe backing",
+            "starting weld tab",
+            "weld tab",
+            "backing",
+            "weld"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER09",
+      "category": "homograph_and_position_disambiguation",
+      "slice_name": "Slice 3 \u2014 Homograph, Weld Position & Domain Qualifier Disambiguation",
+      "query": "What does the abbreviation AB stand for in AWS A3.0?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/a6_ingest_001/a6_crop_300.png",
+      "printed_page": 80,
+      "pdf_index": 92,
+      "evidence_locator": "figure_a6:brazing_and_soldering",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, the letter designation 'AB' appears in two distinct standard contexts: 1. In Table A1 (printed p. 69) and Clause 4 (printed p. 8), 'AB' is the standard process designation for adhesive bonding (Other Welding and Joining). 2. In Figure A6 (printed p. 79, Brazing and Soldering Classification Chart), 'AB' is used in the chart legend to designate arc brazing.",
+      "elements_present": [
+        "AB",
+        "adhesive bonding",
+        "Table A1",
+        "arc brazing",
+        "Figure A6"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:91:figure:Figure A6"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "homograph_disambiguation",
+      "semantic_expansion_trace": {
+        "raw_query": "What does the abbreviation AB stand for in AWS A3.0?",
+        "normalized_query": "what does the abbreviation ab stand for in aws a3 0",
+        "extracted_candidate_terms": [
+          "ab"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "AB",
+            "canonical_term": "adhesive bonding",
+            "source_authority": "Table A1 (p. 69)",
+            "resolution_type": "ABBREVIATION"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "adhesive bonding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER10",
+      "category": "homograph_and_position_disambiguation",
+      "slice_name": "Slice 3 \u2014 Homograph, Weld Position & Domain Qualifier Disambiguation",
+      "query": "What does AB stand for in the context of brazing?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/a6_ingest_001/a6_crop_300.png",
+      "printed_page": 80,
+      "pdf_index": 92,
+      "evidence_locator": "figure_a6:brazing_and_soldering",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, the letter designation 'AB' appears in two distinct standard contexts: 1. In Table A1 (printed p. 69) and Clause 4 (printed p. 8), 'AB' is the standard process designation for adhesive bonding (Other Welding and Joining). 2. In Figure A6 (printed p. 79, Brazing and Soldering Classification Chart), 'AB' is used in the chart legend to designate arc brazing.",
+      "elements_present": [
+        "AB",
+        "adhesive bonding",
+        "Table A1",
+        "arc brazing",
+        "Figure A6"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:91:figure:Figure A6"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "homograph_disambiguation",
+      "semantic_expansion_trace": {
+        "raw_query": "What does AB stand for in the context of brazing?",
+        "normalized_query": "what does ab stand for in the context of brazing",
+        "extracted_candidate_terms": [
+          "ab",
+          "brazing"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "AB",
+            "canonical_term": "adhesive bonding",
+            "source_authority": "Table A1 (p. 69)",
+            "resolution_type": "ABBREVIATION"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "adhesive bonding",
+            "brazing"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER11",
+      "category": "homograph_and_position_disambiguation",
+      "slice_name": "Slice 3 \u2014 Homograph, Weld Position & Domain Qualifier Disambiguation",
+      "query": "What welding position does 6G designate for pipe groove welding?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b19_p108_crop_300.png",
+      "printed_page": 108,
+      "pdf_index": 120,
+      "evidence_locator": "figure_b19:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, 6G is a welding test position designation for a circumferential groove weld applied to a joint in pipe with its axis approximately 45 degrees from horizontal, in which the weld is made in fixed position without rotating the pipe. Illustrated in Figure B19(D) (Positions of Test Pipes for Groove Welds, p. 111) and categorized in Figure B16C (p. 108).",
+      "elements_present": [
+        "6G",
+        "circumferential groove weld",
+        "joint in pipe",
+        "Figure B19",
+        "Figure B16C"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p2:6G",
+        "obs:pdf:123:figure:Figure B19",
+        "obs:pdf:120:figure:Figure B16C"
+      ],
+      "target_division": "Figure B16C",
+      "intent": "test_positions",
+      "semantic_expansion_trace": {
+        "raw_query": "What welding position does 6G designate for pipe groove welding?",
+        "normalized_query": "what welding position does 6g designate for pipe groove welding",
+        "extracted_candidate_terms": [
+          "welding position",
+          "position",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "welding position",
+            "canonical_term": "welding position",
+            "source_authority": "Table D3 (p. 169)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "welding position",
+            "position",
+            "welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER12",
+      "category": "homograph_and_position_disambiguation",
+      "slice_name": "Slice 3 \u2014 Homograph, Weld Position & Domain Qualifier Disambiguation",
+      "query": "What does the welding position 2F designate in plate welding?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b18_p106_crop_300.png",
+      "printed_page": 106,
+      "pdf_index": 118,
+      "evidence_locator": "figure_b18:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, 2F is a welding test position designation for a linear fillet weld applied to a joint in plate in which the weld is made in the horizontal welding position. Illustrated in Figure B18(B) (Positions of Test Plates for Fillet Welds, p. 110) and categorized in Figure B16B (p. 107).",
+      "elements_present": [
+        "2F",
+        "linear fillet weld",
+        "joint in plate",
+        "Figure B18",
+        "Figure B16B"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p2:2F",
+        "obs:pdf:122:figure:Figure B18",
+        "obs:pdf:119:figure:Figure B16B"
+      ],
+      "target_division": "Figure B16A",
+      "intent": "test_positions",
+      "semantic_expansion_trace": {
+        "raw_query": "What does the welding position 2F designate in plate welding?",
+        "normalized_query": "what does the welding position 2f designate in plate welding",
+        "extracted_candidate_terms": [
+          "welding position",
+          "position",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "welding position",
+            "canonical_term": "welding position",
+            "source_authority": "Table D3 (p. 169)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "welding position",
+            "position",
+            "welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER13",
+      "category": "multi_entity_cross_store",
+      "slice_name": "Slice 4 \u2014 Multi-Entity Cross-Store Comparative & Multi-Hop Queries",
+      "query": "What does PAW-AU designate and how is plasma arc welding classified in Figure A4?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/a4_ingest_001/a4_crop_300.png",
+      "printed_page": 78,
+      "pdf_index": 90,
+      "evidence_locator": "figure_a4:fusion_welding",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, PAW-AU designates automatic plasma arc welding (Table A1, p. 69; Table A4, p. 74). In Figure A4 (Fusion Welding Classification, printed p. 78, PDF index 90), plasma arc welding (PAW) branches under Fusion Welding with an Electrical energy source and Arc thermal source.",
+      "elements_present": [
+        "PAW-AU",
+        "automatic plasma arc welding",
+        "Figure A4",
+        "Fusion Welding",
+        "Arc",
+        "plasma arc welding"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:86:table:Table A4",
+        "obs:pdf:90:figure:Figure A4"
+      ],
+      "target_division": "Multi-Division",
+      "intent": "compound_designation_and_diagram",
+      "semantic_expansion_trace": {
+        "raw_query": "What does PAW-AU designate and how is plasma arc welding classified in Figure A4?",
+        "normalized_query": "what does paw-au designate and how is plasma arc welding classified in figure a4",
+        "extracted_candidate_terms": [
+          "plasma arc welding",
+          "arc welding",
+          "welding",
+          "plasma"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "PAW-AU",
+            "canonical_term": "automatic plasma arc welding",
+            "source_authority": "Table A1 (p. 69) + Table A4 (p. 74)",
+            "resolution_type": "COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "PAW",
+                "canonical_term": "plasma arc welding",
+                "source_authority": "Table A1 (p. 69)"
+              },
+              {
+                "type": "APPLICATION_MODE",
+                "suffix": "-AU",
+                "canonical_term": "Automatic",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "plasma arc welding",
+            "arc welding",
+            "welding",
+            "plasma"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER14",
+      "category": "multi_entity_cross_store",
+      "slice_name": "Slice 4 \u2014 Multi-Entity Cross-Store Comparative & Multi-Hop Queries",
+      "query": "Compare the historical process atomic hydrogen welding (AHW) with gas tungsten arc welding (GTAW).",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 74,
+      "pdf_index": 86,
+      "evidence_locator": "table_a5:obsolete_processes",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "Per AWS A3.0M/A3.0:2020, atomic hydrogen welding (letter designation: AHW) is an obsolete process classified in Table A5 (p. 74) and Annex D Table D4, whose definition is retained in Clause 4 for historical interpretation. In contrast, gas tungsten arc welding (letter designation: GTAW) is an active standard arc welding process classified in Table A1 (p. 69), Clause 4 (p. 32), and Figure A4 (p. 78).",
+      "elements_present": [
+        "atomic hydrogen welding",
+        "AHW",
+        "Table A5",
+        "obsolete",
+        "gas tungsten arc welding",
+        "GTAW",
+        "Table A1",
+        "active"
+      ],
+      "normative_provenance": [
+        "obs:pdf:86:table:Table A5",
+        "obs:pdf:81:table:Table A1"
+      ],
+      "target_division": "Multi-Division",
+      "intent": "cross_store_comparison",
+      "semantic_expansion_trace": {
+        "raw_query": "Compare the historical process atomic hydrogen welding (AHW) with gas tungsten arc welding (GTAW).",
+        "normalized_query": "compare the historical process atomic hydrogen welding ahw with gas tungsten arc welding gtaw",
+        "extracted_candidate_terms": [
+          "ahw",
+          "gtaw",
+          "gas tungsten arc welding",
+          "atomic hydrogen welding",
+          "arc welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "AHW",
+            "canonical_term": "atomic hydrogen welding",
+            "source_authority": "Table A5 (p. 74)",
+            "resolution_type": "ABBREVIATION"
+          },
+          {
+            "surface_span": "ahw",
+            "canonical_term": "atomic hydrogen welding",
+            "source_authority": "Table A5 (p. 74)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "GTAW",
+            "canonical_term": "gas tungsten arc welding",
+            "source_authority": "Table A1 (p. 69)",
+            "resolution_type": "ABBREVIATION"
+          },
+          {
+            "surface_span": "atomic hydrogen welding",
+            "canonical_term": "atomic hydrogen welding",
+            "source_authority": "Table A5 (p. 74)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "atomic hydrogen welding",
+            "gas tungsten arc welding",
+            "arc welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER15",
+      "category": "multi_entity_cross_store",
+      "slice_name": "Slice 4 \u2014 Multi-Entity Cross-Store Comparative & Multi-Hop Queries",
+      "query": "What is the preferred standard term for heliarc and which figure illustrates upslope and downslope intervals?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b53_300dpi.png",
+      "printed_page": 157,
+      "pdf_index": 169,
+      "evidence_locator": "figure_b49:interval:upslope",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "Per Clause 4 (p. 32), heliarc is a nonstandard term that redirects to gas tungsten arc welding (GTAW). In Figure B53 (An Example of a Welding Cycle for Pulsed Welding, printed p. 157), the diagram illustrates an example of a welding cycle for pulsed welding. Its parameter traces plotted against time include: WELDING CURRENT, ARC VOLTAGE, WIRE FEED SPEED, TRAVEL SPEED, SHIELDING GAS FLOW. The upslope and downslope current intervals define transition timing: UPSLOPE TIME transitions current up to WELD TIME (comprising HIGH PULSE TIME and LOW PULSE TIME), while DOWNSLOPE TIME transitions current down toward crater fill and POSTFLOW TIME.",
+      "elements_present": [
+        "heliarc",
+        "gas tungsten arc welding",
+        "GTAW",
+        "Figure B53",
+        "WELDING CURRENT",
+        "ARC VOLTAGE",
+        "WIRE FEED SPEED",
+        "TRAVEL SPEED",
+        "SHIELDING GAS FLOW",
+        "HIGH PULSE TIME",
+        "LOW PULSE TIME",
+        "UPSLOPE TIME",
+        "DOWNSLOPE TIME"
+      ],
+      "normative_provenance": [
+        "obs:pdf:169:figure:Figure B53",
+        "obs:clause4:p32:heliarc"
+      ],
+      "target_division": "Figure B53",
+      "intent": "waveform",
+      "semantic_expansion_trace": {
+        "raw_query": "What is the preferred standard term for heliarc and which figure illustrates upslope and downslope intervals?",
+        "normalized_query": "what is the preferred standard term for heliarc and which figure illustrates upslope and downslope intervals",
+        "extracted_candidate_terms": [
+          "preferred",
+          "heliarc"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "heliarc",
+            "canonical_term": "gas tungsten arc welding",
+            "source_authority": "Clause 4 (p. 32) / Annex C",
+            "resolution_type": "NONSTANDARD_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "gas tungsten arc welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER16",
+      "category": "multi_entity_cross_store",
+      "slice_name": "Slice 4 \u2014 Multi-Entity Cross-Store Comparative & Multi-Hop Queries",
+      "query": "How is braze defined as both a noun and a verb in Clause 4?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 12,
+      "pdf_index": 24,
+      "evidence_locator": "clause4:term:braze",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Clause 4 of AWS A3.0M/A3.0:2020, the term 'braze' has the following defined senses: braze (noun (n.)): \"A metallic bond produced as a result of heating an assembly to the brazing temperature, using a brazing filler metal distributed and retained between the closely fitted faying surfaces of the joint by capillary action. See Figure B31(A).\"; braze (verb (v.)): \"The act of brazing.\" (printed p. 12). Parts of speech: noun, verb. It denotes the act of brazing.",
+      "elements_present": [
+        "braze",
+        "act of brazing",
+        "verb",
+        "noun",
+        "braze"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p12:braze"
+      ],
+      "target_division": "Clause 4",
+      "intent": "multi_sense_pos",
+      "semantic_expansion_trace": {
+        "raw_query": "How is braze defined as both a noun and a verb in Clause 4?",
+        "normalized_query": "how is braze defined as both a noun and a verb in clause 4",
+        "extracted_candidate_terms": [
+          "braze"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "braze",
+            "canonical_term": "braze",
+            "source_authority": "Table D2 (p. 167)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "braze"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER17",
+      "category": "boundary_and_abstention",
+      "slice_name": "Slice 5 \u2014 Invalid Compound Suffix, False-Premise & Out-of-Scope NER Boundaries",
+      "query": "What does the compound designation GTAW-ZZ mean in AWS A3.0?",
+      "actual_status": "NOT_IN_STANDARD",
+      "expected_status": "NOT_IN_STANDARD",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 69,
+      "pdf_index": 81,
+      "evidence_locator": "table_a1:process_letter_designations",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, the base process designator GTAW is standardized in Table A1 (p. 69) as gas tungsten arc welding. However, the application mode suffix '-ZZ' is not among Table A4's 6 valid application mode suffixes (-AD, -AU, -MA, -ME, -RO, -SA).",
+      "elements_present": [
+        "GTAW-ZZ",
+        "GTAW",
+        "gas tungsten arc welding",
+        "Table A1",
+        "Table A4",
+        "not among"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:86:table:Table A4"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "invalid_compound_suffix",
+      "semantic_expansion_trace": {
+        "raw_query": "What does the compound designation GTAW-ZZ mean in AWS A3.0?",
+        "normalized_query": "what does the compound designation gtaw-zz mean in aws a3 0",
+        "extracted_candidate_terms": [],
+        "alias_expansions": [
+          {
+            "surface_span": "GTAW-ZZ",
+            "canonical_term": "gas tungsten arc welding",
+            "source_authority": "Table A1 (p. 69) + Table A4 (p. 74)",
+            "resolution_type": "INVALID_COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "GTAW",
+                "canonical_term": "gas tungsten arc welding",
+                "source_authority": "Table A1 (p. 69)"
+              },
+              {
+                "type": "INVALID_APPLICATION_MODE",
+                "suffix": "-ZZ",
+                "canonical_term": "Unknown application mode suffix '-ZZ'",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": []
+        }
+      }
+    },
+    {
+      "id": "G60-NER18",
+      "category": "boundary_and_abstention",
+      "slice_name": "Slice 5 \u2014 Invalid Compound Suffix, False-Premise & Out-of-Scope NER Boundaries",
+      "query": "What information is provided in Figure B55?",
+      "actual_status": "REFUSAL_OUT_OF_RANGE",
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": null,
+      "pdf_index": null,
+      "evidence_locator": "refusal:out_of_range",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "Figure B55 does not exist in AWS A3.0M/A3.0:2020. Annex B figures span Figure B1 through Figure B54.",
+      "elements_present": [
+        "Figure B55",
+        "does not exist",
+        "Figure B1 through Figure B54"
+      ],
+      "normative_provenance": [
+        "obs:pdf:93-169:annex_b_figures"
+      ],
+      "target_division": "Figure B55",
+      "intent": "spatial_callout",
+      "semantic_expansion_trace": {
+        "raw_query": "What information is provided in Figure B55?",
+        "normalized_query": "what information is provided in figure b55",
+        "extracted_candidate_terms": [],
+        "alias_expansions": [],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": []
+        }
+      }
+    },
+    {
+      "id": "G60-NER19",
+      "category": "boundary_and_abstention",
+      "slice_name": "Slice 5 \u2014 Invalid Compound Suffix, False-Premise & Out-of-Scope NER Boundaries",
+      "query": "How is cryo-ionic brazing defined in AWS A3.0?",
+      "actual_status": "NOT_IN_STANDARD",
+      "expected_status": "NOT_IN_STANDARD",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 5,
+      "pdf_index": 17,
+      "evidence_locator": "clause4:term:general_term",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "The term is not defined in AWS A3.0M/A3.0:2020 Clause 4 terms and definitions.",
+      "elements_present": [
+        "not defined",
+        "AWS A3.0M/A3.0:2020 Clause 4"
+      ],
+      "normative_provenance": [
+        "obs:clause4:glossary"
+      ],
+      "target_division": "Clause 4",
+      "intent": "definition",
+      "semantic_expansion_trace": {
+        "raw_query": "How is cryo-ionic brazing defined in AWS A3.0?",
+        "normalized_query": "how is cryo-ionic brazing defined in aws a3 0",
+        "extracted_candidate_terms": [
+          "cryo-ionic brazing",
+          "brazing"
+        ],
+        "alias_expansions": [],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "brazing"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G60-NER20",
+      "category": "boundary_and_abstention",
+      "slice_name": "Slice 5 \u2014 Invalid Compound Suffix, False-Premise & Out-of-Scope NER Boundaries",
+      "query": "What preheat temperature and Charpy impact toughness does AWS A3.0 specify for structural steel?",
+      "actual_status": "REFUSAL_OUT_OF_SCOPE",
+      "expected_status": "REFUSAL_OUT_OF_SCOPE",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": null,
+      "pdf_index": null,
+      "evidence_locator": "refusal:out_of_scope",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "The query is outside the scope of AWS A3.0M/A3.0:2020 (Standard Welding Terms and Definitions). Mechanical material properties and external boiler code designations are not specified in this terminology standard. Quantitative mechanical properties (tensile and yield values, elongation, Charpy V-notch toughness, hardness) and filler metal chemical composition limits are material specification requirements governed by filler metal and base material standards (e.g., AWS A5 series, ASTM), not terminology definitions.",
+      "elements_present": [
+        "outside the scope",
+        "AWS A3.0M/A3.0:2020",
+        "terminology standard"
+      ],
+      "normative_provenance": [
+        "obs:clause1:scope"
+      ],
+      "target_division": "Clause 4",
+      "intent": "definition",
+      "semantic_expansion_trace": {
+        "raw_query": "What preheat temperature and Charpy impact toughness does AWS A3.0 specify for structural steel?",
+        "normalized_query": "what preheat temperature and charpy impact toughness does aws a3 0 specify for structural steel",
+        "extracted_candidate_terms": [
+          "preheat temperature",
+          "preheat"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "preheat temperature",
+            "canonical_term": "preheat temperature",
+            "source_authority": "Table D2 (p. 168)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "preheat temperature",
+            "preheat"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,34 +1,42 @@
 ---
 name: evidence-graph-routing
-description: Route graph questions through the existing typed planning and traversal core, preserving selected evidence and relationship qualifications. Use for designation lookup, membership, children, descendants, comparison or ambiguous graph selectors; use evidence-graph-qa for an owner-question batch through the source-bound A1 CLI.
+description: Route natural-language welding questions through character-offset Welding NER and callout/backlink-indexed multi-intent routing across all 162 ingested pages of AWS A3.0M/A3.0:2020 (Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54, Annex C, Annex D).
 ---
 
 # Evidence Graph Routing
 
-Use the existing `src.evidence_a1_graph_qa.answer_graph` core from the target
-repository. Inspect its plan and actual traversal; do not create another router,
-wrapper, database or framework. For a caller-supplied compatible geometry graph:
+Use the canonical Whole-Standard CLI and routing engine from the target repository:
 
-```python
-from src.evidence_a1_graph_qa import answer_graph
-result = answer_graph(graph, query, complete_chart=False)
+```bash
+# Inspect Named Entity Recognition spans, compound codes, and homographs
+python -B -m src.evidence_whole_standard_cli --ner "<query>" --json
+
+# Inspect Multi-Intent Router plan and target division candidates
+python -B -m src.evidence_whole_standard_cli --route "<query>" --json
 ```
 
-Caller-supplied graph JSON does not authenticate source or edition. Set
-`complete_chart=True` only when full applicable chart coverage is established.
-Source-bound owner questions use the canonical CLI through $evidence-graph-qa;
-the only implemented source adapter is Figure A1.
+Or via the Python API:
 
-Retain all independently requested subjects. Missing/ambiguous selectors must
-remain explicit; direct children and recursive descendants are different
-operations. Preserve selected nodes, edges, paths and qualifications in the
-answer trace. Printed enclosure is chart membership, while indentation remains
-candidate layout, not reviewed semantic subtype. A negative needs complete-chart
-scope and positive evidence elsewhere; missing retrieval is not proof of absence.
+```python
+from src.evidence_whole_standard_cli import run_route_cli
+from src.semantic_nlq_expander import get_semantic_expander
+from src.welding_ner import get_welding_ner
 
-Do not hardcode question answers or repair source facts to fit expected grades.
-Keep source-derived results local and preserve prior failures. Run only the
-requested bounded operation, then report unsupported capabilities or remaining
-failures. This project-discoverable instruction skill does not add automatic
-backend skill loading. No model, UI, global configuration or Git publication work
-is implied.
+ner = get_welding_ner()
+receipt = ner.recognize_entities(query)
+expander = get_semantic_expander()
+trace = expander.expand_query(query)
+```
+
+## Routing Capabilities
+1. **Deterministic Welding Domain NER (`src/welding_ner.py`):**
+   - 11 entity types: `STANDARD_LOCATOR`, `COMPOUND_DESIGNATION`, `INVALID_COMPOUND_DESIGNATION`, `PROCESS_CODE`, `MODE_SUFFIX`, `PROCESS_TERM`, `NONSTANDARD_OR_HISTORICAL`, `WELD_POSITION`, `DOMAIN_QUALIFIER`, `DIAGRAM_CALLOUT`, `WAVEFORM_INTERVAL`, `GLOSSARY_TERM`.
+   - Character-offset non-overlapping longest-match tokenization.
+   - Dynamic `<BASE>-<SUFFIX>` decomposition (`PAW-AU`, `GTAW-ME`, `FCAW-G-SA`, `OFC-A-MA`).
+   - Suffix validity verification against Table A4's 6 standard suffixes (`-AD, -AU, -MA, -ME, -RO, -SA`).
+   - Homograph candidates tracking (`AB` Table A1 vs Figure A6; `1G`/`1F` pipe vs plate).
+2. **Callout- & Backlink-Indexed Multi-Intent Routing:**
+   - Inverted index over all 1,115 Annex B spatial callouts, 96 Annex A circles, and 265 Clause 4 figure back-links.
+   - Deterministic IDF-weighted ranking for ID-free spatial diagram resolution (`Figure B25` weld sizes, `Figure B33` crack types, `Figure B46` FSW zones, `Figure B12` weld tabs/sump, `Figure B7` edge shapes, `Figures B16A-C` test positions).
+3. **Legacy Figure A1 Diagnostics:**
+   - Single-chart Figure A1 inspection is still accessible via `src.evidence_chart_cli`.

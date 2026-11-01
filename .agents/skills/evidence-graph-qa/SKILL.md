@@ -1,41 +1,42 @@
 ---
 name: evidence-graph-qa
-description: Run a bounded owner-question graph-QA set through the existing source-bound Figure A1 CLI and keep actual outputs separate from independent grading. Use for backend answer checks over the prepared A1 adapter; unimplemented figures must be rejected rather than treated as A1.
+description: Execute whole-standard deterministic question answering with modality-appropriate provenance (printed page, PDF index, locator, conditional 300-DPI diagram crop) across AWS A3.0M/A3.0:2020.
 ---
 
 # Evidence Graph QA
 
-Before execution, record the existing source/edition/image/graph identities and
-harness/input versions plus hashes; retain them with the new output. Use existing
-hash tools, not a new wrapper or framework.
+Execute natural-language queries against the complete 162-page ingested AWS A3.0M/A3.0:2020 standard via the canonical CLI:
 
-Invoke the existing canonical CLI from the target repository; do not create a
-wrapper, test framework or new evaluation infrastructure:
+```bash
+# Deterministic Question Answering with structured receipt
+python -B -m src.evidence_whole_standard_cli --ask "<query>" --json
 
-```powershell
-python -B -m src.evidence_a1_cli --root <repo> --input <cqs> --graph-qa --output <repo>/storage/evidence_v2/<new-run>.json
+# Offline DeepSeek-V4.1 Replay Question Answering
+python -B -m src.evidence_whole_standard_cli --ask "<query>" --planner deepseek-replay --json
 ```
 
-Use the owner's execution-only CQ JSON (`a1-owner-cq-1.0`,
-`source_element="Figure A1"`, unique `id`/`query` items). Keep expected answers,
-verdicts and rubric notes in separate private grading data, never in execution
-input, retrieval, graph updates or answer logic. Use a new ignored output file;
-preserve actual prior outputs, gold and failures.
+Or programmatically in Python:
 
-The canonical CLI validates the prepared Figure A1 source/edition/image and
-qualified evidence. Other source adapters are unimplemented. The typed graph
-operations may be reused on compatible geometry graphs, but that does not prove
-other-figure loading or multi-figure operation.
+```python
+from src.evidence_phase4_bakeoff import answer_whole_standard_question
 
-This deterministic path uses model/provider NONE. Answered cases are not semantic
-passes: independently assess actual answers and source support, retaining
-candidate relationship qualifications and `semantic_validation=false`. Require
-complete-chart scope and positive evidence for negatives. Label exposed repairs
-as DEVELOPMENT rather than unseen or model validation.
+result = answer_whole_standard_question(query)
+print("Answer:", result["answer"])
+print("Printed Page:", result["printed_page"])
+print("Evidence Locator:", result["evidence_locator"])
+print("Requires Diagram Crop:", result["requires_diagram_crop"])
+if result["requires_diagram_crop"]:
+    print("Crop Asset:", result["crop_path"])
+```
 
-Run only the authorized bounded set once, report results and remaining failures,
-and stop. Do not add questions/gold to this skill, change source semantics to fit
-an expected answer, or expand checks/infrastructure. This project-discoverable
-instruction skill does not add automatic backend loading or runtime `SKILL.md`
-consumption. No UI, model/cloud, global configuration or Git publication work is
-implied.
+## Production Invariants Enforced
+1. **Modality-Appropriate Provenance (Gate 5.6):**
+   - Every valid answer returns `printed_page`, `pdf_index`, and a structured `evidence_locator` (e.g. `clause4:term:kerf`, `table_a4:suffix:-AU`, `figure_b25:callout:theoretical_throat`).
+   - `requires_diagram_crop: True` (with 300-DPI `crop_path`) is attached **if and only if** the claim depends on a visual diagram (`Figures A1–A6` or `Figures B1–B54`). Pure text and tabular queries return `requires_diagram_crop: False` with zero spurious crops.
+2. **Explicit Abstention & Refusal Contracts:**
+   - Out-of-Range locators (`Figure A7`, `Figure B55`, `Table A6`): `REFUSAL_OUT_OF_RANGE`.
+   - External fabrication codes, mechanical property limits, or welding parameter schedules: `REFUSAL_OUT_OF_SCOPE`.
+   - Coined or unstandardized terms absent from the standard: `NOT_IN_STANDARD`.
+   - False premises contradicting classification trees: `CONTRADICTION_REFUTED`.
+3. **Strict Epistemic Quarantine:**
+   - When using `DeepSeek-V4.1-Flash-1017` planning, all reasoning traces are tagged `UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE` and final answers are composed strictly from verified store records.
