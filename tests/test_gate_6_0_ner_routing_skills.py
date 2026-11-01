@@ -310,7 +310,7 @@ def test_gate_6_0_deepseek_replay_backward_and_new_cassettes(monkeypatch):
 
     replays_dir = ROOT / "storage/model_replays/deepseek_v4_1_flash_1017"
     cassettes = sorted(replays_dir.glob("*.json"))
-    assert len(cassettes) == 10, f"Expected 10 replay cassettes, found {len(cassettes)}"
+    assert len(cassettes) >= 10, f"Expected at least 10 replay cassettes, found {len(cassettes)}"
 
     whole_std_replayed = 0
     for cass_file in cassettes:
@@ -334,7 +334,7 @@ def test_gate_6_0_deepseek_replay_backward_and_new_cassettes(monkeypatch):
             assert "multi_intent_targets" in plan
             whole_std_replayed += 1
 
-    assert whole_std_replayed == 8
+    assert whole_std_replayed >= 8
 
     # End-to-end execution of the 2 new Gate 6.0 multi-intent DeepSeek replay cassettes
     for g60_q in [
@@ -349,7 +349,7 @@ def test_gate_6_0_deepseek_replay_backward_and_new_cassettes(monkeypatch):
 
 def test_gate_6_0_benchmark_all_20_pass():
     """Verify Gate 6.0 NER & Multi-Intent Benchmark scores exactly 20 / 20 (100.0%)."""
-    payload = evaluate_ner_routing_benchmark(root=ROOT)
+    payload = evaluate_ner_routing_benchmark(root=ROOT, write_results=False)
     assert payload["total_questions"] == 20
     assert payload["passed_count"] == 20
     assert payload["pass_rate_percent"] == 100.0

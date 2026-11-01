@@ -1,0 +1,1120 @@
+{
+  "version": "phase6_1_semantic_graph_results_v1.0",
+  "benchmark_name": "Gate 6.1 Polysemous Welding NER, 3-Tier Grammar & Semantic Graph Benchmark",
+  "total_questions": 15,
+  "passed_count": 15,
+  "pass_rate_percent": 100.0,
+  "gate_status": "PASS",
+  "results": [
+    {
+      "id": "G61-SEM01",
+      "category": "polysemous_dual_routing",
+      "slice_name": "Slice 1 \u2014 Polysemous Callout + Glossary Dual-Routing",
+      "query": "Which diagram illustrates theoretical throat, effective throat, and actual throat, and how are they defined in Clause 4?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b25_p123_crop_300.png",
+      "printed_page": 123,
+      "pdf_index": 135,
+      "evidence_locator": "figure_b25:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Figure B25 (Weld Sizes, printed p. 123, PDF index 135) of AWS A3.0M/A3.0:2020, fillet weld throat dimensions are illustrated: theoretical throat is the distance from the beginning of the joint root perpendicular to the hypotenuse of the largest right triangle inscribed within the fillet weld cross section; effective throat is the minimum distance minus any convexity between the fillet weld face and the weld root; and actual throat is the shortest distance between the weld root and the face of a fillet weld.",
+      "elements_present": [
+        "Figure B25",
+        "Weld Sizes",
+        "theoretical throat",
+        "effective throat",
+        "actual throat"
+      ],
+      "normative_provenance": [
+        "obs:pdf:135:figure:Figure B25",
+        "obs:clause4:p58:theoretical_throat"
+      ],
+      "target_division": "Figure B25",
+      "intent": "spatial_callout",
+      "semantic_expansion_trace": {
+        "raw_query": "Which diagram illustrates theoretical throat, effective throat, and actual throat, and how are they defined in Clause 4?",
+        "normalized_query": "which diagram illustrates theoretical throat effective throat and actual throat and how are they defined in clause 4",
+        "extracted_candidate_terms": [
+          "they",
+          "theoretical throat",
+          "effective throat",
+          "actual throat"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "theoretical throat",
+            "canonical_term": "theoretical throat",
+            "source_authority": "Table D2 (p. 168)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "effective throat",
+            "canonical_term": "effective throat",
+            "source_authority": "Table D2 (p. 167)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure B25"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "theoretical throat",
+            "effective throat",
+            "actual throat"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G61-SEM02",
+      "category": "polysemous_dual_routing",
+      "slice_name": "Slice 1 \u2014 Polysemous Callout + Glossary Dual-Routing",
+      "query": "Which diagram illustrates root face and groove angle, and how is root face defined in Clause 4?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b6_p87_crop_300.png",
+      "printed_page": 87,
+      "pdf_index": 99,
+      "evidence_locator": "figure_b6:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Figure B6 (Groove Weld and Joint Nomenclature, printed p. 87, PDF index 99) of AWS A3.0M/A3.0:2020, groove weld and joint terms are illustrated: root face (that portion of the groove face within the joint root), groove face (that surface of a member included in the groove), and groove angle (the total included angle of the groove between workpieces).",
+      "elements_present": [
+        "Figure B6",
+        "Groove Weld and Joint Nomenclature",
+        "root face",
+        "groove angle",
+        "groove face",
+        "joint root"
+      ],
+      "normative_provenance": [
+        "obs:pdf:99:figure:Figure B6",
+        "obs:clause4:p50:root_face"
+      ],
+      "target_division": "Figure B5",
+      "intent": "spatial_callout",
+      "semantic_expansion_trace": {
+        "raw_query": "Which diagram illustrates root face and groove angle, and how is root face defined in Clause 4?",
+        "normalized_query": "which diagram illustrates root face and groove angle and how is root face defined in clause 4",
+        "extracted_candidate_terms": [
+          "root face",
+          "groove angle",
+          "root"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "groove angle",
+            "canonical_term": "groove angle",
+            "source_authority": "Table D3 (p. 169)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "root",
+            "canonical_term": "joint root and weld root",
+            "source_authority": "Clause 4 (p. 49)",
+            "resolution_type": "NONSTANDARD_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure B5",
+            "Figure B6"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "root face",
+            "groove angle",
+            "root"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G61-SEM03",
+      "category": "polysemous_dual_routing",
+      "slice_name": "Slice 1 \u2014 Polysemous Callout + Glossary Dual-Routing",
+      "query": "Which figure illustrates crack types including toe crack and underbead crack, and how is toe crack defined in Clause 4?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b33_p139_crop_300.png",
+      "printed_page": 139,
+      "pdf_index": 151,
+      "evidence_locator": "figure_b33:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Figure B33 (Crack Types, printed p. 137, PDF index 149) of AWS A3.0M/A3.0:2020, standard crack types and locations in and adjacent to welds are illustrated: including crater crack (crack in weld crater), face crack, heat-affected zone crack, lamellar tear, longitudinal crack, root crack, root surface crack, throat crack, toe crack (crack in base metal at weld toe), underbead crack (crack in heat-affected zone under weld metal), and transverse crack.",
+      "elements_present": [
+        "Figure B33",
+        "Crack Types",
+        "toe crack",
+        "underbead crack",
+        "crater crack",
+        "throat crack",
+        "root crack"
+      ],
+      "normative_provenance": [
+        "obs:pdf:149:figure:Figure B33"
+      ],
+      "target_division": "Figure B33",
+      "intent": "crack_keys",
+      "semantic_expansion_trace": {
+        "raw_query": "Which figure illustrates crack types including toe crack and underbead crack, and how is toe crack defined in Clause 4?",
+        "normalized_query": "which figure illustrates crack types including toe crack and underbead crack and how is toe crack defined in clause 4",
+        "extracted_candidate_terms": [
+          "toe crack",
+          "underbead crack",
+          "crack"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "crack types",
+            "canonical_term": "Figure B33",
+            "source_authority": "Annex B (Figure B33)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure B33",
+            "Figure B32"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "toe crack",
+            "underbead crack",
+            "crack"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G61-SEM04",
+      "category": "three_tier_compound_designation",
+      "slice_name": "Slice 2 \u2014 3-Tier Compound Designations & Invalid Variant Rejection",
+      "query": "What does the compound designation FCAW-G-SA stand for according to Table A1 and Table A4?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 69,
+      "pdf_index": 81,
+      "evidence_locator": "table_a1:process_letter_designations",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, FCAW-G-SA designates semiautomatic gas shielded flux cored arc welding. Per Table A1 (printed p. 69), the letter designation FCAW-G designates gas shielded flux cored arc welding. Per Table A4 (printed p. 74), the letter suffix -SA designates semiautomatic application mode per Note format XXXX-YY.",
+      "elements_present": [
+        "FCAW-G-SA",
+        "semiautomatic gas shielded flux cored arc welding",
+        "gas shielded flux cored arc welding",
+        "Semiautomatic",
+        "Table A1",
+        "Table A4"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:86:table:Table A4"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "compound_designation",
+      "semantic_expansion_trace": {
+        "raw_query": "What does the compound designation FCAW-G-SA stand for according to Table A1 and Table A4?",
+        "normalized_query": "what does the compound designation fcaw-g-sa stand for according to table a1 and table a4",
+        "extracted_candidate_terms": [],
+        "alias_expansions": [
+          {
+            "surface_span": "FCAW-G-SA",
+            "canonical_term": "semiautomatic gas shielded flux cored arc welding",
+            "source_authority": "Table A1 (p. 69) + Clause 4 / Table A1 / IS_A Store + Table A4 (p. 74)",
+            "resolution_type": "COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "FCAW",
+                "canonical_term": "flux cored arc welding",
+                "source_authority": "Table A1 (p. 69)"
+              },
+              {
+                "type": "PROCESS_VARIATION",
+                "code": "FCAW-G",
+                "canonical_term": "gas shielded flux cored arc welding",
+                "source_authority": "Clause 4 / Table A1 / IS_A Store"
+              },
+              {
+                "type": "APPLICATION_MODE",
+                "suffix": "-SA",
+                "canonical_term": "Semiautomatic",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": []
+        }
+      }
+    },
+    {
+      "id": "G61-SEM05",
+      "category": "three_tier_compound_designation",
+      "slice_name": "Slice 2 \u2014 3-Tier Compound Designations & Invalid Variant Rejection",
+      "query": "What does the compound code GMAW-P-AU designate in AWS A3.0?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 69,
+      "pdf_index": 81,
+      "evidence_locator": "table_a1:process_letter_designations",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, GMAW-P-AU designates automatic pulsed gas metal arc welding. Per Table A1 (printed p. 69), the letter designation GMAW-P designates pulsed gas metal arc welding. Per Table A4 (printed p. 74), the letter suffix -AU designates automatic application mode per Note format XXXX-YY.",
+      "elements_present": [
+        "GMAW-P-AU",
+        "automatic pulsed gas metal arc welding",
+        "pulsed gas metal arc welding",
+        "Automatic",
+        "Table A1",
+        "Table A4"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:86:table:Table A4"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "compound_designation",
+      "semantic_expansion_trace": {
+        "raw_query": "What does the compound code GMAW-P-AU designate in AWS A3.0?",
+        "normalized_query": "what does the compound code gmaw-p-au designate in aws a3 0",
+        "extracted_candidate_terms": [
+          "gmaw-p-au"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "GMAW-P-AU",
+            "canonical_term": "automatic pulsed gas metal arc welding",
+            "source_authority": "Table A1 (p. 69) + Clause 4 / Table A1 / IS_A Store + Table A4 (p. 74)",
+            "resolution_type": "COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "GMAW",
+                "canonical_term": "gas metal arc welding",
+                "source_authority": "Table A1 (p. 69)"
+              },
+              {
+                "type": "PROCESS_VARIATION",
+                "code": "GMAW-P",
+                "canonical_term": "pulsed gas metal arc welding",
+                "source_authority": "Clause 4 / Table A1 / IS_A Store"
+              },
+              {
+                "type": "APPLICATION_MODE",
+                "suffix": "-AU",
+                "canonical_term": "Automatic",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": []
+        }
+      }
+    },
+    {
+      "id": "G61-SEM06",
+      "category": "three_tier_compound_designation",
+      "slice_name": "Slice 2 \u2014 3-Tier Compound Designations & Invalid Variant Rejection",
+      "query": "Explain why OFC-A-MA is a valid designation while FCAW-Z-SA and PAW-AU-ME are rejected in AWS A3.0.",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 69,
+      "pdf_index": 81,
+      "evidence_locator": "textual_multi_hop:compound_designation_and_validation",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, OFC-A-MA is a valid compound designation for manual oxyacetylene cutting (combining Table A1 base process oxyfuel gas cutting with Table A4 application mode). In contrast, other proposed combinations are not in the standard: FCAW-Z-SA is rejected because Process variation 'FCAW-Z' is not a standardized process variation of 'FCAW' in AWS A3.0M/A3.0:2020. PAW-AU-ME is rejected because Conflicting application mode suffixes: '-AU' and '-ME' cannot both be appended. Table A4 standardizes exactly one application mode suffix per process designation.",
+      "elements_present": [
+        "OFC-A-MA",
+        "manual oxyacetylene cutting",
+        "oxyfuel gas cutting",
+        "OFC-A-MA",
+        "oxyfuel gas cutting",
+        "manual",
+        "FCAW-Z-SA",
+        "PAW-AU-ME",
+        "not in",
+        "Table A1",
+        "Table A4"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:86:table:Table A4"
+      ],
+      "target_division": "Normative Tables",
+      "intent": "compound_designation_and_validation",
+      "semantic_expansion_trace": {
+        "raw_query": "Explain why OFC-A-MA is a valid designation while FCAW-Z-SA and PAW-AU-ME are rejected in AWS A3.0.",
+        "normalized_query": "explain why ofc-a-ma is a valid designation while fcaw-z-sa and paw-au-me are rejected in aws a3 0",
+        "extracted_candidate_terms": [],
+        "alias_expansions": [
+          {
+            "surface_span": "OFC-A-MA",
+            "canonical_term": "manual oxyacetylene cutting",
+            "source_authority": "Table A1 (p. 70) + Clause 4 / Table A1 / IS_A Store + Table A4 (p. 74)",
+            "resolution_type": "COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "OFC",
+                "canonical_term": "oxyfuel gas cutting",
+                "source_authority": "Table A1 (p. 70)"
+              },
+              {
+                "type": "PROCESS_VARIATION",
+                "code": "OFC-A",
+                "canonical_term": "oxyacetylene cutting",
+                "source_authority": "Clause 4 / Table A1 / IS_A Store"
+              },
+              {
+                "type": "APPLICATION_MODE",
+                "suffix": "-MA",
+                "canonical_term": "Manual",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          },
+          {
+            "surface_span": "FCAW-Z-SA",
+            "canonical_term": "flux cored arc welding",
+            "source_authority": "Table A1 (p. 69) + Table A4 (p. 74)",
+            "resolution_type": "INVALID_COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "FCAW",
+                "canonical_term": "flux cored arc welding",
+                "source_authority": "Table A1 (p. 69)"
+              },
+              {
+                "type": "INVALID_PROCESS_VARIATION",
+                "code": "FCAW-Z",
+                "canonical_term": "Unknown process variation 'FCAW-Z'",
+                "source_authority": "Clause 4 / Table A1 / IS_A Store"
+              },
+              {
+                "type": "APPLICATION_MODE",
+                "suffix": "-SA",
+                "canonical_term": "Semiautomatic",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          },
+          {
+            "surface_span": "PAW-AU-ME",
+            "canonical_term": "plasma arc welding",
+            "source_authority": "Table A1 (p. 69) + Table A4 (p. 74)",
+            "resolution_type": "INVALID_COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "PAW",
+                "canonical_term": "plasma arc welding",
+                "source_authority": "Table A1 (p. 69)"
+              },
+              {
+                "type": "CONFLICTING_APPLICATION_MODE",
+                "suffix": "-AU",
+                "canonical_term": "Automatic",
+                "source_authority": "Table A4 (p. 74)"
+              },
+              {
+                "type": "CONFLICTING_APPLICATION_MODE",
+                "suffix": "-ME",
+                "canonical_term": "Mechanized",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": []
+        }
+      }
+    },
+    {
+      "id": "G61-SEM07",
+      "category": "contextual_position_and_homograph",
+      "slice_name": "Slice 3 \u2014 Contextual Position & Homograph Sense Disambiguation",
+      "query": "Which diagram illustrates the 1G test position for pipe groove welding, and how is it defined?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b19_p108_crop_300.png",
+      "printed_page": 108,
+      "pdf_index": 120,
+      "evidence_locator": "figure_b19:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, 1G for pipe designates the welding test position for a circumferential groove weld applied to a pipe with its axis horizontal, rolled or rotated so that weld metal is deposited at or near the top. Illustrated in Figure B19(A) (Positions of Test Pipes for Groove Welds, p. 111, PDF index 123).",
+      "elements_present": [
+        "1G",
+        "pipe",
+        "circumferential",
+        "horizontal",
+        "Figure B19"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p1:1G",
+        "obs:pdf:123:figure:Figure B19"
+      ],
+      "target_division": "Figure B19",
+      "intent": "test_positions",
+      "semantic_expansion_trace": {
+        "raw_query": "Which diagram illustrates the 1G test position for pipe groove welding, and how is it defined?",
+        "normalized_query": "which diagram illustrates the 1g test position for pipe groove welding and how is it defined",
+        "extracted_candidate_terms": [
+          "it",
+          "position",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "position",
+            "welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G61-SEM08",
+      "category": "contextual_position_and_homograph",
+      "slice_name": "Slice 3 \u2014 Contextual Position & Homograph Sense Disambiguation",
+      "query": "Which diagram illustrates the 1G test position for plate groove welding, and how is it defined?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b17_p105_crop_300.png",
+      "printed_page": 105,
+      "pdf_index": 117,
+      "evidence_locator": "figure_b17:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, 1G for plate designates the welding test position for a linear groove weld in plate in the flat welding position. Illustrated in Figure B17(A) (Positions of Test Plates for Groove Welds, p. 109, PDF index 121).",
+      "elements_present": [
+        "1G",
+        "plate",
+        "flat",
+        "Figure B17"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p1:1G",
+        "obs:pdf:121:figure:Figure B17"
+      ],
+      "target_division": "Figure B17",
+      "intent": "test_positions",
+      "semantic_expansion_trace": {
+        "raw_query": "Which diagram illustrates the 1G test position for plate groove welding, and how is it defined?",
+        "normalized_query": "which diagram illustrates the 1g test position for plate groove welding and how is it defined",
+        "extracted_candidate_terms": [
+          "it",
+          "position",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "position",
+            "welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G61-SEM09",
+      "category": "contextual_position_and_homograph",
+      "slice_name": "Slice 3 \u2014 Contextual Position & Homograph Sense Disambiguation",
+      "query": "How are the homograph AB and the position 2F disambiguated in AWS A3.0?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 69,
+      "pdf_index": 81,
+      "evidence_locator": "textual_multi_hop:homograph_and_position_disambiguation",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020: 1. The designation 'AB' is an authentic homograph: in Table A1 (p. 69) and Clause 4 it designates adhesive bonding, whereas in Figure A6 (p. 79) it designates arc brazing. 2. The designation '2F' designates horizontal fillet welding: in plate welding, it represents linear fillet welding of test plates (Figure B18(B)); in pipe welding, it represents circumferential fillet welding of test pipes with pipe axis vertical (Figure B20(B)/(C)).",
+      "elements_present": [
+        "AB",
+        "adhesive bonding",
+        "arc brazing",
+        "2F",
+        "horizontal",
+        "fillet",
+        "plate",
+        "pipe"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:91:figure:Figure A6",
+        "obs:clause4:p2:2F"
+      ],
+      "target_division": "Multi-Division",
+      "intent": "homograph_and_position_disambiguation",
+      "semantic_expansion_trace": {
+        "raw_query": "How are the homograph AB and the position 2F disambiguated in AWS A3.0?",
+        "normalized_query": "how are the homograph ab and the position 2f disambiguated in aws a3 0",
+        "extracted_candidate_terms": [
+          "ab",
+          "position"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "AB",
+            "canonical_term": "adhesive bonding",
+            "source_authority": "Table A1 (p. 69)",
+            "resolution_type": "ABBREVIATION"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "adhesive bonding",
+            "position"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G61-SEM10",
+      "category": "see_also_and_taxonomy_siblings",
+      "slice_name": "Slice 4 \u2014 See also & Taxonomy Sibling Expansion",
+      "query": "What are all the throat terms cross-referenced from throat of a fillet weld in Clause 4?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 58,
+      "pdf_index": 70,
+      "evidence_locator": "textual_multi_hop:see_also_cross_references",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In Clause 4 of AWS A3.0M/A3.0:2020 (printed p. 58), 'throat of a fillet weld' explicitly cross-references ('See also') four related throat terms: actual throat, effective throat, theoretical throat, and weld throat. All four throat dimensions are geometrically illustrated in Figure B25 (Weld Sizes, printed p. 123).",
+      "elements_present": [
+        "throat of a fillet weld",
+        "actual throat",
+        "effective throat",
+        "theoretical throat",
+        "See also"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p58:throat_of_a_fillet_weld"
+      ],
+      "target_division": "Clause 4",
+      "intent": "see_also_cross_references",
+      "semantic_expansion_trace": {
+        "raw_query": "What are all the throat terms cross-referenced from throat of a fillet weld in Clause 4?",
+        "normalized_query": "what are all the throat terms cross-referenced from throat of a fillet weld in clause 4",
+        "extracted_candidate_terms": [
+          "throat of a fillet weld",
+          "fillet weld",
+          "fillet",
+          "weld"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "throat of a fillet weld",
+            "canonical_term": "fillet weld throat",
+            "source_authority": "Clause 4 (p. 25)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "fillet weld",
+            "canonical_term": "fillet weld",
+            "source_authority": "Table D2 (p. 167)",
+            "resolution_type": "CONCEPT_INDEX"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "fillet weld throat",
+            "fillet weld",
+            "fillet",
+            "weld"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G61-SEM11",
+      "category": "see_also_and_taxonomy_siblings",
+      "slice_name": "Slice 4 \u2014 See also & Taxonomy Sibling Expansion",
+      "query": "What are the standard process variations under flux cored arc welding (FCAW) in AWS A3.0?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 58,
+      "pdf_index": 70,
+      "evidence_locator": "textual_multi_hop:taxonomy_subtypes",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020 Clause 4 and the Table A1 / IS_A promotion catalog, flux cored arc welding (FCAW) has two standard process variations: gas shielded flux cored arc welding (FCAW-G) and self-shielded flux cored arc welding (FCAW-S).",
+      "elements_present": [
+        "flux cored arc welding",
+        "FCAW-G",
+        "FCAW-S",
+        "gas shielded",
+        "self-shielded"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p27:fcaw_g",
+        "obs:clause4:p27:fcaw_s"
+      ],
+      "target_division": "Table A1 / IS_A",
+      "intent": "taxonomy_subtypes",
+      "semantic_expansion_trace": {
+        "raw_query": "What are the standard process variations under flux cored arc welding (FCAW) in AWS A3.0?",
+        "normalized_query": "what are the standard process variations under flux cored arc welding fcaw in aws a3 0",
+        "extracted_candidate_terms": [
+          "the",
+          "fcaw",
+          "flux cored arc welding",
+          "arc welding",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "FCAW",
+            "canonical_term": "flux cored arc welding",
+            "source_authority": "Table A1 (p. 69)",
+            "resolution_type": "ABBREVIATION"
+          },
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "flux cored arc welding",
+            "arc welding",
+            "welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G61-SEM12",
+      "category": "see_also_and_taxonomy_siblings",
+      "slice_name": "Slice 4 \u2014 See also & Taxonomy Sibling Expansion",
+      "query": "What related welding angle concepts are connected to travel angle in Clause 4?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 58,
+      "pdf_index": 70,
+      "evidence_locator": "textual_multi_hop:angle_cluster",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020 Clause 4 (printed p. 59), travel angle is part of an interconnected family of welding angles: work angle (the angle that an electrode or torch makes with the referenced base metal surface), drag angle (travel angle when electrode points opposite to travel direction), and push angle (travel angle when electrode points forward in travel direction).",
+      "elements_present": [
+        "travel angle",
+        "work angle",
+        "drag angle",
+        "push angle"
+      ],
+      "normative_provenance": [
+        "obs:clause4:p59:travel_angle"
+      ],
+      "target_division": "Clause 4",
+      "intent": "angle_cluster",
+      "semantic_expansion_trace": {
+        "raw_query": "What related welding angle concepts are connected to travel angle in Clause 4?",
+        "normalized_query": "what related welding angle concepts are connected to travel angle in clause 4",
+        "extracted_candidate_terms": [
+          "travel angle",
+          "welding"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "travel angle",
+            "welding"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G61-SEM13",
+      "category": "deepseek_replay_multihop",
+      "slice_name": "Slice 5 \u2014 DeepSeek Replay Multi-Hop over Semantic Neighborhoods",
+      "query": "What does FCAW-G-SA stand for and how is fusion welding classified in Figure A4?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/a4_ingest_001/a4_crop_300.png",
+      "printed_page": 78,
+      "pdf_index": 90,
+      "evidence_locator": "figure_a4:fusion_welding",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, FCAW-G-SA designates semiautomatic gas shielded flux cored arc welding (Table A1, p. 69; Table A4, p. 74). In Figure A4 (Fusion Welding Classification, printed p. 78, PDF index 90), plasma arc welding (PAW) branches under Fusion Welding with an Electrical energy source and Arc thermal source.",
+      "elements_present": [
+        "FCAW-G-SA",
+        "semiautomatic gas shielded flux cored arc welding",
+        "Figure A4",
+        "Fusion Welding",
+        "Arc",
+        "plasma arc welding"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:86:table:Table A4",
+        "obs:pdf:90:figure:Figure A4"
+      ],
+      "target_division": "Multi-Division",
+      "intent": "compound_designation_and_diagram",
+      "semantic_expansion_trace": {
+        "raw_query": "What does FCAW-G-SA stand for and how is fusion welding classified in Figure A4?",
+        "normalized_query": "what does fcaw-g-sa stand for and how is fusion welding classified in figure a4",
+        "extracted_candidate_terms": [
+          "fcaw-g-sa",
+          "fusion welding",
+          "welding",
+          "fusion"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "fusion",
+            "canonical_term": "fusion",
+            "source_authority": "Table D3 (p. 169)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "FCAW-G-SA",
+            "canonical_term": "semiautomatic gas shielded flux cored arc welding",
+            "source_authority": "Table A1 (p. 69) + Clause 4 / Table A1 / IS_A Store + Table A4 (p. 74)",
+            "resolution_type": "COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "FCAW",
+                "canonical_term": "flux cored arc welding",
+                "source_authority": "Table A1 (p. 69)"
+              },
+              {
+                "type": "PROCESS_VARIATION",
+                "code": "FCAW-G",
+                "canonical_term": "gas shielded flux cored arc welding",
+                "source_authority": "Clause 4 / Table A1 / IS_A Store"
+              },
+              {
+                "type": "APPLICATION_MODE",
+                "suffix": "-SA",
+                "canonical_term": "Semiautomatic",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "fusion welding",
+            "welding",
+            "fusion"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G61-SEM14",
+      "category": "deepseek_replay_multihop",
+      "slice_name": "Slice 5 \u2014 DeepSeek Replay Multi-Hop over Semantic Neighborhoods",
+      "query": "What does PAW-AU stand for and how are theoretical throat and effective throat defined and illustrated in Figure B25?",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": true,
+      "expected_requires_diagram_crop": true,
+      "crop_match": true,
+      "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b25_p123_crop_300.png",
+      "printed_page": 123,
+      "pdf_index": 135,
+      "evidence_locator": "figure_b25:diagram_details",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "In AWS A3.0M/A3.0:2020, PAW-AU designates automatic plasma arc welding (Table A1, p. 69; Table A4, p. 74). In Figure B25 (Weld Sizes, printed p. 123, PDF index 135), fillet weld throat dimensions are illustrated: theoretical throat (distance from beginning of joint root perpendicular to hypotenuse of largest inscribed right triangle), effective throat (minimum distance minus convexity from weld face to root), and actual throat (shortest distance between root and face).",
+      "elements_present": [
+        "PAW-AU",
+        "automatic plasma arc welding",
+        "Figure B25",
+        "Weld Sizes",
+        "theoretical throat",
+        "effective throat",
+        "actual throat"
+      ],
+      "normative_provenance": [
+        "obs:pdf:81:table:Table A1",
+        "obs:pdf:86:table:Table A4",
+        "obs:pdf:135:figure:Figure B25"
+      ],
+      "target_division": "Multi-Division",
+      "intent": "compound_designation_and_diagram",
+      "semantic_expansion_trace": {
+        "raw_query": "What does PAW-AU stand for and how are theoretical throat and effective throat defined and illustrated in Figure B25?",
+        "normalized_query": "what does paw-au stand for and how are theoretical throat and effective throat defined and illustrated in figure b25",
+        "extracted_candidate_terms": [
+          "theoretical throat and effective throat",
+          "paw-au",
+          "theoretical throat",
+          "effective throat"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "theoretical throat",
+            "canonical_term": "theoretical throat",
+            "source_authority": "Table D2 (p. 168)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "effective throat",
+            "canonical_term": "effective throat",
+            "source_authority": "Table D2 (p. 167)",
+            "resolution_type": "CONCEPT_INDEX"
+          },
+          {
+            "surface_span": "PAW-AU",
+            "canonical_term": "automatic plasma arc welding",
+            "source_authority": "Table A1 (p. 69) + Table A4 (p. 74)",
+            "resolution_type": "COMPOUND_DESIGNATION",
+            "sub_components": [
+              {
+                "type": "BASE_PROCESS",
+                "designation": "PAW",
+                "canonical_term": "plasma arc welding",
+                "source_authority": "Table A1 (p. 69)"
+              },
+              {
+                "type": "APPLICATION_MODE",
+                "suffix": "-AU",
+                "canonical_term": "Automatic",
+                "source_authority": "Table A4 (p. 74)"
+              }
+            ]
+          }
+        ],
+        "inferred_targets": {
+          "figures": [
+            "Figure B25"
+          ],
+          "tables": [],
+          "clause4_terms": [
+            "theoretical throat",
+            "effective throat"
+          ]
+        }
+      }
+    },
+    {
+      "id": "G61-SEM15",
+      "category": "deepseek_replay_multihop",
+      "slice_name": "Slice 5 \u2014 DeepSeek Replay Multi-Hop over Semantic Neighborhoods",
+      "query": "Compare the active process variation FCAW-G with the obsolete process atomic hydrogen welding (AHW) in AWS A3.0.",
+      "actual_status": "PASS",
+      "expected_status": "PASS",
+      "status_match": true,
+      "requires_diagram_crop": false,
+      "expected_requires_diagram_crop": false,
+      "crop_match": true,
+      "crop_path": null,
+      "printed_page": 74,
+      "pdf_index": 86,
+      "evidence_locator": "table_a5:obsolete_processes",
+      "required_missing": [],
+      "forbidden_hits": [],
+      "test_passed": true,
+      "answer": "Per AWS A3.0M/A3.0:2020, atomic hydrogen welding (letter designation: AHW) is an obsolete process classified in Table A5 (p. 74) and Annex D Table D4, whose definition is retained in Clause 4 for historical interpretation. In contrast, gas shielded flux cored arc welding (letter designation: FCAW-G) is an active standard process variation classified in Table A1 (p. 69) and Clause 4.",
+      "elements_present": [
+        "atomic hydrogen welding",
+        "AHW",
+        "Table A5",
+        "obsolete",
+        "gas shielded flux cored arc welding",
+        "FCAW-G"
+      ],
+      "normative_provenance": [
+        "obs:pdf:86:table:Table A5",
+        "obs:pdf:81:table:Table A1"
+      ],
+      "target_division": "Multi-Division",
+      "intent": "cross_store_comparison",
+      "semantic_expansion_trace": {
+        "raw_query": "Compare the active process variation FCAW-G with the obsolete process atomic hydrogen welding (AHW) in AWS A3.0.",
+        "normalized_query": "compare the active process variation fcaw-g with the obsolete process atomic hydrogen welding ahw in aws a3 0",
+        "extracted_candidate_terms": [
+          "fcaw-g",
+          "ahw",
+          "atomic hydrogen welding",
+          "welding",
+          "process"
+        ],
+        "alias_expansions": [
+          {
+            "surface_span": "FCAW-G",
+            "canonical_term": "gas shielded flux cored arc welding",
+            "source_authority": "Table A1 / IS_A Promotions",
+            "resolution_type": "ABBREVIATION"
+          },
+          {
+            "surface_span": "AHW",
+            "canonical_term": "atomic hydrogen welding",
+            "source_authority": "Table A5 (p. 74)",
+            "resolution_type": "ABBREVIATION"
+          },
+          {
+            "surface_span": "ahw",
+            "canonical_term": "atomic hydrogen welding",
+            "source_authority": "Table A5 (p. 74)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "atomic hydrogen welding",
+            "canonical_term": "atomic hydrogen welding",
+            "source_authority": "Table A5 (p. 74)",
+            "resolution_type": "HISTORICAL_TERM"
+          },
+          {
+            "surface_span": "welding",
+            "canonical_term": "welding",
+            "source_authority": "Table D6 (p. 170)",
+            "resolution_type": "HISTORICAL_TERM"
+          }
+        ],
+        "inferred_targets": {
+          "figures": [],
+          "tables": [],
+          "clause4_terms": [
+            "gas shielded flux cored arc welding",
+            "atomic hydrogen welding",
+            "welding",
+            "process"
+          ]
+        }
+      }
+    }
+  ]
+}

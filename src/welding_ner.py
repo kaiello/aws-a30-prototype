@@ -31,6 +31,11 @@ class WeldingEntitySpan:
     ambiguity_candidates: Tuple[Dict[str, Any], ...] = ()
     is_valid: bool = True
     abstention_reason: Optional[str] = None
+    secondary_entity_types: Tuple[str, ...] = ()
+    linked_clause4_terms: Tuple[str, ...] = ()
+    linked_figures: Tuple[str, ...] = ()
+    linked_tables: Tuple[str, ...] = ()
+    ambiguous_senses: Tuple[str, ...] = ()
 
 
 @dataclass
@@ -63,6 +68,11 @@ class WeldingNERReceipt:
                     "ambiguity_candidates": list(s.ambiguity_candidates),
                     "is_valid": s.is_valid,
                     "abstention_reason": s.abstention_reason,
+                    "secondary_entity_types": list(s.secondary_entity_types),
+                    "linked_clause4_terms": list(s.linked_clause4_terms),
+                    "linked_figures": list(s.linked_figures),
+                    "linked_tables": list(s.linked_tables),
+                    "ambiguous_senses": list(s.ambiguous_senses),
                 }
                 for s in self.spans
             ],
@@ -469,6 +479,7 @@ class WeldingNER:
             "coalescences": "coalescence",
             "porosities": "porosity",
             "discontinuities": "discontinuity",
+            "throat of a fillet weld": "fillet weld throat",
         }
         for infl, base_t in domain_inflections.items():
             if base_t in self.glossary_terms and infl not in self.glossary_terms:
@@ -630,6 +641,8 @@ class WeldingNER:
             "aws a3.0m/a3.0:2020", "annex b", "time", "weld", "welds", "plate", "pipe",
             "joint", "joints", "process", "arrow", "other", "both", "none", "notes", "note",
             "detail", "section", "view", "axis", "force", "speed", "current", "voltage",
+            "1g welding", "2g welding", "3g welding", "4g welding", "5g welding", "6g welding",
+            "1f welding", "2f welding", "3f welding", "4f welding",
         }
         if annex_b_dir.exists():
             for fig_store_path in sorted(annex_b_dir.glob("figure_b*_store.json")):
@@ -723,80 +736,226 @@ class WeldingNER:
 
     def parse_compound_designation(self, token: str) -> Optional[Dict[str, Any]]:
         """Parse <BASE_PROCESS>[-<VARIANT>]-<MODE_SUFFIX> per Table A4.
-        e.g. PAW-AU, GTAW-ME, FCAW-G-SA, OFC-A-MA, GTAW-P-AU.
-        Also detects invalid suffixes on valid base processes (e.g. GTAW-ZZ).
+        e.g. PAW-AU, GTAW-ME, FCAW-G-SA, OFC-A-MA, GMAW-P-AU.
+        Also detects invalid variants (e.g. FCAW-Z-SA), invalid suffixes (e.g. GTAW-ZZ),
+        and conflicting double mode suffixes (e.g. PAW-AU-ME).
         """
-        # Match pattern: 2-6 upper letters, optionally hyphen + 1-2 letters, hyphen + 2 letters
-        m = re.match(r"^([A-Z]{2,6})(?:-([A-Z]{1,3}))?-([A-Z]{2})$", token.upper())
-        if not m:
+        tok_upper = token.upper().strip()
+        parts = tok_upper.split("-")
+        if len(parts) < 2 or len(parts) > 3:
             return None
 
-        base_cand = m.group(1)
-        var_cand = m.group(2)
-        suf_cand = f"-{m.group(3)}"
+        base_cand = parts[0]
+        if not re.match(r"^[A-Z]{2,6}$", base_cand):
+            return None
 
-        # Check if base_cand or base_cand-var_cand is a recognized process code
-        full_base = f"{base_cand}-{var_cand}" if var_cand else base_cand
-        base_info = self.process_codes.get(full_base) or self.process_codes.get(base_cand)
-
+        # Check if base_cand is a recognized process code
+        base_info = self.process_codes.get(base_cand)
         if not base_info:
             return None
 
-        # Base is recognized. Check if suffix is in Table A4
-        suf_info = self.VALID_MODE_SUFFIXES.get(suf_cand)
-        if suf_info:
-            canonical_mode = suf_info["mode"]
-            canonical_proc = base_info["canonical_term"]
-            full_canonical = f"{canonical_mode.lower()} {canonical_proc}"
+        # -------------------------------------------------------------------
+        # 2-Tier Compound: <BASE>-<MODE_SUFFIX> (e.g. PAW-AU, GTAW-ZZ)
+        # Suffix must be exactly 2 letters; 1-letter hyphens are process variations (e.g. FCAW-G)
+        # -------------------------------------------------------------------
+        if len(parts) == 2:
+            if len(parts[1]) != 2:
+                return None
+            suf_cand = f"-{parts[1]}"
+            suf_info = self.VALID_MODE_SUFFIXES.get(suf_cand)
+            if suf_info:
+                canonical_mode = suf_info["mode"]
+                canonical_proc = base_info["canonical_term"]
+                full_canonical = f"{canonical_mode.lower()} {canonical_proc}"
+                return {
+                    "is_valid": True,
+                    "canonical_term": full_canonical,
+                    "canonical_id": f"compound:{tok_upper}",
+                    "source_authority": f"{base_info['source_authority']} + Table A4 (p. 74)",
+                    "target_division": "annex_a_tables",
+                    "sub_components": (
+                        {
+                            "type": "BASE_PROCESS",
+                            "designation": base_cand,
+                            "canonical_term": canonical_proc,
+                            "source_authority": base_info["source_authority"],
+                        },
+                        {
+                            "type": "APPLICATION_MODE",
+                            "suffix": suf_cand,
+                            "canonical_term": canonical_mode,
+                            "source_authority": "Table A4 (p. 74)",
+                        },
+                    ),
+                    "abstention_reason": None,
+                }
+            else:
+                # Valid base process, but invalid application mode suffix!
+                return {
+                    "is_valid": False,
+                    "canonical_term": base_info["canonical_term"],
+                    "canonical_id": f"invalid_compound:{tok_upper}",
+                    "source_authority": f"{base_info['source_authority']} + Table A4 (p. 74)",
+                    "target_division": "annex_a_tables",
+                    "sub_components": (
+                        {
+                            "type": "BASE_PROCESS",
+                            "designation": base_cand,
+                            "canonical_term": base_info["canonical_term"],
+                            "source_authority": base_info["source_authority"],
+                        },
+                        {
+                            "type": "INVALID_APPLICATION_MODE",
+                            "suffix": suf_cand,
+                            "canonical_term": f"Unknown application mode suffix '{suf_cand}'",
+                            "source_authority": "Table A4 (p. 74)",
+                        },
+                    ),
+                    "abstention_reason": (
+                        f"Suffix '{suf_cand}' is not a standardized application mode suffix in AWS A3.0M/A3.0:2020 Table A4. "
+                        "Table A4 standardizes exactly six suffixes: -AD (Adaptive control), -AU (Automatic), -MA (Manual), "
+                        "-ME (Mechanized), -RO (Robotic), and -SA (Semiautomatic)."
+                    ),
+                }
+
+        # -------------------------------------------------------------------
+        # 3-Tier Compound: <BASE>-<MID>-<SUFFIX> (e.g. FCAW-G-SA, PAW-AU-ME)
+        # -------------------------------------------------------------------
+        part1_suf = f"-{parts[1]}"
+        part2_suf = f"-{parts[2]}"
+
+        # Subcase 1: Conflicting double mode suffixes (e.g. PAW-AU-ME, PAW-AU-MA)
+        if part1_suf in self.VALID_MODE_SUFFIXES and part2_suf in self.VALID_MODE_SUFFIXES:
             return {
-                "is_valid": True,
-                "canonical_term": full_canonical,
-                "canonical_id": f"compound:{token.upper()}",
+                "is_valid": False,
+                "canonical_term": base_info["canonical_term"],
+                "canonical_id": f"invalid_compound:{tok_upper}",
                 "source_authority": f"{base_info['source_authority']} + Table A4 (p. 74)",
                 "target_division": "annex_a_tables",
                 "sub_components": (
                     {
                         "type": "BASE_PROCESS",
-                        "designation": full_base,
-                        "canonical_term": canonical_proc,
+                        "designation": base_cand,
+                        "canonical_term": base_info["canonical_term"],
                         "source_authority": base_info["source_authority"],
                     },
                     {
+                        "type": "CONFLICTING_APPLICATION_MODE",
+                        "suffix": part1_suf,
+                        "canonical_term": self.VALID_MODE_SUFFIXES[part1_suf]["mode"],
+                        "source_authority": "Table A4 (p. 74)",
+                    },
+                    {
+                        "type": "CONFLICTING_APPLICATION_MODE",
+                        "suffix": part2_suf,
+                        "canonical_term": self.VALID_MODE_SUFFIXES[part2_suf]["mode"],
+                        "source_authority": "Table A4 (p. 74)",
+                    },
+                ),
+                "abstention_reason": (
+                    f"Conflicting application mode suffixes: '{part1_suf}' and '{part2_suf}' cannot both be appended. "
+                    "Table A4 standardizes exactly one application mode suffix per process designation."
+                ),
+            }
+
+        # Subcase 2: Base + Process Variation + Mode Suffix
+        var_code = f"{base_cand}-{parts[1]}"
+        var_info = self.process_codes.get(var_code)
+        suf_info = self.VALID_MODE_SUFFIXES.get(part2_suf)
+
+        if var_info and suf_info:
+            # Valid 3-tier compound!
+            canonical_mode = suf_info["mode"]
+            canonical_var = var_info["canonical_term"]
+            canonical_base = base_info["canonical_term"]
+            full_canonical = f"{canonical_mode.lower()} {canonical_var}"
+            return {
+                "is_valid": True,
+                "canonical_term": full_canonical,
+                "canonical_id": f"compound:{tok_upper}",
+                "source_authority": f"{base_info['source_authority']} + Clause 4 / Table A1 / IS_A Store + Table A4 (p. 74)",
+                "target_division": "annex_a_tables",
+                "sub_components": (
+                    {
+                        "type": "BASE_PROCESS",
+                        "designation": base_cand,
+                        "canonical_term": canonical_base,
+                        "source_authority": base_info["source_authority"],
+                    },
+                    {
+                        "type": "PROCESS_VARIATION",
+                        "code": var_code,
+                        "canonical_term": canonical_var,
+                        "source_authority": "Clause 4 / Table A1 / IS_A Store",
+                    },
+                    {
                         "type": "APPLICATION_MODE",
-                        "suffix": suf_cand,
+                        "suffix": part2_suf,
                         "canonical_term": canonical_mode,
                         "source_authority": "Table A4 (p. 74)",
                     },
                 ),
                 "abstention_reason": None,
             }
-        else:
-            # Valid base process, but invalid application mode suffix!
+        elif not var_info:
+            # Base is valid, but intermediate variation is invalid! (e.g. FCAW-Z-SA)
             return {
                 "is_valid": False,
                 "canonical_term": base_info["canonical_term"],
-                "canonical_id": f"invalid_compound:{token.upper()}",
+                "canonical_id": f"invalid_compound:{tok_upper}",
                 "source_authority": f"{base_info['source_authority']} + Table A4 (p. 74)",
                 "target_division": "annex_a_tables",
                 "sub_components": (
                     {
                         "type": "BASE_PROCESS",
-                        "designation": full_base,
+                        "designation": base_cand,
                         "canonical_term": base_info["canonical_term"],
                         "source_authority": base_info["source_authority"],
                     },
                     {
-                        "type": "INVALID_APPLICATION_MODE",
-                        "suffix": suf_cand,
-                        "canonical_term": f"Unknown application mode suffix '{suf_cand}'",
+                        "type": "INVALID_PROCESS_VARIATION",
+                        "code": var_code,
+                        "canonical_term": f"Unknown process variation '{var_code}'",
+                        "source_authority": "Clause 4 / Table A1 / IS_A Store",
+                    },
+                    {
+                        "type": "APPLICATION_MODE" if suf_info else "INVALID_APPLICATION_MODE",
+                        "suffix": part2_suf,
+                        "canonical_term": suf_info["mode"] if suf_info else f"Unknown suffix '{part2_suf}'",
                         "source_authority": "Table A4 (p. 74)",
                     },
                 ),
-                "abstention_reason": (
-                    f"Suffix '{suf_cand}' is not a standardized application mode suffix in AWS A3.0M/A3.0:2020 Table A4. "
-                    "Table A4 standardizes exactly six suffixes: -AD (Adaptive control), -AU (Automatic), -MA (Manual), "
-                    "-ME (Mechanized), -RO (Robotic), and -SA (Semiautomatic)."
+                "abstention_reason": f"Process variation '{var_code}' is not a standardized process variation of '{base_cand}' in AWS A3.0M/A3.0:2020.",
+            }
+        else:
+            # Intermediate variation is valid, but mode suffix is invalid!
+            return {
+                "is_valid": False,
+                "canonical_term": var_info["canonical_term"],
+                "canonical_id": f"invalid_compound:{tok_upper}",
+                "source_authority": f"{var_info['source_authority']} + Table A4 (p. 74)",
+                "target_division": "annex_a_tables",
+                "sub_components": (
+                    {
+                        "type": "BASE_PROCESS",
+                        "designation": base_cand,
+                        "canonical_term": base_info["canonical_term"],
+                        "source_authority": base_info["source_authority"],
+                    },
+                    {
+                        "type": "PROCESS_VARIATION",
+                        "code": var_code,
+                        "canonical_term": var_info["canonical_term"],
+                        "source_authority": "Clause 4 / Table A1 / IS_A Store",
+                    },
+                    {
+                        "type": "INVALID_APPLICATION_MODE",
+                        "suffix": part2_suf,
+                        "canonical_term": f"Unknown application mode suffix '{part2_suf}'",
+                        "source_authority": "Table A4 (p. 74)",
+                    },
                 ),
+                "abstention_reason": f"Suffix '{part2_suf}' is not a standardized application mode suffix in AWS A3.0M/A3.0:2020 Table A4.",
             }
 
     # -----------------------------------------------------------------------
@@ -865,8 +1024,8 @@ class WeldingNER:
                     )
                 )
 
-        # 3. Dynamic Compound Designations (e.g. PAW-AU, GTAW-ME, GTAW-ZZ, FCAW-G-SA)
-        for m in re.finditer(r"\b[A-Za-z]{2,6}(?:-[A-Za-z]{1,3})?-[A-Za-z]{2}\b", query):
+        # 3. Dynamic Compound Designations (e.g. PAW-AU, GTAW-ME, GTAW-ZZ, FCAW-G-SA, OFC-A-MA, PAW-AU-ME)
+        for m in re.finditer(r"\b[A-Za-z]{2,6}(?:-[A-Za-z0-9]{1,4}){1,2}\b", query):
             tok = m.group(0)
             parsed = self.parse_compound_designation(tok)
             if parsed:
@@ -1140,6 +1299,31 @@ class WeldingNER:
         selected_spans: List[WeldingEntitySpan] = []
         last_end = -1
 
+        pipe_positions = {
+            "1g": ("1G, pipe", "Figure B19(A)", "Clause 4 (p. 1) / Figure B19(A)"),
+            "2g": ("2G, pipe", "Figure B19(B)", "Clause 4 (p. 1) / Figure B19(B)"),
+            "3g": ("3G, pipe", "Figure B19(A)", "Clause 4 (p. 1) / Figure B19(A)"),
+            "4g": ("4G, pipe", "Figure B19(A)", "Clause 4 (p. 1) / Figure B19(A)"),
+            "5g": ("5G, pipe", "Figure B19(C)", "Clause 4 (p. 1) / Figure B19(C)"),
+            "6g": ("6G, pipe", "Figure B19(D)", "Clause 4 (p. 1) / Figure B19(D)"),
+            "6gr": ("6GR, pipe", "Figure B19(E)", "Clause 4 (p. 1) / Figure B19(E)"),
+            "1f": ("1F, pipe", "Figure B20(A)", "Clause 4 (p. 1) / Figure B20(A)"),
+            "2f": ("2F, pipe", "Figure B20(B)", "Clause 4 (p. 1) / Figure B20(B)"),
+            "2fr": ("2FR, pipe", "Figure B20(C)", "Clause 4 (p. 1) / Figure B20(C)"),
+            "3f": ("3F, pipe", "Figure B20(C)", "Clause 4 (p. 1) / Figure B20(C)"),
+            "4f": ("4F, pipe", "Figure B20(D)", "Clause 4 (p. 1) / Figure B20(D)"),
+        }
+        plate_positions = {
+            "1g": ("1G, plate", "Figure B17(A)", "Clause 4 (p. 1) / Figure B17(A)"),
+            "2g": ("2G, plate", "Figure B17(B)", "Clause 4 (p. 1) / Figure B17(B)"),
+            "3g": ("3G, plate", "Figure B17(C)", "Clause 4 (p. 1) / Figure B17(C)"),
+            "4g": ("4G, plate", "Figure B17(D)", "Clause 4 (p. 1) / Figure B17(D)"),
+            "1f": ("1F, plate", "Figure B18(A)", "Clause 4 (p. 1) / Figure B18(A)"),
+            "2f": ("2F, plate", "Figure B18(B)", "Clause 4 (p. 1) / Figure B18(B)"),
+            "3f": ("3F, plate", "Figure B18(C)", "Clause 4 (p. 1) / Figure B18(C)"),
+            "4f": ("4F, plate", "Figure B18(D)", "Clause 4 (p. 1) / Figure B18(D)"),
+        }
+
         for s, e, d in unique_cands:
             if s >= last_end:
                 # Disambiguation / Context Refinement
@@ -1149,6 +1333,12 @@ class WeldingNER:
                 authority = d["source_authority"]
                 target_div = d["target_division"]
 
+                sec_types: List[str] = []
+                linked_c4: List[str] = []
+                linked_figs: List[str] = []
+                linked_tbls: List[str] = []
+                ambig_senses: List[str] = []
+
                 # Special Disambiguation 1: "AB"
                 if d["surface_text"].upper() == "AB":
                     q_lower = query.lower()
@@ -1157,26 +1347,120 @@ class WeldingNER:
                         canon_id = "figure_a6:code:AB"
                         authority = "Figure A6 (p. 79) Legend"
                         target_div = "annex_a_charts"
+                        linked_figs.append("Figure A6")
                     elif any(w in q_lower for w in ["adhesive", "bonding", "table a1", "clause 4"]):
                         canon_term = "adhesive bonding"
                         canon_id = "table_a1:code:AB"
                         authority = "Table A1 (p. 69) / Clause 4 (p. 8)"
                         target_div = "annex_a_tables"
+                        linked_tbls.append("Table A1")
+                    else:
+                        ambig_senses.extend(["adhesive bonding", "arc brazing"])
+                        linked_tbls.append("Table A1")
+                        linked_figs.append("Figure A6")
 
                 # Special Disambiguation 2: Test Positions (1G, 1F, 2G, 2F, 5G, 6G, 6GR)
-                if d["entity_type"] == "WELD_POSITION":
+                elif d["entity_type"] == "WELD_POSITION":
                     q_lower = query.lower()
-                    code_lower = d["surface_text"].lower()
-                    if "pipe" in q_lower or "[pipe]" in q_lower:
-                        if code_lower.endswith("f"):
-                            authority = "Clause 4 (p. 1) / Figure B20(A)"
+                    code_lower = d["surface_text"].lower().strip()
+                    pipe_words = any(w in q_lower for w in ["pipe", "tube", "circumferential", "rotated", "[pipe]"])
+                    plate_words = any(w in q_lower for w in ["plate", "linear", "[plate]"])
+                    if code_lower in pipe_positions or code_lower in plate_positions:
+                        if pipe_words and not plate_words and code_lower in pipe_positions:
+                            c_term, fig, auth = pipe_positions[code_lower]
+                            canon_term = c_term
+                            authority = auth
+                            linked_figs.append(fig)
+                            bf = fig.split("(")[0]
+                            if bf not in linked_figs:
+                                linked_figs.append(bf)
+                        elif plate_words and not pipe_words and code_lower in plate_positions:
+                            c_term, fig, auth = plate_positions[code_lower]
+                            canon_term = c_term
+                            authority = auth
+                            linked_figs.append(fig)
+                            bf = fig.split("(")[0]
+                            if bf not in linked_figs:
+                                linked_figs.append(bf)
                         else:
-                            authority = "Clause 4 / Figure B19 / Figure B16C"
-                    elif "plate" in q_lower or "[plate]" in q_lower:
-                        if code_lower.endswith("f"):
-                            authority = "Clause 4 / Figure B18 / Figure B16B"
-                        else:
-                            authority = "Clause 4 / Figure B17 / Figure B16A"
+                            # Both or Unqualified -> Bind both senses!
+                            c_plate = plate_positions.get(code_lower)
+                            c_pipe = pipe_positions.get(code_lower)
+                            if c_plate and c_pipe:
+                                ambig_senses.extend([f"{code_lower.upper()}, plate", f"{code_lower.upper()}, pipe"])
+                                for cf in [c_plate[1], c_pipe[1]]:
+                                    linked_figs.append(cf)
+                                    bf = cf.split("(")[0]
+                                    if bf not in linked_figs:
+                                        linked_figs.append(bf)
+                            elif c_pipe:
+                                linked_figs.append(c_pipe[1])
+                            elif c_plate:
+                                linked_figs.append(c_plate[1])
+
+                # Polysemous Cross-Linking (Callouts <-> Glossary)
+                if d["entity_type"] in ["DIAGRAM_CALLOUT", "WAVEFORM_INTERVAL", "PROCESS_TERM", "PROCESS_CODE"]:
+                    term_key = d["canonical_term"].lower()
+                    surf_key = d["surface_text"].lower()
+                    g_meta = self.glossary_terms.get(term_key) or self.glossary_terms.get(surf_key)
+                    if g_meta:
+                        if "GLOSSARY_TERM" not in sec_types:
+                            sec_types.append("GLOSSARY_TERM")
+                        g_term = g_meta["canonical_term"]
+                        if g_term not in linked_c4:
+                            linked_c4.append(g_term)
+                        for cf in g_meta.get("cross_figures", []):
+                            clean_cf = cf if cf.startswith("Figure") else f"Figure {cf}"
+                            if clean_cf not in linked_figs:
+                                linked_figs.append(clean_cf)
+                    if d.get("figure_id") and d["figure_id"] not in linked_figs:
+                        linked_figs.append(d["figure_id"])
+
+                elif d["entity_type"] == "GLOSSARY_TERM":
+                    term_key = d["canonical_term"].lower()
+                    surf_key = d["surface_text"].lower()
+                    c_meta = self.diagram_callouts.get(term_key) or self.diagram_callouts.get(surf_key)
+                    w_meta = self.waveform_intervals.get(term_key) or self.waveform_intervals.get(surf_key)
+                    if c_meta:
+                        if "DIAGRAM_CALLOUT" not in sec_types:
+                            sec_types.append("DIAGRAM_CALLOUT")
+                        if c_meta.get("figure_id") and c_meta["figure_id"] not in linked_figs:
+                            linked_figs.append(c_meta["figure_id"])
+                    elif w_meta:
+                        if "WAVEFORM_INTERVAL" not in sec_types:
+                            sec_types.append("WAVEFORM_INTERVAL")
+                        if w_meta.get("figure_id") and w_meta["figure_id"] not in linked_figs:
+                            linked_figs.append(w_meta["figure_id"])
+                    if d["canonical_term"] not in linked_c4:
+                        linked_c4.append(d["canonical_term"])
+                    for cf in d.get("cross_figures", []):
+                        clean_cf = cf if cf.startswith("Figure") else f"Figure {cf}"
+                        if clean_cf not in linked_figs:
+                            linked_figs.append(clean_cf)
+
+                # Extract figure from canonical_id if present
+                m_fig_id = re.search(r"figure_([ab][0-9]{1,2}[a-z]?)", d["canonical_id"])
+                if m_fig_id:
+                    fid_str = f"Figure {m_fig_id.group(1).upper()}"
+                    if fid_str not in linked_figs:
+                        linked_figs.append(fid_str)
+
+                # Extract table from canonical_id if present
+                m_tbl_id = re.search(r"table_([a-z][0-9]+)", d["canonical_id"])
+                if m_tbl_id:
+                    tid_str = f"Table {m_tbl_id.group(1).upper()}"
+                    if tid_str not in linked_tbls:
+                        linked_tbls.append(tid_str)
+
+                # Extract tables for compound designations
+                if d.get("sub_components"):
+                    for sc in d["sub_components"]:
+                        if sc.get("type") in ["APPLICATION_MODE", "INVALID_APPLICATION_MODE", "CONFLICTING_APPLICATION_MODE"]:
+                            if "Table A4" not in linked_tbls:
+                                linked_tbls.append("Table A4")
+                        if sc.get("type") in ["BASE_PROCESS", "PROCESS_VARIATION"]:
+                            if "Table A1" not in linked_tbls:
+                                linked_tbls.append("Table A1")
 
                 span = WeldingEntitySpan(
                     surface_text=d["surface_text"],
@@ -1191,6 +1475,11 @@ class WeldingNER:
                     ambiguity_candidates=ambig,
                     is_valid=d.get("is_valid", True),
                     abstention_reason=d.get("abstention_reason"),
+                    secondary_entity_types=tuple(sec_types),
+                    linked_clause4_terms=tuple(linked_c4),
+                    linked_figures=tuple(linked_figs),
+                    linked_tables=tuple(linked_tbls),
+                    ambiguous_senses=tuple(ambig_senses),
                 )
                 selected_spans.append(span)
                 last_end = e
@@ -1206,10 +1495,26 @@ class WeldingNER:
         for sp in selected_spans:
             entity_counts[sp.entity_type] = entity_counts.get(sp.entity_type, 0) + 1
             target_divisions_set.add(sp.target_division)
-            if sp.ambiguity_candidates:
+            if sp.ambiguity_candidates or sp.ambiguous_senses:
                 has_ambiguities = True
 
-            # Inferred targets (diagrams, tables, clause 4 terms)
+            # Inferred targets from links
+            for fig in sp.linked_figures:
+                clean_fig = fig.split("(")[0].strip()
+                if clean_fig not in inferred_figures:
+                    inferred_figures.append(clean_fig)
+                if fig not in inferred_figures:
+                    inferred_figures.append(fig)
+
+            for tbl in sp.linked_tables:
+                if tbl not in inferred_tables:
+                    inferred_tables.append(tbl)
+
+            for c4 in sp.linked_clause4_terms:
+                if c4 not in inferred_clause4_terms:
+                    inferred_clause4_terms.append(c4)
+
+            # Inferred targets from entity type
             if sp.entity_type in ["STANDARD_LOCATOR", "DIAGRAM_CALLOUT", "WAVEFORM_INTERVAL"]:
                 m_fig = re.search(r"figure_([ab][0-9]{1,2}[a-z]?)", sp.canonical_id)
                 if m_fig:
@@ -1229,6 +1534,15 @@ class WeldingNER:
                 if sp.canonical_term not in inferred_clause4_terms and len(sp.canonical_term.split()) <= 4:
                     inferred_clause4_terms.append(sp.canonical_term)
 
+            # If span is dual-role (e.g. DIAGRAM_CALLOUT with secondary GLOSSARY_TERM), include clause4_glossary
+            if "GLOSSARY_TERM" in sp.secondary_entity_types or sp.linked_clause4_terms:
+                target_divisions_set.add("clause4_glossary")
+
+        # Definitional intent promotion
+        definitional_intent = any(tok in q_words for tok in ["define", "defined", "definition", "definitions", "meaning"]) or "what is" in query.lower() or "how is" in query.lower() or "how are" in query.lower() or "explain" in query.lower()
+        if definitional_intent and inferred_clause4_terms:
+            target_divisions_set.add("clause4_glossary")
+
         # Normalized query
         cleaned = re.sub(r"[^\w\s\-]", " ", query)
         normalized_query = " ".join(cleaned.lower().split())
@@ -1246,6 +1560,10 @@ class WeldingNER:
                 "clause4_terms": inferred_clause4_terms,
             },
         )
+
+    def extract(self, query: str) -> WeldingNERReceipt:
+        """Standardized NER extraction interface equivalent to recognize_entities."""
+        return self.recognize_entities(query)
 
 
 # Singleton

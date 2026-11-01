@@ -1,0 +1,107 @@
+[
+  {
+    "id": "G61-SEM01",
+    "category": "polysemous_dual_routing",
+    "slice_name": "Slice 1 — Polysemous Callout + Glossary Dual-Routing",
+    "query": "Which diagram illustrates theoretical throat, effective throat, and actual throat, and how are they defined in Clause 4?",
+    "target_source": "Figure B25 (p. 123) + Clause 4 (p. 58)"
+  },
+  {
+    "id": "G61-SEM02",
+    "category": "polysemous_dual_routing",
+    "slice_name": "Slice 1 — Polysemous Callout + Glossary Dual-Routing",
+    "query": "Which diagram illustrates root face and groove angle, and how is root face defined in Clause 4?",
+    "target_source": "Figure B6 (p. 87) + Clause 4 (p. 50)"
+  },
+  {
+    "id": "G61-SEM03",
+    "category": "polysemous_dual_routing",
+    "slice_name": "Slice 1 — Polysemous Callout + Glossary Dual-Routing",
+    "query": "Which figure illustrates crack types including toe crack and underbead crack, and how is toe crack defined in Clause 4?",
+    "target_source": "Figure B33 (p. 137) + Clause 4"
+  },
+  {
+    "id": "G61-SEM04",
+    "category": "three_tier_compound_designation",
+    "slice_name": "Slice 2 — 3-Tier Compound Designations & Invalid Variant Rejection",
+    "query": "What does the compound designation FCAW-G-SA stand for according to Table A1 and Table A4?",
+    "target_source": "Table A1 (p. 69) + Table A4 (p. 74)"
+  },
+  {
+    "id": "G61-SEM05",
+    "category": "three_tier_compound_designation",
+    "slice_name": "Slice 2 — 3-Tier Compound Designations & Invalid Variant Rejection",
+    "query": "What does the compound code GMAW-P-AU designate in AWS A3.0?",
+    "target_source": "Table A1 (p. 69) + Table A4 (p. 74)"
+  },
+  {
+    "id": "G61-SEM06",
+    "category": "three_tier_compound_designation",
+    "slice_name": "Slice 2 — 3-Tier Compound Designations & Invalid Variant Rejection",
+    "query": "Explain why OFC-A-MA is a valid designation while FCAW-Z-SA and PAW-AU-ME are rejected in AWS A3.0.",
+    "target_source": "Table A1 (p. 69) + Table A4 (p. 74)"
+  },
+  {
+    "id": "G61-SEM07",
+    "category": "contextual_position_and_homograph",
+    "slice_name": "Slice 3 — Contextual Position & Homograph Sense Disambiguation",
+    "query": "Which diagram illustrates the 1G test position for pipe groove welding, and how is it defined?",
+    "target_source": "Figure B19(A) (p. 111) + Clause 4 (p. 1)"
+  },
+  {
+    "id": "G61-SEM08",
+    "category": "contextual_position_and_homograph",
+    "slice_name": "Slice 3 — Contextual Position & Homograph Sense Disambiguation",
+    "query": "Which diagram illustrates the 1G test position for plate groove welding, and how is it defined?",
+    "target_source": "Figure B17(A) (p. 109) + Clause 4 (p. 1)"
+  },
+  {
+    "id": "G61-SEM09",
+    "category": "contextual_position_and_homograph",
+    "slice_name": "Slice 3 — Contextual Position & Homograph Sense Disambiguation",
+    "query": "How are the homograph AB and the position 2F disambiguated in AWS A3.0?",
+    "target_source": "Table A1 (p. 69) + Figure A6 (p. 79) + Figure B18(B) + Figure B20"
+  },
+  {
+    "id": "G61-SEM10",
+    "category": "see_also_and_taxonomy_siblings",
+    "slice_name": "Slice 4 — See also & Taxonomy Sibling Expansion",
+    "query": "What are all the throat terms cross-referenced from throat of a fillet weld in Clause 4?",
+    "target_source": "Clause 4 (p. 58) + Figure B25"
+  },
+  {
+    "id": "G61-SEM11",
+    "category": "see_also_and_taxonomy_siblings",
+    "slice_name": "Slice 4 — See also & Taxonomy Sibling Expansion",
+    "query": "What are the standard process variations under flux cored arc welding (FCAW) in AWS A3.0?",
+    "target_source": "Table A1 / IS_A Store + Clause 4 (p. 27)"
+  },
+  {
+    "id": "G61-SEM12",
+    "category": "see_also_and_taxonomy_siblings",
+    "slice_name": "Slice 4 — See also & Taxonomy Sibling Expansion",
+    "query": "What related welding angle concepts are connected to travel angle in Clause 4?",
+    "target_source": "Clause 4 (p. 59)"
+  },
+  {
+    "id": "G61-SEM13",
+    "category": "deepseek_replay_multihop",
+    "slice_name": "Slice 5 — DeepSeek Replay Multi-Hop over Semantic Neighborhoods",
+    "query": "What does FCAW-G-SA stand for and how is fusion welding classified in Figure A4?",
+    "target_source": "Table A1 + Table A4 + Figure A4 (p. 78)"
+  },
+  {
+    "id": "G61-SEM14",
+    "category": "deepseek_replay_multihop",
+    "slice_name": "Slice 5 — DeepSeek Replay Multi-Hop over Semantic Neighborhoods",
+    "query": "What does PAW-AU stand for and how are theoretical throat and effective throat defined and illustrated in Figure B25?",
+    "target_source": "Table A1 + Table A4 + Figure B25 (p. 123)"
+  },
+  {
+    "id": "G61-SEM15",
+    "category": "deepseek_replay_multihop",
+    "slice_name": "Slice 5 — DeepSeek Replay Multi-Hop over Semantic Neighborhoods",
+    "query": "Compare the active process variation FCAW-G with the obsolete process atomic hydrogen welding (AHW) in AWS A3.0.",
+    "target_source": "Table A1 (p. 69) + Table A5 (p. 74) + Clause 4"
+  }
+]

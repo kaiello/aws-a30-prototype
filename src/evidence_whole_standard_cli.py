@@ -3,9 +3,10 @@
 Deterministic, offline command-line interface supporting:
 1. --ner "<query>": Run deterministic Welding Domain Named Entity Recognition.
 2. --route "<query>": Run callout/backlink-indexed multi-intent routing and action planning.
-3. --ask "<query>": Execute full multi-store retrieval, Layer 6 composition, and Gate 5.6 provenance.
-4. --planner deterministic|deepseek-replay: Select planner backend (default: deterministic).
-5. --json: Output structured JSON receipt.
+3. --expand "<query>": Run store-compiled semantic graph neighborhood expansion.
+4. --ask "<query>": Execute full multi-store retrieval, Layer 6 composition, and Gate 5.6 provenance.
+5. --planner deterministic|deepseek-replay: Select planner backend (default: deterministic).
+6. --json: Output structured JSON receipt.
 
 Zero network calls, 100% offline from locked _001 canonical stores.
 """
@@ -98,6 +99,47 @@ def run_route_cli(query: str, as_json: bool = False, planner_name: str = "determ
     return 0
 
 
+def run_expand_cli(query: str, as_json: bool = False) -> int:
+    """Run Store-Compiled Semantic Graph Neighborhood Expansion over query."""
+    from src.semantic_nlq_expander import get_semantic_expander
+    from src.welding_ner import get_welding_ner
+    from src.evidence_phase4_bakeoff import get_whole_standard_stores
+
+    stores = get_whole_standard_stores(ROOT)
+    ner = get_welding_ner(stores=stores, root=ROOT)
+    ner_receipt = ner.recognize_entities(query).to_dict()
+    expander = get_semantic_expander(stores=stores, root=ROOT)
+    neighborhood = expander.expand_semantic_neighborhood(query)
+
+    payload = {
+        "query": query,
+        "ner_receipt": ner_receipt,
+        "concept_graph_neighborhood": neighborhood,
+        "ranked_target_figures": neighborhood.get("ranked_target_figures", []),
+    }
+
+    if as_json:
+        print(json.dumps(payload, indent=2))
+    else:
+        print(f"=== AWS A3.0M/A3.0:2020 SEMANTIC GRAPH EXPANSION RECEIPT ===")
+        print(f"Query: {query}")
+        print(f"Seed Entities: {neighborhood['seed_entities']}")
+        if neighborhood['synonym_pivots']:
+            print(f"Synonym Pivots ({len(neighborhood['synonym_pivots'])}):")
+            for sp in neighborhood['synonym_pivots']:
+                print(f"  - '{sp.get('span')}' -> {sp.get('canonical_term')} [{sp.get('resolution_type')}] ({sp.get('source_authority')})")
+        if neighborhood['see_also_neighbors']:
+            print(f"See Also Neighbors ({len(neighborhood['see_also_neighbors'])}): {neighborhood['see_also_neighbors']}")
+        if neighborhood['taxonomy_subtypes']:
+            print(f"Taxonomy Subtypes ({len(neighborhood['taxonomy_subtypes'])}): {neighborhood['taxonomy_subtypes']}")
+        if neighborhood['taxonomy_siblings']:
+            print(f"Taxonomy Siblings ({len(neighborhood['taxonomy_siblings'])}): {neighborhood['taxonomy_siblings']}")
+        if neighborhood['co_diagram_callouts']:
+            print(f"Co-Diagram Callouts ({len(neighborhood['co_diagram_callouts'])}): {neighborhood['co_diagram_callouts'][:10]}")
+        print(f"Ranked Target Figures: {neighborhood['ranked_target_figures'][:5]}")
+    return 0
+
+
 def run_ask_cli(query: str, as_json: bool = False, planner_name: str = "deterministic") -> int:
     """Execute full Whole-Standard Question Answering."""
     from src.evidence_phase4_bakeoff import answer_whole_standard_question, get_whole_standard_stores
@@ -138,6 +180,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--ner", type=str, help="Run Named Entity Recognition over welding query.")
     group.add_argument("--route", type=str, help="Run multi-intent routing and plan synthesis.")
+    group.add_argument("--expand", type=str, help="Run store-compiled semantic graph neighborhood expansion.")
     group.add_argument("--ask", type=str, help="Execute full question answering with provenance.")
 
     parser.add_argument(
@@ -155,6 +198,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         return run_ner_cli(args.ner, as_json=args.json)
     elif args.route:
         return run_route_cli(args.route, as_json=args.json, planner_name=args.planner)
+    elif args.expand:
+        return run_expand_cli(args.expand, as_json=args.json)
     elif args.ask:
         return run_ask_cli(args.ask, as_json=args.json, planner_name=args.planner)
     return 0

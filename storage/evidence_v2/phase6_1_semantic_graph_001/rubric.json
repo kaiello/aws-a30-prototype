@@ -1,0 +1,238 @@
+{
+  "version": "phase6_1_semantic_graph_rubric_v1.0",
+  "total_questions": 15,
+  "rubrics": {
+    "G61-SEM01": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B25",
+        "theoretical throat",
+        "effective throat",
+        "actual throat",
+        "joint root",
+        "fillet weld"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G61-SEM02": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B6",
+        "root face",
+        "groove angle",
+        "groove face",
+        "joint root"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G61-SEM03": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B33",
+        "toe crack",
+        "underbead crack",
+        "base metal",
+        "weld toe"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G61-SEM04": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "FCAW-G-SA",
+        "gas shielded flux cored arc welding",
+        "semiautomatic",
+        "Table A1",
+        "Table A4"
+      ],
+      "forbidden_elements": [
+        "Figure B",
+        "laser"
+      ]
+    },
+    "G61-SEM05": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "GMAW-P-AU",
+        "gas metal arc welding",
+        "automatic",
+        "Table A1",
+        "Table A4"
+      ],
+      "forbidden_elements": [
+        "Figure B",
+        "laser"
+      ]
+    },
+    "G61-SEM06": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "OFC-A-MA",
+        "oxyfuel gas cutting",
+        "manual",
+        "FCAW-Z-SA",
+        "PAW-AU-ME",
+        "not in",
+        "Table A1",
+        "Table A4"
+      ],
+      "forbidden_elements": [
+        "Figure B",
+        "Figure A"
+      ]
+    },
+    "G61-SEM07": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "1G",
+        "pipe",
+        "Figure B19",
+        "circumferential",
+        "horizontal"
+      ],
+      "forbidden_elements": [
+        "Figure B17",
+        "plate"
+      ]
+    },
+    "G61-SEM08": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "1G",
+        "plate",
+        "Figure B17",
+        "flat"
+      ],
+      "forbidden_elements": [
+        "Figure B19",
+        "pipe"
+      ]
+    },
+    "G61-SEM09": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "AB",
+        "adhesive bonding",
+        "arc brazing",
+        "2F",
+        "fillet",
+        "plate",
+        "pipe"
+      ],
+      "forbidden_elements": [
+        "laser",
+        "plasma"
+      ]
+    },
+    "G61-SEM10": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "throat of a fillet weld",
+        "actual throat",
+        "effective throat",
+        "theoretical throat",
+        "See also"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G61-SEM11": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "flux cored arc welding",
+        "FCAW-G",
+        "FCAW-S",
+        "gas shielded",
+        "self-shielded"
+      ],
+      "forbidden_elements": [
+        "Figure B",
+        "laser"
+      ]
+    },
+    "G61-SEM12": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "travel angle",
+        "work angle",
+        "drag angle",
+        "push angle"
+      ],
+      "forbidden_elements": [
+        "Figure B",
+        "laser"
+      ]
+    },
+    "G61-SEM13": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "FCAW-G-SA",
+        "gas shielded flux cored arc welding",
+        "semiautomatic",
+        "Figure A4",
+        "Fusion Welding",
+        "Arc"
+      ],
+      "forbidden_elements": [
+        "Solid-State",
+        "Figure B"
+      ]
+    },
+    "G61-SEM14": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "PAW-AU",
+        "plasma arc welding",
+        "automatic",
+        "Figure B25",
+        "theoretical throat",
+        "effective throat"
+      ],
+      "forbidden_elements": [
+        "laser",
+        "Figure A"
+      ]
+    },
+    "G61-SEM15": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "FCAW-G",
+        "gas shielded flux cored arc welding",
+        "atomic hydrogen welding",
+        "AHW",
+        "Table A5",
+        "obsolete"
+      ],
+      "forbidden_elements": [
+        "Figure B",
+        "laser"
+      ]
+    }
+  }
+}

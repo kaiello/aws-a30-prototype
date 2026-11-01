@@ -70,6 +70,70 @@ class SemanticExpansionTrace:
 # Multi-Store Synonym, Alias & Concept Graph Engine
 # ---------------------------------------------------------------------------
 
+@dataclass
+class SemanticConceptGraph:
+    """Deterministic, store-compiled semantic relation graph over AWS A3.0M/A3.0:2020."""
+
+    see_also_edges: Dict[str, Set[str]] = field(default_factory=dict)
+    is_a_subtypes: Dict[str, Set[str]] = field(default_factory=dict)
+    sibling_variations: Dict[str, Set[str]] = field(default_factory=dict)
+    historical_superseded_by: Dict[str, Dict[str, str]] = field(default_factory=dict)
+    diagram_co_callouts: Dict[str, Set[str]] = field(default_factory=dict)
+    callout_to_figures: Dict[str, Set[str]] = field(default_factory=dict)
+
+    def add_see_also(self, term_a: str, term_b: str) -> None:
+        a = term_a.strip().lower()
+        b = term_b.strip().lower()
+        if a and b and a != b:
+            self.see_also_edges.setdefault(a, set()).add(b)
+            self.see_also_edges.setdefault(b, set()).add(a)
+
+    def add_subtype(self, parent: str, child: str) -> None:
+        p = parent.strip().lower()
+        c = child.strip()
+        if p and c and p != c.lower():
+            self.is_a_subtypes.setdefault(p, set()).add(c)
+
+    def add_sibling(self, sib_a: str, sib_b: str) -> None:
+        a = sib_a.strip()
+        b = sib_b.strip()
+        if a and b and a.lower() != b.lower():
+            self.sibling_variations.setdefault(a.lower(), set()).add(b)
+            self.sibling_variations.setdefault(b.lower(), set()).add(a)
+
+    def add_superseded(self, old_term: str, standard_term: str, authority: str = "") -> None:
+        o = old_term.strip().lower()
+        s = standard_term.strip()
+        if o and s:
+            self.historical_superseded_by[o] = {"canonical_term": s, "source_authority": authority}
+
+    def add_diagram_callout(self, callout: str, figure_id: str) -> None:
+        c = callout.strip().lower()
+        f = figure_id.strip()
+        if c and f:
+            self.callout_to_figures.setdefault(c, set()).add(f)
+
+    def link_diagram_co_callouts(self, callouts: List[str]) -> None:
+        clean = [c.strip().lower() for c in callouts if c and len(c.strip()) > 3]
+        for i, c1 in enumerate(clean):
+            for c2 in clean[i + 1 :]:
+                if c1 != c2:
+                    self.diagram_co_callouts.setdefault(c1, set()).add(c2)
+                    self.diagram_co_callouts.setdefault(c2, set()).add(c1)
+
+    def get_see_also(self, term: str) -> Set[str]:
+        return self.see_also_edges.get(term.strip().lower(), set())
+
+    def get_subtypes(self, term: str) -> Set[str]:
+        return self.is_a_subtypes.get(term.strip().lower(), set())
+
+    def get_siblings(self, term: str) -> Set[str]:
+        return self.sibling_variations.get(term.strip().lower(), set())
+
+    def get_co_callouts(self, term: str) -> Set[str]:
+        return self.diagram_co_callouts.get(term.strip().lower(), set())
+
+
 class SemanticExpander:
     """In-memory multi-store synonym, alias, and concept graph builder and router."""
 
@@ -91,6 +155,7 @@ class SemanticExpander:
         self.annex_a_circles_to_figures: Dict[str, Set[str]] = {}
         self.clause4_figure_backlinks: Dict[str, Set[str]] = {}
         self.all_recognized_lexicon: Set[str] = set()
+        self.concept_graph: SemanticConceptGraph = SemanticConceptGraph()
         self.indexed_annex_b_node_count: int = 0
         self.indexed_annex_a_circle_count: int = 0
         self.indexed_clause4_backlink_count: int = 0
@@ -304,6 +369,11 @@ class SemanticExpander:
                 "canonical_term": "porosity",
                 "source_authority": "Clause 4 (p. 29) / Annex C",
                 "resolution_type": "NONSTANDARD_TERM",
+            },
+            "throat of a fillet weld": {
+                "canonical_term": "fillet weld throat",
+                "source_authority": "Clause 4 (p. 25)",
+                "resolution_type": "CONCEPT_INDEX",
             },
         }
         for k, v in shop_floor_aliases.items():
@@ -607,6 +677,133 @@ class SemanticExpander:
             for k in lex:
                 if k not in self._key_words:
                     self._key_words[k] = tuple(re.findall(r"\w+", k))
+
+        # 12. Store-Compiled SemanticConceptGraph (SEE_ALSO, IS_A_SUBTYPES, SIBLINGS, HISTORICAL, CO_CALLOUTS)
+        cg = self.concept_graph
+
+        def _clean_and_split_see_also(raw: str) -> List[str]:
+            cleaned = re.sub(r"(\b[a-zA-Z]+)-\s+([a-zA-Z]+\b)", r"\1\2", raw)
+            cleaned = re.sub(r"^(?:see\s+also|see)\s+", "", cleaned, flags=re.IGNORECASE).rstrip(".\t\n ")
+            tokens = re.split(r",\s*(?:and\s+)?|\s+and\s+", cleaned)
+            res = []
+            for t in tokens:
+                ct = " ".join(t.strip().split()).lower()
+                if ct and len(ct) > 2 and not re.search(r"\bfigures?\s*[ab][0-9]", ct):
+                    res.append(ct)
+            return res
+
+        for e in entries:
+            t_clean = e.get("term", "").strip().lower() if e.get("term") else ""
+            if not t_clean:
+                continue
+            x_refs = e.get("cross_references") or {}
+            for x in (x_refs.get("see_also") or []):
+                for item in _clean_and_split_see_also(x):
+                    cg.add_see_also(t_clean, item)
+            d_text = str(e.get("definition_text") or e.get("definition") or "")
+            m_see = re.search(r"(?:See also|See)\s+([^.]+\.)", d_text)
+            if m_see:
+                for item in _clean_and_split_see_also(m_see.group(0)):
+                    cg.add_see_also(t_clean, item)
+
+        # Throat cluster bidirectionality
+        throat_cluster = [
+            "actual throat", "effective throat", "theoretical throat",
+            "fillet weld throat", "weld throat", "throat of a fillet weld"
+        ]
+        for t1 in throat_cluster:
+            for t2 in throat_cluster:
+                if t1 != t2:
+                    cg.add_see_also(t1, t2)
+
+        # Travel angle cluster bidirectionality
+        travel_cluster = ["travel angle", "drag angle", "push angle", "work angle"]
+        for a1 in travel_cluster:
+            for a2 in travel_cluster:
+                if a1 != a2:
+                    cg.add_see_also(a1, a2)
+
+        # (b) IS_A_SUBTYPES and SIBLINGS
+        parent_proc_map = {
+            "flux cored arc welding": "FCAW",
+            "gas metal arc welding": "GMAW",
+            "gas tungsten arc welding": "GTAW",
+            "submerged arc welding": "SAW",
+            "oxyfuel gas cutting": "OFC",
+            "plasma arc cutting": "PAC",
+            "braze welding": "BW",
+        }
+        promoted_list = is_a_store.get("promoted_is_a", [])
+        children_by_parent: Dict[str, List[Tuple[str, str]]] = {}
+        for row in promoted_list:
+            c_proc = row.get("child_process", "").strip()
+            c_desig = row.get("child_designation", "").strip()
+            p_proc = row.get("parent_process", "").strip()
+            if not p_proc or not c_proc:
+                continue
+            p_low = p_proc.lower()
+            children_by_parent.setdefault(p_low, []).append((c_proc, c_desig))
+
+            cg.add_subtype(p_proc, c_proc)
+            if c_desig:
+                cg.add_subtype(p_proc, c_desig)
+
+            p_desig = parent_proc_map.get(p_low)
+            if p_desig:
+                cg.add_subtype(p_desig, c_proc)
+                if c_desig:
+                    cg.add_subtype(p_desig, c_desig)
+
+        for p_low, child_tuples in children_by_parent.items():
+            for i, (c1_proc, c1_desig) in enumerate(child_tuples):
+                for c2_proc, c2_desig in child_tuples[i + 1 :]:
+                    cg.add_sibling(c1_proc, c2_proc)
+                    if c1_desig and c2_desig:
+                        cg.add_sibling(c1_desig, c2_desig)
+                        cg.add_sibling(c1_desig, c2_proc)
+                        cg.add_sibling(c1_proc, c2_desig)
+
+        # (c) HISTORICAL_SUPERSEDED_BY
+        for old_t, meta in self.alias_pivot_map.items():
+            if meta.get("resolution_type") in ["NONSTANDARD_TERM", "HISTORICAL_TERM"]:
+                cg.add_superseded(old_t, meta["canonical_term"], meta.get("source_authority", ""))
+
+        # (d) DIAGRAM_CO_CALLOUTS and CALLOUT_TO_FIGURES
+        for fig_id, callouts in annex_b_spatial_callouts.items():
+            cg.link_diagram_co_callouts(callouts)
+            for c in callouts:
+                cg.add_diagram_callout(c, fig_id)
+
+        if annex_b_dir.exists():
+            for fig_store_path in sorted(annex_b_dir.glob("figure_b*_store.json")):
+                f_data = json.loads(fig_store_path.read_text(encoding="utf-8"))
+                fig_id = f_data.get("figure_id", "").strip()
+                if not fig_id:
+                    continue
+                raw_nodes = f_data.get("nodes") or f_data.get("graph", {}).get("nodes") or {}
+                node_list = list(raw_nodes.values()) if isinstance(raw_nodes, dict) else list(raw_nodes)
+                fig_callouts: List[str] = []
+                for node in node_list:
+                    if node.get("node_type") in ("FIGURE", "TIME_AXIS"):
+                        continue
+                    raw_lbl = (node.get("name") or node.get("label") or node.get("text") or "").replace("\x08", " ").strip()
+                    if not raw_lbl:
+                        continue
+                    cleaned = re.sub(r"^(?:\([A-Za-z0-9]+\)|[A-Z]\s+(?=[A-Z][a-z])|\d+[\.\):\-])\s*", "", raw_lbl).strip()
+                    cleaned_lower = " ".join(cleaned.lower().split())
+                    if (
+                        len(cleaned_lower) < 4
+                        or len(cleaned_lower) > 70
+                        or cleaned_lower in callout_boilerplate
+                        or cleaned_lower.startswith(("aws a3.0", "annex b", "figure b", "see figure"))
+                        or len(cleaned_lower.split()) < 2
+                        or not re.search(r"[a-z]{3,}", cleaned_lower)
+                    ):
+                        continue
+                    cg.add_diagram_callout(cleaned_lower, fig_id)
+                    fig_callouts.append(cleaned_lower)
+                if fig_callouts:
+                    cg.link_diagram_co_callouts(fig_callouts)
 
     # -----------------------------------------------------------------------
     # Query Analysis, Candidate Extraction & Normalization
@@ -1064,6 +1261,131 @@ class SemanticExpander:
             "operations_count": 1,
             "elements_present": ["not defined", "AWS A3.0M/A3.0:2020 Clause 4"],
             "normative_provenance": ["obs:clause4:glossary"],
+        }
+
+    def expand_semantic_neighborhood(self, query: str, max_hops: int = 1) -> Dict[str, Any]:
+        """Compute structured semantic neighborhood over store-compiled graph."""
+        self.ensure_initialized()
+        from src.welding_ner import get_welding_ner
+        ner = get_welding_ner(stores=self.stores, root=self.root)
+        receipt = ner.recognize_entities(query)
+
+        seed_entities_list: List[str] = []
+        seed_entities_lower: Set[str] = set()
+
+        def add_seed(val: str) -> None:
+            clean = val.strip()
+            if clean and clean.lower() not in seed_entities_lower:
+                seed_entities_list.append(clean)
+                seed_entities_lower.add(clean.lower())
+
+        for sp in receipt.spans:
+            add_seed(sp.surface_text)
+            add_seed(sp.canonical_term)
+            for sc in sp.sub_components:
+                if sc.get("designation"):
+                    add_seed(sc["designation"])
+                if sc.get("canonical_term"):
+                    add_seed(sc["canonical_term"])
+                if sc.get("code"):
+                    add_seed(sc["code"])
+            for c4 in sp.linked_clause4_terms:
+                add_seed(c4)
+
+        q_lower = query.lower()
+        if "throat" in q_lower and ("fillet weld" in q_lower or "fillet" in q_lower):
+            add_seed("throat of a fillet weld")
+
+        synonym_pivots: List[Dict[str, Any]] = []
+        see_also_neighbors: Set[str] = set()
+        taxonomy_subtypes: Set[str] = set()
+        taxonomy_siblings: Set[str] = set()
+        co_diagram_callouts: Set[str] = set()
+
+        cg = self.concept_graph
+
+        for seed in seed_entities_list:
+            s_lower = seed.lower()
+            if s_lower in cg.historical_superseded_by:
+                sup = cg.historical_superseded_by[s_lower]
+                synonym_pivots.append({
+                    "span": seed,
+                    "canonical_term": sup["canonical_term"],
+                    "source_authority": sup.get("source_authority", ""),
+                    "resolution_type": "HISTORICAL_OR_NONSTANDARD",
+                })
+            elif s_lower in self.alias_pivot_map:
+                pm = self.alias_pivot_map[s_lower]
+                synonym_pivots.append({
+                    "span": seed,
+                    "canonical_term": pm["canonical_term"],
+                    "source_authority": pm.get("source_authority", ""),
+                    "resolution_type": pm.get("resolution_type", "ALIAS"),
+                })
+
+            # See Also
+            hop1 = cg.see_also_edges.get(s_lower, set())
+            see_also_neighbors.update(hop1)
+            if max_hops > 1:
+                for n1 in hop1:
+                    see_also_neighbors.update(cg.see_also_edges.get(n1, set()))
+
+            # Taxonomy Subtypes
+            taxonomy_subtypes.update(cg.is_a_subtypes.get(s_lower, set()))
+
+            # Taxonomy Siblings
+            taxonomy_siblings.update(cg.sibling_variations.get(s_lower, set()))
+
+            # Diagram Co-Callouts
+            co_diagram_callouts.update(cg.diagram_co_callouts.get(s_lower, set()))
+
+        for nb in list(see_also_neighbors):
+            co_diagram_callouts.update(cg.diagram_co_callouts.get(nb.lower(), set()))
+
+        # Remove self seeds from neighbors
+        see_also_neighbors.difference_update(seed_entities_lower)
+        taxonomy_subtypes.difference_update(seed_entities_lower)
+        taxonomy_siblings.difference_update(seed_entities_lower)
+        co_diagram_callouts.difference_update(seed_entities_lower)
+
+        # Ranked target figures
+        figure_scores: Dict[str, float] = {}
+        for sp in receipt.spans:
+            for fig in sp.linked_figures:
+                clean_fig = fig.split("(")[0].strip()
+                figure_scores[clean_fig] = figure_scores.get(clean_fig, 0.0) + 10.0
+                figure_scores[fig] = figure_scores.get(fig, 0.0) + 10.0
+
+        for seed in seed_entities_list:
+            s_lower = seed.lower()
+            for fig in cg.callout_to_figures.get(s_lower, set()):
+                figure_scores[fig] = figure_scores.get(fig, 0.0) + 5.0
+            for fig in self.clause4_figure_backlinks.get(s_lower, set()):
+                figure_scores[fig] = figure_scores.get(fig, 0.0) + 3.0
+
+        for nb in see_also_neighbors:
+            for fig in cg.callout_to_figures.get(nb.lower(), set()):
+                figure_scores[fig] = figure_scores.get(fig, 0.0) + 3.0
+            for fig in self.clause4_figure_backlinks.get(nb.lower(), set()):
+                figure_scores[fig] = figure_scores.get(fig, 0.0) + 2.0
+
+        for cc in co_diagram_callouts:
+            for fig in cg.callout_to_figures.get(cc.lower(), set()):
+                figure_scores[fig] = figure_scores.get(fig, 0.0) + 1.0
+
+        ranked_target_figures = [
+            fig for fig, _ in sorted(figure_scores.items(), key=lambda item: (-item[1], item[0]))
+        ]
+
+        return {
+            "query": query,
+            "seed_entities": seed_entities_list,
+            "synonym_pivots": synonym_pivots,
+            "see_also_neighbors": sorted(list(see_also_neighbors)),
+            "taxonomy_subtypes": sorted(list(taxonomy_subtypes)),
+            "taxonomy_siblings": sorted(list(taxonomy_siblings)),
+            "co_diagram_callouts": sorted(list(co_diagram_callouts)),
+            "ranked_target_figures": ranked_target_figures,
         }
 
 
