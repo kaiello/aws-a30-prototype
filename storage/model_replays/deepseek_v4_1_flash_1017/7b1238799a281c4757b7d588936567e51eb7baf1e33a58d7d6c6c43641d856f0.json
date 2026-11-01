@@ -1,0 +1,39 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0",
+  "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: Which diagram illustrates theoretical throat, effective throat, and actual throat, and how are they defined in Clause 4?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"target_division\": \"Figure B25\", \"intent\": \"spatial_callout\", \"target_entities\": [\"Figure B25\", \"theoretical throat\", \"effective throat\", \"actual throat\"], \"actions\": [{\"action_type\": \"query_figure\", \"target\": \"Figure B25\", \"parameters\": {\"callouts\": [\"theoretical throat\", \"effective throat\", \"actual throat\"]}}, {\"action_type\": \"lookup_term\", \"target\": \"theoretical throat\", \"parameters\": {\"clause\": \"Clause 4\"}}], \"reason\": \"DeepSeek-V4.1 trace: Resolve ID-free spatial throat callouts via inverted index to Figure B25 (Weld Sizes) and join Clause 4 throat definitions.\"}",
+  "parsed_plan": {
+    "target_division": "Figure B25",
+    "intent": "spatial_callout",
+    "target_entities": [
+      "Figure B25",
+      "theoretical throat",
+      "effective throat",
+      "actual throat"
+    ],
+    "actions": [
+      {
+        "action_type": "query_figure",
+        "target": "Figure B25",
+        "parameters": {
+          "callouts": [
+            "theoretical throat",
+            "effective throat",
+            "actual throat"
+          ]
+        }
+      },
+      {
+        "action_type": "lookup_term",
+        "target": "theoretical throat",
+        "parameters": {
+          "clause": "Clause 4"
+        }
+      }
+    ],
+    "reason": "DeepSeek-V4.1 trace: Resolve ID-free spatial throat callouts via inverted index to Figure B25 (Weld Sizes) and join Clause 4 throat definitions."
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}

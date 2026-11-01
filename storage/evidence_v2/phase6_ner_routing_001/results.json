@@ -394,7 +394,8 @@
         ],
         "inferred_targets": {
           "figures": [
-            "Figure B33"
+            "Figure B33",
+            "Figure B32"
           ],
           "tables": [],
           "clause4_terms": [

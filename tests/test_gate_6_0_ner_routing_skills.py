@@ -87,10 +87,10 @@ ALL_29_LOCKED_HASHES = {
     # 3 Gate 6.0 Benchmark Files
     "storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json": "bf2fd3b05532cb76a0584cd1d6db8d3f1fe038ba632d539d8be94a4feb4f23ac",
     "storage/evidence_v2/phase6_ner_routing_001/rubric.json": "602f37e0194a99ee6b3e52c95c1c76d9e57a3950a50ea7a5efd15c336645b427",
-    "storage/evidence_v2/phase6_ner_routing_001/results.json": "a0f9b3b3005276b0c6d74a45c9e8a0db5ad6b00ae8fb5fb7d79c4a9cf3a3626b",
+    "storage/evidence_v2/phase6_ner_routing_001/results.json": "4023b5c13b8265f9a6085399e0176644df8119366ccc3ea920c098159f6ef8a8",
     # 2 Gate 6.0 DeepSeek Replay Cassettes
-    "storage/model_replays/deepseek_v4_1_flash_1017/a56878be1a109cb0e9cc69d24e5bd3943cf1b49e12911fdf6d6d5957c365ca0e.json": "5c4b63a9ee87339881afd99a91bfb273046531423107b4acf52069cd8e64e3da",
-    "storage/model_replays/deepseek_v4_1_flash_1017/890dfe6113a45a4e8fe173be3e502a44b034dc82613f5b02c4ef84a45688f971.json": "0c3ff8a6fae4f475550a8bad452728be1f29dfa28f916e6e1d5a6369782b84f0",
+    "storage/model_replays/deepseek_v4_1_flash_1017/4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed.json": "b5c11233c5389651c5ff6730ebb56b51e910042d8aada8f5b9ec7752f2c7d057",
+    "storage/model_replays/deepseek_v4_1_flash_1017/7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0.json": "178e40f106af85fd17e9a949877cf6b0ea3c469516e102efdc017d043635df42",
 }
 
 
@@ -99,11 +99,14 @@ def test_gate_6_0_welding_ner_spans_and_compound_codes():
     ner = get_welding_ner(root=ROOT)
     assert ner is not None
 
-    # 1. Cold-start auto-hydration
+    # 1. Cold-start auto-hydration & store-compiled node counts
     standalone_ner = WeldingNER(root=ROOT)
     standalone_ner.ensure_initialized()
     assert len(standalone_ner.process_codes) > 10
     assert len(standalone_ner.glossary_terms) > 100
+    assert standalone_ner.indexed_annex_b_node_count == 1115
+    assert standalone_ner.indexed_annex_a_circle_count >= 96
+    assert standalone_ner.indexed_clause4_backlink_count >= 265
 
     # 2. Exact character offset matching
     q1 = "What does the compound designation PAW-AU stand for according to Table A1 and Table A4?"
@@ -144,7 +147,7 @@ def test_gate_6_0_welding_ner_spans_and_compound_codes():
     # Sub-tokens like "arc" or "welding" alone should not form overlapping spans
     assert not any(s.surface_text == "arc" for s in receipt4.spans)
 
-    # 5. Homograph ambiguity candidates for AB
+    # 5. Homograph ambiguity candidates for AB & multi-POS Clause 4 headwords & morphological inflections
     q5 = "What is AB?"
     receipt5 = ner.recognize_entities(q5)
     ab_span = next((s for s in receipt5.spans if s.surface_text == "AB"), None)
@@ -154,9 +157,34 @@ def test_gate_6_0_welding_ner_spans_and_compound_codes():
     assert "arc brazing" in cands
     assert "adhesive bonding" in cands
 
+    receipt_pos = ner.recognize_entities("Define braze and kerfs in Clause 4")
+    braze_span = next((s for s in receipt_pos.spans if s.surface_text == "braze"), None)
+    assert braze_span is not None
+    assert len(braze_span.ambiguity_candidates) >= 2
+    pos_tags = {c.get("part_of_speech") for c in braze_span.ambiguity_candidates}
+    assert "n." in pos_tags and "v." in pos_tags
+    kerfs_span = next((s for s in receipt_pos.spans if s.surface_text == "kerfs"), None)
+    assert kerfs_span is not None
+    assert kerfs_span.entity_type == "GLOSSARY_TERM"
+    assert kerfs_span.canonical_term == "kerf"
+
 
 def test_gate_6_0_id_free_spatial_callout_routing():
     """Verify ID-free spatial callout queries route cleanly to diagrams with requires_diagram_crop=True."""
+    from src.semantic_nlq_expander import SemanticExpander
+
+    standalone_exp = SemanticExpander(root=ROOT)
+    standalone_exp.ensure_initialized()
+    assert standalone_exp.indexed_annex_b_node_count == 1115
+    assert standalone_exp.indexed_annex_a_circle_count >= 96
+    assert standalone_exp.indexed_clause4_backlink_count >= 265
+
+    # Verify non-benchmark Annex B figure resolves via store-compiled 1,115-node IDF callout index
+    b10_trace = standalone_exp.expand_query(
+        "Which diagram illustrates flanged butt joint weld and flanged corner joint weld?"
+    )
+    assert "Figure B10" in b10_trace.inferred_targets["figures"]
+
     stores = get_whole_standard_stores(ROOT)
     planner = DeterministicQuestionPlanner(ROOT)
 
@@ -231,6 +259,8 @@ def test_gate_6_0_whole_standard_cli_and_skills_contracts(monkeypatch):
     assert p_route.returncode == 0
     data_route = json.loads(p_route.stdout)
     assert "actions" in data_route
+    assert "ner_receipt" in data_route
+    assert "inferred_targets" in data_route
 
     cmd_ask = [sys.executable, "-B", "-m", "src.evidence_whole_standard_cli", "--ask", "What does PAW-AU designate?", "--json"]
     p_ask = subprocess.run(cmd_ask, capture_output=True, text=True, cwd=str(ROOT))
@@ -238,12 +268,34 @@ def test_gate_6_0_whole_standard_cli_and_skills_contracts(monkeypatch):
     data_ask = json.loads(p_ask.stdout)
     assert data_ask["execution"]["status"] == "PASS"
 
+    cmd_ask_ds = [
+        sys.executable,
+        "-B",
+        "-m",
+        "src.evidence_whole_standard_cli",
+        "--ask",
+        "What does PAW-AU designate and how is plasma arc welding classified in Figure A4?",
+        "--planner",
+        "deepseek-replay",
+        "--json",
+    ]
+    p_ask_ds = subprocess.run(cmd_ask_ds, capture_output=True, text=True, cwd=str(ROOT))
+    assert p_ask_ds.returncode == 0
+    data_ask_ds = json.loads(p_ask_ds.stdout)
+    assert data_ask_ds["execution"]["status"] == "PASS"
+    assert data_ask_ds["requires_diagram_crop"] is True
+
     # 2. Modernized .agents/skills/ scan
     skills_dir = ROOT / ".agents/skills"
     assert skills_dir.exists()
+    combined_skills = []
     for skill_md in skills_dir.glob("*/SKILL.md"):
         content = skill_md.read_text(encoding="utf-8")
+        combined_skills.append(content)
         assert "only implemented source adapter is Figure A1" not in content, f"Obsolete restriction in {skill_md}"
+    joined_skills = "\n".join(combined_skills)
+    assert "src.evidence_whole_standard_cli" in joined_skills
+    assert "src.evidence_whole_standard_preflight" in joined_skills
 
 
 def test_gate_6_0_deepseek_replay_backward_and_new_cassettes(monkeypatch):
@@ -254,17 +306,45 @@ def test_gate_6_0_deepseek_replay_backward_and_new_cassettes(monkeypatch):
 
     cfg = DeepSeekV41Config(mode="OFFLINE_REPLAY_ONLY")
     adapter = DeepSeekV41PlannerAdapter(config=cfg, root=ROOT)
+    stores = get_whole_standard_stores(ROOT)
 
     replays_dir = ROOT / "storage/model_replays/deepseek_v4_1_flash_1017"
-    cassettes = list(replays_dir.glob("*.json"))
-    assert len(cassettes) >= 10, f"Expected at least 10 replay cassettes, found {len(cassettes)}"
+    cassettes = sorted(replays_dir.glob("*.json"))
+    assert len(cassettes) == 10, f"Expected 10 replay cassettes, found {len(cassettes)}"
 
+    whole_std_replayed = 0
     for cass_file in cassettes:
         data = json.loads(cass_file.read_text(encoding="utf-8"))
         assert data.get("epistemic_tag") == "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
         assert "replay_key" in data
         assert "raw_model_output" in data
         assert "parsed_plan" in data
+        computed_key = adapter.compute_replay_key(data["normalized_prompt"])
+        assert computed_key == data["replay_key"] == cass_file.stem
+        loaded = adapter.load_replay(computed_key)
+        assert loaded["epistemic_tag"] == "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+
+        if data["normalized_prompt"].startswith("AWS A3.0M/A3.0:2020 Question Planning Contract"):
+            m_q = re.search(r"^Question:\s*(.+)$", data["normalized_prompt"], flags=re.MULTILINE)
+            assert m_q is not None
+            q_text = m_q.group(1).strip()
+            plan = adapter.plan_with_semantic_expansion(q_text, stores=stores)
+            assert plan["receipt_metadata"]["epistemic_tag"] == "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+            assert "ner_entities" in plan
+            assert "multi_intent_targets" in plan
+            whole_std_replayed += 1
+
+    assert whole_std_replayed == 8
+
+    # End-to-end execution of the 2 new Gate 6.0 multi-intent DeepSeek replay cassettes
+    for g60_q in [
+        "What does PAW-AU designate and how is plasma arc welding classified in Figure A4?",
+        "Which diagram illustrates theoretical throat, effective throat, and actual throat, and how are they defined in Clause 4?",
+    ]:
+        ans = answer_whole_standard_question(g60_q, planner=adapter, stores=stores)
+        assert ans["execution"]["status"] == "PASS"
+        assert ans["requires_diagram_crop"] is True
+        assert (ROOT / ans["crop_path"]).exists()
 
 
 def test_gate_6_0_benchmark_all_20_pass():

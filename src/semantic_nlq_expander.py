@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 import json
+import math
 from pathlib import Path
 import re
 from typing import Any, Dict, List, Optional, Set, Tuple
@@ -87,8 +88,14 @@ class SemanticExpander:
         self.waveform_intervals_index: Dict[str, List[str]] = {}
         self.annex_b_titles_index: Dict[str, str] = {}
         self.callouts_to_figures: Dict[str, Set[str]] = {}
+        self.annex_a_circles_to_figures: Dict[str, Set[str]] = {}
         self.clause4_figure_backlinks: Dict[str, Set[str]] = {}
         self.all_recognized_lexicon: Set[str] = set()
+        self.indexed_annex_b_node_count: int = 0
+        self.indexed_annex_a_circle_count: int = 0
+        self.indexed_clause4_backlink_count: int = 0
+        self._sorted_candidate_lexicon: List[Tuple[str, Tuple[str, ...]]] = []
+        self._key_words: Dict[str, Tuple[str, ...]] = {}
 
         self._initialized = False
 
@@ -491,7 +498,27 @@ class SemanticExpander:
         }
         self.waveform_intervals_index = waveform_intervals
 
-        # 11. Annex B Spatial Callout & Numbered Key Inverted Index
+        # 11. Annex B Spatial Callout & Numbered Key Inverted Index (All 1,115 Accepted Nodes Across 56 Figure Stores)
+        #     + 96+ Annex A Process Circles + Clause 4 Figure Backlinks
+        self.indexed_clause4_backlink_count = sum(len(v) for v in self.clause4_figure_backlinks.values())
+
+        # Index Annex A process circles across Figures A2-A6 (96 circles across A4-A6; 130 across A2-A6)
+        self.indexed_annex_a_circle_count = 0
+        annex_a_graphs = dict(self.stores.get("annex_a_graphs", {}))
+        a2_path = self.root / "storage/evidence_v2/a2_ingest_001/final_projection/graph.json"
+        if "Figure A2" not in annex_a_graphs and a2_path.exists():
+            annex_a_graphs["Figure A2"] = json.loads(a2_path.read_text(encoding="utf-8"))
+        for fig_a_id, fig_a_graph in sorted(annex_a_graphs.items()):
+            for node in fig_a_graph.get("nodes", []):
+                if node.get("kind") == "process":
+                    self.indexed_annex_a_circle_count += 1
+                    lbl = (node.get("label") or node.get("name") or "").strip().lower()
+                    code = (node.get("code") or "").strip().lower()
+                    if lbl:
+                        self.annex_a_circles_to_figures.setdefault(lbl, set()).add(fig_a_id)
+                    if code:
+                        self.annex_a_circles_to_figures.setdefault(code, set()).add(fig_a_id)
+
         annex_b_spatial_callouts = {
             "Figure B25": [
                 "theoretical throat", "effective throat", "actual throat",
@@ -526,6 +553,60 @@ class SemanticExpander:
             for c in callouts:
                 self.callouts_to_figures.setdefault(c, set()).add(fig_id)
                 self.all_recognized_lexicon.add(c)
+
+        # Dynamically index all 1,115 accepted nodes across the 56 Annex B figure_b*_store.json files
+        self.indexed_annex_b_node_count = 0
+        annex_b_dir = self.root / "storage/evidence_v2/annex_b_complete_001"
+        callout_boilerplate = {
+            "aws a3.0m/a3.0:2020", "annex b", "time", "weld", "welds", "plate", "pipe",
+            "joint", "joints", "process", "arrow", "other", "both", "none", "notes", "note",
+            "detail", "section", "view", "axis", "force", "speed", "current", "voltage",
+        }
+        if annex_b_dir.exists():
+            for fig_store_path in sorted(annex_b_dir.glob("figure_b*_store.json")):
+                f_data = json.loads(fig_store_path.read_text(encoding="utf-8"))
+                fig_id = f_data.get("figure_id", "").strip()
+                raw_nodes = f_data.get("nodes") or f_data.get("graph", {}).get("nodes") or {}
+                node_list = list(raw_nodes.values()) if isinstance(raw_nodes, dict) else list(raw_nodes)
+                self.indexed_annex_b_node_count += len(node_list)
+                if not fig_id:
+                    continue
+                for node in node_list:
+                    if node.get("node_type") in ("FIGURE", "TIME_AXIS"):
+                        continue
+                    raw_lbl = (node.get("name") or node.get("label") or node.get("text") or "").replace("\x08", " ").strip()
+                    if not raw_lbl:
+                        continue
+                    cleaned = re.sub(r"^(?:\([A-Za-z0-9]+\)|[A-Z]\s+(?=[A-Z][a-z])|\d+[\.\):\-])\s*", "", raw_lbl).strip()
+                    cleaned_lower = " ".join(cleaned.lower().split())
+                    if (
+                        len(cleaned_lower) < 4
+                        or len(cleaned_lower) > 70
+                        or cleaned_lower in callout_boilerplate
+                        or cleaned_lower.startswith(("aws a3.0", "annex b", "figure b", "see figure"))
+                        or len(cleaned_lower.split()) < 2
+                        or not re.search(r"[a-z]{3,}", cleaned_lower)
+                    ):
+                        continue
+                    self.callouts_to_figures.setdefault(cleaned_lower, set()).add(fig_id)
+                    self.all_recognized_lexicon.add(cleaned_lower)
+
+        # Precompute sorted lexicon & word-boundary token tuples for O(1) set-membership pre-filtering
+        sorted_raw = sorted(
+            list(self.alias_pivot_map.keys()) + list(self.clause4_lexicon.keys()),
+            key=len,
+            reverse=True,
+        )
+        self._sorted_candidate_lexicon = [
+            (item, tuple(re.findall(r"\w+", item)))
+            for item in sorted_raw
+            if len(item) > 3
+        ]
+        self._key_words = {}
+        for lex in (self.callouts_to_figures, self.clause4_figure_backlinks):
+            for k in lex:
+                if k not in self._key_words:
+                    self._key_words[k] = tuple(re.findall(r"\w+", k))
 
     # -----------------------------------------------------------------------
     # Query Analysis, Candidate Extraction & Normalization
@@ -592,13 +673,9 @@ class SemanticExpander:
 
         # 4. Longest-span lexicon matches against multi-word known aliases
         q_low = raw_query.lower()
-        sorted_lexicon = sorted(
-            list(self.alias_pivot_map.keys()) + list(self.clause4_lexicon.keys()),
-            key=len,
-            reverse=True,
-        )
-        for lex_item in sorted_lexicon:
-            if len(lex_item) > 3 and re.search(r"\b" + re.escape(lex_item) + r"\b", q_low):
+        q_words = set(re.findall(r"\w+", q_low))
+        for lex_item, lex_words in self._sorted_candidate_lexicon:
+            if all(w in q_words for w in lex_words) and re.search(r"\b" + re.escape(lex_item) + r"\b", q_low):
                 add_cand(lex_item)
                 if len(candidates) >= 5:
                     break
@@ -745,24 +822,75 @@ class SemanticExpander:
                         })
                     break
 
-        # E. Annex B Spatial Callouts & Clause 4 Figure Backlinks Inverted Match
+        # E. Annex B Spatial Callouts & Clause 4 Figure Backlinks IDF-Weighted Inverted Match
+        #    w(span) = ln(1 + N_figs / df(span)) * word_count(span)
+        n_figs = 56.0
         figure_scores: Dict[str, float] = {}
+        figure_span_hits: Dict[str, int] = {}
         stop_callouts = {
             "welding", "process", "cycle", "joint", "weld", "standard", "figure", "table",
             "square", "bevel", "interval", "waveform", "edge", "round", "plate", "pipe",
+            "arc welding", "solid-state welding", "fusion welding", "resistance spot welding",
+            "pulsed welding", "covered electrode", "atomic hydrogen welding", "forge welding",
+            "cold welding", "brazing", "soldering",
         }
-        for callout, fig_set in self.callouts_to_figures.items():
-            if callout in stop_callouts:
-                continue
-            if len(callout) >= 3 and re.search(r"\b" + re.escape(callout) + r"\b", q_lower):
-                words = callout.split()
-                if len(words) < 2 and len(fig_set) > 2:
-                    continue
-                weight = len(words) * 2.0 + len(callout) * 0.1
-                for f in sorted(fig_set):
-                    figure_scores[f] = figure_scores.get(f, 0.0) + weight
+        has_diagram_intent = any(
+            kw in q_lower for kw in ("diagram", "figure", "illustrat", "schematic", "sketch", "drawing")
+        )
 
-        sorted_figs = sorted([f for f, sc in figure_scores.items() if sc >= 4.0], key=lambda x: (-figure_scores[x], x))
+        # Collect non-overlapping longest callout matches in query
+        q_words = set(re.findall(r"\w+", q_lower))
+        kw_map = self._key_words
+        matched_callout_spans: List[Tuple[int, int, str, Set[str]]] = []
+        for callout, fig_set in self.callouts_to_figures.items():
+            if callout in stop_callouts or len(callout) < 3 or not all(w in q_words for w in kw_map.get(callout, ())):
+                continue
+            words = callout.split()
+            if len(words) < 2 and len(fig_set) > 2:
+                continue
+            for m_c in re.finditer(r"\b" + re.escape(callout) + r"\b", q_lower):
+                matched_callout_spans.append((m_c.start(), m_c.end(), callout, fig_set))
+
+        # Also incorporate Clause 4 "see Figure B..." backlinks when query asks for a diagram/figure
+        if has_diagram_intent:
+            for c4_term, b_fig_set in self.clause4_figure_backlinks.items():
+                if (
+                    c4_term in stop_callouts
+                    or len(c4_term) < 4
+                    or c4_term in self.callouts_to_figures
+                    or not all(w in q_words for w in kw_map.get(c4_term, ()))
+                ):
+                    continue
+                words = c4_term.split()
+                if len(words) < 2:
+                    continue
+                for m_b in re.finditer(r"\b" + re.escape(c4_term) + r"\b", q_lower):
+                    matched_callout_spans.append((m_b.start(), m_b.end(), c4_term, b_fig_set))
+
+        # Keep longest non-overlapping matched callout/backlink spans
+        matched_callout_spans.sort(key=lambda x: (x[0], -(x[1] - x[0]), x[2]))
+        kept_callout_spans: List[Tuple[str, Set[str]]] = []
+        last_c_end = -1
+        for s_idx, e_idx, phrase, f_set in matched_callout_spans:
+            if s_idx >= last_c_end:
+                kept_callout_spans.append((phrase, f_set))
+                last_c_end = e_idx
+
+        for phrase, fig_set in kept_callout_spans:
+            df = max(1, len(fig_set))
+            word_count = len(phrase.split())
+            idf_weight = math.log(1.0 + (n_figs / df)) * float(word_count)
+            for f in sorted(fig_set):
+                figure_scores[f] = figure_scores.get(f, 0.0) + idf_weight
+                figure_span_hits[f] = figure_span_hits.get(f, 0) + 1
+
+        eligible_figs = [
+            f
+            for f, sc in figure_scores.items()
+            if (figure_span_hits.get(f, 0) >= 2 and sc >= 7.5)
+            or (has_diagram_intent and not inferred_figures and sc >= 7.5)
+        ]
+        sorted_figs = sorted(eligible_figs, key=lambda x: (-figure_scores[x], -figure_span_hits.get(x, 0), x))
         for sf in sorted_figs:
             if sf not in inferred_figures:
                 inferred_figures.append(sf)

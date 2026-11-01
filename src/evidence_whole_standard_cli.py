@@ -73,7 +73,9 @@ def run_route_cli(query: str, as_json: bool = False, planner_name: str = "determ
         "target_division": plan.get("target_division"),
         "intent": plan.get("intent"),
         "target_entities": plan.get("target_entities"),
+        "inferred_targets": trace.inferred_targets,
         "actions": plan.get("actions"),
+        "ner_receipt": trace.ner_receipt,
         "semantic_expansion_trace": plan.get("semantic_expansion_trace"),
         "receipt_metadata": plan.get("receipt_metadata"),
     }

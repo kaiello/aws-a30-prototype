@@ -1,0 +1,34 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed",
+  "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: What does PAW-AU designate and how is plasma arc welding classified in Figure A4?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"target_division\": \"Multi-Division\", \"intent\": \"compound_designation_and_diagram\", \"target_entities\": [\"PAW-AU\", \"Figure A4\"], \"actions\": [{\"action_type\": \"lookup_compound_code\", \"target\": \"PAW-AU\", \"parameters\": {\"process_code\": \"PAW\", \"mode_suffix\": \"-AU\"}}, {\"action_type\": \"query_figure\", \"target\": \"Figure A4\", \"parameters\": {\"process_code\": \"PAW\"}}], \"reason\": \"DeepSeek-V4.1 trace: Decompose PAW-AU into Table A1 plasma arc welding (PAW) and Table A4 automatic mode (-AU), then query Figure A4 fusion welding classification branch.\"}",
+  "parsed_plan": {
+    "target_division": "Multi-Division",
+    "intent": "compound_designation_and_diagram",
+    "target_entities": [
+      "PAW-AU",
+      "Figure A4"
+    ],
+    "actions": [
+      {
+        "action_type": "lookup_compound_code",
+        "target": "PAW-AU",
+        "parameters": {
+          "process_code": "PAW",
+          "mode_suffix": "-AU"
+        }
+      },
+      {
+        "action_type": "query_figure",
+        "target": "Figure A4",
+        "parameters": {
+          "process_code": "PAW"
+        }
+      }
+    ],
+    "reason": "DeepSeek-V4.1 trace: Decompose PAW-AU into Table A1 plasma arc welding (PAW) and Table A4 automatic mode (-AU), then query Figure A4 fusion welding classification branch."
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}
