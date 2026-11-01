@@ -11,3 +11,6 @@
 *.pdf binary
 *.png binary
 *.jpg binary
+
+# Cryptographically locked storage fixtures and stores (verbatim byte integrity)
+storage/** -text

@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "standard_title": "AWS A3.0M/A3.0:2020 Standard Welding Terms and Definitions",
+  "benchmark_timestamp": "2026-11-01T18:16:26.425337+00:00",
+  "execution_environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python_version": "3.12.7",
+    "cpu_count": 20,
+    "architecture": "AMD64",
+    "timing_primitive": "time.perf_counter_ns"
+  },
+  "cost_and_replay_qualification": {
+    "external_api_charge_per_query_usd": 0.0,
+    "cost_qualification": "No per-query external API charge in offline deterministic/replay mode; local compute, storage, and maintenance costs still apply. Live DeepSeek-V4.1 API calls incur normal token/endpoint charges and network latency.",
+    "replay_isolation": "100% network-blocked via socket.socket interception during benchmark runs."
+  },
+  "routes": {
+    "offline_deterministic_route": {
+      "query_count": 25,
+      "total_iterations": 125,
+      "iterations_per_query": 5,
+      "p50_ms": 55.509,
+      "p95_ms": 70.238,
+      "p99_ms": 76.879,
+      "mean_ms": 57.033,
+      "min_ms": 45.629,
+      "max_ms": 83.591,
+      "stdev_ms": 6.794
+    },
+    "offline_deepseek_replay_route": {
+      "cassettes_count": 8,
+      "total_iterations": 40,
+      "iterations_per_query": 5,
+      "p50_ms": 53.979,
+      "p95_ms": 67.11,
+      "p99_ms": 67.954,
+      "mean_ms": 45.155,
+      "min_ms": 5.07,
+      "max_ms": 68.397,
+      "stdev_ms": 21.665
+    }
+  }
+}

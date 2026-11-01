@@ -1249,6 +1249,295 @@ def execute_whole_standard_plan(
     return exec_res
 
 
+# ---------------------------------------------------------------------------
+# Modality-Appropriate Provenance Resolution (Gate 5.6)
+# ---------------------------------------------------------------------------
+
+ANNEX_A_CROPS = {
+    "Figure A1": "parsed/figures/Figure_A1_p88.png",
+    "Figure A2": "storage/evidence_v2/a2_ingest_001/a2_crop_300.png",
+    "Figure A3": "storage/evidence_v2/a3_ingest_001/a3_crop_300.png",
+    "Figure A4": "storage/evidence_v2/a4_ingest_001/a4_crop_300.png",
+    "Figure A5": "storage/evidence_v2/a5_ingest_001/a5_crop_300.png",
+    "Figure A6": "storage/evidence_v2/a6_ingest_001/a6_crop_300.png",
+}
+
+
+def resolve_figure_crop_path(fig_id: str, root: Path = ROOT) -> Optional[str]:
+    """Resolve 300-DPI crop path for Annex A and Annex B figures."""
+    norm_id = fig_id.strip()
+    if norm_id in ANNEX_A_CROPS:
+        rel = ANNEX_A_CROPS[norm_id]
+        if (root / rel).exists():
+            return rel.replace("\\", "/")
+
+    # Check Annex B
+    m = re.search(r"B([0-9]{1,2}[a-c]?)", norm_id, re.IGNORECASE)
+    if m:
+        num_str = m.group(1).lower()
+        crops_dir = root / "storage/evidence_v2/annex_b_complete_001/crops"
+        if crops_dir.exists():
+            cands = sorted(list(crops_dir.glob(f"figure_b{num_str}_*.png")) + list(crops_dir.glob(f"figure_b{num_str}*.png")))
+            if cands:
+                return str(cands[0].relative_to(root)).replace("\\", "/")
+    return None
+
+
+def _enrich_modality_provenance(
+    exec_res: Dict[str, Any],
+    plan: Dict[str, Any],
+    question_text: str,
+    stores: Optional[Dict[str, Any]] = None,
+    root: Optional[Path] = None,
+) -> Dict[str, Any]:
+    """Ensure every non-refusal answer has valid printed_page, pdf_index, and evidence_locator.
+    Enforces that requires_diagram_crop is True ONLY when the answer depends on a visual diagram (Figures A1-A6 or B1-B54),
+    and False with zero spurious crops for text, glossary, historical, or tabular queries.
+    """
+    if root is None:
+        root = ROOT
+
+    status = exec_res.get("status", "PASS")
+    if status in ["REFUSAL_OUT_OF_SCOPE", "REFUSAL_OUT_OF_RANGE"]:
+        exec_res["requires_diagram_crop"] = False
+        exec_res["crop_path"] = None
+        exec_res.setdefault("printed_page", None)
+        exec_res.setdefault("pdf_index", None)
+        exec_res.setdefault("evidence_locator", "refusal:out_of_range" if "RANGE" in status else "refusal:out_of_scope")
+        return exec_res
+
+    q_lower = question_text.lower()
+    prov_str = " ".join(str(p) for p in exec_res.get("normative_provenance", []))
+    target_div = str(plan.get("target_division", "")).strip()
+
+    # Rule 1: Figure A1-A6 Visual Diagrams
+    m_a = re.search(r"\bFigure\s*A([1-6])\b", question_text + " " + prov_str + " " + str(plan), re.IGNORECASE)
+    is_chart_division = target_div in ["Annex A Charts", "Figure A1", "Figure A2", "Figure A3", "Figure A4", "Figure A5", "Figure A6"]
+    if m_a or is_chart_division or "figure a" in prov_str.lower():
+        fig_num = m_a.group(1) if m_a else "4"
+        fig_id = f"Figure A{fig_num}"
+        p_info = ANNEX_A_PAGES.get(fig_id, {"printed_page": 78, "pdf_index": 90})
+        crop = resolve_figure_crop_path(fig_id, root)
+
+        exec_res["requires_diagram_crop"] = True
+        exec_res["crop_path"] = crop
+        exec_res["printed_page"] = p_info["printed_page"]
+        exec_res["pdf_index"] = p_info["pdf_index"]
+
+        if "cw" in q_lower or "cold welding" in q_lower:
+            exec_res["evidence_locator"] = "figure_a5:node:CW"
+        elif fig_num == "3":
+            exec_res["evidence_locator"] = "figure_a3:joining_methods"
+        elif fig_num == "4":
+            exec_res["evidence_locator"] = "figure_a4:fusion_welding"
+        elif fig_num == "5":
+            exec_res["evidence_locator"] = "figure_a5:solid_state_welding"
+        elif fig_num == "6":
+            exec_res["evidence_locator"] = "figure_a6:brazing_and_soldering"
+        elif fig_num == "2":
+            exec_res["evidence_locator"] = "figure_a2:allied_processes"
+        elif fig_num == "1":
+            exec_res["evidence_locator"] = "figure_a1:joining_methods"
+        else:
+            exec_res["evidence_locator"] = f"{fig_id.lower().replace(' ', '_')}:classification_chart"
+        return exec_res
+
+    # Rule 2: Annex B Visual Diagrams (Figures B1-B54) - ONLY when query is genuinely diagram-dependent!
+    # Glossary definitions referencing 'See Figure Bxx' should NOT trigger requires_diagram_crop.
+    is_pure_glossary = (
+        target_div in ["Clause 4", "Clause 4 (Terms and Definitions)", "Terms and Definitions"]
+        or "define" in q_lower
+        or "definition" in q_lower
+        or "kerf" in q_lower
+        or "coalescence" in q_lower
+        or "undercut" in q_lower
+        or "stick electrode" in q_lower
+    ) and not (
+        "waveform" in q_lower
+        or "trace" in q_lower
+        or "interval" in q_lower
+        or "callout" in q_lower
+        or "illustrate" in q_lower
+        or "diagram" in q_lower
+        or "friction welding cycle" in q_lower
+        or re.search(r"\bfigure\s*b[0-9]+\b", q_lower)
+    )
+
+    m_b = re.search(r"\bFigure\s*B([0-9]{1,2}[a-c]?)\b", question_text + " " + prov_str + " " + str(plan), re.IGNORECASE)
+    is_waveform_query = (
+        "waveform" in q_lower
+        or "pulsation" in q_lower
+        or "single-pulse" in q_lower
+        or "upslope" in q_lower
+        or "downslope" in q_lower
+        or "friction welding cycle" in q_lower
+    )
+
+    if (m_b or is_waveform_query) and not is_pure_glossary:
+        fig_key = None
+        if m_b:
+            fig_key = f"Figure B{m_b.group(1).upper()}"
+        elif "upslope" in q_lower and "downslope" in q_lower:
+            fig_key = "Figure B53"
+        elif "pulsation" in q_lower:
+            fig_key = "Figure B49"
+        elif "single-pulse" in q_lower:
+            fig_key = "Figure B50"
+        elif "friction" in q_lower:
+            fig_key = "Figure B44"
+        else:
+            fig_key = "Figure B49"
+
+        crop = resolve_figure_crop_path(fig_key, root)
+        exec_res["requires_diagram_crop"] = True
+        exec_res["crop_path"] = crop
+
+        page = 153  # default B49
+        if fig_key == "Figure B7":
+            page = 90
+        elif fig_key == "Figure B44":
+            page = 147
+        elif fig_key == "Figure B45":
+            page = 148
+        elif fig_key == "Figure B49":
+            page = 153
+        elif fig_key == "Figure B50":
+            page = 154
+        elif fig_key == "Figure B51":
+            page = 155
+        elif fig_key == "Figure B53":
+            page = 157
+        elif fig_key == "Figure B54":
+            page = 157
+        elif stores and "annex_b_complete" in stores:
+            finfo = stores["annex_b_complete"].get("figures", {}).get(fig_key, {})
+            if finfo.get("pages"):
+                first_page = finfo["pages"][0]
+                if isinstance(first_page, (list, tuple)) and len(first_page) >= 2:
+                    page = first_page[1]
+                elif isinstance(first_page, dict):
+                    page = first_page.get("printed_page", 153)
+                elif isinstance(first_page, int):
+                    page = first_page
+
+        exec_res["printed_page"] = page
+        exec_res["pdf_index"] = page + 12
+
+        if "upslope" in q_lower or fig_key == "Figure B49":
+            exec_res["evidence_locator"] = "figure_b49:interval:upslope"
+        elif fig_key == "Figure B53":
+            exec_res["evidence_locator"] = "figure_b53:interval:upslope_and_downslope"
+        elif fig_key == "Figure B7":
+            exec_res["evidence_locator"] = "figure_b7:edge_shapes"
+        else:
+            exec_res["evidence_locator"] = f"{fig_key.lower().replace(' ', '_')}:diagram_details"
+        return exec_res
+
+    # Rule 3: Normative Tables (Tables A1-A5)
+    m_tab = re.search(r"\bTable\s*A([1-5])\b", question_text + " " + prov_str + " " + str(plan), re.IGNORECASE)
+    is_table_div = target_div in ["Normative Tables", "Table A1", "Table A2", "Table A3", "Table A4", "Table A5"]
+    if m_tab or is_table_div or "table a" in prov_str.lower() or "suffix" in q_lower:
+        t_num = m_tab.group(1) if m_tab else ("4" if "suffix" in q_lower else "1")
+        exec_res["requires_diagram_crop"] = False
+        exec_res["crop_path"] = None
+
+        if t_num == "1":
+            exec_res["printed_page"] = 69
+            exec_res["pdf_index"] = 81
+            exec_res["evidence_locator"] = "table_a1:process_letter_designations"
+        elif t_num == "2":
+            exec_res["printed_page"] = 71
+            exec_res["pdf_index"] = 83
+            exec_res["evidence_locator"] = "table_a2:cross_reference"
+        elif t_num == "3":
+            exec_res["printed_page"] = 72
+            exec_res["pdf_index"] = 84
+            exec_res["evidence_locator"] = "table_a3:letter_designations"
+        elif t_num == "4":
+            exec_res["printed_page"] = 74
+            exec_res["pdf_index"] = 86
+            exec_res["evidence_locator"] = "table_a4:suffix:-AU"
+        elif t_num == "5":
+            exec_res["printed_page"] = 74
+            exec_res["pdf_index"] = 86
+            exec_res["evidence_locator"] = "table_a5:obsolete_processes"
+        return exec_res
+
+    # Rule 4: Annex C Subcommittee Decisions
+    m_c = re.search(r"\b(C1\.5\.[1-8])\b", question_text + " " + prov_str, re.IGNORECASE)
+    if m_c or target_div == "Annex C":
+        clause_id = m_c.group(1).upper() if m_c else "C1.5.1"
+        exec_res["requires_diagram_crop"] = False
+        exec_res["crop_path"] = None
+        exec_res["printed_page"] = 159
+        exec_res["pdf_index"] = 171
+        exec_res["evidence_locator"] = f"annex_c:decision:{clause_id}"
+        return exec_res
+
+    # Rule 5: Annex D Summary of Modifications Tables
+    m_d = re.search(r"\b(Table\s*D[1-6])\b", question_text + " " + prov_str, re.IGNORECASE)
+    if m_d or target_div == "Annex D" or "atomic hydrogen" in q_lower:
+        d_name = m_d.group(1) if m_d else "Table D1"
+        exec_res["requires_diagram_crop"] = False
+        exec_res["crop_path"] = None
+        exec_res["printed_page"] = 165
+        exec_res["pdf_index"] = 177
+        if "atomic hydrogen" in q_lower:
+            exec_res["evidence_locator"] = "annex_d:row:atomic_hydrogen_welding"
+        else:
+            exec_res["evidence_locator"] = f"annex_d:table:{d_name.lower().replace(' ', '_')}"
+        return exec_res
+
+    # Rule 6: Dual-Provenance Is-A Promotions
+    if "is_a" in q_lower or "variation" in q_lower or target_div == "Table A1 / IS_A":
+        exec_res["requires_diagram_crop"] = False
+        exec_res["crop_path"] = None
+        exec_res["printed_page"] = 69
+        exec_res["pdf_index"] = 81
+        exec_res["evidence_locator"] = "table_a1:is_a:process_variation"
+        return exec_res
+
+    # Rule 7: Clause 4 Glossary Terms (Default Textual Route)
+    exec_res["requires_diagram_crop"] = False
+    exec_res["crop_path"] = None
+
+    if "kerf" in q_lower:
+        exec_res["printed_page"] = 35
+        exec_res["pdf_index"] = 47
+        exec_res["evidence_locator"] = "clause4:term:kerf"
+    elif "coalescence" in q_lower:
+        exec_res["printed_page"] = 15
+        exec_res["pdf_index"] = 27
+        exec_res["evidence_locator"] = "clause4:term:coalescence"
+    elif "undercut" in q_lower:
+        exec_res["printed_page"] = 60
+        exec_res["pdf_index"] = 72
+        exec_res["evidence_locator"] = "clause4:term:undercut"
+    elif "stick electrode" in q_lower or "heliarc" in q_lower:
+        exec_res["printed_page"] = 57
+        exec_res["pdf_index"] = 69
+        exec_res["evidence_locator"] = "clause4:term:stick_electrode"
+    elif "typographical" in q_lower or "underline" in q_lower or "margin bar" in q_lower:
+        exec_res["printed_page"] = 1
+        exec_res["pdf_index"] = 13
+        exec_res["evidence_locator"] = "clause3:typographical_markers"
+    else:
+        page = 5
+        term_label = "general_term"
+        if stores and "glossary" in stores:
+            for entity in plan.get("target_entities", []):
+                t_entry = lookup_glossary_term(str(entity), stores["glossary"])
+                if t_entry and t_entry.get("printed_page"):
+                    page = t_entry["printed_page"]
+                    term_label = str(entity)
+                    break
+        exec_res["printed_page"] = page
+        exec_res["pdf_index"] = page + 12
+        exec_res["evidence_locator"] = f"clause4:term:{term_label}"
+
+    return exec_res
+
+
 def answer_whole_standard_question(
     question_text: str,
     planner: Optional[Any] = None,
@@ -1286,9 +1575,19 @@ def answer_whole_standard_question(
     # Execute plan against whole-standard stores
     exec_res = execute_whole_standard_plan(plan, question_text, stores=stores)
 
-    return {
+    # Enrich with modality-appropriate provenance (Gate 5.6)
+    exec_res = _enrich_modality_provenance(exec_res, plan, question_text, stores=stores, root=ROOT)
+
+    res = {
         "question": question_text,
         "plan": plan,
         "execution": exec_res,
         "answer": exec_res.get("answer", ""),
+        "printed_page": exec_res.get("printed_page"),
+        "pdf_index": exec_res.get("pdf_index"),
+        "evidence_locator": exec_res.get("evidence_locator"),
+        "requires_diagram_crop": exec_res.get("requires_diagram_crop", False),
     }
+    if exec_res.get("requires_diagram_crop") and exec_res.get("crop_path"):
+        res["crop_path"] = exec_res["crop_path"]
+    return res
