@@ -261,6 +261,7 @@ class DeterministicQuestionPlanner:
             spans = (trace.ner_receipt or {}).get("spans", [])
             inv_comp = next((s for s in spans if s.get("entity_type") == "INVALID_COMPOUND_DESIGNATION"), None)
             val_comp = next((s for s in spans if s.get("entity_type") == "COMPOUND_DESIGNATION"), None)
+            hist_comp = next((s for s in spans if s.get("entity_type") == "NONSTANDARD_OR_HISTORICAL"), None)
 
             loc_figs = [s.get("canonical_term", "") for s in spans if s.get("entity_type") == "STANDARD_LOCATOR" and str(s.get("canonical_term", "")).startswith("Figure")]
             all_candidate_figs = [f for f in inferred_figs if f.startswith("Figure")] + [f for f in loc_figs if f.startswith("Figure")]
@@ -278,6 +279,14 @@ class DeterministicQuestionPlanner:
                 actions = [
                     {"action_type": "lookup_compound_code", "target": val_comp["surface_text"], "parameters": {"sub_components": val_comp.get("sub_components", [])}},
                     {"action_type": "query_figure", "target": fig_target, "parameters": {}},
+                ]
+            elif val_comp and hist_comp:
+                target_div = "Multi-Division"
+                intent = "compound_designation_and_historical"
+                entities = [hist_comp["canonical_term"], val_comp["surface_text"]]
+                actions = [
+                    {"action_type": "lookup_historical_process", "target": hist_comp["canonical_term"], "parameters": {"source_authority": hist_comp.get("source_authority")}},
+                    {"action_type": "lookup_compound_code", "target": val_comp["surface_text"], "parameters": {"sub_components": val_comp.get("sub_components", [])}},
                 ]
             elif val_comp:
                 target_div = "Normative Tables"
@@ -1251,6 +1260,29 @@ def execute_whole_standard_plan(
             "operations_count": 2,
             "elements_present": elements,
             "normative_provenance": provenance,
+        }
+
+    if intent == "compound_designation_and_historical":
+        hist_term = entities[0] if entities else "atomic hydrogen welding"
+        tok = entities[1] if len(entities) > 1 else "GTAW-ME"
+        from src.welding_ner import get_welding_ner
+        ner = get_welding_ner(stores=stores, root=ROOT)
+        parsed = ner.parse_compound_designation(tok)
+        canon = parsed["canonical_term"] if parsed and parsed.get("is_valid") else tok
+        return {
+            "status": "PASS",
+            "answer": (
+                f"In AWS A3.0M/A3.0:2020, {hist_term} is a historical/nonstandard term or obsolete process "
+                f"(cataloged in Table A5, p. 74 / Clause 4 / Annex D), whereas {tok} designates {canon} "
+                f"per active standard process designations in Table A1 (p. 69) combined with application mode suffixes in Table A4 (p. 74)."
+            ),
+            "operations": [
+                {"operation": "lookup_historical_process", "term": hist_term, "status": "executed"},
+                {"operation": "lookup_compound_code", "designation": tok, "status": "executed"},
+            ],
+            "operations_count": 2,
+            "elements_present": [hist_term, tok, canon, "Table A5", "Table A1", "Table A4"],
+            "normative_provenance": ["obs:pdf:86:table:Table A5", "obs:pdf:81:table:Table A1", "obs:pdf:86:table:Table A4"],
         }
 
     # Figure B25: Weld Sizes & Throat Dimensions

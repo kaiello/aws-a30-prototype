@@ -6,9 +6,9 @@
 
 ## 1. Project Overview & Gate Status Summary
 
-- **Standard Document:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions*, 190 PDF pages)
-- **Current Test Suite Baseline:** `1,468 passed, 8 skipped, 0 failures, 0 warnings`
-- **Active Milestone:** **Gate 5.6 — Epistemic Claims Calibration, Coverage Manifest, Latency Telemetry & Conditional Visual Provenance** (`feat/gate-5-6-epistemic-manifest-calibration` $\rightarrow$ `main`)
+- **Standard Document:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions*, 190 PDF pages / 162 ingested canonical store pages)
+- **Current Test Suite Baseline:** `1,475 passed, 8 skipped, 0 failures, 0 warnings`
+- **Active Milestone:** **Gate 6.0 — GitOps Branch Reconciliation, Deterministic Welding NER, Callout/Backlink Multi-Intent Router & Whole-Standard Agent Skills** (`feat/gate-6-0-ner-routing-skills` $\rightarrow$ `main`, tagged `v1.6.0-ner-routing-skills`)
 - **Canonical Repository:** `C:\Users\kenai\Documents\Codex\2026-10-21\task\aws-a2-source-aware-ingest`
 - **Mirror Destination:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)
 
@@ -29,13 +29,14 @@
 | **Gate 5.0–5.2** | Production Hardening, AST Zero-Fallback Guard, Adversarial Benchmark & Audit Remediation (`DRIFT-5-1..5-5`) | `e9a5621` (+ `DRIFT-5-1..5-5` fixes on `feat/gate-5-production-hardening`) | `VERIFIED_READY` — 10/10 (`100.0%`) adversarial benchmark (`G5-ADV01..10`), AST zero-fallback guard, 7-target store mutation test, socket-isolated preflight (`CLEAR_WHOLE_STANDARD_CONTRACT`), `1,449 passed, 8 skipped, 0 warnings`. |
 | **Gate 5.4** | DeepSeek-V4.1-Flash-1017 Planner Adapter & Offline Replay Harness | `feat/gate-5-4-deepseek-planner-replay` | `PASSED` — Layer 4 planner adapter, Layer 1/2 multimodal visual verifier stub, strict epistemic quarantine (`UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE`), 5 locked offline replay fixtures (`0` network calls). |
 | **Gate 5.5** | Unified Final Production Release: Semantic NLQ Expansion, ID-Free Routing, and DeepSeek-V4.1 Integration | `feat/gate-5-5-semantic-nlq` $\rightarrow$ `main` (`e31b8e2`) | `PASSED & MERGED` — Store-derived Semantic Expansion Engine, ID-free `Figure`/`Table` routing, conversational noun-phrase extraction, generalized out-of-scope refusal (`HK-5-1`), 8 locked DeepSeek replay cassettes, 15/15 (100.0%) NLQ benchmark. |
-| **Gate 5.6** | **Epistemic Claims Calibration, Coverage Manifest, Latency Telemetry & Conditional Visual Provenance** | `feat/gate-5-6-epistemic-manifest-calibration` $\rightarrow$ `main` | **`VERIFIED_READY`** — Whole-standard 190-page coverage manifest (`162` ingested, `28` excluded), empirical latency telemetry ($p_{50}: 55.5\text{ ms}$ offline det, $54.0\text{ ms}$ replay), conditional diagram crop requirement, calibrated epistemic claims, 24/24 locked artifacts. |
+| **Gate 5.6** | Epistemic Claims Calibration, Coverage Manifest, Latency Telemetry & Conditional Visual Provenance | `feat/gate-5-6-epistemic-manifest-calibration` $\rightarrow$ `main` (`dd22331`, `v1.5.6-gate-5-6-calibrated`) | `PASSED & MERGED` — Whole-standard 190-page coverage manifest (`162` ingested, `28` excluded), empirical latency telemetry ($p_{50}: 55.5\text{ ms}$ offline det, $54.0\text{ ms}$ replay), conditional diagram crop requirement, calibrated epistemic claims, 24/24 locked artifacts. |
+| **Gate 6.0** | **GitOps Branch Reconciliation, Deterministic Welding NER, Callout/Backlink Multi-Intent Router & Whole-Standard Agent Skills** | `feat/gate-6-0-ner-routing-skills` $\rightarrow$ `main` (`v1.6.0-ner-routing-skills`) | **`PASSED & MERGED`** — `origin` pruned `10` $\rightarrow$ `1` clean `main`, character-offset `WeldingNER` (`11` entity types, dynamic `<BASE>-<SUFFIX>` parser, multi-POS/homograph tracking), `1,115`-node Annex B + `96`+ Annex A circle + `492`-edge Clause 4 backlink IDF router, `src.evidence_whole_standard_cli`, modernized `.agents/skills/`, `20/20` (`100.0%`) Gate 6.0 benchmark, `29/29` locked SHA-256 artifacts, `1,475 passed, 8 skipped`. |
 
 ---
 
-## 2. Cryptographic Immutability Ledger (24 Locked Repository Artifacts)
+## 2. Cryptographic Immutability Ledger (29 Locked Repository Artifacts)
 
-All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. `tests/test_gate_5_hardening.py`, `tests/test_gate_5_4_deepseek_adapter.py`, `tests/test_gate_5_5_semantic_nlq.py`, and `tests/test_gate_5_6_epistemic_manifest.py` enforce exact SHA-256 verification across all 24 locked files:
+All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. `tests/test_gate_5_hardening.py`, `tests/test_gate_5_4_deepseek_adapter.py`, `tests/test_gate_5_5_semantic_nlq.py`, `tests/test_gate_5_6_epistemic_manifest.py`, and `tests/test_gate_6_0_ner_routing_skills.py` enforce exact SHA-256 verification across all 29 locked files:
 
 ### Part A: 14 Core Repository & Benchmark Artifacts
 
@@ -75,6 +76,16 @@ All operational, evaluation, and semantic expansion code must treat the canonica
 | :---: | :--- | :--- | :--- | :--- |
 | 23 | **Coverage Manifest** | `storage/manifests/coverage_manifest.json` | `8fa510a5d4880f88e05fbf3c295992b9c5ae5274c65e46086ad08fee7c2d553e` | `VERIFIED_LOCKED` |
 | 24 | **Latency Benchmark** | `storage/manifests/latency_benchmark.json` | `bc4bb0edfd67bbea0d5204a6430ce6be5af508b07f2874a779a0c2bf230c614c` | `VERIFIED_LOCKED` |
+
+### Part D: 5 Gate 6.0 Artifacts (NER/Routing Benchmark & DeepSeek Replay Cassettes)
+
+| # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 25 | **Gate 6.0 Questions** | `storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json` | `bf2fd3b05532cb76a0584cd1d6db8d3f1fe038ba632d539d8be94a4feb4f23ac` | `VERIFIED_LOCKED` |
+| 26 | **Gate 6.0 Rubric** | `storage/evidence_v2/phase6_ner_routing_001/rubric.json` | `602f37e0194a99ee6b3e52c95c1c76d9e57a3950a50ea7a5efd15c336645b427` | `VERIFIED_LOCKED` |
+| 27 | **Gate 6.0 Results** | `storage/evidence_v2/phase6_ner_routing_001/results.json` | `4023b5c13b8265f9a6085399e0176644df8119366ccc3ea920c098159f6ef8a8` | `VERIFIED_LOCKED` |
+| 28 | **Gate 6.0 Compound + Chart Cassette** | `storage/model_replays/deepseek_v4_1_flash_1017/4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed.json` | `b5c11233c5389651c5ff6730ebb56b51e910042d8aada8f5b9ec7752f2c7d057` | `VERIFIED_LOCKED` |
+| 29 | **Gate 6.0 Spatial Callout Cassette** | `storage/model_replays/deepseek_v4_1_flash_1017/7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0.json` | `178e40f106af85fd17e9a949877cf6b0ea3c469516e102efdc017d043635df42` | `VERIFIED_LOCKED` |
 
 ### Version-Bound Store Immutability Policy
 Cryptographic SHA-256 digests lock each released store version (`*_001`). Verified content corrections or spatial refinements produce a successor version (`*_002`) with a documented migration ledger rather than mutating locked releases in place.

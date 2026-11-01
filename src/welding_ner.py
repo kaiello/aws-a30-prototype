@@ -111,6 +111,10 @@ class WeldingNER:
 
         # Lookups
         self.all_spans_trie: Dict[str, List[Dict[str, Any]]] = {}
+        self._key_words: Dict[str, Tuple[str, ...]] = {}
+        self.indexed_annex_b_node_count: int = 0
+        self.indexed_annex_a_circle_count: int = 0
+        self.indexed_clause4_backlink_count: int = 0
 
     def ensure_initialized(self, stores: Optional[Dict[str, Any]] = None) -> None:
         """Hydrate knowledge stores if not already initialized."""
@@ -277,23 +281,43 @@ class WeldingNER:
                     "entity_type": "PROCESS_TERM",
                 }
 
-        # Figure A6 processes (check for arc brazing)
-        fig_a6 = annex_a_graphs.get("Figure A6", {})
-        for node in fig_a6.get("nodes", []):
-            code = node.get("code")
-            label = node.get("label")
-            if code and label:
-                if code == "AB" and "arc brazing" in label.lower():
-                    # already tracked as ambiguity candidate above
-                    pass
-                elif code not in self.process_codes:
-                    self.process_codes[code] = {
-                        "canonical_term": label,
-                        "canonical_id": f"figure_a6:code:{code}",
-                        "source_authority": "Figure A6 (p. 79)",
-                        "target_division": "annex_a_charts",
-                        "entity_type": "PROCESS_CODE",
-                    }
+        # Figure A2-A6 process circles (96 circles across A4-A6; 130 across A2-A6)
+        self.indexed_annex_a_circle_count = 0
+        annex_a_graph_map: Dict[str, Dict[str, Any]] = dict(annex_a_graphs)
+        a2_graph_path = self.root / "storage/evidence_v2/a2_ingest_001/final_projection/graph.json"
+        if "Figure A2" not in annex_a_graph_map and a2_graph_path.exists():
+            import json as _json
+            annex_a_graph_map["Figure A2"] = _json.loads(a2_graph_path.read_text(encoding="utf-8"))
+
+        annex_a_pages = {"Figure A2": 76, "Figure A3": 77, "Figure A4": 78, "Figure A5": 79, "Figure A6": 79}
+        for fig_a_id, fig_a_graph in sorted(annex_a_graph_map.items()):
+            p_a = annex_a_pages.get(fig_a_id, 78)
+            for node in fig_a_graph.get("nodes", []):
+                if node.get("kind") == "process":
+                    self.indexed_annex_a_circle_count += 1
+                code = node.get("code")
+                label = (node.get("label") or node.get("name") or "").strip()
+                if code and label:
+                    if code == "AB" and "arc brazing" in label.lower():
+                        # already tracked as ambiguity candidate above
+                        continue
+                    if code not in self.process_codes:
+                        self.process_codes[code] = {
+                            "canonical_term": label,
+                            "canonical_id": f"{fig_a_id.lower().replace(' ', '_')}:code:{code}",
+                            "source_authority": f"{fig_a_id} (p. {p_a})",
+                            "target_division": "annex_a_charts",
+                            "entity_type": "PROCESS_CODE",
+                        }
+                    lbl_clean = re.sub(r"^[A-Z0-9\-]+:\s*", "", label).strip()
+                    if lbl_clean and lbl_clean.lower() not in self.process_terms and len(lbl_clean) > 3:
+                        self.process_terms[lbl_clean.lower()] = {
+                            "canonical_term": lbl_clean,
+                            "canonical_id": f"{fig_a_id.lower().replace(' ', '_')}:proc:{lbl_clean.lower().replace(' ', '_')}",
+                            "source_authority": f"{fig_a_id} (p. {p_a})",
+                            "target_division": "annex_a_charts",
+                            "entity_type": "PROCESS_TERM",
+                        }
 
         # 3. Mode Suffixes (Table A4)
         for suf, info in self.VALID_MODE_SUFFIXES.items():
@@ -305,9 +329,9 @@ class WeldingNER:
                 "entity_type": "MODE_SUFFIX",
             }
 
-        # 4. Annex C / Annex D Nonstandard & Historical Terms
+        # 4. Annex C / Annex D Nonstandard & Historical Terms (Table D4 nonstandard & Table D6 deleted)
         annex_d = annex_c_d.get("annex_d", {})
-        for tbl_key in ["Table D1", "Table D2", "Table D3", "Table D4", "Table D5", "Table D6"]:
+        for tbl_key in ["Table D4", "Table D6"]:
             t_obj = annex_d.get(tbl_key, {})
             p_default = t_obj.get("page", 165)
             for row in t_obj.get("rows", []):
@@ -346,8 +370,10 @@ class WeldingNER:
                 "entity_type": "NONSTANDARD_OR_HISTORICAL",
             }
 
-        # 5. Clause 4 Glossary Terms
+        # 5. Clause 4 Glossary Terms (with Multi-POS Ambiguity Candidates & Morphological Inflections)
+        self.indexed_clause4_backlink_count = 0
         entries = glossary.get("entries", [])
+        std_entries_by_term: Dict[str, List[Dict[str, Any]]] = {}
         for e in entries:
             term = e.get("term", "").strip()
             if not term:
@@ -356,6 +382,11 @@ class WeldingNER:
             status = e.get("term_status", "standard")
             is_std = e.get("is_standard", True)
             page = e.get("printed_page", 17)
+
+            figs = e.get("cross_references", {}).get("figures", [])
+            for f_ref in figs:
+                if re.search(r"B[0-9]{1,2}[A-C]?", str(f_ref)):
+                    self.indexed_clause4_backlink_count += 1
 
             if status == "nonstandard" or not is_std:
                 target = e.get("target_standard_term") or (e.get("preferred_terms", [None])[0] if e.get("preferred_terms") else term)
@@ -367,15 +398,81 @@ class WeldingNER:
                     "entity_type": "NONSTANDARD_OR_HISTORICAL",
                 }
             else:
-                # Standard glossary headword
-                self.glossary_terms[term_lower] = {
-                    "canonical_term": term,
-                    "canonical_id": f"clause4:term:{term_lower.replace(' ', '_')}",
-                    "source_authority": f"Clause 4 (p. {page})",
-                    "target_division": "clause4_glossary",
-                    "entity_type": "GLOSSARY_TERM",
-                    "cross_figures": e.get("cross_references", {}).get("figures", []),
-                }
+                std_entries_by_term.setdefault(term_lower, []).append(e)
+
+        for term_lower, matching_entries in std_entries_by_term.items():
+            primary = matching_entries[0]
+            term = primary.get("term", "").strip()
+            page = primary.get("printed_page", 17)
+            cross_figs: List[str] = []
+            for me in matching_entries:
+                for cf in me.get("cross_references", {}).get("figures", []):
+                    if cf not in cross_figs:
+                        cross_figs.append(cf)
+
+            ambig_cands: Tuple[Dict[str, Any], ...] = ()
+            if len(matching_entries) > 1:
+                ambig_cands = tuple(
+                    {
+                        "canonical_term": me.get("term", term),
+                        "part_of_speech": me.get("part_of_speech"),
+                        "domain_qualifier": me.get("domain_delimiter") or me.get("qualifier"),
+                        "source_authority": f"Clause 4 (p. {me.get('printed_page', page)})",
+                        "target_division": "clause4_glossary",
+                    }
+                    for me in matching_entries
+                )
+
+            self.glossary_terms[term_lower] = {
+                "canonical_term": term,
+                "canonical_id": f"clause4:term:{term_lower.replace(' ', '_')}",
+                "source_authority": f"Clause 4 (p. {page})",
+                "target_division": "clause4_glossary",
+                "entity_type": "GLOSSARY_TERM",
+                "cross_figures": cross_figs,
+                "ambiguity_candidates": ambig_cands,
+            }
+
+        # Add morphological inflections (plurals, hyphenation variants, gerunds) to glossary_terms
+        morph_stopwords = {
+            "is", "in", "as", "at", "by", "to", "or", "an", "it", "on", "of", "for", "the",
+            "and", "be", "do", "we", "he", "so", "no", "if", "my", "up", "are", "was",
+            "were", "has", "had", "how", "what", "which", "who", "whom", "this", "that",
+            "means", "terms", "parts", "sides", "types", "lines", "areas", "rates", "times",
+        }
+        base_headwords = list(self.glossary_terms.items())
+        for base_lower, g_meta in base_headwords:
+            if len(base_lower) <= 2 or base_lower in morph_stopwords:
+                continue
+            variants: List[str] = []
+            if base_lower.endswith("y") and not base_lower.endswith(("ay", "ey", "oy", "uy")):
+                variants.append(base_lower[:-1] + "ies")
+            elif base_lower.endswith(("s", "sh", "ch", "x", "z")):
+                variants.append(base_lower + "es")
+            else:
+                variants.append(base_lower + "s")
+            if "-" in base_lower:
+                variants.append(base_lower.replace("-", " "))
+            for var in variants:
+                if (
+                    var not in self.glossary_terms
+                    and var not in self.nonstandard_terms
+                    and var not in self.process_terms
+                    and var not in morph_stopwords
+                ):
+                    self.glossary_terms[var] = dict(g_meta)
+
+        domain_inflections = {
+            "kerfs": "kerf",
+            "undercutting": "undercut",
+            "keyholing": "keyhole welding",
+            "coalescences": "coalescence",
+            "porosities": "porosity",
+            "discontinuities": "discontinuity",
+        }
+        for infl, base_t in domain_inflections.items():
+            if base_t in self.glossary_terms and infl not in self.glossary_terms:
+                self.glossary_terms[infl] = dict(self.glossary_terms[base_t])
 
         # 6. Weld Position Entities & Domain Qualifiers
         position_codes = {
@@ -525,6 +622,101 @@ class WeldingNER:
                 "entity_type": "WAVEFORM_INTERVAL",
             }
 
+        # 9. Full Store-Compiled Annex B Node Inventory (All 1,115 Accepted Nodes Across 56 Figure Stores)
+        import json as _json
+        self.indexed_annex_b_node_count = 0
+        annex_b_dir = self.root / "storage/evidence_v2/annex_b_complete_001"
+        generic_callout_noise = {
+            "aws a3.0m/a3.0:2020", "annex b", "time", "weld", "welds", "plate", "pipe",
+            "joint", "joints", "process", "arrow", "other", "both", "none", "notes", "note",
+            "detail", "section", "view", "axis", "force", "speed", "current", "voltage",
+        }
+        if annex_b_dir.exists():
+            for fig_store_path in sorted(annex_b_dir.glob("figure_b*_store.json")):
+                f_data = _json.loads(fig_store_path.read_text(encoding="utf-8"))
+                fig_id = f_data.get("figure_id", "").strip()
+                title = f_data.get("official_title", "").strip()
+                archetype = f_data.get("archetype", "")
+                pages_raw = f_data.get("pages", [])
+                page = 88
+                if pages_raw:
+                    first_p = pages_raw[0]
+                    if isinstance(first_p, (list, tuple)) and len(first_p) >= 2:
+                        page = first_p[1]
+                    elif isinstance(first_p, int):
+                        page = first_p
+                elif f_data.get("provenance", {}).get("printed_page"):
+                    page = f_data["provenance"]["printed_page"]
+
+                raw_nodes = f_data.get("nodes") or f_data.get("graph", {}).get("nodes") or {}
+                node_list = list(raw_nodes.values()) if isinstance(raw_nodes, dict) else list(raw_nodes)
+                self.indexed_annex_b_node_count += len(node_list)
+
+                is_waveform = archetype == "cycle_waveform_plot" or fig_id in {
+                    "Figure B44", "Figure B45", "Figure B49", "Figure B50",
+                    "Figure B51", "Figure B53", "Figure B54",
+                }
+                for node in node_list:
+                    n_type = node.get("node_type", "")
+                    if n_type in ("FIGURE", "TIME_AXIS"):
+                        continue
+                    raw_lbl = (node.get("name") or node.get("label") or node.get("text") or "").replace("\x08", " ").strip()
+                    if not raw_lbl:
+                        continue
+                    cleaned_lbl = re.sub(r"^(?:\([A-Za-z0-9]+\)|[A-Z]\s+(?=[A-Z][a-z])|\d+[\.\):\-])\s*", "", raw_lbl).strip()
+                    cleaned_lower = " ".join(cleaned_lbl.lower().split())
+                    if (
+                        len(cleaned_lower) < 4
+                        or len(cleaned_lower) > 70
+                        or cleaned_lower in generic_callout_noise
+                        or cleaned_lower.startswith(("aws a3.0", "annex b", "figure b", "see figure"))
+                        or not re.search(r"[a-z]{3,}", cleaned_lower)
+                    ):
+                        continue
+                    # Require >= 2 words for auto-extracted store labels to prevent single-word over-tagging
+                    if len(cleaned_lower.split()) < 2:
+                        continue
+                    if is_waveform:
+                        if cleaned_lower not in self.waveform_intervals:
+                            self.waveform_intervals[cleaned_lower] = {
+                                "canonical_term": cleaned_lower,
+                                "canonical_id": f"{fig_id.lower().replace(' ', '_')}:interval:{cleaned_lower.replace(' ', '_')}",
+                                "figure_id": fig_id,
+                                "figure_title": title,
+                                "source_authority": f"Annex B ({fig_id}, p. {page})",
+                                "target_division": "annex_b_waveform",
+                                "entity_type": "WAVEFORM_INTERVAL",
+                            }
+                    else:
+                        if cleaned_lower not in self.diagram_callouts:
+                            self.diagram_callouts[cleaned_lower] = {
+                                "canonical_term": cleaned_lower,
+                                "canonical_id": f"{fig_id.lower().replace(' ', '_')}:callout:{cleaned_lower.replace(' ', '_')}",
+                                "figure_id": fig_id,
+                                "figure_title": title,
+                                "source_authority": f"Annex B ({fig_id}, p. {page})",
+                                "target_division": "annex_b_spatial",
+                                "entity_type": "DIAGRAM_CALLOUT",
+                            }
+
+        # Precompute word-boundary token tuples for O(1) set-membership pre-filtering
+        self._key_words = {}
+        for lex in (
+            self.OUT_OF_RANGE_LOCATORS,
+            self.standard_locators,
+            self.waveform_intervals,
+            self.diagram_callouts,
+            self.weld_positions,
+            self.domain_qualifiers,
+            self.process_codes,
+            self.nonstandard_terms,
+            self.process_terms,
+            self.glossary_terms,
+        ):
+            for k in lex:
+                if k not in self._key_words:
+                    self._key_words[k] = tuple(re.findall(r"\w+", k.lower()))
+
     # -----------------------------------------------------------------------
     # Compound Designation Parsing
     # -----------------------------------------------------------------------
@@ -618,12 +810,16 @@ class WeldingNER:
         self.ensure_initialized()
         raw_query = query
         q_len = len(query)
+        q_words = set(re.findall(r"\w+", query.lower()))
+        kw_map = self._key_words
 
         # Collect candidate spans: (start, end, span_dict)
         raw_candidates: List[Tuple[int, int, Dict[str, Any]]] = []
 
         # 1. Out-of-Range Locators
         for loc_str, loc_info in self.OUT_OF_RANGE_LOCATORS.items():
+            if not all(w in q_words for w in kw_map.get(loc_str, ())):
+                continue
             for m in re.finditer(r"\b" + re.escape(loc_str) + r"\b", query, flags=re.IGNORECASE):
                 raw_candidates.append(
                     (
@@ -646,6 +842,8 @@ class WeldingNER:
 
         # 2. Standard Locators (Figures, Tables, Clauses)
         for loc_str, loc_info in self.standard_locators.items():
+            if not all(w in q_words for w in kw_map.get(loc_str, ())):
+                continue
             pattern = r"\b" + re.escape(loc_str) + r"\b"
             for m in re.finditer(pattern, query, flags=re.IGNORECASE):
                 raw_candidates.append(
@@ -693,6 +891,8 @@ class WeldingNER:
 
         # 4. Waveform Intervals
         for w_str, w_info in self.waveform_intervals.items():
+            if not all(w in q_words for w in kw_map.get(w_str, ())):
+                continue
             for m in re.finditer(r"\b" + re.escape(w_str) + r"\b", query, flags=re.IGNORECASE):
                 raw_candidates.append(
                     (
@@ -715,6 +915,8 @@ class WeldingNER:
 
         # 5. Diagram Callouts
         for c_str, c_info in self.diagram_callouts.items():
+            if not all(w in q_words for w in kw_map.get(c_str, ())):
+                continue
             for m in re.finditer(r"\b" + re.escape(c_str) + r"\b", query, flags=re.IGNORECASE):
                 raw_candidates.append(
                     (
@@ -737,6 +939,8 @@ class WeldingNER:
 
         # 6. Weld Positions
         for p_str, p_info in self.weld_positions.items():
+            if not all(w in q_words for w in kw_map.get(p_str, ())):
+                continue
             for m in re.finditer(r"\b" + re.escape(p_str) + r"\b", query, flags=re.IGNORECASE):
                 raw_candidates.append(
                     (
@@ -759,6 +963,8 @@ class WeldingNER:
 
         # 7. Domain Qualifiers
         for q_str, q_info in self.domain_qualifiers.items():
+            if not all(w in q_words for w in kw_map.get(q_str, ())):
+                continue
             # Support bracketed and unbracketed word boundary
             esc_q = re.escape(q_str)
             pattern = esc_q if q_str.startswith("[") else r"\b" + esc_q + r"\b"
@@ -784,6 +990,8 @@ class WeldingNER:
 
         # 8. Standalone Process Codes
         for code, c_info in self.process_codes.items():
+            if not all(w in q_words for w in kw_map.get(code, ())):
+                continue
             # If code is short (2 letters like CW, AB, TB, FB, IB, IS, RS, WS), require word boundary
             for m in re.finditer(r"\b" + re.escape(code) + r"\b", query, flags=re.IGNORECASE if len(code) > 2 else 0):
                 raw_candidates.append(
@@ -807,7 +1015,7 @@ class WeldingNER:
 
         # 9. Nonstandard & Historical Terms
         for ns_str, ns_info in self.nonstandard_terms.items():
-            if len(ns_str) <= 2:
+            if len(ns_str) <= 2 or not all(w in q_words for w in kw_map.get(ns_str, ())):
                 continue
             for m in re.finditer(r"\b" + re.escape(ns_str) + r"\b", query, flags=re.IGNORECASE):
                 raw_candidates.append(
@@ -831,7 +1039,7 @@ class WeldingNER:
 
         # 10. Process Terms (Table A1/A2/IS-A full names)
         for p_str, p_info in self.process_terms.items():
-            if len(p_str) <= 3:
+            if len(p_str) <= 3 or not all(w in q_words for w in kw_map.get(p_str, ())):
                 continue
             for m in re.finditer(r"\b" + re.escape(p_str) + r"\b", query, flags=re.IGNORECASE):
                 raw_candidates.append(
@@ -868,7 +1076,7 @@ class WeldingNER:
             "terms", "figure", "figures", "table", "tables", "annex", "clause", "part",
         }
         for g_str, g_info in self.glossary_terms.items():
-            if len(g_str) <= 2 or g_str in stopwords:
+            if len(g_str) <= 2 or g_str in stopwords or not all(w in q_words for w in kw_map.get(g_str, ())):
                 continue
             for m in re.finditer(r"\b" + re.escape(g_str) + r"\b", query, flags=re.IGNORECASE):
                 raw_candidates.append(
@@ -885,7 +1093,7 @@ class WeldingNER:
                             "is_valid": True,
                             "abstention_reason": None,
                             "sub_components": (),
-                            "ambiguity_candidates": (),
+                            "ambiguity_candidates": g_info.get("ambiguity_candidates", ()),
                         },
                     )
                 )

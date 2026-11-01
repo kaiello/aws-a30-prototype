@@ -202,6 +202,14 @@ class DeepSeekV41PlannerAdapter:
         expander = get_semantic_expander(stores=stores, root=self.root)
         trace = expander.expand_query(question_text)
         plan["semantic_expansion_trace"] = trace.to_dict()
+        ner_receipt = trace.ner_receipt or {}
+        plan["ner_entities"] = list(ner_receipt.get("spans", []))
+        plan["multi_intent_targets"] = {
+            "target_divisions": list(ner_receipt.get("target_divisions", [])),
+            "inferred_targets": dict(trace.inferred_targets),
+            "ner_inferred_targets": dict(ner_receipt.get("inferred_targets", {})),
+            "has_ambiguities": bool(ner_receipt.get("has_ambiguities", False)),
+        }
 
         plan["receipt_metadata"] = {
             "planner": "DeepSeekV41PlannerAdapter",
