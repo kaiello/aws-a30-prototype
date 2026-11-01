@@ -1,8 +1,8 @@
 # GATE 5 CONSOLIDATED FULL AUDIT BUNDLE (FINAL PRODUCTION RELEASE: HARDENING, DEEPSEEK V4.1, SEMANTIC NLQ & EPISTEMIC CALIBRATION)
 Generated for Principal Reviewer Gate 5 / 5.4 / 5.5 / 5.6 Production Release Audit.
 Standard: AWS A3.0M/A3.0:2020 | Gate: Gate 5.6 | Branch: feat/gate-5-6-epistemic-manifest-calibration
-Build Commit SHA: 9ff90ae9ba58e59ab25b6a5c4f27037d3f4ce3b2 | Timestamp: 2026-11-01T18:32:45.269403+00:00
-Working Tree Tracked Codebase: MODIFIED
+Build Commit SHA: 17e5ef7ad0806b21b81f1bb389a543d38054d1cc | Timestamp: 2026-11-01T18:37:39.697841+00:00
+Working Tree Tracked Codebase: CLEAN
 Cryptographic Immutability Ledger: ALL_24_VERIFIED_LOCKED (24/24 repository hashes locked and verified)
 Whole-Standard Preflight Contract: CLEAR_WHOLE_STANDARD_CONTRACT (0 network calls, offline verified)
 DeepSeek-V4.1 Replay Preflight: CLEAR_DEEPSEEK_REPLAY_PREFLIGHT (0 network calls, epistemic quarantine verified)
@@ -5543,7 +5543,13 @@ def _enrich_modality_provenance(
         elif stores and "annex_b_complete" in stores:
             finfo = stores["annex_b_complete"].get("figures", {}).get(fig_key, {})
             if finfo.get("pages"):
-                page = finfo["pages"][0].get("printed_page", 153)
+                first_page = finfo["pages"][0]
+                if isinstance(first_page, (list, tuple)) and len(first_page) >= 2:
+                    page = first_page[1]
+                elif isinstance(first_page, dict):
+                    page = first_page.get("printed_page", 153)
+                elif isinstance(first_page, int):
+                    page = first_page
 
         exec_res["printed_page"] = page
         exec_res["pdf_index"] = page + 12
