@@ -7,7 +7,7 @@
 ## 1. Project Overview & Gate Status Summary
 
 - **Standard Document:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions*, 190 PDF pages)
-- **Current Test Suite Baseline:** `1,455+ passed, 8 skipped, 0 failures, 0 warnings`
+- **Current Test Suite Baseline:** `1,463 passed, 8 skipped, 0 failures, 0 warnings`
 - **Active Milestone:** **Gate 5.5 — Unified Final Production Gate: Store-Derived Semantic NLQ Expansion, ID-Free Routing, and DeepSeek-V4.1 Integration** (`feat/gate-5-5-semantic-nlq` $\rightarrow$ `main`)
 - **Canonical Repository:** `C:\Users\kenai\Documents\Codex\2026-10-21\task\aws-a2-source-aware-ingest`
 - **Mirror Destination:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)
@@ -109,4 +109,4 @@ All operational, evaluation, and semantic expansion code must treat the canonica
 - [x] **Deliverable 2 (ID-Free Routing & Conversational Extractor in `src/evidence_phase4_bakeoff.py`):** ID-free routing to `Figures A1–A6`, `Tables A1–A5`, and `Figures B1–B54`; conversational noun-phrase extraction; generalized out-of-scope refusal logic (`HK-5-1`).
 - [x] **Deliverable 3 (DeepSeek-V4.1-Flash-1017 Integration in `src/deepseek_v41_adapter.py`):** Full offline replay integration with `plan_with_semantic_expansion`, epistemic quarantine, and 8 content-addressed replay cassettes in `storage/model_replays/deepseek_v4_1_flash_1017/`.
 - [x] **Deliverable 4 (Frozen 15-Query Gate 5.5 NLQ Benchmark):** `storage/evidence_v2/phase5_5_nlq_001/{nlq_questions.json, rubric.json, results.json}` and `eval/run_phase5_5_nlq.py`, achieving **15 / 15 (100.0%)** across all 5 NLQ slices (`G55-NLQ01` through `G55-NLQ15`).
-- [x] **Deliverable 5 (22/22 Artifact Hash Locks & Full Test Suite):** Lock all 14 core project hashes and all 8 DeepSeek replay hashes in `tests/test_gate_5_4_deepseek_adapter.py` and `tests/test_gate_5_5_semantic_nlq.py`, verifying `0` failures and `0` warnings across all `1,455+` repository tests.
+- [x] **Deliverable 5 (22/22 Artifact Hash Locks & Full Test Suite):** Lock all 14 core project hashes and all 8 DeepSeek replay hashes in `tests/test_gate_5_4_deepseek_adapter.py` and `tests/test_gate_5_5_semantic_nlq.py`, verifying `0` failures and `0` warnings across all `1,463` repository tests.
