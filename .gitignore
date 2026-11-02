@@ -49,6 +49,8 @@ storage/evidence_v2/*
 !storage/evidence_v2/phase5_5_nlq_001/
 !storage/evidence_v2/phase6_ner_routing_001/
 !storage/evidence_v2/phase6_1_semantic_graph_001/
+!storage/evidence_v2/phase6_2_generalization_holdout_001/
+!storage/evidence_v2/phase6_2_generalization_holdout_002/
 !storage/evidence_v2/annex_a_holdout_001/
 storage/evidence_v2/annex_a_holdout_001/*
 !storage/evidence_v2/annex_a_holdout_001/evaluation/

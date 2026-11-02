@@ -7,7 +7,7 @@
 **Audit Bundle:** [`GATE_6_FULL_AUDIT_BUNDLE.md`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/GATE_6_FULL_AUDIT_BUNDLE.md) & [`storage/gate_reviews/GATE_6_FULL_AUDIT_BUNDLE.md`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/gate_reviews/GATE_6_FULL_AUDIT_BUNDLE.md) (built via `python -B scripts/build_gate_6_bundle.py`)  
 **Google Drive Mirror:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)  
 **Working Tree Status:** `CLEAN` (`39/39` cryptographic hashes locked and verified)  
-**Full Regression Test Suite:** `1,482 passed, 8 skipped, 0 failures, 0 warnings`  
+**Full Regression Test Suite:** `1,489 passed, 8 skipped, 0 failures, 0 warnings` (1,482 baseline + 7 Gate 6.2 tests)  
 **Author / Lead Developer:** Autonomous RAG Engineering Lead  
 **Auditor / Reviewer:** Principal Reviewer & Systems Architect  
 **Submission & Verification Date:** November 1, 2026  

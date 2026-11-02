@@ -1,0 +1,296 @@
+{
+  "version": "phase6_2_generalization_holdout_rubric_v1.0",
+  "total_questions": 20,
+  "rubrics": {
+    "G62-GEN01": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "gas metal arc welding",
+        "GMAW",
+        "GMAW-P",
+        "GMAW-S"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN02": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "oxyfuel gas cutting",
+        "OFC",
+        "OFC-A",
+        "OFC-H",
+        "OFC-N",
+        "OFC-P"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN03": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "submerged arc welding",
+        "SAW",
+        "series submerged arc welding",
+        "SAW-S"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN04": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "resistance seam welding",
+        "RSEW",
+        "RSEW-HF",
+        "RSEW-I",
+        "RSEW-MS"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN05": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "backfire",
+        "flashback",
+        "sustained backfire",
+        "See also"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN06": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "bend test",
+        "face bend test",
+        "root bend test",
+        "See also"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN07": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "flux",
+        "brazing flux",
+        "soldering flux",
+        "welding flux",
+        "See also"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN08": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "base metal zone",
+        "heat-affected zone",
+        "weld metal",
+        "See also"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN09": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "5G",
+        "pipe",
+        "Figure B19",
+        "Figure B16C"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN10": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "3G",
+        "plate",
+        "Figure B17",
+        "Figure B16A"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN11": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "4F",
+        "pipe",
+        "plate",
+        "Figure B18",
+        "Figure B20",
+        "Figure B16B"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN12": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "AB",
+        "adhesive bonding",
+        "arc brazing",
+        "2G",
+        "plate",
+        "pipe",
+        "Figure B17",
+        "Figure B19"
+      ],
+      "forbidden_elements": [
+        "laser"
+      ]
+    },
+    "G62-GEN13": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B6",
+        "root face",
+        "groove face",
+        "groove angle",
+        "joint root"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN14": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B37",
+        "Electroslag Welding",
+        "Guide Tube",
+        "Molding Shoe",
+        "Slag Pool",
+        "Weld Pool"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN15": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "forge welding",
+        "FOW",
+        "friction stir welding",
+        "FSW",
+        "Table A1"
+      ],
+      "forbidden_elements": [
+        "laser"
+      ]
+    },
+    "G62-GEN16": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "OFC-P-ME",
+        "oxypropane cutting",
+        "Mechanized",
+        "GMAW-X-SA",
+        "GTAW-AU-MA",
+        "rejected"
+      ],
+      "forbidden_elements": [
+        "laser"
+      ]
+    },
+    "G62-GEN17": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "GMAW-P-SA",
+        "semiautomatic pulsed gas metal arc welding",
+        "Figure B54"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN18": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure A5",
+        "Solid-State Welding",
+        "Mechanical",
+        "Deformation"
+      ],
+      "forbidden_elements": [
+        "Figure B",
+        "laser"
+      ]
+    },
+    "G62-GEN19": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "braze",
+        "noun",
+        "verb",
+        "act of brazing"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "laser"
+      ]
+    },
+    "G62-GEN20": {
+      "expected_status": "REFUSAL_OUT_OF_RANGE",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "Figure A7",
+        "does not exist",
+        "Figure A1 through Figure A6"
+      ],
+      "forbidden_elements": [
+        "laser"
+      ]
+    }
+  }
+}

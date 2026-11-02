@@ -37,7 +37,9 @@ def evaluate_generalization_holdout_benchmark(
     if root is None:
         root = ROOT
     if output_dir is None:
-        output_dir = root / "storage/evidence_v2/phase6_2_generalization_holdout_001"
+        output_dir = (root / "storage/evidence_v2/phase6_2_generalization_holdout_001").resolve()
+    else:
+        output_dir = Path(output_dir).resolve()
 
     q_file = output_dir / "questions.json"
     r_file = output_dir / "rubric.json"
@@ -129,7 +131,7 @@ def evaluate_generalization_holdout_benchmark(
         res_file.write_bytes(res_bytes)
         res_sha = hashlib.sha256(res_bytes).hexdigest()
         print(f"Gate 6.2 Generalization Holdout Benchmark: {passed_count}/{total_q} passed ({pass_rate:.1f}%)")
-        print(f"Results written to: {res_file.relative_to(root)} (SHA-256: {res_sha})")
+        print(f"Results written to: {res_file.resolve().relative_to(root.resolve())} (SHA-256: {res_sha})")
     else:
         print(f"Gate 6.2 Generalization Holdout Benchmark: {passed_count}/{total_q} passed ({pass_rate:.1f}%) [in-memory]")
 

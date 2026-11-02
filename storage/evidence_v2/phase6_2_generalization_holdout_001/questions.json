@@ -1,0 +1,142 @@
+[
+  {
+    "id": "G62-GEN01",
+    "category": "unseen_is_a_variations",
+    "slice_name": "Slice 1 — Unseen IS_A Process Variation Families",
+    "query": "What process variations are standardized under gas metal arc welding (GMAW) in AWS A3.0?",
+    "target_source": "Table A1 (p. 69) + Clause 4 + is_a_promotion_store.json"
+  },
+  {
+    "id": "G62-GEN02",
+    "category": "unseen_is_a_variations",
+    "slice_name": "Slice 1 — Unseen IS_A Process Variation Families",
+    "query": "What process variations are standardized under oxyfuel gas cutting (OFC) in AWS A3.0?",
+    "target_source": "Table A1 (p. 69) + Clause 4 + is_a_promotion_store.json"
+  },
+  {
+    "id": "G62-GEN03",
+    "category": "unseen_is_a_variations",
+    "slice_name": "Slice 1 — Unseen IS_A Process Variation Families",
+    "query": "What process variation is standardized under submerged arc welding (SAW) in AWS A3.0?",
+    "target_source": "Table A1 (p. 69) + Clause 4 + is_a_promotion_store.json"
+  },
+  {
+    "id": "G62-GEN04",
+    "category": "unseen_is_a_variations",
+    "slice_name": "Slice 1 — Unseen IS_A Process Variation Families",
+    "query": "What process variations are standardized under resistance seam welding (RSEW) in AWS A3.0?",
+    "target_source": "Table A1 (p. 70) + Clause 4 + is_a_promotion_store.json"
+  },
+  {
+    "id": "G62-GEN05",
+    "category": "unseen_cross_references",
+    "slice_name": "Slice 2 — Unseen Clause 4 See / See also Graph Neighborhoods",
+    "query": "In Clause 4 of AWS A3.0, what terms are cross-referenced from backfire?",
+    "target_source": "Clause 4 (p. 10)"
+  },
+  {
+    "id": "G62-GEN06",
+    "category": "unseen_cross_references",
+    "slice_name": "Slice 2 — Unseen Clause 4 See / See also Graph Neighborhoods",
+    "query": "In Clause 4 of AWS A3.0, what related bend test terms are cross-referenced from bend test?",
+    "target_source": "Clause 4 (p. 11)"
+  },
+  {
+    "id": "G62-GEN07",
+    "category": "unseen_cross_references",
+    "slice_name": "Slice 2 — Unseen Clause 4 See / See also Graph Neighborhoods",
+    "query": "In Clause 4 of AWS A3.0, what flux terms are cross-referenced from agglomerated flux?",
+    "target_source": "Clause 4 (p. 7 / p. 27)"
+  },
+  {
+    "id": "G62-GEN08",
+    "category": "unseen_cross_references",
+    "slice_name": "Slice 2 — Unseen Clause 4 See / See also Graph Neighborhoods",
+    "query": "In Clause 4 of AWS A3.0, what related metallurgical zone terms are cross-referenced from base metal zone?",
+    "target_source": "Clause 4 (p. 11)"
+  },
+  {
+    "id": "G62-GEN09",
+    "category": "unseen_weld_test_positions",
+    "slice_name": "Slice 3 — Unseen Weld Test Positions & Unqualified Dual-Sense Disambiguation",
+    "query": "What does the welding test position designation 5G for pipe designate and which diagram illustrates it?",
+    "target_source": "Clause 4 (p. 6) + Figure B19(C)"
+  },
+  {
+    "id": "G62-GEN10",
+    "category": "unseen_weld_test_positions",
+    "slice_name": "Slice 3 — Unseen Weld Test Positions & Unqualified Dual-Sense Disambiguation",
+    "query": "What does the welding test position designation 3G for plate designate and which diagram illustrates it?",
+    "target_source": "Clause 4 (p. 5) + Figure B17(C)"
+  },
+  {
+    "id": "G62-GEN11",
+    "category": "unseen_weld_test_positions",
+    "slice_name": "Slice 3 — Unseen Weld Test Positions & Unqualified Dual-Sense Disambiguation",
+    "query": "What does the welding test position designation 4F designate in pipe versus plate?",
+    "target_source": "Clause 4 (p. 5) + Figure B20(D) + Figure B18(D)"
+  },
+  {
+    "id": "G62-GEN12",
+    "category": "unseen_weld_test_positions",
+    "slice_name": "Slice 3 — Unseen Weld Test Positions & Unqualified Dual-Sense Disambiguation",
+    "query": "How are the designations AB and 2G defined and disambiguated in AWS A3.0?",
+    "target_source": "Table A1 (p. 69) + Figure A6 (p. 79) + Clause 4 (p. 5) + Figure B17(B) + Figure B19(B)"
+  },
+  {
+    "id": "G62-GEN13",
+    "category": "unseen_polysemous_and_obsolete",
+    "slice_name": "Slice 4 — Unseen Polysemous Callouts, Obsolete Comparisons & 3-Tier Validation",
+    "query": "How are bevel face, groove face, and root face defined in Clause 4 and illustrated in Figure B6?",
+    "target_source": "Clause 4 (p. 11, 29, 50) + Figure B6"
+  },
+  {
+    "id": "G62-GEN14",
+    "category": "unseen_polysemous_and_obsolete",
+    "slice_name": "Slice 4 — Unseen Polysemous Callouts, Obsolete Comparisons & 3-Tier Validation",
+    "query": "How are backing shoe, moving shoe, and stationary shoe defined in Clause 4 and illustrated in Figure B37?",
+    "target_source": "Clause 4 (p. 10, 41, 54) + Figure B37"
+  },
+  {
+    "id": "G62-GEN15",
+    "category": "unseen_polysemous_and_obsolete",
+    "slice_name": "Slice 4 — Unseen Polysemous Callouts, Obsolete Comparisons & 3-Tier Validation",
+    "query": "How do forge welding (FOW) and friction stir welding (FSW) compare in AWS A3.0?",
+    "target_source": "Table A1 (p. 70, 71) + Figure A5"
+  },
+  {
+    "id": "G62-GEN16",
+    "category": "unseen_polysemous_and_obsolete",
+    "slice_name": "Slice 4 — Unseen Polysemous Callouts, Obsolete Comparisons & 3-Tier Validation",
+    "query": "What does OFC-P-ME stand for, and why are GMAW-X-SA and GTAW-AU-MA invalid designations?",
+    "target_source": "Table A1 (p. 69) + Table A4 (p. 74)"
+  },
+  {
+    "id": "G62-GEN17",
+    "category": "unseen_deepseek_and_boundary",
+    "slice_name": "Slice 5 — Unseen DeepSeek-V4.1 Multi-Operation Replay Cassettes & Boundary Guards",
+    "query": "What does GMAW-P-SA stand for and how are arc welding cycle intervals illustrated in Figure B54?",
+    "target_source": "Table A1 + Table A4 + Figure B54"
+  },
+  {
+    "id": "G62-GEN18",
+    "category": "unseen_deepseek_and_boundary",
+    "slice_name": "Slice 5 — Unseen DeepSeek-V4.1 Multi-Operation Replay Cassettes & Boundary Guards",
+    "query": "How do forge welding (FOW) and friction stir welding (FSW) compare and how is solid-state welding classified in Figure A5?",
+    "target_source": "Figure A5 + Table A1"
+  },
+  {
+    "id": "G62-GEN19",
+    "category": "unseen_deepseek_and_boundary",
+    "slice_name": "Slice 5 — Unseen DeepSeek-V4.1 Multi-Operation Replay Cassettes & Boundary Guards",
+    "query": "How is the term braze defined across multiple parts of speech in Clause 4?",
+    "target_source": "Clause 4 (p. 13)"
+  },
+  {
+    "id": "G62-GEN20",
+    "category": "unseen_deepseek_and_boundary",
+    "slice_name": "Slice 5 — Unseen DeepSeek-V4.1 Multi-Operation Replay Cassettes & Boundary Guards",
+    "query": "What does EBW-AU-SA stand for and how is it classified in Figure A7?",
+    "target_source": "Refusal: Out of Range (Figure A7 does not exist)"
+  }
+]
