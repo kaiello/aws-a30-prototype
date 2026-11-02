@@ -722,16 +722,24 @@ class SemanticExpander:
                     cg.add_see_also(old_t, nb)
                 cg.add_see_also(old_t, canon)
 
-        # (b) IS_A_SUBTYPES and SIBLINGS
-        parent_proc_map = {
-            "flux cored arc welding": "FCAW",
-            "gas metal arc welding": "GMAW",
-            "gas tungsten arc welding": "GTAW",
-            "submerged arc welding": "SAW",
-            "oxyfuel gas cutting": "OFC",
-            "plasma arc cutting": "PAC",
-            "braze welding": "BW",
-        }
+        # (b) IS_A_SUBTYPES and SIBLINGS dynamically derived from Table A1 and is_a_store
+        table_a1_rows = tables.get("table_a1", [])
+        parent_proc_map: Dict[str, str] = {}
+        for row in table_a1_rows:
+            proc_n = (row.get("process") or "").strip().lower()
+            desig_c = (row.get("designation") or "").strip()
+            if proc_n and desig_c and "-" not in desig_c:
+                parent_proc_map[proc_n] = desig_c
+        if not parent_proc_map:
+            parent_proc_map = {
+                "flux cored arc welding": "FCAW",
+                "gas metal arc welding": "GMAW",
+                "gas tungsten arc welding": "GTAW",
+                "submerged arc welding": "SAW",
+                "oxyfuel gas cutting": "OFC",
+                "plasma arc cutting": "PAC",
+                "braze welding": "BW",
+            }
         promoted_list = is_a_store.get("promoted_is_a", [])
         children_by_parent: Dict[str, List[Tuple[str, str]]] = {}
         for row in promoted_list:

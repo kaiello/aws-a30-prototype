@@ -1299,30 +1299,52 @@ class WeldingNER:
         selected_spans: List[WeldingEntitySpan] = []
         last_end = -1
 
-        pipe_positions = {
-            "1g": ("1G, pipe", "Figure B19(A)", "Clause 4 (p. 5) / Figure B19(A)"),
-            "2g": ("2G, pipe", "Figure B19(B)", "Clause 4 (p. 5) / Figure B19(B)"),
-            "3g": ("3G, pipe", "Figure B19(A)", "Clause 4 (p. 5) / Figure B19(A)"),
-            "4g": ("4G, pipe", "Figure B19(A)", "Clause 4 (p. 6) / Figure B19(A)"),
-            "5g": ("5G, pipe", "Figure B19(C)", "Clause 4 (p. 6) / Figure B19(C)"),
-            "6g": ("6G, pipe", "Figure B19(D)", "Clause 4 (p. 6) / Figure B19(D)"),
-            "6gr": ("6GR, pipe", "Figure B19(E)", "Clause 4 (p. 6) / Figure B19(E)"),
-            "1f": ("1F, pipe", "Figure B20(A)", "Clause 4 (p. 5) / Figure B20(A)"),
-            "2f": ("2F, pipe", "Figure B20(B)", "Clause 4 (p. 5) / Figure B20(B)"),
-            "2fr": ("2FR, pipe", "Figure B20(C)", "Clause 4 (p. 5) / Figure B20(C)"),
-            "3f": ("3F, pipe", "Figure B20(C)", "Clause 4 (p. 5) / Figure B20(C)"),
-            "4f": ("4F, pipe", "Figure B20(D)", "Clause 4 (p. 5) / Figure B20(D)"),
-        }
-        plate_positions = {
-            "1g": ("1G, plate", "Figure B17(A)", "Clause 4 (p. 5) / Figure B17(A)"),
-            "2g": ("2G, plate", "Figure B17(B)", "Clause 4 (p. 5) / Figure B17(B)"),
-            "3g": ("3G, plate", "Figure B17(C)", "Clause 4 (p. 5) / Figure B17(C)"),
-            "4g": ("4G, plate", "Figure B17(D)", "Clause 4 (p. 6) / Figure B17(D)"),
-            "1f": ("1F, plate", "Figure B18(A)", "Clause 4 (p. 5) / Figure B18(A)"),
-            "2f": ("2F, plate", "Figure B18(B)", "Clause 4 (p. 5) / Figure B18(B)"),
-            "3f": ("3F, plate", "Figure B18(C)", "Clause 4 (p. 5) / Figure B18(C)"),
-            "4f": ("4F, plate", "Figure B18(D)", "Clause 4 (p. 5) / Figure B18(D)"),
-        }
+        # Derive pipe and plate positions dynamically from glossary store
+        glossary_entries = (self.stores.get("glossary") or {}).get("entries", []) if self.stores else []
+        pipe_positions = {}
+        plate_positions = {}
+        if glossary_entries:
+            for entry in glossary_entries:
+                heading = (entry.get("raw_heading") or "").strip()
+                domains = entry.get("domain_delimiters") or []
+                page = entry.get("printed_page") or 5
+                defn = entry.get("definition") or ""
+                m_fig = re.search(r"Figure\s+([AB][0-9]{1,2}(?:\([A-Z]\))?)", defn)
+                fig_str = f"Figure {m_fig.group(1)}" if m_fig else "Annex B"
+                if "pipe" in domains:
+                    pipe_positions[heading.lower()] = (
+                        f"{heading}, pipe",
+                        fig_str,
+                        f"Clause 4 (p. {page}) / {fig_str}",
+                    )
+                if "plate" in domains:
+                    plate_positions[heading.lower()] = (
+                        f"{heading}, plate",
+                        fig_str,
+                        f"Clause 4 (p. {page}) / {fig_str}",
+                    )
+        else:
+            pipe_positions = {
+                "1g": ("1G, pipe", "Figure B19(A)", "Clause 4 (p. 5) / Figure B19(A)"),
+                "2g": ("2G, pipe", "Figure B19(B)", "Clause 4 (p. 5) / Figure B19(B)"),
+                "5g": ("5G, pipe", "Figure B19(C)", "Clause 4 (p. 6) / Figure B19(C)"),
+                "6g": ("6G, pipe", "Figure B19(D)", "Clause 4 (p. 6) / Figure B19(D)"),
+                "6gr": ("6GR, pipe", "Figure B19(E)", "Clause 4 (p. 6) / Figure B19(E)"),
+                "1f": ("1F, pipe", "Figure B20(A)", "Clause 4 (p. 5) / Figure B20(A)"),
+                "2f": ("2F, pipe", "Figure B20(B)", "Clause 4 (p. 5) / Figure B20(B)"),
+                "2fr": ("2FR, pipe", "Figure B20(C)", "Clause 4 (p. 5) / Figure B20(C)"),
+                "4f": ("4F, pipe", "Figure B20(D)", "Clause 4 (p. 5) / Figure B20(D)"),
+            }
+            plate_positions = {
+                "1g": ("1G, plate", "Figure B17(A)", "Clause 4 (p. 5) / Figure B17(A)"),
+                "2g": ("2G, plate", "Figure B17(B)", "Clause 4 (p. 5) / Figure B17(B)"),
+                "3g": ("3G, plate", "Figure B17(C)", "Clause 4 (p. 5) / Figure B17(C)"),
+                "4g": ("4G, plate", "Figure B17(D)", "Clause 4 (p. 6) / Figure B17(D)"),
+                "1f": ("1F, plate", "Figure B18(A)", "Clause 4 (p. 5) / Figure B18(A)"),
+                "2f": ("2F, plate", "Figure B18(B)", "Clause 4 (p. 5) / Figure B18(B)"),
+                "3f": ("3F, plate", "Figure B18(C)", "Clause 4 (p. 5) / Figure B18(C)"),
+                "4f": ("4F, plate", "Figure B18(D)", "Clause 4 (p. 5) / Figure B18(D)"),
+            }
 
         for s, e, d in unique_cands:
             if s >= last_end:

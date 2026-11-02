@@ -309,29 +309,33 @@ def test_gate_6_2_ast_zero_fallbacks_and_12_target_store_mutations():
     mut_8 = copy.deepcopy(base_stores)
     mut_8["is_a"]["promoted_is_a"] = []
     with pytest.raises(ValueError, match="INSUFFICIENT_EVIDENCE"):
-        _exec_lookup_taxonomy_subtypes("gas metal arc welding", stores=mut_8)
+        answer_whole_standard_question("What process variations branch under gas metal arc welding in AWS A3.0?", planner, stores=mut_8)
 
     # Mutation 9: glossary entries emptied
     mut_9 = copy.deepcopy(base_stores)
     mut_9["glossary"]["entries"] = []
     with pytest.raises(ValueError, match="INSUFFICIENT_EVIDENCE"):
-        _exec_expand_cross_references("backfire", "In Clause 4, what is related to backfire?", stores=mut_9)
+        answer_whole_standard_question("In Clause 4, what related terms are cross-referenced from backfire?", planner, stores=mut_9)
 
     # Mutation 10: position store data blanked
     mut_10 = copy.deepcopy(base_stores)
+    for e in mut_10["glossary"].get("entries", []):
+        if e.get("term") == "5G":
+            e["definition"] = None
     with pytest.raises(ValueError, match="INSUFFICIENT_EVIDENCE"):
-        _exec_weld_position_sense("INVALID_POS", None, include_diagram=True, stores=mut_10)
+        answer_whole_standard_question("Which diagram illustrates the 5G test position for pipe groove welding, and how is it defined?", planner, stores=mut_10)
 
     # Mutation 11: Table A1 active process rows removed
     mut_11 = copy.deepcopy(base_stores)
     mut_11["tables"]["table_a1"] = []
     with pytest.raises(ValueError, match="INSUFFICIENT_EVIDENCE"):
-        _exec_compare_historical_and_active("atomic hydrogen welding", "gas tungsten arc welding", stores=mut_11)
+        answer_whole_standard_question("How does obsolete atomic hydrogen welding compare to active gas tungsten arc welding?", planner, stores=mut_11)
 
-    # Mutation 12: Compound validation with empty valid codes
+    # Mutation 12: Compound validation with empty Table A1 store
     mut_12 = copy.deepcopy(base_stores)
+    mut_12["tables"]["table_a1"] = []
     with pytest.raises(ValueError, match="INSUFFICIENT_EVIDENCE"):
-        _exec_compound_lookup_and_validation([], [], stores=mut_12)
+        answer_whole_standard_question("What does the compound designation GMAW-P-SA stand for according to Table A1 and Table A4?", planner, stores=mut_12)
 
 
 def test_gate_6_2_deepseek_14_replays_and_20_query_holdout_benchmark(monkeypatch):
