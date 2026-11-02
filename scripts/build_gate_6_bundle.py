@@ -32,6 +32,9 @@ FILES = [
     "storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json",
     "storage/evidence_v2/phase6_1_semantic_graph_001/rubric.json",
     "storage/evidence_v2/phase6_1_semantic_graph_001/results.json",
+    "storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json",
+    "storage/evidence_v2/phase6_2_generalization_holdout_001/rubric.json",
+    "storage/evidence_v2/phase6_2_generalization_holdout_001/results.json",
     "src/evidence_whole_standard_preflight.py",
     "src/deepseek_v41_adapter.py",
     "src/semantic_nlq_expander.py",
@@ -40,8 +43,10 @@ FILES = [
     "src/evidence_whole_standard_cli.py",
     "eval/run_phase6_ner_routing.py",
     "eval/run_phase6_1_semantic_graph.py",
+    "eval/run_phase6_2_generalization_holdout.py",
     "tests/test_gate_6_0_ner_routing_skills.py",
     "tests/test_gate_6_1_semantic_graph.py",
+    "tests/test_gate_6_2_store_driven_composition.py",
     "docs/FULL_PROMPT.md",
 ]
 
@@ -61,7 +66,7 @@ def main():
     preflight_res = run_whole_standard_preflight(ROOT)
     deepseek_res = run_deepseek_replay_preflight(ROOT)
 
-    from tests.test_gate_6_1_semantic_graph import ALL_34_LOCKED_HASHES
+    from tests.test_gate_6_2_store_driven_composition import ALL_39_LOCKED_HASHES
 
     header = f"""# Gate 6 Full Production Audit Bundle
 Generated at: {timestamp}
@@ -74,9 +79,9 @@ Clean Working Tree: `{is_clean}`
 - DeepSeek Replay Preflight Status: `{deepseek_res['status']}`
 - DeepSeek Replay Cassettes Verified: `{deepseek_res.get('cassettes_verified', 0)}`
 
-## Cryptographic Locks (All 34 Artifacts)
+## Cryptographic Locks (All 39 Artifacts)
 """
-    for rel_path, expected_hash in ALL_34_LOCKED_HASHES.items():
+    for rel_path, expected_hash in ALL_39_LOCKED_HASHES.items():
         p = ROOT / rel_path
         actual_hash = hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else "MISSING"
         match_str = "MATCH" if actual_hash == expected_hash else "MISMATCH"

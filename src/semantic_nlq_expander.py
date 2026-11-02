@@ -697,31 +697,30 @@ class SemanticExpander:
             if not t_clean:
                 continue
             x_refs = e.get("cross_references") or {}
+            see_items: List[str] = []
             for x in (x_refs.get("see_also") or []):
                 for item in _clean_and_split_see_also(x):
+                    see_items.append(item)
                     cg.add_see_also(t_clean, item)
             d_text = str(e.get("definition_text") or e.get("definition") or "")
             m_see = re.search(r"(?:See also|See)\s+([^.]+\.)", d_text)
             if m_see:
                 for item in _clean_and_split_see_also(m_see.group(0)):
+                    see_items.append(item)
                     cg.add_see_also(t_clean, item)
+            # Clique completion among co-referenced items in the same See / See also redirect clause
+            if len(see_items) > 1:
+                for i, it1 in enumerate(see_items):
+                    for it2 in see_items[i + 1 :]:
+                        cg.add_see_also(it1, it2)
 
-        # Throat cluster bidirectionality
-        throat_cluster = [
-            "actual throat", "effective throat", "theoretical throat",
-            "fillet weld throat", "weld throat", "throat of a fillet weld"
-        ]
-        for t1 in throat_cluster:
-            for t2 in throat_cluster:
-                if t1 != t2:
-                    cg.add_see_also(t1, t2)
-
-        # Travel angle cluster bidirectionality
-        travel_cluster = ["travel angle", "drag angle", "push angle", "work angle"]
-        for a1 in travel_cluster:
-            for a2 in travel_cluster:
-                if a1 != a2:
-                    cg.add_see_also(a1, a2)
+        # Propagate store-compiled See also edges across registered alias pivots (e.g. 'throat of a fillet weld' -> 'fillet weld throat')
+        for old_t, meta in self.alias_pivot_map.items():
+            canon = meta.get("canonical_term", "").strip().lower()
+            if canon:
+                for nb in list(cg.get_see_also(canon)):
+                    cg.add_see_also(old_t, nb)
+                cg.add_see_also(old_t, canon)
 
         # (b) IS_A_SUBTYPES and SIBLINGS
         parent_proc_map = {

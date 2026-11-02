@@ -140,7 +140,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Gate 6.0 NER & Multi-Intent Routing Benchmark")
     parser.add_argument("--root", type=Path, default=ROOT, help="Project root directory")
     parser.add_argument("--output-dir", type=Path, default=None, help="Output directory for benchmark")
+    parser.add_argument("--no-write", action="store_true", help="Do not write results to disk (dry run)")
     args = parser.parse_args()
 
-    payload = evaluate_ner_routing_benchmark(root=args.root, output_dir=args.output_dir)
+    payload = evaluate_ner_routing_benchmark(root=args.root, output_dir=args.output_dir, write_results=not args.no_write)
     sys.exit(0 if payload["gate_status"] == "PASS" else 1)

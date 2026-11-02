@@ -1,0 +1,41 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "3d6a2cbb61def68a41a52cdec81712a85cd65f7ed52c2e6505bc280821dacf9a",
+  "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: How do forge welding (FOW) and friction stir welding (FSW) compare and how is solid-state welding classified in Figure A5?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"target_division\": \"Multi-Division\", \"intent\": \"cross_store_comparison\", \"target_entities\": [\"forge welding\", \"friction stir welding\", \"Figure A5\"], \"actions\": [{\"action_type\": \"lookup_historical_process\", \"target\": \"forge welding\", \"parameters\": {\"process_code\": \"FOW\"}}, {\"action_type\": \"lookup_active_process\", \"target\": \"friction stir welding\", \"parameters\": {\"process_code\": \"FSW\"}}, {\"action_type\": \"query_figure\", \"target\": \"Figure A5\", \"parameters\": {\"group\": \"Solid-State Welding\"}}], \"reason\": \"DeepSeek-V4.1 trace: Compare forge welding (FOW) in Table A1 with active friction stir welding (FSW) in Table A1, then query solid-state welding classification in Figure A5.\"}",
+  "parsed_plan": {
+    "target_division": "Multi-Division",
+    "intent": "cross_store_comparison",
+    "target_entities": [
+      "forge welding",
+      "friction stir welding",
+      "Figure A5"
+    ],
+    "actions": [
+      {
+        "action_type": "lookup_historical_process",
+        "target": "forge welding",
+        "parameters": {
+          "process_code": "FOW"
+        }
+      },
+      {
+        "action_type": "lookup_active_process",
+        "target": "friction stir welding",
+        "parameters": {
+          "process_code": "FSW"
+        }
+      },
+      {
+        "action_type": "query_figure",
+        "target": "Figure A5",
+        "parameters": {
+          "group": "Solid-State Welding"
+        }
+      }
+    ],
+    "reason": "DeepSeek-V4.1 trace: Compare forge welding (FOW) in Table A1 with active friction stir welding (FSW) in Table A1, then query solid-state welding classification in Figure A5."
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}

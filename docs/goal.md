@@ -3,10 +3,10 @@
 **Target Standard:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions Including Terms for Adhesive Bonding, Brazing, Soldering, Thermal Cutting, and Thermal Spraying*, 13th Edition, 190 PDF pages)  
 **Source PDF SHA-256:** `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d`  
 **Coordinate Formula:** $\text{printed\_page} = \text{pdf\_index} - 12 = \text{viewer\_page} - 13$ (for main text & annexes starting at Clause 1, printed p. 1 = PDF index 13)  
-**Production Release Merge SHA:** `e31b8e2` (merged on `main`)  
+**Production Release Tag:** `v1.6.1-ner-semantic-graph` (merged on `main`)  
 **Repository:** `https://github.com/kaiello/aws-a30-prototype`  
 **Google Drive Mirror:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)  
-**Full Regression Test Suite:** `1,463 passed, 8 skipped, 0 failures, 0 warnings`  
+**Full Regression Test Suite:** `1,482 passed, 8 skipped, 0 failures, 0 warnings`  
 
 ---
 
@@ -113,9 +113,9 @@ When a user submits a natural language question at runtime, the system executes 
 
 ---
 
-## 3. Cryptographic Immutability Ledger (24 Locked Repository Artifacts)
+## 3. Cryptographic Immutability Ledger (39 Locked Repository Artifacts)
 
-All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. [`tests/test_gate_5_hardening.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_hardening.py), [`tests/test_gate_5_4_deepseek_adapter.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_4_deepseek_adapter.py), [`tests/test_gate_5_5_semantic_nlq.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_5_semantic_nlq.py), and [`tests/test_gate_5_6_epistemic_manifest.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_6_epistemic_manifest.py) enforce exact SHA-256 verification across all 24 locked files:
+All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. [`tests/test_gate_5_hardening.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_hardening.py), [`tests/test_gate_5_4_deepseek_adapter.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_4_deepseek_adapter.py), [`tests/test_gate_5_5_semantic_nlq.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_5_semantic_nlq.py), [`tests/test_gate_5_6_epistemic_manifest.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_6_epistemic_manifest.py), [`tests/test_gate_6_0_ner_routing_skills.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_0_ner_routing_skills.py), [`tests/test_gate_6_1_semantic_graph.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_1_semantic_graph.py), and [`tests/test_gate_6_2_store_driven_composition.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_2_store_driven_composition.py) enforce exact SHA-256 verification across all 39 locked files:
 
 ### Part A: 14 Core Repository & Benchmark Artifacts
 
@@ -156,6 +156,36 @@ All operational, evaluation, and semantic expansion code must treat the canonica
 | 23 | **Coverage Manifest** | `storage/manifests/coverage_manifest.json` | `8fa510a5d4880f88e05fbf3c295992b9c5ae5274c65e46086ad08fee7c2d553e` | `VERIFIED_LOCKED` |
 | 24 | **Latency Benchmark** | `storage/manifests/latency_benchmark.json` | `bc4bb0edfd67bbea0d5204a6430ce6be5af508b07f2874a779a0c2bf230c614c` | `VERIFIED_LOCKED` |
 
+### Part D: 5 Gate 6.0 Artifacts (NER/Routing Benchmark & DeepSeek Replay Cassettes)
+
+| # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 25 | **Gate 6.0 Questions** | `storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json` | `bf2fd3b05532cb76a0584cd1d6db8d3f1fe038ba632d539d8be94a4feb4f23ac` | `VERIFIED_LOCKED` |
+| 26 | **Gate 6.0 Rubric** | `storage/evidence_v2/phase6_ner_routing_001/rubric.json` | `602f37e0194a99ee6b3e52c95c1c76d9e57a3950a50ea7a5efd15c336645b427` | `VERIFIED_LOCKED` |
+| 27 | **Gate 6.0 Results** | `storage/evidence_v2/phase6_ner_routing_001/results.json` | `4023b5c13b8265f9a6085399e0176644df8119366ccc3ea920c098159f6ef8a8` | `VERIFIED_LOCKED` |
+| 28 | **Gate 6.0 Compound + Chart Cassette** | `storage/model_replays/deepseek_v4_1_flash_1017/4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed.json` | `b5c11233c5389651c5ff6730ebb56b51e910042d8aada8f5b9ec7752f2c7d057` | `VERIFIED_LOCKED` |
+| 29 | **Gate 6.0 Spatial Callout Cassette** | `storage/model_replays/deepseek_v4_1_flash_1017/7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0.json` | `178e40f106af85fd17e9a949877cf6b0ea3c469516e102efdc017d043635df42` | `VERIFIED_LOCKED` |
+
+### Part E: 5 Gate 6.1 Artifacts (Semantic Graph Benchmark & DeepSeek Replay Cassettes)
+
+| # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 30 | **Gate 6.1 Questions** | `storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json` | `aa16b7fcc444ca4c54bed8eb758a35bde3d9e8c3f64afbb7b75b0112ed0f45d7` | `VERIFIED_LOCKED` |
+| 31 | **Gate 6.1 Rubric** | `storage/evidence_v2/phase6_1_semantic_graph_001/rubric.json` | `42e4e8c3d3fa9e7c32b61d1deafa3a5d42a36b72ab0ec2c4465268d3977457d5` | `VERIFIED_LOCKED` |
+| 32 | **Gate 6.1 Results** | `storage/evidence_v2/phase6_1_semantic_graph_001/results.json` | `48b4dc84db39dfe0aa68f0e1610bb3fa8e27be546f0294319a11c9af1cafbccf` | `VERIFIED_LOCKED` |
+| 33 | **Gate 6.1 FCAW-G-SA Replay** | `storage/model_replays/deepseek_v4_1_flash_1017/a93c3e92000bc19bc6a8f7672c57767205dc0241047f7e2a6f1d00421a71ed81.json` | `22bcf1de364e9ba87b604da2ee3e817516570d972b858616cd80018c9acbf432` | `VERIFIED_LOCKED` |
+| 34 | **Gate 6.1 PAW-AU Replay** | `storage/model_replays/deepseek_v4_1_flash_1017/b1548f09c2320a74d640678cd729af098402a7685f4d160f66b0781ccd6d80a1.json` | `72f97e7f8aae9bcef96b16d2f55fea24b9c99ae2068fed3dc8cae8a69efc4993` | `VERIFIED_LOCKED` |
+
+### Part F: 5 Gate 6.2 Artifacts (Generalization Holdout Benchmark & DeepSeek Replay Cassettes)
+
+| # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 35 | **Gate 6.2 Holdout Questions** | `storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json` | `5cb54690e1d6d15e60df75e60a173f5d9eba948e38c6f1042b2c9acb3d123d0a` | `VERIFIED_LOCKED` |
+| 36 | **Gate 6.2 Holdout Rubric** | `storage/evidence_v2/phase6_2_generalization_holdout_001/rubric.json` | `bb18c854ee6c590dfa83955939b0c9fd810a4cd633ee6d0f64eaf9f0168fe6c3` | `VERIFIED_LOCKED` |
+| 37 | **Gate 6.2 Holdout Results** | `storage/evidence_v2/phase6_2_generalization_holdout_001/results.json` | `dfe96330a00328fdb79d594353be826c6d3ccaa10063b62b0a83e0f560886f60` | `VERIFIED_LOCKED` |
+| 38 | **Gate 6.2 GMAW-P-SA Replay** | `storage/model_replays/deepseek_v4_1_flash_1017/7e9982c36d0fcfa591123da74ceb0e7c7da002981d4379693a07eb61d3c40d29.json` | `f8cd0108b311f27868d5b9fa59b9478ff4128492be28d361d7b793f6011bc21f` | `VERIFIED_LOCKED` |
+| 39 | **Gate 6.2 FOW vs FSW Replay** | `storage/model_replays/deepseek_v4_1_flash_1017/3d6a2cbb61def68a41a52cdec81712a85cd65f7ed52c2e6505bc280821dacf9a.json` | `cb9ac95d98a5aac82c61f4d2d4b34438b452268f7e0221996fdac9e55edac570` | `VERIFIED_LOCKED` |
+
 ### Version-Bound Store Immutability Policy
 Cryptographic SHA-256 digests lock each released store version (`*_001`). Verified content corrections or spatial refinements produce a successor version (`*_002`) with a documented migration ledger rather than mutating locked releases in place.
 
@@ -174,11 +204,11 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 1. **Zero Question-ID or Benchmark-Literal Hardcoding:**
    - Operational modules (`src/*.py`) and evaluators (`eval/*.py`) must return `0 matches` for any benchmark question ID pattern:
      ```powershell
-     git grep -E "QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+|G53-NLQ[0-9]+|G54-[0-9]+|G55-NLQ[0-9]+" -- src/ eval/*.py
+     git grep -E "QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+|G53-NLQ[0-9]+|G54-[0-9]+|G55-NLQ[0-9]+|G56-[0-9]+|G60-NER[0-9]+|G60-[0-9]+|G61-SEM[0-9]+|G61-[0-9]+|G62-GEN[0-9]+|G62-[0-9]+" -- src/ eval/*.py
      ```
    - Operational modules (`src/*.py`) must return `0 matches` for benchmark-specific trap literals:
      ```powershell
-     git grep -Ei "hyper-flux|laser-quantum|cryo-ionic|ASME Section IX|yield strength|E7018" -- src/
+     git grep -Ei "hyper-flux|laser-quantum|cryo-ionic|ASME Section IX|yield strength|E7018|OFC-A-MA|FCAW-Z-SA|PAW-AU-ME|GTAW-ZZ|GMAW-P-AU|FCAW-G-SA|GMAW-X-SA|GTAW-AU-MA|EBW-AU-SA" -- src/
      ```
 2. **Epistemic Quarantine of Model Traces:**
    - Every `part.reason` emitted by `DeepSeek-V4.1-Flash-1017` is lowered to `PLANNED_REASON` (`""`) in internal wire plans and quarantined in `model_part_metadata` with `authority: "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"`. It never enters final answers or provenance citations.
@@ -209,3 +239,71 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable 3 (DeepSeek-V4.1-Flash-1017 Integration in `src/deepseek_v41_adapter.py`):** Full offline replay integration with `plan_with_semantic_expansion`, epistemic quarantine, and 8 content-addressed replay cassettes in `storage/model_replays/deepseek_v4_1_flash_1017/`.
 - [x] **Deliverable 4 (Frozen 15-Query Gate 5.5 NLQ Benchmark):** `storage/evidence_v2/phase5_5_nlq_001/{nlq_questions.json, rubric.json, results.json}` and `eval/run_phase5_5_nlq.py`, achieving **15 / 15 (100.0%)** across all 5 NLQ slices (`G55-NLQ01` through `G55-NLQ15`).
 - [x] **Deliverable 5 (22/22 Artifact Hash Locks & Full Test Suite):** Lock all 14 core project hashes and all 8 DeepSeek replay hashes in `tests/test_gate_5_4_deepseek_adapter.py` and `tests/test_gate_5_5_semantic_nlq.py`, verifying `0` failures and `0` warnings across all `1,463` repository tests.
+
+---
+
+## 6. Gate 6.0 NER & Multi-Intent Benchmark Slices & Deliverables Summary
+
+### Benchmark Slices ([`storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json))
+
+| Slice | Category / Focus | Query IDs | Target Stores & Coverage | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Slice 1** | Dynamic Compound Process + Mode Designations | `G60-NER01` – `G60-NER04` | Table A1 + Table A4 (`PAW-AU`, `GTAW-ME`, `FCAW-G-SA`, `OFC-A-MA`) | `100.0% PASS (4/4)` |
+| **Slice 2** | ID-Free Annex B Spatial Diagram Callouts | `G60-NER05` – `G60-NER08` | Figures B25, B33, B46, B12 (Throat terms, Crack types, FSW zones, Joint backing) | `100.0% PASS (4/4)` |
+| **Slice 3** | Homographs & Weld Test Position Disambiguation | `G60-NER09` – `G60-NER12` | Table A1 / Figure A6 (`AB`), Figures B16A–C (`6G`, `2F` positions) | `100.0% PASS (4/4)` |
+| **Slice 4** | Multi-Entity Cross-Store Comparative & Multi-Hop | `G60-NER13` – `G60-NER16` | Table A1/A4 + Figure A4, Table A5 vs A1 (`AHW`/`GTAW`), Figure B53 + Clause 4 (`heliarc`), Clause 4 (`braze` POS) | `100.0% PASS (4/4)` |
+| **Slice 5** | Suffix Verification, Out-of-Range & Out-of-Scope Boundaries | `G60-NER17` – `G60-NER20` | Invalid suffix (`GTAW-ZZ`), Figure B55 refusal, coined term refusal, WPS parameter refusal | `100.0% PASS (4/4)` |
+
+### Deliverables Checklist
+
+- [x] **Deliverable 1 (`src/welding_ner.py`):** Deterministic Welding Named Entity Recognizer & dynamic compound code parser resolving 11 domain entity categories, character-offset matching, longest-match precedence, and homograph candidate tracking (`AB`).
+- [x] **Deliverable 2 (`src/semantic_nlq_expander.py` & `src/evidence_phase4_bakeoff.py`):** Inverted Annex B spatial callout graph (1,115 callout terms), Clause 4 figure backlink graph (265 edges), and multi-intent action planner for cross-store multi-hop queries.
+- [x] **Deliverable 3 (`src/evidence_whole_standard_cli.py` & `.agents/skills/`):** Whole-standard CLI entry point (`--ner`, `--route`, `--ask`) and updated skill playbooks replacing legacy Figure A1 limitations.
+- [x] **Deliverable 4 (`storage/evidence_v2/phase6_ner_routing_001/` & `eval/run_phase6_ner_routing.py`):** Frozen 20-question Gate 6.0 benchmark scoring **20 / 20 (100.0%)** across compound designations, ID-free callouts, homographs, multi-hop queries, and adversarial boundaries.
+- [x] **Deliverable 5 (29/29 Cryptographic Hash Locks & Regression Suite in `tests/test_gate_6_0_ner_routing_skills.py`):** 24 prior locked hashes + 5 Gate 6.0 artifacts cryptographically locked under CI; full regression suite passing at 1,475 passed, 8 skipped, 0 failures, 0 warnings.
+
+---
+
+## 7. Gate 6.1 Polysemous NER, 3-Tier Compound Grammar & Store-Compiled Semantic Graph Expansion
+
+### Benchmark Slices ([`storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json))
+
+| Slice | Category / Focus | Query IDs | Target Stores & Coverage | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Slice 1** | Polysemous Callout & Definitional Intent Spans | `G61-SEM01` – `G61-SEM03` | Clause 4 + Annex B (`theoretical throat`, `crater crack`, `advancing side`) | `100.0% PASS (3/3)` |
+| **Slice 2** | 3-Tier Compound Designation Decompositions | `G61-SEM04` – `G61-SEM06` | Table A1 + Table A4 (`FCAW-G-SA`, `GMAW-P-AU`, `OFC-A-MA` vs `FCAW-Z-SA` / `PAW-AU-ME`) | `100.0% PASS (3/3)` |
+| **Slice 3** | Contextual Sense & Qualifier Resolution | `G61-SEM07` – `G61-SEM09` | Figures B17 vs B19 (`1G, plate` vs `1G, pipe`), Table A1 vs Figure A6 (`AB` + `2F`) | `100.0% PASS (3/3)` |
+| **Slice 4** | See also & Taxonomy Sibling Expansion | `G61-SEM10` – `G61-SEM12` | Clause 4 cross-references (`throat of a fillet weld`, `FCAW` variations, `travel angle` family) | `100.0% PASS (3/3)` |
+| **Slice 5** | CLI `--expand` & Offline Replay Verification | `G61-SEM13` – `G61-SEM15` | Whole-standard CLI JSON expand contract & DeepSeek-V4.1 offline replay cassettes | `100.0% PASS (3/3)` |
+
+### Deliverables Checklist
+
+- [x] **Deliverable 1 (`src/welding_ner.py`):** Extended `WeldingEntitySpan` with `secondary_entity_types`, `linked_clause4_terms`, `linked_figures`, `linked_tables`, and `ambiguous_senses`; dual-role routing for definitional intent queries.
+- [x] **Deliverable 2 (`src/welding_ner.py`):** 3-tier compound designation parser `<BASE>[-<VAR>][-<MODE>]` with process variations (`FCAW-G-SA`, `OFC-A-MA`), invalid code detection (`FCAW-Z-SA`, `PAW-AU-ME`), and contextual sense resolution for weld positions (`1G`, `1F`) and homographs (`AB`).
+- [x] **Deliverable 3 (`src/semantic_nlq_expander.py`):** Deterministic in-memory `SemanticConceptGraph` tracking `see_also_edges`, `is_a_subtypes`, `sibling_variations`, and diagram co-callouts; bidirectional expansion for throat and angle clusters.
+- [x] **Deliverable 4 (`src/evidence_whole_standard_cli.py` & `src/evidence_phase4_bakeoff.py`):** CLI `--expand` flag returning structured neighborhood, NER receipt, and ranked figures; multi-hop execution branch for compound validation, test positions, disambiguation, and see-also cross references.
+- [x] **Deliverable 5 (34/34 Cryptographic Hash Locks & Regression Suite in `tests/test_gate_6_1_semantic_graph.py`):** 29 prior locked hashes + 3 Gate 6.1 benchmark files + 2 new DeepSeek-V4.1 replay cassettes locked under CI; full regression suite passing at 1,482 passed, 8 skipped, 0 failures, 0 warnings.
+
+---
+
+## 8. Gate 6.2 Store-Driven Multi-Operation Composition, Zero-Canned-Prose AST Hardening & 20-Query Holdout
+
+### Benchmark Slices ([`storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json))
+
+| Slice | Category / Focus | Query IDs | Target Stores & Coverage | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Slice 1** | Generalized Dynamic Taxonomy Subtypes | `G62-GEN01` – `G62-GEN04` | `is_a_promotion_store.json` + `Table A1` (OFC, SAW, RSEW, GMAW variations) | `100.0% PASS (4/4)` |
+| **Slice 2** | Dynamic See-Also Expansion across Unseen Hubs | `G62-GEN05` – `G62-GEN08` | `glossary_store.json` (backfire, welding cycle, defect, joint type cross-references) | `100.0% PASS (4/4)` |
+| **Slice 3** | Comprehensive Weld Test Position Disambiguation | `G62-GEN09` – `G62-GEN12` | Clause 4 (p. 5/6) + Figures B16A–C, B17–B20 (3G, 4G, 5G, 3F, 4F plate vs pipe) | `100.0% PASS (4/4)` |
+| **Slice 4** | Generalized Cross-Store & Multi-Validation Operations | `G62-GEN13` – `G62-GEN16` | Table A5 / A1 / A2 (`FOW` vs `FSW`, `OFC-P-ME` vs invalid `GMAW-X-SA`, `GTAW-AU-MA`) | `100.0% PASS (4/4)` |
+| **Slice 5** | Offline DeepSeek Multi-Hop Replay over Composers | `G62-GEN17` – `G62-GEN20` | `DeepSeek-V4.1-Flash-1017` replay cassettes over 3-tier compound, diagram cycles & FSW | `100.0% PASS (4/4)` |
+
+### Deliverables Checklist
+
+- [x] **Deliverable G62-1 (Store-Driven Multi-Operation Action Composers in `src/evidence_phase4_bakeoff.py`):** 7 atomic, zero-canned-prose composers (`_exec_lookup_taxonomy_subtypes`, `_exec_expand_cross_references`, `_exec_weld_position_sense`, `_exec_disambiguate_homograph`, `_exec_compound_lookup_and_validation`, `_exec_compare_historical_and_active`, `_exec_polysemous_diagram_and_glossary`) reading dynamically from canonical stores.
+- [x] **Deliverable G62-2 (Zero-Canned-Prose AST Guard & 12-Target Store Mutation Degradation Suite in `tests/test_gate_6_2_store_driven_composition.py`):** AST guard enforcing zero string literal fallbacks in `.get(key, '...')` across all 10 composers; 12-target store mutation degradation suite proving catastrophic failure (`INSUFFICIENT_EVIDENCE`) when store keys/data are emptied.
+- [x] **Deliverable G62-3 (Offline DeepSeek 14-Replay Suite with Epistemic Quarantine):** 14 content-addressed `DeepSeek-V4.1-Flash-1017` replay cassettes executing in `< 1 ms` under socket isolation (`socket.socket` blocked, 0 network calls).
+- [x] **Deliverable G62-4 (20-Query Unseen Generalization Holdout Benchmark):** `storage/evidence_v2/phase6_2_generalization_holdout_001/{questions.json, rubric.json, results.json}` and `eval/run_phase6_2_generalization_holdout.py`, achieving **20 / 20 (100.0%)** across all 5 slices (`G62-GEN01` through `G62-GEN20`).
+- [x] **Deliverable G62-5 (39/39 Cryptographic Hash Locks & Anti-Drift Zero-Tolerance):** 34 prior locked hashes + 5 Gate 6.2 artifacts cryptographically locked under CI; 0 benchmark question IDs and 0 trap literals in `src/`; full regression suite passing at 100%.
+
+
