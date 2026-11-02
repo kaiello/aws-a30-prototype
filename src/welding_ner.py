@@ -736,9 +736,9 @@ class WeldingNER:
 
     def parse_compound_designation(self, token: str) -> Optional[Dict[str, Any]]:
         """Parse <BASE_PROCESS>[-<VARIANT>]-<MODE_SUFFIX> per Table A4.
-        e.g. PAW-AU, GTAW-ME, FCAW-G-SA, OFC-A-MA, GMAW-P-AU.
-        Also detects invalid variants (e.g. FCAW-Z-SA), invalid suffixes (e.g. GTAW-ZZ),
-        and conflicting double mode suffixes (e.g. PAW-AU-ME).
+        Supports 2-tier and 3-tier compound designations.
+        Also detects invalid variants, invalid suffixes,
+        and conflicting double mode suffixes.
         """
         tok_upper = token.upper().strip()
         parts = tok_upper.split("-")
@@ -755,8 +755,8 @@ class WeldingNER:
             return None
 
         # -------------------------------------------------------------------
-        # 2-Tier Compound: <BASE>-<MODE_SUFFIX> (e.g. PAW-AU, GTAW-ZZ)
-        # Suffix must be exactly 2 letters; 1-letter hyphens are process variations (e.g. FCAW-G)
+        # 2-Tier Compound: <BASE>-<MODE_SUFFIX>
+        # Suffix must be exactly 2 letters; 1-letter hyphens are process variations
         # -------------------------------------------------------------------
         if len(parts) == 2:
             if len(parts[1]) != 2:
@@ -819,12 +819,12 @@ class WeldingNER:
                 }
 
         # -------------------------------------------------------------------
-        # 3-Tier Compound: <BASE>-<MID>-<SUFFIX> (e.g. FCAW-G-SA, PAW-AU-ME)
+        # 3-Tier Compound: <BASE>-<MID>-<SUFFIX>
         # -------------------------------------------------------------------
         part1_suf = f"-{parts[1]}"
         part2_suf = f"-{parts[2]}"
 
-        # Subcase 1: Conflicting double mode suffixes (e.g. PAW-AU-ME, PAW-AU-MA)
+        # Subcase 1: Conflicting double mode suffixes
         if part1_suf in self.VALID_MODE_SUFFIXES and part2_suf in self.VALID_MODE_SUFFIXES:
             return {
                 "is_valid": False,
@@ -898,7 +898,7 @@ class WeldingNER:
                 "abstention_reason": None,
             }
         elif not var_info:
-            # Base is valid, but intermediate variation is invalid! (e.g. FCAW-Z-SA)
+            # Base is valid, but intermediate variation is invalid
             return {
                 "is_valid": False,
                 "canonical_term": base_info["canonical_term"],
@@ -1024,7 +1024,7 @@ class WeldingNER:
                     )
                 )
 
-        # 3. Dynamic Compound Designations (e.g. PAW-AU, GTAW-ME, GTAW-ZZ, FCAW-G-SA, OFC-A-MA, PAW-AU-ME)
+        # 3. Dynamic Compound Designations (<BASE>-<MODE_SUFFIX> or <BASE>-<MID>-<SUFFIX>)
         for m in re.finditer(r"\b[A-Za-z]{2,6}(?:-[A-Za-z0-9]{1,4}){1,2}\b", query):
             tok = m.group(0)
             parsed = self.parse_compound_designation(tok)
@@ -1300,28 +1300,28 @@ class WeldingNER:
         last_end = -1
 
         pipe_positions = {
-            "1g": ("1G, pipe", "Figure B19(A)", "Clause 4 (p. 1) / Figure B19(A)"),
-            "2g": ("2G, pipe", "Figure B19(B)", "Clause 4 (p. 1) / Figure B19(B)"),
-            "3g": ("3G, pipe", "Figure B19(A)", "Clause 4 (p. 1) / Figure B19(A)"),
-            "4g": ("4G, pipe", "Figure B19(A)", "Clause 4 (p. 1) / Figure B19(A)"),
-            "5g": ("5G, pipe", "Figure B19(C)", "Clause 4 (p. 1) / Figure B19(C)"),
-            "6g": ("6G, pipe", "Figure B19(D)", "Clause 4 (p. 1) / Figure B19(D)"),
-            "6gr": ("6GR, pipe", "Figure B19(E)", "Clause 4 (p. 1) / Figure B19(E)"),
-            "1f": ("1F, pipe", "Figure B20(A)", "Clause 4 (p. 1) / Figure B20(A)"),
-            "2f": ("2F, pipe", "Figure B20(B)", "Clause 4 (p. 1) / Figure B20(B)"),
-            "2fr": ("2FR, pipe", "Figure B20(C)", "Clause 4 (p. 1) / Figure B20(C)"),
-            "3f": ("3F, pipe", "Figure B20(C)", "Clause 4 (p. 1) / Figure B20(C)"),
-            "4f": ("4F, pipe", "Figure B20(D)", "Clause 4 (p. 1) / Figure B20(D)"),
+            "1g": ("1G, pipe", "Figure B19(A)", "Clause 4 (p. 5) / Figure B19(A)"),
+            "2g": ("2G, pipe", "Figure B19(B)", "Clause 4 (p. 5) / Figure B19(B)"),
+            "3g": ("3G, pipe", "Figure B19(A)", "Clause 4 (p. 5) / Figure B19(A)"),
+            "4g": ("4G, pipe", "Figure B19(A)", "Clause 4 (p. 6) / Figure B19(A)"),
+            "5g": ("5G, pipe", "Figure B19(C)", "Clause 4 (p. 6) / Figure B19(C)"),
+            "6g": ("6G, pipe", "Figure B19(D)", "Clause 4 (p. 6) / Figure B19(D)"),
+            "6gr": ("6GR, pipe", "Figure B19(E)", "Clause 4 (p. 6) / Figure B19(E)"),
+            "1f": ("1F, pipe", "Figure B20(A)", "Clause 4 (p. 5) / Figure B20(A)"),
+            "2f": ("2F, pipe", "Figure B20(B)", "Clause 4 (p. 5) / Figure B20(B)"),
+            "2fr": ("2FR, pipe", "Figure B20(C)", "Clause 4 (p. 5) / Figure B20(C)"),
+            "3f": ("3F, pipe", "Figure B20(C)", "Clause 4 (p. 5) / Figure B20(C)"),
+            "4f": ("4F, pipe", "Figure B20(D)", "Clause 4 (p. 5) / Figure B20(D)"),
         }
         plate_positions = {
-            "1g": ("1G, plate", "Figure B17(A)", "Clause 4 (p. 1) / Figure B17(A)"),
-            "2g": ("2G, plate", "Figure B17(B)", "Clause 4 (p. 1) / Figure B17(B)"),
-            "3g": ("3G, plate", "Figure B17(C)", "Clause 4 (p. 1) / Figure B17(C)"),
-            "4g": ("4G, plate", "Figure B17(D)", "Clause 4 (p. 1) / Figure B17(D)"),
-            "1f": ("1F, plate", "Figure B18(A)", "Clause 4 (p. 1) / Figure B18(A)"),
-            "2f": ("2F, plate", "Figure B18(B)", "Clause 4 (p. 1) / Figure B18(B)"),
-            "3f": ("3F, plate", "Figure B18(C)", "Clause 4 (p. 1) / Figure B18(C)"),
-            "4f": ("4F, plate", "Figure B18(D)", "Clause 4 (p. 1) / Figure B18(D)"),
+            "1g": ("1G, plate", "Figure B17(A)", "Clause 4 (p. 5) / Figure B17(A)"),
+            "2g": ("2G, plate", "Figure B17(B)", "Clause 4 (p. 5) / Figure B17(B)"),
+            "3g": ("3G, plate", "Figure B17(C)", "Clause 4 (p. 5) / Figure B17(C)"),
+            "4g": ("4G, plate", "Figure B17(D)", "Clause 4 (p. 6) / Figure B17(D)"),
+            "1f": ("1F, plate", "Figure B18(A)", "Clause 4 (p. 5) / Figure B18(A)"),
+            "2f": ("2F, plate", "Figure B18(B)", "Clause 4 (p. 5) / Figure B18(B)"),
+            "3f": ("3F, plate", "Figure B18(C)", "Clause 4 (p. 5) / Figure B18(C)"),
+            "4f": ("4F, plate", "Figure B18(D)", "Clause 4 (p. 5) / Figure B18(D)"),
         }
 
         for s, e, d in unique_cands:

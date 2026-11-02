@@ -66,9 +66,9 @@ def test_gate_5_canonical_store_hashes():
 def test_gate_5_anti_drift_source_scan():
     """Verify that no benchmark question IDs are hardcoded in src/ or eval/*.py using full wildcard pattern,
     and assert zero forbidden benchmark literals across src/."""
-    regex_pattern = r"QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+|G53-NLQ[0-9]+|G54-[0-9]+|G55-NLQ[0-9]+"
+    regex_pattern = r"QA[0-9]+|HO[0-9]+|CQ-[0-9]+|DEV[0-9]+|C4-QA[0-9]+|B[0-9]+-QA|P3-S[1-4]-|G4-B[0-9]+|G4B-[0-9]+|G5-ADV[0-9]+|G53-NLQ[0-9]+|G54-[0-9]+|G55-NLQ[0-9]+|G56-[0-9]+|G60-NER[0-9]+|G60-[0-9]+|G61-SEM[0-9]+|G61-[0-9]+|G62-GEN[0-9]+|G62-[0-9]+"
     forbidden_literals_re = re.compile(
-        r"hyper-flux|laser-quantum|cryo-ionic|ASME\s+Section\s+IX|yield\s+strength|E7018",
+        r"hyper-flux|laser-quantum|cryo-ionic|ASME\s+Section\s+IX|yield\s+strength|E7018|OFC-A-MA|FCAW-Z-SA|PAW-AU-ME|GTAW-ZZ|GMAW-P-AU|FCAW-G-SA|GMAW-X-SA|GTAW-AU-MA|EBW-AU-SA",
         re.IGNORECASE,
     )
 
@@ -103,6 +103,13 @@ def test_gate_5_composer_ast_no_silent_string_fallbacks():
         "_compose_annex_a_chart_answer",
         "_compose_normative_tables_answer",
         "_compose_waveform_phase4_answer",
+        "_exec_lookup_taxonomy_subtypes",
+        "_exec_expand_cross_references",
+        "_exec_weld_position_sense",
+        "_exec_disambiguate_homograph",
+        "_exec_compound_lookup_and_validation",
+        "_exec_compare_historical_and_active",
+        "_exec_polysemous_diagram_and_glossary",
     ]
 
     violations = []

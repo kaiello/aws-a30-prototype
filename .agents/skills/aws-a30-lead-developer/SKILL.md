@@ -47,17 +47,18 @@ Follow this workflow as the lead developing agent for `aws-a30-prototype` to mai
 
 1. Check repository and baseline integrity:
    - Inspect `git status` and current branch.
-   - Verify source PDF hash (`205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d`) and canonical locked hashes in `tests/test_gate_6_0_ner_routing_skills.py` (29 locked artifacts).
+   - Verify source PDF hash (`205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d`) and canonical locked hashes in `tests/test_gate_6_2_store_driven_composition.py` (39 locked artifacts).
 
 2. Localize the target defect or feature to its exact architectural layer:
    - Inspect entity spans with `python -B -m src.evidence_whole_standard_cli --ner "<query>" --json`.
    - Inspect routing decisions with `python -B -m src.evidence_whole_standard_cli --route "<query>" --json`.
-   - Restrict edits to the appropriate layer (NER, router, planner, compiler, or composer).
+   - Inspect 1-hop semantic graph neighborhood with `python -B -m src.evidence_whole_standard_cli --expand "<query>" --json`.
+   - Restrict edits to the appropriate layer (NER, router, planner, compiler, or store-driven composer).
 
 3. Validate offline before any model call:
    - Run focused unit tests (`pytest`).
    - Run `python -B -m src.evidence_whole_standard_preflight` with network blocked.
-   - Verify replay cassettes under `storage/model_replays/deepseek_v4_1_flash_1017/` replay cleanly with 0 network calls.
+   - Verify all 14 replay cassettes under `storage/model_replays/deepseek_v4_1_flash_1017/` replay cleanly with 0 network calls.
 
 4. Report separated metrics in every receipt and handoff:
    - Report structural schema validity, compiler acceptance, executed graph operations, content grade, delivery grade (per requested part), and provenance audit separately.
@@ -66,5 +67,5 @@ Follow this workflow as the lead developing agent for `aws-a30-prototype` to mai
 
 - Passing unit tests verifies code invariants, not domain answer precision or coverage.
 - In `src/welding_ner.py`, never add `table_a1:proc:...` terms to `inferred_tables` as locators unless explicitly referencing Table A1.
-- In `src/evidence_phase4_bakeoff.py`, Gate 6.0 multi-intent handlers must precede generic division fallbacks in `execute_whole_standard_plan`.
-- In AST anti-drift scans, question IDs matching `QA[0-9]+|...|G60-NER[0-9]+` must return 0 matches across `src/` and `eval/*.py`.
+- In `src/evidence_phase4_bakeoff.py`, all 7 atomic composers must read dynamically from canonical stores with zero string fallbacks in `.get()`.
+- In AST anti-drift scans, question IDs matching `QA[0-9]+|...|G62-GEN[0-9]+` must return 0 matches across `src/` and `eval/*.py`.

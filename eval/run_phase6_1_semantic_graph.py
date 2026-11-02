@@ -31,6 +31,7 @@ from src.evidence_phase4_bakeoff import (
 def evaluate_semantic_graph_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
+    write_results: bool = True,
 ) -> Dict[str, Any]:
     """Execute Gate 6.1 15-query NER, 3-tier grammar and semantic graph benchmark."""
     if root is None:
@@ -122,13 +123,15 @@ def evaluate_semantic_graph_benchmark(
         "results": results,
     }
 
-    res_file = output_dir / "results.json"
-    res_bytes = json.dumps(output_payload, indent=2).encode("utf-8")
-    res_file.write_bytes(res_bytes)
-    res_sha = hashlib.sha256(res_bytes).hexdigest()
-
-    print(f"Gate 6.1 Semantic Graph Benchmark: {passed_count}/{total_q} passed ({pass_rate:.1f}%)")
-    print(f"Results written to: {res_file.relative_to(root)} (SHA-256: {res_sha})")
+    if write_results:
+        res_file = output_dir / "results.json"
+        res_bytes = json.dumps(output_payload, indent=2).encode("utf-8")
+        res_file.write_bytes(res_bytes)
+        res_sha = hashlib.sha256(res_bytes).hexdigest()
+        print(f"Gate 6.1 Semantic Graph Benchmark: {passed_count}/{total_q} passed ({pass_rate:.1f}%)")
+        print(f"Results written to: {res_file.relative_to(root)} (SHA-256: {res_sha})")
+    else:
+        print(f"Gate 6.1 Semantic Graph Benchmark: {passed_count}/{total_q} passed ({pass_rate:.1f}%) [in-memory]")
 
     return output_payload
 
@@ -137,7 +140,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Gate 6.1 Semantic Graph Benchmark")
     parser.add_argument("--root", type=Path, default=ROOT, help="Project root directory")
     parser.add_argument("--output-dir", type=Path, default=None, help="Output directory for benchmark")
+    parser.add_argument("--no-write", action="store_true", help="Do not write results to disk (dry run)")
     args = parser.parse_args()
 
-    payload = evaluate_semantic_graph_benchmark(root=args.root, output_dir=args.output_dir)
+    payload = evaluate_semantic_graph_benchmark(root=args.root, output_dir=args.output_dir, write_results=not args.no_write)
     sys.exit(0 if payload["gate_status"] == "PASS" else 1)

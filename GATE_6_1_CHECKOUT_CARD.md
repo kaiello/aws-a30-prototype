@@ -109,23 +109,25 @@ This checkout card formalizes the forensic audit, implementation, and final prod
 
 ## 3. Benchmark Verification Results
 
+*Audit Reconciliation Note (Gate 6.2): Table updated to match canonical locked `ner_routing_questions.json` (SHA-256: `aa16b7fc...`) verbatim across all 15 queries.*
+
 | Query ID | Category / Intent | Query Text | Status | Evidence Locator / Modality Provenance |
 | :--- | :--- | :--- | :---: | :--- |
-| `G61-SEM01` | Polysemous Span | What does PAW-AU stand for and how are theoretical throat and effective throat defined? | `PASS` | `clause4_glossary` + `Figure B25` (p. 123) |
-| `G61-SEM02` | Polysemous Span | Which diagram illustrates crater crack and how is crater crack defined in Clause 4? | `PASS` | `Figure B33` (p. 139) + `Clause 4` (p. 23) |
-| `G61-SEM03` | Polysemous Span | Which diagram illustrates advancing side and retreating side in friction stir welding? | `PASS` | `Figure B46` (p. 151) + `Clause 4` |
-| `G61-SEM04` | 3-Tier Grammar | What does the designation FCAW-G-SA designate in AWS A3.0? | `PASS` | `Table A1` (p. 69) + `Table A4` (p. 74) |
-| `G61-SEM05` | 3-Tier Grammar | Which diagram illustrates root face, groove face, and groove angle, and how are they defined in Clause 4? | `PASS` | `Figure B6` (p. 87) + `Clause 4` |
-| `G61-SEM06` | 3-Tier Grammar | Why is OFC-A-MA a valid compound designation while FCAW-Z-SA and PAW-AU-ME are rejected? | `PASS` | `Table A1` + `Table A4` (Validation Refutation) |
-| `G61-SEM07` | Sense Disambiguation | Which diagram illustrates the 1G test position for pipe groove welding, and how is it defined? | `PASS` | `Figure B19` (p. 111) + `Clause 4` (p. 1) |
-| `G61-SEM08` | Sense Disambiguation | Which diagram illustrates the 1G test position for plate groove welding, and how is it defined? | `PASS` | `Figure B17` (p. 109) + `Clause 4` (p. 1) |
-| `G61-SEM09` | Sense Disambiguation | How are the homograph AB and the position 2F disambiguated in AWS A3.0? | `PASS` | `Table A1` / `Figure A6` (`AB`) + `Figure B18` (`2F`) |
-| `G61-SEM10` | Semantic Graph | What terms are linked via 'See also' from throat of a fillet weld in AWS A3.0? | `PASS` | `Clause 4` (p. 58) `see_also` neighborhood |
-| `G61-SEM11` | Semantic Graph | What are the standard process variations under flux cored arc welding (FCAW) in AWS A3.0? | `PASS` | `Table A1` / `IS_A Store` (`FCAW-G`, `FCAW-S`) |
-| `G61-SEM12` | Semantic Graph | What interrelated welding angles form the angle family around travel angle in Clause 4? | `PASS` | `Clause 4` (p. 59) (`work angle`, `drag`, `push`) |
-| `G61-SEM13` | CLI `--expand` | CLI `--expand` structured JSON contract verification | `PASS` | `concept_graph_neighborhood`, `ner_receipt` |
-| `G61-SEM14` | Offline Replay | What does FCAW-G-SA stand for and how is fusion welding classified in Figure A4? | `PASS` | Replay `a93c3e92...` (`Figure A4`, p. 78 crop) |
-| `G61-SEM15` | Offline Replay | What does PAW-AU stand for and how are theoretical throat and effective throat defined and illustrated in Figure B25? | `PASS` | Replay `b1548f09...` (`Figure B25`, p. 123 crop) |
+| `G61-SEM01` | Polysemous Span | Which diagram illustrates theoretical throat, effective throat, and actual throat, and how are they defined in Clause 4? | `PASS` | `Figure B25` (p. 123) + `Clause 4` (p. 58) |
+| `G61-SEM02` | Polysemous Span | Which diagram illustrates root face and groove angle, and how is root face defined in Clause 4? | `PASS` | `Figure B6` (p. 87) + `Clause 4` (p. 50) |
+| `G61-SEM03` | Polysemous Span | Which figure illustrates crack types including toe crack and underbead crack, and how is toe crack defined in Clause 4? | `PASS` | `Figure B33` (p. 137) + `Clause 4` |
+| `G61-SEM04` | 3-Tier Grammar | What does the compound designation FCAW-G-SA stand for according to Table A1 and Table A4? | `PASS` | `Table A1` (p. 69) + `Table A4` (p. 74) |
+| `G61-SEM05` | 3-Tier Grammar | What does the compound code GMAW-P-AU designate in AWS A3.0? | `PASS` | `Table A1` (p. 69) + `Table A4` (p. 74) |
+| `G61-SEM06` | 3-Tier Grammar | Explain why OFC-A-MA is a valid designation while FCAW-Z-SA and PAW-AU-ME are rejected in AWS A3.0. | `PASS` | `Table A1` + `Table A4` (Validation Refutation) |
+| `G61-SEM07` | Sense Disambiguation | Which diagram illustrates the 1G test position for pipe groove welding, and how is it defined? | `PASS` | `Figure B19(A)` (p. 111) + `Clause 4` (p. 5) |
+| `G61-SEM08` | Sense Disambiguation | Which diagram illustrates the 1G test position for plate groove welding, and how is it defined? | `PASS` | `Figure B17(A)` (p. 109) + `Clause 4` (p. 5) |
+| `G61-SEM09` | Sense Disambiguation | How are the homograph AB and the position 2F disambiguated in AWS A3.0? | `PASS` | `Table A1` / `Figure A6` (`AB`) + `Figure B18(B)` / `Figure B20` (`2F`) |
+| `G61-SEM10` | Semantic Graph | What are all the throat terms cross-referenced from throat of a fillet weld in Clause 4? | `PASS` | `Clause 4` (p. 58) `see_also` neighborhood + `Figure B25` |
+| `G61-SEM11` | Semantic Graph | What are the standard process variations under flux cored arc welding (FCAW) in AWS A3.0? | `PASS` | `Table A1` / `IS_A Store` (`FCAW-G`, `FCAW-S`) + `Clause 4` (p. 27) |
+| `G61-SEM12` | Semantic Graph | What related welding angle concepts are connected to travel angle in Clause 4? | `PASS` | `Clause 4` (p. 60) (`work angle`, `drag`, `push`) |
+| `G61-SEM13` | Offline Replay | What does FCAW-G-SA stand for and how is fusion welding classified in Figure A4? | `PASS` | Replay `a93c3e92...` (`Figure A4`, p. 78 crop) |
+| `G61-SEM14` | Offline Replay | What does PAW-AU stand for and how are theoretical throat and effective throat defined and illustrated in Figure B25? | `PASS` | Replay `b1548f09...` (`Figure B25`, p. 123 crop) |
+| `G61-SEM15` | Offline Replay | Compare the active process variation FCAW-G with the obsolete process atomic hydrogen welding (AHW) in AWS A3.0. | `PASS` | `Table A1` (p. 69) + `Table A5` (p. 74) + `Clause 4` |
 
 ---
 

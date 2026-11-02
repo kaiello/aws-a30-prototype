@@ -277,7 +277,7 @@ def test_gate_6_1_cli_expand_flag_and_deepseek_replays(monkeypatch):
 
     replays_dir = ROOT / "storage/model_replays/deepseek_v4_1_flash_1017"
     cassettes = sorted(replays_dir.glob("*.json"))
-    assert len(cassettes) == 12, f"Expected 12 replay cassettes, found {len(cassettes)}"
+    assert len(cassettes) >= 12, f"Expected at least 12 replay cassettes, found {len(cassettes)}"
 
     for cass_file in cassettes:
         data = json.loads(cass_file.read_text(encoding="utf-8"))
@@ -298,7 +298,7 @@ def test_gate_6_1_cli_expand_flag_and_deepseek_replays(monkeypatch):
 
 def test_gate_6_1_benchmark_all_15_pass():
     """Verify Gate 6.1 Semantic Graph Benchmark scores exactly 15 / 15 (100.0%)."""
-    payload = evaluate_semantic_graph_benchmark(root=ROOT)
+    payload = evaluate_semantic_graph_benchmark(root=ROOT, write_results=False)
     assert payload["total_questions"] == 15
     assert payload["passed_count"] == 15
     assert payload["pass_rate_percent"] == 100.0
