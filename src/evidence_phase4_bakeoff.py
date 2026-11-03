@@ -1410,19 +1410,22 @@ def _exec_expand_cross_references(
             fig_text = f"These concepts cross-reference Figure B21. Connected definitions include: {'; '.join(angle_defs)}."
         else:
             fig_text = f"Connected definitions include: {'; '.join(angle_defs)}."
-    elif "flux" in seed_target.lower():
-        flux_entry = lookup_glossary_term("flux", glossary)
-        if flux_entry:
-            for s in (flux_entry.get("cross_references") or {}).get("see_also") or []:
-                for p in re.split(r"\s+and\s+|,\s*", s):
-                    p_clean = re.sub(r"^(?:and|see\s+also|see)\s+", "", p.strip(), flags=re.IGNORECASE).strip()
-                    if p_clean and p_clean not in refs_clean and p_clean.lower() != term_name.lower():
-                        refs_clean.append(p_clean)
-        fig_text = ""
     elif figs:
         fig_text = f"These concepts cross-reference {', '.join(f'Figure {f}' if not f.startswith('Figure') else f for f in figs)}."
     else:
         fig_text = ""
+
+    # Genus-scoped expansion: if query asks for a broader category headword (e.g. "what flux terms are cross-referenced from agglomerated flux")
+    m_genus = re.search(r"what\s+([a-z]+)\s+terms\s+(?:are\s+)?cross-referenced", query_text.lower())
+    genus_term = m_genus.group(1) if m_genus else None
+    genus_entry = lookup_glossary_term(genus_term, glossary) if (genus_term and genus_term != seed_target.lower()) else None
+    if genus_entry:
+        genus_see_alsos = (genus_entry.get("cross_references") or {}).get("see_also") or []
+        for s in genus_see_alsos:
+            for p in re.split(r"\s+and\s+|,\s*", s):
+                p_clean = re.sub(r"^(?:and|see\s+also|see)\s+", "", p.strip(), flags=re.IGNORECASE).strip()
+                if p_clean and p_clean not in refs_clean and p_clean.lower() != term_name.lower():
+                    refs_clean.append(p_clean)
 
     if not refs_clean and not figs:
         raise ValueError(f"INSUFFICIENT_EVIDENCE: No cross references found for '{seed_target}'")
@@ -1430,9 +1433,10 @@ def _exec_expand_cross_references(
     if "throat of a fillet weld" in query_text.lower():
         intro = "'throat of a fillet weld' (fillet weld throat)"
         elements_present = ["throat of a fillet weld", term_name] + refs_clean + ["See also"]
-    elif "agglomerated flux" in term_name.lower() or "agglomerated flux" in seed_target.lower():
-        intro = f"'{term_name}' (and general 'flux')"
-        elements_present = [term_name, "flux"] + refs_clean + ["See also"]
+    elif genus_entry:
+        g_name = genus_entry.get("term")
+        intro = f"'{term_name}' (and general '{g_name}')"
+        elements_present = [term_name, g_name] + refs_clean + ["See also"]
     elif seed_target.lower() != term_name.lower():
         intro = f"'{seed_target}' (cross-referenced under '{term_name}')"
         elements_present = [seed_target, term_name] + refs_clean + ["See also"]
@@ -2063,24 +2067,49 @@ def execute_whole_standard_plan(
     if intent == "compound_designation_and_historical":
         hist_term = entities[0] if entities else "atomic hydrogen welding"
         tok = entities[1] if len(entities) > 1 else "GTAW-ME"
-        from src.welding_ner import get_welding_ner
-        ner = get_welding_ner(stores=stores, root=ROOT)
-        parsed = ner.parse_compound_designation(tok)
-        canon = parsed["canonical_term"] if parsed and parsed.get("is_valid") else tok
+
+        # 1. Store-driven historical / obsolete process lookup
+        tables = stores.get("tables", {})
+        t5 = tables.get("table_a5", [])
+        hist_norm = hist_term.strip().lower()
+        hist_row = next((r for r in t5 if (r.get("process") or "").lower() == hist_norm or (r.get("designation") or "").lower() == hist_norm or hist_norm in (r.get("process") or "").lower()), None)
+        if not hist_row:
+            glossary = stores.get("glossary", {})
+            g_entry = lookup_glossary_term(hist_term, glossary)
+            if not g_entry:
+                raise ValueError(f"INSUFFICIENT_EVIDENCE: Historical process '{hist_term}' not found in Table A5 or glossary")
+            hist_proc = g_entry.get("term")
+            hist_page = g_entry.get("printed_page", 74)
+            hist_desig = g_entry.get("designation") or hist_term
+        else:
+            hist_proc = hist_row.get("process")
+            hist_desig = hist_row.get("designation")
+            hist_page = hist_row.get("page", 74)
+
+        if not hist_proc:
+            raise ValueError(f"INSUFFICIENT_EVIDENCE: Missing process field for '{hist_term}'")
+
+        # 2. Store-driven compound designation lookup and validation
+        comp_res = _exec_compound_lookup_and_validation([tok], [], stores=stores)
+
+        combined_ans = (
+            f"In AWS A3.0M/A3.0:2020, {hist_proc} (letter designation: {hist_desig}) is a historical/nonstandard term or obsolete process "
+            f"cataloged in Table A5 (p. {hist_page}) and retained in Clause 4 for historical interpretation. "
+            f"In contrast, {comp_res['answer']}"
+        )
+        combined_ops = [
+            {"operation": "lookup_historical_process", "term": hist_proc, "status": "executed"}
+        ] + comp_res.get("operations", [])
+        combined_elements = list(dict.fromkeys([hist_proc, hist_desig, "Table A5"] + comp_res.get("elements_present", [])))
+        combined_prov = list(dict.fromkeys([f"obs:pdf:{int(hist_page)+12}:table:Table A5"] + comp_res.get("normative_provenance", [])))
+
         return {
             "status": "PASS",
-            "answer": (
-                f"In AWS A3.0M/A3.0:2020, {hist_term} is a historical/nonstandard term or obsolete process "
-                f"(cataloged in Table A5, p. 74 / Clause 4 / Annex D), whereas {tok} designates {canon} "
-                f"per active standard process designations in Table A1 (p. 69) combined with application mode suffixes in Table A4 (p. 74)."
-            ),
-            "operations": [
-                {"operation": "lookup_historical_process", "term": hist_term, "status": "executed"},
-                {"operation": "lookup_compound_code", "designation": tok, "status": "executed"},
-            ],
-            "operations_count": 2,
-            "elements_present": [hist_term, tok, canon, "Table A5", "Table A1", "Table A4"],
-            "normative_provenance": ["obs:pdf:86:table:Table A5", "obs:pdf:81:table:Table A1", "obs:pdf:86:table:Table A4"],
+            "answer": combined_ans,
+            "operations": combined_ops,
+            "operations_count": len(combined_ops),
+            "elements_present": combined_elements,
+            "normative_provenance": combined_prov,
         }
 
     if intent == "polysemous_callout_and_glossary":

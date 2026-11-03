@@ -51,6 +51,13 @@ FILES = [
     "tests/test_gate_6_1_semantic_graph.py",
     "tests/test_gate_6_2_store_driven_composition.py",
     "tests/test_gate_6_2_1_multi_action_closure.py",
+    "tests/test_gate_6_2_2_closeout_hygiene.py",
+    "GATE_6_0_CHECKOUT_CARD.md",
+    "GATE_6_1_CHECKOUT_CARD.md",
+    "GATE_6_2_CHECKOUT_CARD.md",
+    "GATE_6_2_1_CHECKOUT_CARD.md",
+    "GATE_6_2_2_CLOSEOUT_HYGIENE_CARD.md",
+    "GATE_6_2_2_CHECKOUT_CARD.md",
     "docs/FULL_PROMPT.md",
 ]
 
@@ -72,6 +79,8 @@ def main():
 
     from tests.test_gate_6_2_1_multi_action_closure import ALL_42_LOCKED_HASHES
 
+    replay_cassettes_count = len(list((ROOT / "storage/model_replays/deepseek_v4_1_flash_1017").glob("*.json")))
+
     header = f"""# Gate 6 Full Production Audit Bundle
 Generated at: {timestamp}
 Branch: `{branch}`
@@ -81,7 +90,8 @@ Clean Working Tree: `{is_clean}`
 ## Preflight Verification
 - Whole Standard Preflight Status: `{preflight_res['status']}`
 - DeepSeek Replay Preflight Status: `{deepseek_res['status']}`
-- DeepSeek Replay Cassettes Verified: `{deepseek_res.get('cassettes_verified', 0)}`
+- DeepSeek Preflight Smoke Queries Replayed: `{deepseek_res.get('replayed_queries_count', 0)}`
+- DeepSeek Replay Cassettes Verified on Disk: `{replay_cassettes_count}`
 
 ## Cryptographic Locks (All 42 Artifacts)
 """

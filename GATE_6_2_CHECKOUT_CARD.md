@@ -25,7 +25,7 @@ This checkout card formalizes the forensic audit, implementation, and final prod
    - Implemented 7 atomic, zero-canned-prose composers that query store data structures dynamically:
      - `_exec_lookup_taxonomy_subtypes`: dynamically queries `is_a_promotion_store.json` and Table A1 for process variations across any parent (GMAW, OFC, SAW, RSEW, FCAW).
      - `_exec_expand_cross_references`: dynamically queries `glossary_store.json` for bidirectional `see_also` and `figures` cross-references across any hub term.
-     - `_exec_weld_position_sense`: dynamically queries Clause 4 definitions for all 12 weld test positions (`1G`–`6GR`, `1F`–`4F`), binding to exact printed page coordinates (p. 5 for groove, p. 6 for fillet) and overview diagrams (`Figure B16A`–`C`).
+     - `_exec_weld_position_sense`: dynamically queries Clause 4 definitions for all 12 weld test positions (`1G`–`6GR`, `1F`–`4F`), binding to exact printed page coordinates (alphabetical order: 1F–4F and 1G–3G on printed p. 5; 4G–6GR on printed p. 6) and overview diagrams (`Figure B16A`–`C`).
      - `_exec_disambiguate_homograph`: resolves homograph `AB` across Table A1 (adhesive bonding) and Figure A6 legend (arc brazing).
      - `_exec_compound_lookup_and_validation`: parses 2-tier and 3-tier compound codes, emitting structured rejection rationales for invalid codes.
      - `_exec_compare_historical_and_active`: dynamically compares historical/obsolete processes (Table A5) with active standard processes (Table A1).

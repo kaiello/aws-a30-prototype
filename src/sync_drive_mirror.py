@@ -13,6 +13,7 @@ import argparse
 from datetime import datetime, timezone
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -110,6 +111,20 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
             if p.is_file() and "__pycache__" not in p.parts and p.suffix in (".py", ".json", ".md"):
                 collected.append(p)
 
+    # 4b. scripts/ (.py, .json, .sh, .bat files, excluding __pycache__)
+    scripts_dir = base_dir / "scripts"
+    if scripts_dir.is_dir():
+        for p in scripts_dir.rglob("*"):
+            if p.is_file() and "__pycache__" not in p.parts and p.suffix in (".py", ".json", ".sh", ".bat"):
+                collected.append(p)
+
+    # 4c. docs/ (.md, .json, .py files, excluding __pycache__)
+    docs_dir = base_dir / "docs"
+    if docs_dir.is_dir():
+        for p in docs_dir.rglob("*"):
+            if p.is_file() and "__pycache__" not in p.parts and p.suffix in (".md", ".json", ".py"):
+                collected.append(p)
+
     # 5. .agents/skills/ (all SKILL.md and skill assets)
     skills_dir = base_dir / ".agents" / "skills"
     if skills_dir.is_dir():
@@ -136,14 +151,23 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
             if p.is_file():
                 collected.append(p)
 
+    # 6d. storage/manifests/ (coverage and benchmark manifests)
+    manifests_dir = base_dir / "storage" / "manifests"
+    if manifests_dir.is_dir():
+        for p in manifests_dir.rglob("*.json"):
+            if p.is_file():
+                collected.append(p)
+
     # 7. storage/evidence_v2/ stores and lightweight review artifacts
     ev_dir = base_dir / "storage" / "evidence_v2"
     if ev_dir.is_dir():
         for p in ev_dir.glob("*.json"):
             collected.append(p)
     if ev_dir.is_dir():
-        for ingest_dir in ev_dir.glob("*_001"):
+        for ingest_dir in ev_dir.iterdir():
             if not ingest_dir.is_dir():
+                continue
+            if not re.match(r".*_[0-9]{3}$", ingest_dir.name):
                 continue
             for p in ingest_dir.rglob("*"):
                 if not p.is_file():
@@ -157,7 +181,12 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
                 # Include crops, receipts, graphs, and evaluation files
                 if (
                     p.name.endswith("_crop_300.png") or p.suffix == ".png"
-                    or p.name in ("graph.json", "questions.json", "nlq_questions.json", "adversarial_questions.json", "rubric.json", "results.json", "ingest_receipt.json", "tables_graph.json", "answers.json")
+                    or p.name in (
+                        "graph.json", "questions.json", "nlq_questions.json",
+                        "ner_routing_questions.json", "adversarial_questions.json",
+                        "rubric.json", "results.json", "ingest_receipt.json",
+                        "tables_graph.json", "answers.json"
+                    )
                     or p.name.endswith("_receipt.json")
                     or p.name.endswith("_store.json")
                 ):
