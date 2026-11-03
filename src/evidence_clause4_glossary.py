@@ -569,6 +569,43 @@ def lookup_glossary_term(query: str, store: Optional[Dict[str, Any]] = None) -> 
         if q_norm in e["term"].lower():
             return e
 
+    # Embedded lightface nonstandard & incorrect terms
+    pat_embedded = re.compile(
+        r"(?:\.\s+)([a-zA-Z0-9][a-zA-Z0-9\s\-,/()]{1,60}?)\.\s+((?:A\s+nonstandard(?:\s+and\s+incorrect)?\s+term|An\s+incorrect\s+term)[^.]*\.)"
+    )
+    for e in entries:
+        ft = e.get("full_text", "")
+        for m in pat_embedded.finditer(ft):
+            subterm = m.group(1).strip()
+            if subterm.lower() == q_norm:
+                sub_def = m.group(2).strip()
+                page = e.get("printed_page", 17)
+                m_target = re.search(r"(?:when used for|for)\s+([a-zA-Z0-9\s\-,/()]+?)(?:\.|$)", sub_def)
+                target_std = m_target.group(1).strip() if m_target else subterm
+                return {
+                    "entry_id": f"term:embedded_{subterm.lower().replace(' ', '_')}",
+                    "observation_id": f"obs:clause4:p{page}:embedded_{subterm.lower().replace(' ', '_')}",
+                    "term": subterm,
+                    "raw_heading": subterm,
+                    "designation": None,
+                    "term_status": "nonstandard_and_incorrect" if "incorrect" in sub_def.lower() else "nonstandard",
+                    "is_standard": False,
+                    "definition": sub_def,
+                    "part_of_speech": None,
+                    "domain_delimiters": [],
+                    "has_2020_underline": False,
+                    "has_2020_margin_bar": False,
+                    "preferred_terms": [target_std],
+                    "target_standard_term": target_std,
+                    "is_process_variation": False,
+                    "variation_genus": None,
+                    "is_obsolete": False,
+                    "printed_page": page,
+                    "pdf_index": page + 12,
+                    "cross_references": {"figures": [], "tables": [], "see_also": []},
+                    "full_text": f"{subterm}. {sub_def}",
+                }
+
     return None
 
 

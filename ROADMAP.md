@@ -7,8 +7,8 @@
 ## 1. Project Overview & Gate Status Summary
 
 - **Standard Document:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions*, 190 PDF pages / 162 ingested canonical store pages)
-- **Current Test Suite Baseline:** `1,499 passed, 8 skipped, 0 failures, 0 warnings`
-- **Active Milestone:** **Gate 6.2.2 — Post-6.2.1 Closeout Hygiene, Google Drive 42-Artifact Mirror Parity, Repo Doc Alignment & Post-Merge Audit Bundle** (`feat/gate-6-2-2-closeout-hygiene` $\rightarrow$ `main`, tagged `v1.6.2.2-closeout-hygiene`)
+- **Current Test Suite Baseline:** `1,505 passed, 8 skipped, 0 failures, 0 warnings`
+- **Active Milestone:** **Gate 6.3 — Blind Hardening Benchmark & Generalization Hardening** (`feat/gate-6-3-blind-hardening` $\rightarrow$ `main`, tagged `v1.6.3-blind-hardening`)
 - **Canonical Repository:** `C:\Users\kenai\Documents\Codex\2026-10-21\task\aws-a2-source-aware-ingest`
 - **Mirror Destination:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)
 
@@ -34,13 +34,14 @@
 | **Gate 6.1** | Polysemous Welding NER, 3-Tier Compound Grammar & Store-Compiled Semantic Graph Expansion | `feat/gate-6-1-ner-semantic-graph-expansion` $\rightarrow$ `main` (`v1.6.1-ner-semantic-graph`) | `PASSED & MERGED` — Character-offset polysemous spans (`secondary_entity_types`, `linked_clause4_terms`, `linked_figures`, `linked_tables`), 3-tier compound grammar `<BASE>[-<VAR>][-<MODE>]` (`FCAW-G-SA`, `OFC-A-MA`, invalid code rejection), in-memory `SemanticConceptGraph` (see-also, IS_A subtypes, sibling variations, co-callouts), whole-standard CLI `--expand`, `15/15` (`100.0%`) Gate 6.1 benchmark, `34/34` locked SHA-256 artifacts, `1,482 passed, 8 skipped`. |
 | **Gate 6.2** | Store-Driven Multi-Operation Composition, Zero-Canned-Prose AST Hardening & 20-Query Holdout | `feat/gate-6-2-store-driven-composition` $\rightarrow$ `main` (`v1.6.2-store-driven-composition`) | `PASSED & MERGED` — 7 atomic store-driven action composers, AST zero-fallback guard across all 10 composers, 12-target store mutation degradation suite, 14 offline DeepSeek-V4.1 replays, 20/20 (100.0%) holdout benchmark, `39/39` locked SHA-256 artifacts, `1,489 passed, 8 skipped`. |
 | **Gate 6.2.1** | Multi-Action Closure, Hardened Store-Mutation Tests & Generalization Holdout 002 | `feat/gate-6-2-1-multi-action-closure` $\rightarrow$ `main` (`v1.6.2.1-multi-action-closure`) | `PASSED & MERGED` — Modular multi-action composition, zero canned prose in all composers, unweakened holdout_002 benchmark (20/20 PASS, 100.0%), dynamic table derivations in NER & NLQ expander, 12-target store mutations passing through `answer_whole_standard_question`, 42/42 locked SHA-256 artifacts, 1,494 passed, 8 skipped. |
-| **Gate 6.2.2** | **Post-6.2.1 Closeout Hygiene, Google Drive 42-Artifact Mirror Parity, Repo Doc Alignment & Post-Merge Audit Bundle** | `feat/gate-6-2-2-closeout-hygiene` $\rightarrow$ `main` (`v1.6.2.2-closeout-hygiene`) | `PASSED & MERGED` — Complete 42-artifact mirror collection in sync_drive_mirror.py, doc-hash accuracy (#36, #37), alphabetical Clause 4 pagination, post-merge audit bundle on main, holdout evaluator --benchmark-dir / --use-replay-cassettes, AST zero-fallback coverage for execute_whole_standard_plan, and genus-scoped cross-references. |
+| **Gate 6.2.2** | Post-6.2.1 Closeout Hygiene, Google Drive 42-Artifact Mirror Parity, Repo Doc Alignment & Post-Merge Audit Bundle | `feat/gate-6-2-2-closeout-hygiene` $\rightarrow$ `main` (`v1.6.2.2-closeout-hygiene`) | `PASSED & MERGED` — Complete 42-artifact mirror collection in sync_drive_mirror.py, doc-hash accuracy (#36, #37), alphabetical Clause 4 pagination, post-merge audit bundle on main, holdout evaluator --benchmark-dir / --use-replay-cassettes, AST zero-fallback coverage for execute_whole_standard_plan, and genus-scoped cross-references. |
+| **Gate 6.3** | **Blind Hardening Benchmark & Generalization Hardening** | `feat/gate-6-3-blind-hardening` $\rightarrow$ `main` (`v1.6.3-blind-hardening`) | `PASSED & MERGED` — 20/20 (100.0%) blind hardening holdout benchmark (Q01–Q20), dynamic process variation grammar (Table A1–A3 vs Table A4 compound mode suffixes), embedded lightface nonstandard term resolution, AST zero-fallback coverage across 12 functions, 45/45 locked SHA-256 artifacts, 1,505 passed, 8 skipped. |
 
 ---
 
-## 2. Cryptographic Immutability Ledger (42 Locked Repository Artifacts)
+## 2. Cryptographic Immutability Ledger (45 Locked Repository Artifacts)
 
-All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. `tests/test_gate_5_hardening.py`, `tests/test_gate_5_4_deepseek_adapter.py`, `tests/test_gate_5_5_semantic_nlq.py`, `tests/test_gate_5_6_epistemic_manifest.py`, `tests/test_gate_6_0_ner_routing_skills.py`, `tests/test_gate_6_1_semantic_graph.py`, `tests/test_gate_6_2_store_driven_composition.py`, and `tests/test_gate_6_2_1_multi_action_closure.py` enforce exact SHA-256 verification across all 42 locked files:
+All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. `tests/test_gate_5_hardening.py`, `tests/test_gate_5_4_deepseek_adapter.py`, `tests/test_gate_5_5_semantic_nlq.py`, `tests/test_gate_5_6_epistemic_manifest.py`, `tests/test_gate_6_0_ner_routing_skills.py`, `tests/test_gate_6_1_semantic_graph.py`, `tests/test_gate_6_2_store_driven_composition.py`, `tests/test_gate_6_2_1_multi_action_closure.py`, and `tests/test_gate_6_3_blind_hardening.py` enforce exact SHA-256 verification across all 45 locked files:
 
 ### Part A: 14 Core Repository & Benchmark Artifacts
 
@@ -123,6 +124,14 @@ All operational, evaluation, and semantic expansion code must treat the canonica
 | 40 | **Gate 6.2.1 Questions (Holdout 002)** | `storage/evidence_v2/phase6_2_generalization_holdout_002/questions.json` | `5cb54690e1d6d15e60df75e60a173f5d9eba948e38c6f1042b2c9acb3d123d0a` | `VERIFIED_LOCKED` |
 | 41 | **Gate 6.2.1 Rubric (Holdout 002)** | `storage/evidence_v2/phase6_2_generalization_holdout_002/rubric.json` | `e23085ad83f13142a7bc84a1ddc3a89459b72b8c894c966b98d4d9b6587b24c4` | `VERIFIED_LOCKED` |
 | 42 | **Gate 6.2.1 Results (Holdout 002)** | `storage/evidence_v2/phase6_2_generalization_holdout_002/results.json` | `0d9f8a1bf4a88861ab0c6fa27ec6cf0a88fd8a1f1cc257c02d25433396b53b2b` | `VERIFIED_LOCKED` |
+
+### Part I: 3 Gate 6.3 Benchmark Artifacts (Blind Hardening 001)
+
+| # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 43 | **Gate 6.3 Questions** | `storage/evidence_v2/phase6_3_blind_hardening_001/questions.json` | `be8ee997284de16cb367042a09206d77950344b59f14c68f5ba9ac0123141b5b` | `VERIFIED_LOCKED` |
+| 44 | **Gate 6.3 Rubric** | `storage/evidence_v2/phase6_3_blind_hardening_001/rubric.json` | `a575cd1833cd2d041b6359abdadeff71a728430e155d49d8bdf70205e50ff22c` | `VERIFIED_LOCKED` |
+| 45 | **Gate 6.3 Results** | `storage/evidence_v2/phase6_3_blind_hardening_001/results.json` | `18f247c1abb8b96d0a52081e0f8fabb32a74dcaced77143bf9ece518cd19c4c2` | `VERIFIED_LOCKED` |
 
 ### Version-Bound Store Immutability Policy
 Cryptographic SHA-256 digests lock each released store version (`*_001`). Verified content corrections or spatial refinements produce a successor version (`*_002`) with a documented migration ledger rather than mutating locked releases in place.
@@ -237,3 +246,40 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable G622-3 (AST Zero-Fallback Expansion):** Enforced AST zero-fallback guard on `execute_whole_standard_plan` across `tests/test_gate_5_hardening.py` and `tests/test_gate_6_2_store_driven_composition.py`, eliminating inline fallback strings.
 - [x] **Deliverable G622-4 (Evaluator CLI Enhancements & Genus-Scoped Cross-References):** Added `--benchmark-dir` and `--use-replay-cassettes` CLI flags to `eval/run_phase6_2_generalization_holdout.py` and isolated single-subtype cross-reference expansion.
 - [x] **Deliverable G622-5 (42/42 Locked Hash Verification & Full Suite Baseline):** Maintained 100% byte-identity across all 42 locked repository artifacts with full test suite passing at 1,499 passed, 8 skipped.
+
+---
+
+## 10. Gate 6.3 Blind Hardening Benchmark & Generalization Hardening
+
+### Benchmark Breakdown ([`storage/evidence_v2/phase6_3_blind_hardening_001/questions.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/evidence_v2/phase6_3_blind_hardening_001/questions.json))
+
+| Query ID | Category / Focus | Query Topic & Standard Target | Status |
+| :--- | :--- | :--- | :--- |
+| `G63-BLIND01` | Nonstandard Term Resolution | `ground clamp` $\rightarrow$ `workpiece connection` (Clause 4 & Annex C) | `100.0% PASS` |
+| `G63-BLIND02` | Process Acronym Lookup | `PAW` $\rightarrow$ `plasma arc welding` (Table A1) | `100.0% PASS` |
+| `G63-BLIND03` | Nonstandard Term Resolution | `ground lead` $\rightarrow$ `workpiece lead` (Clause 4 & Annex C) | `100.0% PASS` |
+| `G63-BLIND04` | Historical Term Differentiation | `brazing` vs `bronze welding` historical status (Annex D Table D2) | `100.0% PASS` |
+| `G63-BLIND05` | Spatial Callout Diagram | Butt joint applicable weld types (Figure B1(A)) | `100.0% PASS` |
+| `G63-BLIND06` | Nonstandard Term Resolution | `welding ground` $\rightarrow$ `workpiece connection` (Clause 4 & Annex C) | `100.0% PASS` |
+| `G63-BLIND07` | Nonstandard Term Resolution | `silver soldering` $\rightarrow$ `silver brazing` (Clause 4 & Annex C) | `100.0% PASS` |
+| `G63-BLIND08` | Process Variation Parsing | `GMAW-S` $\rightarrow$ Gas Metal Arc Welding - Short Circuiting (Table A1) | `100.0% PASS` |
+| `G63-BLIND09` | Obsolete Process Classification | `BB` & `CAW-S` obsolete process status (Table A5) | `100.0% PASS` |
+| `G63-BLIND10` | Nonstandard Term Resolution | `burning` $\rightarrow$ `oxygen cutting` / `thermal cutting` (Clause 4 & Annex C) | `100.0% PASS` |
+| `G63-BLIND11` | Nonstandard Term Resolution | `puddle` $\rightarrow$ `weld pool` (Clause 4 & Annex C) | `100.0% PASS` |
+| `G63-BLIND12` | Spatial Callout Diagram | Scarf joint member preparation and groove weld applicability (Figure B1(D)) | `100.0% PASS` |
+| `G63-BLIND13` | Process Variation Parsing | `GTAW-P` $\rightarrow$ Gas Tungsten Arc Welding - Pulsed Arc (Table A1) | `100.0% PASS` |
+| `G63-BLIND14` | Nonstandard Term Resolution | `backhand welding` $\rightarrow$ `push angle` vs `drag angle` (Clause 4 & Annex C) | `100.0% PASS` |
+| `G63-BLIND15` | Nonstandard Term Resolution | `stick welding` $\rightarrow$ `shielded metal arc welding` (SMAW) (Clause 4 & Annex C) | `100.0% PASS` |
+| `G63-BLIND16` | Normative Suffix Notation | Table A4 compound application mode suffixes (`-MA`, `-SA`, `-ME`, `-AU`, `-RO`, `-AD`) | `100.0% PASS` |
+| `G63-BLIND17` | Homograph Disambiguation | `AB` $\rightarrow$ `arc brazing` (Table A1/A2) vs `adhesive bonding` (Figure A6) | `100.0% PASS` |
+| `G63-BLIND18` | Spatial Callout Diagram | T-joint panel (E) applicable welds (Figure B1(E)) | `100.0% PASS` |
+| `G63-BLIND19` | Nonstandard Term Resolution | `mig welding` $\rightarrow$ `gas metal arc welding` (GMAW) (Clause 4 & Annex C) | `100.0% PASS` |
+| `G63-BLIND20` | Nonstandard Term Resolution | `heliarc` $\rightarrow$ `gas tungsten arc welding` (GTAW) (Annex D Table D1) | `100.0% PASS` |
+
+### Deliverables Checklist
+
+- [x] **Deliverable G63-1 (20-Question Blind Hardening Benchmark Suite):** Established `storage/evidence_v2/phase6_3_blind_hardening_001/{questions.json, rubric.json, results.json}` and `eval/run_phase6_3_blind_hardening.py`, achieving **20 / 20 (100.0%)** pass rate under socket isolation (`0` network calls).
+- [x] **Deliverable G63-2 (Process Variation Grammar vs Compound Suffix Bifurcation):** Hardened `WeldingNER` process variations (`ner.process_codes` vs Table A4 compound application modes) avoiding false invalidations on Table A1–A3 variants like `GMAW-S` and `GTAW-P`.
+- [x] **Deliverable G63-3 (Embedded Lightface Nonstandard Term Resolution):** Enhanced `SemanticExpander` and `WeldingNER` to extract and resolve multi-word embedded nonstandard terms (`ground clamp`, `ground lead`, `welding ground`, `silver soldering`) directly to standard Clause 4 terms and definitions.
+- [x] **Deliverable G63-4 (AST Zero-Fallback Expansion Across 12 Functions):** Extended the AST zero-fallback guard in `tests/test_gate_6_3_blind_hardening.py` across all 12 composer and plan-execution functions (`0` violations).
+- [x] **Deliverable G63-5 (45/45 Cryptographic Hash Locks & Drive Mirror Parity):** Added Artifacts #43–#45 to the immutability ledger (`test_gate_6_3_all_45_locked_hashes`), preserved 100% backward compatibility across all legacy test suites, and synchronized with Google Drive mirror.

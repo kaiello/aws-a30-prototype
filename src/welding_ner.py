@@ -244,6 +244,58 @@ class WeldingNER:
                         "entity_type": "PROCESS_CODE",
                     }
 
+        # Table A2 Process Codes & Process Terms
+        table_a2 = tables.get("table_a2", [])
+        for row in table_a2:
+            proc = row.get("process", "").strip()
+            desig = row.get("designation")
+            page = row.get("page", 71)
+            if proc and proc.lower() not in self.process_terms:
+                p_lower = proc.lower()
+                self.process_terms[p_lower] = {
+                    "canonical_term": proc,
+                    "canonical_id": f"table_a2:proc:{p_lower.replace(' ', '_')}",
+                    "source_authority": f"Table A2 (p. {page})",
+                    "target_division": "annex_a_tables",
+                    "entity_type": "PROCESS_TERM",
+                }
+            if desig:
+                d_upper = desig.upper().strip()
+                if d_upper not in self.process_codes:
+                    self.process_codes[d_upper] = {
+                        "canonical_term": proc,
+                        "canonical_id": f"table_a2:code:{d_upper}",
+                        "source_authority": f"Table A2 (p. {page})",
+                        "target_division": "annex_a_tables",
+                        "entity_type": "PROCESS_CODE",
+                    }
+
+        # Table A3 Process Codes & Process Terms
+        table_a3 = tables.get("table_a3", [])
+        for row in table_a3:
+            proc = row.get("process", "").strip()
+            desig = row.get("designation")
+            page = row.get("page", 72)
+            if proc and proc.lower() not in self.process_terms:
+                p_lower = proc.lower()
+                self.process_terms[p_lower] = {
+                    "canonical_term": proc,
+                    "canonical_id": f"table_a3:proc:{p_lower.replace(' ', '_')}",
+                    "source_authority": f"Table A3 (p. {page})",
+                    "target_division": "annex_a_tables",
+                    "entity_type": "PROCESS_TERM",
+                }
+            if desig:
+                d_upper = desig.upper().strip()
+                if d_upper not in self.process_codes:
+                    self.process_codes[d_upper] = {
+                        "canonical_term": proc,
+                        "canonical_id": f"table_a3:code:{d_upper}",
+                        "source_authority": f"Table A3 (p. {page})",
+                        "target_division": "annex_a_tables",
+                        "entity_type": "PROCESS_CODE",
+                    }
+
         # Table A5 Obsolete Processes
         table_a5 = tables.get("table_a5", [])
         for row in table_a5:
@@ -409,6 +461,32 @@ class WeldingNER:
                 }
             else:
                 std_entries_by_term.setdefault(term_lower, []).append(e)
+
+        # Embedded lightface nonstandard & incorrect terms in Clause 4 full_text
+        pat_embedded = re.compile(
+            r"(?:\.\s+)([a-zA-Z0-9][a-zA-Z0-9\s\-,/()]{1,60}?)\.\s+((?:A\s+nonstandard(?:\s+and\s+incorrect)?\s+term|An\s+incorrect\s+term)[^.]*\.)"
+        )
+        for e in entries:
+            ft = e.get("full_text", "")
+            page = e.get("printed_page", 17)
+            for m in pat_embedded.finditer(ft):
+                subterm = m.group(1).strip()
+                sub_def = m.group(2).strip()
+                sub_lower = subterm.lower()
+                if sub_lower == e.get("term", "").lower():
+                    continue
+                m_target = re.search(r"(?:when used for|for)\s+([a-zA-Z0-9\s\-,/()]+?)(?:\.|$)", sub_def)
+                target_std = m_target.group(1).strip() if m_target else subterm
+                self.nonstandard_terms[sub_lower] = {
+                    "canonical_term": target_std,
+                    "canonical_id": f"clause4:embedded_nonstandard:{sub_lower.replace(' ', '_')}",
+                    "source_authority": f"Clause 4 (p. {page})",
+                    "target_division": "clause4_glossary",
+                    "entity_type": "NONSTANDARD_OR_HISTORICAL",
+                    "raw_definition": sub_def,
+                    "embedded_in_parent": e.get("term"),
+                    "printed_page": page,
+                }
 
         for term_lower, matching_entries in std_entries_by_term.items():
             primary = matching_entries[0]
@@ -752,6 +830,11 @@ class WeldingNER:
         # Check if base_cand is a recognized process code
         base_info = self.process_codes.get(base_cand)
         if not base_info:
+            return None
+
+        # If tok_upper itself is a recognized standalone process code (e.g. LBC-EV, EBW-HV, FLSP-P, FRW-DD),
+        # it is a standardized process variation, NOT a compound application mode designation!
+        if tok_upper in self.process_codes:
             return None
 
         # -------------------------------------------------------------------

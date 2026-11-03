@@ -111,6 +111,7 @@ def test_gate_5_composer_ast_no_silent_string_fallbacks():
         "_exec_compare_historical_and_active",
         "_exec_polysemous_diagram_and_glossary",
         "execute_whole_standard_plan",
+        "_exec_decode_process_designations",
     ]
 
     violations = []

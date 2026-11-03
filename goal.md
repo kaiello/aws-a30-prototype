@@ -3,10 +3,10 @@
 **Target Standard:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions Including Terms for Adhesive Bonding, Brazing, Soldering, Thermal Cutting, and Thermal Spraying*, 13th Edition, 190 PDF pages)  
 **Source PDF SHA-256:** `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d`  
 **Coordinate Formula:** $\text{printed\_page} = \text{pdf\_index} - 12 = \text{viewer\_page} - 13$ (for main text & annexes starting at Clause 1, printed p. 1 = PDF index 13)  
-**Production Release Tag:** `v1.6.2.2-closeout-hygiene` (merged on `main`)  
+**Production Release Tag:** `v1.6.3-blind-hardening` (merged on `main`)  
 **Repository:** `https://github.com/kaiello/aws-a30-prototype`  
 **Google Drive Mirror:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)  
-**Full Regression Test Suite:** `1,499 passed, 8 skipped, 0 failures, 0 warnings`  
+**Full Regression Test Suite:** `1,505 passed, 8 skipped, 0 failures, 0 warnings`  
 
 ---
 
@@ -113,9 +113,9 @@ When a user submits a natural language question at runtime, the system executes 
 
 ---
 
-## 3. Cryptographic Immutability Ledger (42 Locked Repository Artifacts)
+## 3. Cryptographic Immutability Ledger (45 Locked Repository Artifacts)
 
-All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. [`tests/test_gate_5_hardening.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_hardening.py), [`tests/test_gate_5_4_deepseek_adapter.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_4_deepseek_adapter.py), [`tests/test_gate_5_5_semantic_nlq.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_5_semantic_nlq.py), [`tests/test_gate_5_6_epistemic_manifest.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_6_epistemic_manifest.py), [`tests/test_gate_6_0_ner_routing_skills.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_0_ner_routing_skills.py), [`tests/test_gate_6_1_semantic_graph.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_1_semantic_graph.py), and [`tests/test_gate_6_2_store_driven_composition.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_2_store_driven_composition.py) and [`tests/test_gate_6_2_1_multi_action_closure.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_2_1_multi_action_closure.py) enforce exact SHA-256 verification across all 42 locked files:
+All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. [`tests/test_gate_5_hardening.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_hardening.py), [`tests/test_gate_5_4_deepseek_adapter.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_4_deepseek_adapter.py), [`tests/test_gate_5_5_semantic_nlq.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_5_semantic_nlq.py), [`tests/test_gate_5_6_epistemic_manifest.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_5_6_epistemic_manifest.py), [`tests/test_gate_6_0_ner_routing_skills.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_0_ner_routing_skills.py), [`tests/test_gate_6_1_semantic_graph.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_1_semantic_graph.py), [`tests/test_gate_6_2_store_driven_composition.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_2_store_driven_composition.py), [`tests/test_gate_6_2_1_multi_action_closure.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_2_1_multi_action_closure.py), and [`tests/test_gate_6_3_blind_hardening.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_3_blind_hardening.py) enforce exact SHA-256 verification across all 45 locked files:
 
 ### Part A: 14 Core Repository & Benchmark Artifacts
 
@@ -193,6 +193,14 @@ All operational, evaluation, and semantic expansion code must treat the canonica
 | 40 | **Gate 6.2.1 Holdout Questions** | `storage/evidence_v2/phase6_2_generalization_holdout_002/questions.json` | `5cb54690e1d6d15e60df75e60a173f5d9eba948e38c6f1042b2c9acb3d123d0a` | `VERIFIED_LOCKED` |
 | 41 | **Gate 6.2.1 Holdout Rubric** | `storage/evidence_v2/phase6_2_generalization_holdout_002/rubric.json` | `e23085ad83f13142a7bc84a1ddc3a89459b72b8c894c966b98d4d9b6587b24c4` | `VERIFIED_LOCKED` |
 | 42 | **Gate 6.2.1 Holdout Results** | `storage/evidence_v2/phase6_2_generalization_holdout_002/results.json` | `0d9f8a1bf4a88861ab0c6fa27ec6cf0a88fd8a1f1cc257c02d25433396b53b2b` | `VERIFIED_LOCKED` |
+
+### Part H: 3 Gate 6.3 Artifacts (Blind Hardening 001 Benchmark)
+
+| # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 43 | **Gate 6.3 Blind Hardening Questions** | `storage/evidence_v2/phase6_3_blind_hardening_001/questions.json` | `be8ee997284de16cb367042a09206d77950344b59f14c68f5ba9ac0123141b5b` | `VERIFIED_LOCKED` |
+| 44 | **Gate 6.3 Blind Hardening Rubric** | `storage/evidence_v2/phase6_3_blind_hardening_001/rubric.json` | `a575cd1833cd2d041b6359abdadeff71a728430e155d49d8bdf70205e50ff22c` | `VERIFIED_LOCKED` |
+| 45 | **Gate 6.3 Blind Hardening Results** | `storage/evidence_v2/phase6_3_blind_hardening_001/results.json` | `18f247c1abb8b96d0a52081e0f8fabb32a74dcaced77143bf9ece518cd19c4c2` | `VERIFIED_LOCKED` |
 
 ### Version-Bound Store Immutability Policy
 Cryptographic SHA-256 digests lock each released store version (`*_001`). Verified content corrections or spatial refinements produce a successor version (`*_002`) with a documented migration ledger rather than mutating locked releases in place.
@@ -343,3 +351,25 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable G622-3 (AST Zero-Fallback Expansion):** Enforced AST zero-fallback guard on `execute_whole_standard_plan` across `tests/test_gate_5_hardening.py` and `tests/test_gate_6_2_store_driven_composition.py`, eliminating inline fallback strings.
 - [x] **Deliverable G622-4 (Evaluator CLI Enhancements & Genus-Scoped Cross-References):** Added `--benchmark-dir` and `--use-replay-cassettes` CLI flags to `eval/run_phase6_2_generalization_holdout.py` and isolated single-subtype cross-reference expansion.
 - [x] **Deliverable G622-5 (42/42 Locked Hash Verification & Full Suite Baseline):** Maintained 100% byte-identity across all 42 locked repository artifacts with full test suite passing at 1,499 passed, 8 skipped.
+
+---
+
+## 10. Gate 6.3: Blind Hardening Benchmark, Process Variation Grammar & Embedded Lightface NER
+
+### Benchmark Slices ([`storage/evidence_v2/phase6_3_blind_hardening_001/questions.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/evidence_v2/phase6_3_blind_hardening_001/questions.json))
+
+| Slice | Category / Focus | Query IDs | Target Stores & Coverage | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Slice 1** | Embedded Lightface Nonstandard Terms | `G63-BLIND01`, `03`, `06`, `07` | Clause 4 + Annex C (`ground clamp`, `ground lead`, `welding ground`, `silver soldering`) | `100.0% PASS (4/4)` |
+| **Slice 2** | Process Acronyms & Variations | `G63-BLIND02`, `08`, `13` | Table A1 + Table A3 (`PAW`, `GMAW-S`, `GTAW-P`) | `100.0% PASS (3/3)` |
+| **Slice 3** | Historical & Obsolete Designations | `G63-BLIND04`, `09`, `20` | Annex D Table D1/D2 + Table A5 (`BB`, `CAW-S`, `bronze welding`, `heliarc`) | `100.0% PASS (3/3)` |
+| **Slice 4** | Spatial Callout Diagram Lookups | `G63-BLIND05`, `12`, `18` | Figure B1 panels (A), (D), (E) (Butt joint, Scarf joint, T-joint) | `100.0% PASS (3/3)` |
+| **Slice 5** | Nonstandard Terms, Mode Suffixes & Homographs | `G63-BLIND10`, `11`, `14`, `15`, `16`, `17`, `19` | Clause 4, Table A4 suffixes, Table A1 vs Fig A6 (`AB`), `burning`, `puddle`, `stick`, `mig` | `100.0% PASS (7/7)` |
+
+### Deliverables Checklist
+
+- [x] **Deliverable G63-1 (20-Question Blind Hardening Benchmark Suite):** Established `storage/evidence_v2/phase6_3_blind_hardening_001/{questions.json, rubric.json, results.json}` and `eval/run_phase6_3_blind_hardening.py`, achieving **20 / 20 (100.0%)** pass rate under socket isolation (`0` network calls).
+- [x] **Deliverable G63-2 (Process Variation Grammar vs Compound Suffix Bifurcation):** Hardened `WeldingNER` process variations (`ner.process_codes` vs Table A4 compound application modes) avoiding false invalidations on Table A1–A3 variants like `GMAW-S` and `GTAW-P`.
+- [x] **Deliverable G63-3 (Embedded Lightface Nonstandard Term Resolution):** Enhanced `SemanticExpander` and `WeldingNER` to extract and resolve multi-word embedded nonstandard terms (`ground clamp`, `ground lead`, `welding ground`, `silver soldering`) directly to standard Clause 4 terms and definitions.
+- [x] **Deliverable G63-4 (AST Zero-Fallback Expansion Across 12 Functions):** Extended the AST zero-fallback guard in `tests/test_gate_6_3_blind_hardening.py` across all 12 composer and plan-execution functions (`0` violations).
+- [x] **Deliverable G63-5 (45/45 Cryptographic Hash Locks & Drive Mirror Parity):** Added Artifacts #43–#45 to the immutability ledger (`test_gate_6_3_all_45_locked_hashes`), preserved 100% backward compatibility across all legacy test suites, and synchronized with Google Drive mirror.
