@@ -57,6 +57,7 @@ FILES = [
     "tests/test_gate_6_2_1_multi_action_closure.py",
     "tests/test_gate_6_2_2_closeout_hygiene.py",
     "tests/test_gate_6_3_blind_hardening.py",
+    "tests/test_gate_6_4_comprehensive_enhancements.py",
     "GATE_6_0_CHECKOUT_CARD.md",
     "GATE_6_1_CHECKOUT_CARD.md",
     "GATE_6_2_CHECKOUT_CARD.md",
@@ -64,6 +65,7 @@ FILES = [
     "GATE_6_2_2_CLOSEOUT_HYGIENE_CARD.md",
     "GATE_6_2_2_CHECKOUT_CARD.md",
     "GATE_6_3_CHECKOUT_CARD.md",
+    "GATE_6_4_CHECKOUT_CARD.md",
     "docs/FULL_PROMPT.md",
 ]
 
@@ -83,7 +85,7 @@ def main():
     preflight_res = run_whole_standard_preflight(ROOT)
     deepseek_res = run_deepseek_replay_preflight(ROOT)
 
-    from tests.test_gate_6_3_blind_hardening import ALL_45_LOCKED_HASHES
+    from tests.test_gate_6_4_comprehensive_enhancements import ALL_51_LOCKED_HASHES
 
     replay_cassettes_count = len(list((ROOT / "storage/model_replays/deepseek_v4_1_flash_1017").glob("*.json")))
 
@@ -99,9 +101,9 @@ Clean Working Tree: `{is_clean}`
 - DeepSeek Preflight Smoke Queries Replayed: `{deepseek_res.get('replayed_queries_count', 0)}`
 - DeepSeek Replay Cassettes Verified on Disk: `{replay_cassettes_count}`
 
-## Cryptographic Locks (All 45 Artifacts)
+## Cryptographic Locks (All 51 Artifacts)
 """
-    for rel_path, expected_hash in ALL_45_LOCKED_HASHES.items():
+    for rel_path, expected_hash in ALL_51_LOCKED_HASHES.items():
         p = ROOT / rel_path
         actual_hash = hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else "MISSING"
         match_str = "MATCH" if actual_hash == expected_hash else "MISMATCH"

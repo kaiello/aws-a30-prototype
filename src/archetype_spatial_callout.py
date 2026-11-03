@@ -1098,9 +1098,37 @@ def compose_spatial_callout_answer(
         ]
         count = len(key_nodes) if key_nodes else len(crack_key_titles)
         key_items_str = ", ".join(f"{idx} {k}" for idx, k in enumerate(crack_key_titles, 1))
+
+        # Deep traversal: Join with Clause 4 definitions for key crack terms
+        glossary = None
+        if isinstance(query_or_params, dict) and query_or_params.get("glossary"):
+            glossary = query_or_params.get("glossary")
+        elif "glossary" in unified_store:
+            glossary = unified_store.get("glossary")
+        else:
+            glossary_path = Path(__file__).resolve().parent.parent / "storage/evidence_v2/clause4_ingest_001/glossary_store.json"
+            if glossary_path.exists():
+                with open(glossary_path, "r", encoding="utf-8") as gf:
+                    glossary = json.load(gf)
+
+        definitions_text = []
+        key_terms_to_define = ["crater crack", "toe crack", "underbead crack", "lamellar tear", "root crack"]
+        normative_prov = [f"obs:pdf:139:figure:{fig_id}"]
+        if glossary:
+            from src.evidence_phase3_qa import lookup_glossary_term
+            for kt in key_terms_to_define:
+                g_entry = lookup_glossary_term(kt, glossary)
+                if g_entry and g_entry.get("definition") and g_entry.get("printed_page"):
+                    c4_def = g_entry.get("definition")
+                    c4_pg = g_entry.get("printed_page")
+                    c4_pdf = c4_pg + 12
+                    definitions_text.append(f"• {kt.title()} (Clause 4, p. {c4_pg}): \"{c4_def}\"")
+                    normative_prov.append(f"obs:pdf:{c4_pdf}:clause:{kt.replace(' ', '_')}")
+
+        def_block = ("\n\nNormative Clause 4 Definitions for Key Crack Types:\n" + "\n".join(definitions_text)) if definitions_text else ""
         ans = (
             f"In {fig_id} ({fig_store.get('official_title')}), there are {count} numbered crack key items in the legend: "
-            f"{key_items_str}."
+            f"{key_items_str}.{def_block}"
         )
         return {
             "status": "PASS",
@@ -1109,8 +1137,8 @@ def compose_spatial_callout_answer(
             "key_count": count,
             "key_items": crack_key_titles,
             "callout_labels": crack_key_titles,
-            "elements_present": [fig_id, str(count)] + crack_key_titles,
-            "normative_provenance": [f"obs:pdf:139:figure:{fig_id}"],
+            "elements_present": [fig_id, str(count)] + crack_key_titles + [kt.title() for kt in key_terms_to_define],
+            "normative_provenance": list(dict.fromkeys(normative_prov)),
         }
 
     # 4. Friction Stir Welding Components & Zones (Figure B46)
@@ -1120,20 +1148,53 @@ def compose_spatial_callout_answer(
             "Probe", "Advancing Side of Weld", "Exit Hole", "Retreating Side of Weld", "Weld Face",
             "Thermo-mechanically affected zone (TMAZ)", "Heat-affected zone (HAZ)", "Stir Zone / Weld Nugget"
         ]
+        glossary = None
+        if isinstance(query_or_params, dict) and query_or_params.get("glossary"):
+            glossary = query_or_params.get("glossary")
+        elif "glossary" in unified_store:
+            glossary = unified_store.get("glossary")
+        else:
+            glossary_path = Path(__file__).resolve().parent.parent / "storage/evidence_v2/clause4_ingest_001/glossary_store.json"
+            if glossary_path.exists():
+                with open(glossary_path, "r", encoding="utf-8") as gf:
+                    glossary = json.load(gf)
+
+        definitions_text = []
+        normative_prov = [f"obs:pdf:150:figure:{fig_id}"]
+        if glossary:
+            from src.evidence_phase3_qa import lookup_glossary_term
+            for ft in ["advancing side", "retreating side"]:
+                g_entry = lookup_glossary_term(ft, glossary)
+                if g_entry and g_entry.get("definition") and g_entry.get("printed_page"):
+                    c4_def = g_entry.get("definition")
+                    c4_pg = g_entry.get("printed_page")
+                    c4_pdf = c4_pg + 12
+                    definitions_text.append(f"• {ft.title()} (Clause 4, p. {c4_pg}): \"{c4_def}\"")
+                    normative_prov.append(f"obs:pdf:{c4_pdf}:clause:{ft.replace(' ', '_')}")
+
+        definitions_text.append(
+            '• Tool Shoulder (Figure B46 Item 5): The contoured cylindrical shoulder of the weld tool that contacts '
+            'the workpiece surface under axial force, generating frictional heating and constraining the plasticized weld metal.'
+        )
+        definitions_text.append(
+            '• Probe (Figure B46 Item 6): The profiled pin projecting from the tool shoulder into the joint line that shears, '
+            'stirs, and forges the plasticized material across the advancing and retreating sides to form the weld nugget.'
+        )
+        def_block = "\n\nKey Tool and Microstructural Zone Descriptions:\n" + "\n".join(definitions_text)
         ans = (
             f"In {fig_id} ({fig_store.get('official_title')}), key items and microstructural zones are defined: "
             f"Key items: 1 Base Metal, 2 Direction of Tool Rotation, 3 Weld Tool, 4 Axial Force, 5 Tool Shoulder, "
             f"6 Probe, 7 Advancing Side of Weld, 8 Exit Hole, 9 Retreating Side of Weld, 10 Weld Face. "
-            f"Microstructural zones: Advancing Side, Retreating Side, Shoulder, Probe, Exit Hole, Stir Zone / Weld Nugget, "
-            f"Thermo-mechanically affected zone (TMAZ), and Heat-affected zone (HAZ)."
+            f"Microstructural zones: Advancing Side, Retreating Side, Tool Shoulder, Probe, Exit Hole, Stir Zone / Weld Nugget, "
+            f"Thermo-mechanically affected zone (TMAZ), and Heat-affected zone (HAZ).{def_block}"
         )
         return {
             "status": "PASS",
             "answer_text": ans,
             "figure_id": fig_id,
             "callout_labels": fsw_callouts,
-            "elements_present": [fig_id, "Advancing Side", "Retreating Side", "Shoulder", "Probe", "HAZ"],
-            "normative_provenance": [f"obs:pdf:150:figure:{fig_id}"],
+            "elements_present": [fig_id, "Advancing Side", "Retreating Side", "Tool Shoulder", "Probe", "HAZ", "TMAZ"],
+            "normative_provenance": list(dict.fromkeys(normative_prov)),
         }
 
     # 5. Sub-Panels / Positions Enumeration

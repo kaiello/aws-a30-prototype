@@ -7,8 +7,8 @@
 ## 1. Project Overview & Gate Status Summary
 
 - **Standard Document:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions*, 190 PDF pages / 162 ingested canonical store pages)
-- **Current Test Suite Baseline:** `1,507 passed, 8 skipped, 0 failures, 0 warnings`
-- **Active Milestone:** **Gate 6.3 — Blind Hardening Benchmark & Generalization Hardening** (`feat/gate-6-3-blind-hardening` $\rightarrow$ `main`, tagged `v1.6.3-blind-hardening`)
+- **Current Test Suite Baseline:** `1,522 passed, 8 skipped, 0 failures, 0 warnings`
+- **Active Milestone:** **Gate 6.4 — Comprehensive Enhancements** (`feat/gate-6-4-comprehensive-enhancements` $\rightarrow$ `main`, tagged `v1.6.4-comprehensive-enhancements`)
 - **Canonical Repository:** `C:\Users\kenai\Documents\Codex\2026-10-21\task\aws-a2-source-aware-ingest`
 - **Mirror Destination:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)
 
@@ -35,11 +35,12 @@
 | **Gate 6.2** | Store-Driven Multi-Operation Composition, Zero-Canned-Prose AST Hardening & 20-Query Holdout | `feat/gate-6-2-store-driven-composition` $\rightarrow$ `main` (`v1.6.2-store-driven-composition`) | `PASSED & MERGED` — 7 atomic store-driven action composers, AST zero-fallback guard across all 10 composers, 12-target store mutation degradation suite, 14 offline DeepSeek-V4.1 replays, 20/20 (100.0%) holdout benchmark, `39/39` locked SHA-256 artifacts, `1,489 passed, 8 skipped`. |
 | **Gate 6.2.1** | Multi-Action Closure, Hardened Store-Mutation Tests & Generalization Holdout 002 | `feat/gate-6-2-1-multi-action-closure` $\rightarrow$ `main` (`v1.6.2.1-multi-action-closure`) | `PASSED & MERGED` — Modular multi-action composition, zero canned prose in all composers, unweakened holdout_002 benchmark (20/20 PASS, 100.0%), dynamic table derivations in NER & NLQ expander, 12-target store mutations passing through `answer_whole_standard_question`, 42/42 locked SHA-256 artifacts, 1,494 passed, 8 skipped. |
 | **Gate 6.2.2** | Post-6.2.1 Closeout Hygiene, Google Drive 42-Artifact Mirror Parity, Repo Doc Alignment & Post-Merge Audit Bundle | `feat/gate-6-2-2-closeout-hygiene` $\rightarrow$ `main` (`v1.6.2.2-closeout-hygiene`) | `PASSED & MERGED` — Complete 42-artifact mirror collection in sync_drive_mirror.py, doc-hash accuracy (#36, #37), alphabetical Clause 4 pagination, post-merge audit bundle on main, holdout evaluator --benchmark-dir / --use-replay-cassettes, AST zero-fallback coverage for execute_whole_standard_plan, and genus-scoped cross-references. |
-| **Gate 6.3** | **Blind Hardening Benchmark & Generalization Hardening** | `feat/gate-6-3-blind-hardening` $\rightarrow$ `main` (`v1.6.3-blind-hardening`) | `PASSED & MERGED` — 20/20 (100.0%) blind hardening holdout benchmark (Q01–Q20), dynamic process variation grammar (Table A1–A3 vs Table A4 compound mode suffixes), embedded lightface nonstandard term resolution, AST zero-fallback coverage across 12 functions, 45/45 locked SHA-256 artifacts, 1,507 passed, 8 skipped. |
+| **Gate 6.3** | Blind Hardening Benchmark & Generalization Hardening | `feat/gate-6-3-blind-hardening` $\rightarrow$ `main` (`v1.6.3-blind-hardening`) | `PASSED & MERGED` — 20/20 (100.0%) blind hardening holdout benchmark (Q01–Q20), dynamic process variation grammar (Table A1–A3 vs Table A4 compound mode suffixes), embedded lightface nonstandard term resolution, AST zero-fallback coverage across 12 functions, 45/45 locked SHA-256 artifacts, 1,507 passed, 8 skipped. |
+| **Gate 6.4** | **Comprehensive Enhancements** | `feat/gate-6-4-comprehensive-enhancements` $\rightarrow$ `main` (`v1.6.4-comprehensive-enhancements`) | `PASSED & MERGED` — 20 offline DeepSeek-V4.1 replay cassettes (expanded from 14), 20/20 (100.0%) blind hardening holdout in both deterministic and replay mode under socket isolation, Table A3 cross-reference matrix (134 letter designations) joined with Tables A1/A2 and Clause 4, deep traversal for Figures B33 (13 crack locations) and B46 (10 FSW zones) with Clause 4 definitions and high-res crops, whole-standard CLI `--table-a3` and `--offline` options, 51/51 locked SHA-256 artifacts, 1,522 passed, 8 skipped. |
 
 ---
 
-## 2. Cryptographic Immutability Ledger (45 Locked Repository Artifacts)
+## 2. Cryptographic Immutability Ledger (51 Locked Repository Artifacts)
 
 All operational, evaluation, and semantic expansion code must treat the canonical Phase 0–3 stores, frozen benchmark suites, offline model replay cassettes, and system manifests as **100% read-only**. `tests/test_gate_5_hardening.py`, `tests/test_gate_5_4_deepseek_adapter.py`, `tests/test_gate_5_5_semantic_nlq.py`, `tests/test_gate_5_6_epistemic_manifest.py`, `tests/test_gate_6_0_ner_routing_skills.py`, `tests/test_gate_6_1_semantic_graph.py`, `tests/test_gate_6_2_store_driven_composition.py`, `tests/test_gate_6_2_1_multi_action_closure.py`, and `tests/test_gate_6_3_blind_hardening.py` enforce exact SHA-256 verification across all 45 locked files:
 
@@ -132,6 +133,17 @@ All operational, evaluation, and semantic expansion code must treat the canonica
 | 43 | **Gate 6.3 Questions** | `storage/evidence_v2/phase6_3_blind_hardening_001/questions.json` | `be8ee997284de16cb367042a09206d77950344b59f14c68f5ba9ac0123141b5b` | `VERIFIED_LOCKED` |
 | 44 | **Gate 6.3 Rubric** | `storage/evidence_v2/phase6_3_blind_hardening_001/rubric.json` | `a575cd1833cd2d041b6359abdadeff71a728430e155d49d8bdf70205e50ff22c` | `VERIFIED_LOCKED` |
 | 45 | **Gate 6.3 Results** | `storage/evidence_v2/phase6_3_blind_hardening_001/results.json` | `18f247c1abb8b96d0a52081e0f8fabb32a74dcaced77143bf9ece518cd19c4c2` | `VERIFIED_LOCKED` |
+
+### Part J: 6 Gate 6.4 DeepSeek Replay Cassettes (Expansion to 20 Cassettes)
+
+| # | Artifact ID | Canonical Repository Path | Locked SHA-256 Digest | Status |
+| :---: | :--- | :--- | :--- | :--- |
+| 46 | **Gate 6.4 Replay Cassette G63-BLIND04** | `storage/model_replays/deepseek_v4_1_flash_1017/07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec.json` | `6b9b5f3d17afdba5859a4b75114876681308098ba96da860327c56a5739478a7` | `VERIFIED_LOCKED` |
+| 47 | **Gate 6.4 Replay Cassette G63-BLIND09** | `storage/model_replays/deepseek_v4_1_flash_1017/1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c.json` | `1ff122410c75893e47771d4af0fccb2243e81e0df2417eccc51a63ecf5482ffc` | `VERIFIED_LOCKED` |
+| 48 | **Gate 6.4 Replay Cassette G63-BLIND14** | `storage/model_replays/deepseek_v4_1_flash_1017/73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182.json` | `dd4a7a19ca1c8a3327fcc031bb046427f218dc103f15bd4627bfaf044ab330dc` | `VERIFIED_LOCKED` |
+| 49 | **Gate 6.4 Replay Cassette G63-BLIND16** | `storage/model_replays/deepseek_v4_1_flash_1017/78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f.json` | `0c8d9d97c74a4fd51327f9cb6df1a4f93a97f0c5c9251ac877c71c58eacc7f1a` | `VERIFIED_LOCKED` |
+| 50 | **Gate 6.4 Replay Cassette G63-BLIND18** | `storage/model_replays/deepseek_v4_1_flash_1017/c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033.json` | `eb60b4a70c60bcfbc8a521aed76fda62f41f9c21bbc43ede727b30a9767b3198` | `VERIFIED_LOCKED` |
+| 51 | **Gate 6.4 Replay Cassette G63-BLIND20** | `storage/model_replays/deepseek_v4_1_flash_1017/d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7.json` | `b75fe39c9afea284c639a024296b0b251e45fda8e4d3a309088a54c36120a449` | `VERIFIED_LOCKED` |
 
 ### Version-Bound Store Immutability Policy
 Cryptographic SHA-256 digests lock each released store version (`*_001`). Verified content corrections or spatial refinements produce a successor version (`*_002`) with a documented migration ledger rather than mutating locked releases in place.
@@ -283,3 +295,15 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable G63-3 (Embedded Lightface Nonstandard Term Resolution):** Enhanced `SemanticExpander` and `WeldingNER` to extract and resolve multi-word embedded nonstandard terms (`ground clamp`, `ground lead`, `welding ground`, `silver soldering`) directly to standard Clause 4 terms and definitions.
 - [x] **Deliverable G63-4 (AST Zero-Fallback Expansion Across 12 Functions):** Extended the AST zero-fallback guard in `tests/test_gate_6_3_blind_hardening.py` across all 12 composer and plan-execution functions (`0` violations).
 - [x] **Deliverable G63-5 (45/45 Cryptographic Hash Locks & Drive Mirror Parity):** Added Artifacts #43–#45 to the immutability ledger (`test_gate_6_3_all_45_locked_hashes`), preserved 100% backward compatibility across all legacy test suites, and synchronized with Google Drive mirror.
+
+---
+
+## 11. Gate 6.4: Comprehensive Enhancements (20-Cassette Replay Suite, Table A3 Joins, Figures B33/B46 Deep Traversal & Whole-Standard CLI)
+
+### Deliverables Checklist
+
+- [x] **Deliverable G64-1 (Offline DeepSeek Replay Suite Expansion to 20 Cassettes):** Added 6 net-new content-addressed replay cassettes in `storage/model_replays/deepseek_v4_1_flash_1017/` (`G63-BLIND04`, `G63-BLIND09`, `G63-BLIND14`, `G63-BLIND16`, `G63-BLIND18`, `G63-BLIND20`), expanding total cassettes from 14 to 20. Updated `eval/run_phase6_3_blind_hardening.py` to support `--use-replay-cassettes`, verifying **20 / 20 (100.0%)** pass rate in both deterministic and replay modes under socket isolation.
+- [x] **Deliverable G64-2 (Table A3 Matrix & Multi-Table Joins):** Built dedicated store-driven composer `_compose_table_a3_cross_reference` in `src/evidence_phase4_bakeoff.py` for Table A3 (134 letter designations), dynamically cross-referencing process names, letter designations, Table A1/A2, source anomalies (`ANOMALY-01` through `ANOMALY-04`), and Clause 4 definitions with zero fallback AST compliance and store-mutation degradation tests.
+- [x] **Deliverable G64-3 (Annex B Spatial Callout Deep Traversal for Figures B33 & B46):** Deepened Figure B33 (13 crack locations) and Figure B46 (10 FSW key items & zones) in `src/archetype_spatial_callout.py` to join spatial callouts with Clause 4 definitions (advancing/retreating side, tool shoulder, probe, TMAZ, HAZ, crack types) and high-res crop provenance.
+- [x] **Deliverable G64-4 (Whole-Standard CLI & Agent Skills Modernization):** Added `--table-a3` and `--offline` to `src/evidence_whole_standard_cli.py`, modernizing `.agents/skills/aws-a30-ner-and-routing/SKILL.md` (correct alphabetical weld test position Clause 4 pagination `1F`–`4F` and `1G`–`3G` on printed p. 5, `4G`–`6GR` on printed p. 6; documented Table A3 CLI and capabilities).
+- [x] **Deliverable G64-5 (51/51 Cryptographic Hash Locks & Test Suite in `tests/test_gate_6_4_comprehensive_enhancements.py`):** Added Artifacts #46–#51 to the immutability ledger, verified all 51 cryptographic hashes under CI, and scored 7/7 (100%) on `tests/test_gate_6_4_comprehensive_enhancements.py`.

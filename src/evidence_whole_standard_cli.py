@@ -173,6 +173,32 @@ def run_ask_cli(query: str, as_json: bool = False, planner_name: str = "determin
     return 0
 
 
+def run_table_a3_cli(term: str, as_json: bool = False) -> int:
+    """Query Table A3 cross-reference matrix by designation or process."""
+    from src.evidence_phase4_bakeoff import _compose_table_a3_cross_reference, get_whole_standard_stores
+
+    stores = get_whole_standard_stores(ROOT)
+    tables_graph = stores.get("tables", {})
+    plan = {
+        "target_division": "Normative Tables",
+        "intent": "table_a3_cross_reference",
+        "target_entities": [term],
+    }
+    res = _compose_table_a3_cross_reference(plan, term, tables_graph, stores=stores)
+
+    if as_json:
+        print(json.dumps(res, indent=2))
+    else:
+        print("=== AWS A3.0M/A3.0:2020 TABLE A3 CROSS-REFERENCE RECEIPT ===")
+        print(f"Query: {term}")
+        print(f"Status: {res.get('status')}")
+        print(f"\nAnswer:\n{res.get('answer', '')}\n")
+        print(f"Operations Count: {res.get('operations_count', 0)}")
+        print(f"Elements Present: {res.get('elements_present', [])}")
+        print(f"Normative Provenance: {res.get('normative_provenance', [])}")
+    return 0
+
+
 def main(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         description="Canonical Whole-Standard CLI for AWS A3.0M/A3.0:2020 (Terms & Definitions)."
@@ -182,6 +208,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     group.add_argument("--route", type=str, help="Run multi-intent routing and plan synthesis.")
     group.add_argument("--expand", type=str, help="Run store-compiled semantic graph neighborhood expansion.")
     group.add_argument("--ask", type=str, help="Execute full question answering with provenance.")
+    group.add_argument("--table-a3", type=str, help="Query Table A3 cross-reference matrix by designation or process.")
 
     parser.add_argument(
         "--planner",
@@ -191,18 +218,35 @@ def main(argv: Optional[list[str]] = None) -> int:
         help="Planner backend to use (default: deterministic).",
     )
     parser.add_argument("--json", action="store_true", help="Output result as structured JSON.")
+    parser.add_argument("--offline", action="store_true", help="Enforce offline socket blocking.")
 
     args = parser.parse_args(argv)
 
-    if args.ner:
-        return run_ner_cli(args.ner, as_json=args.json)
-    elif args.route:
-        return run_route_cli(args.route, as_json=args.json, planner_name=args.planner)
-    elif args.expand:
-        return run_expand_cli(args.expand, as_json=args.json)
-    elif args.ask:
-        return run_ask_cli(args.ask, as_json=args.json, planner_name=args.planner)
-    return 0
+    orig_socket = None
+    if args.offline:
+        import socket
+        orig_socket = socket.socket
+        class BlockedSocket(orig_socket):
+            def __init__(self, *args, **kwargs):
+                raise RuntimeError("Network disabled by --offline flag")
+        socket.socket = BlockedSocket
+
+    try:
+        if args.ner:
+            return run_ner_cli(args.ner, as_json=args.json)
+        elif args.route:
+            return run_route_cli(args.route, as_json=args.json, planner_name=args.planner)
+        elif args.expand:
+            return run_expand_cli(args.expand, as_json=args.json)
+        elif args.ask:
+            return run_ask_cli(args.ask, as_json=args.json, planner_name=args.planner)
+        elif args.table_a3:
+            return run_table_a3_cli(args.table_a3, as_json=args.json)
+        return 0
+    finally:
+        if orig_socket is not None:
+            import socket
+            socket.socket = orig_socket
 
 
 if __name__ == "__main__":

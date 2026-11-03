@@ -373,3 +373,15 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable G63-3 (Embedded Lightface Nonstandard Term Resolution):** Enhanced `SemanticExpander` and `WeldingNER` to extract and resolve multi-word embedded nonstandard terms (`ground clamp`, `ground lead`, `welding ground`, `silver soldering`) directly to standard Clause 4 terms and definitions.
 - [x] **Deliverable G63-4 (AST Zero-Fallback Expansion Across 12 Functions):** Extended the AST zero-fallback guard in `tests/test_gate_6_3_blind_hardening.py` across all 12 composer and plan-execution functions (`0` violations).
 - [x] **Deliverable G63-5 (45/45 Cryptographic Hash Locks & Drive Mirror Parity):** Added Artifacts #43–#45 to the immutability ledger (`test_gate_6_3_all_45_locked_hashes`), preserved 100% backward compatibility across all legacy test suites, and synchronized with Google Drive mirror.
+
+---
+
+## 11. Gate 6.4: Comprehensive Enhancements (20-Cassette Replay Suite, Table A3 Joins, Figures B33/B46 Deep Traversal & Whole-Standard CLI)
+
+### Deliverables Checklist
+
+- [x] **Deliverable G64-1 (Offline DeepSeek Replay Suite Expansion to 20 Cassettes):** Added 6 net-new content-addressed replay cassettes in `storage/model_replays/deepseek_v4_1_flash_1017/` (`G63-BLIND04`, `G63-BLIND09`, `G63-BLIND14`, `G63-BLIND16`, `G63-BLIND18`, `G63-BLIND20`), expanding total cassettes from 14 to 20. Updated `eval/run_phase6_3_blind_hardening.py` to support `--use-replay-cassettes`, verifying **20 / 20 (100.0%)** pass rate in both deterministic and replay modes under socket isolation.
+- [x] **Deliverable G64-2 (Table A3 Matrix & Multi-Table Joins):** Built dedicated store-driven composer `_compose_table_a3_cross_reference` in `src/evidence_phase4_bakeoff.py` for Table A3 (134 letter designations), dynamically cross-referencing process names, letter designations, Table A1/A2, source anomalies (`ANOMALY-01` through `ANOMALY-04`), and Clause 4 definitions with zero fallback AST compliance and store-mutation degradation tests.
+- [x] **Deliverable G64-3 (Annex B Spatial Callout Deep Traversal for Figures B33 & B46):** Deepened Figure B33 (13 crack locations) and Figure B46 (10 FSW key items & zones) in `src/archetype_spatial_callout.py` to join spatial callouts with Clause 4 definitions (advancing/retreating side, tool shoulder, probe, TMAZ, HAZ, crack types) and high-res crop provenance.
+- [x] **Deliverable G64-4 (Whole-Standard CLI & Agent Skills Modernization):** Added `--table-a3` and `--offline` to `src/evidence_whole_standard_cli.py`, modernizing `.agents/skills/aws-a30-ner-and-routing/SKILL.md` (correct alphabetical weld test position Clause 4 pagination `1F`–`4F` and `1G`–`3G` on printed p. 5, `4G`–`6GR` on printed p. 6; documented Table A3 CLI and capabilities).
+- [x] **Deliverable G64-5 (51/51 Cryptographic Hash Locks & Test Suite in `tests/test_gate_6_4_comprehensive_enhancements.py`):** Added Artifacts #46–#51 to the immutability ledger, verified all 51 cryptographic hashes under CI, and scored 7/7 (100%) on `tests/test_gate_6_4_comprehensive_enhancements.py`.

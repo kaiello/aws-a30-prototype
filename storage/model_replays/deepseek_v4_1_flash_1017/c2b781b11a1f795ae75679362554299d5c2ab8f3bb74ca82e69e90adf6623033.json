@@ -1,0 +1,29 @@
+{
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "replay_key": "c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033",
+  "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: List all six application modes and their letter designation suffixes from Table A4, explain the rule and format for appending them to a process or process variation designation, and give the Clause 4 definitions that distinguish the six application modes.\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "raw_model_output": "{\"target_division\": \"Normative Tables\", \"intent\": \"suffix_modifiers\", \"target_entities\": [\"Table A4\", \"-AD\", \"-AU\", \"-MA\", \"-ME\", \"-RO\", \"-SA\"], \"actions\": [{\"action_type\": \"query_tables\", \"target\": \"Table A4\", \"parameters\": {}}], \"reason\": \"DeepSeek-V4.1 trace: Propose structured plan for application_mode_suffixes_and_rules targeting Normative Tables.\"}",
+  "parsed_plan": {
+    "target_division": "Normative Tables",
+    "intent": "suffix_modifiers",
+    "target_entities": [
+      "Table A4",
+      "-AD",
+      "-AU",
+      "-MA",
+      "-ME",
+      "-RO",
+      "-SA"
+    ],
+    "actions": [
+      {
+        "action_type": "query_tables",
+        "target": "Table A4",
+        "parameters": {}
+      }
+    ],
+    "reason": "DeepSeek-V4.1 trace: Propose structured plan for application_mode_suffixes_and_rules targeting Normative Tables."
+  },
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+}

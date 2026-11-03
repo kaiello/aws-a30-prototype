@@ -120,7 +120,7 @@ WHOLE_STANDARD_PLAN_SCHEMA = {
       },
       "intent": {
         "type": "string",
-        "description": "Specific query intent: 'characteristic_path', 'branching', 'circle_legend_count', 'joining_methods', 'epistemic_admission', 'suffix_modifiers', 'obsolete_processes', 'letter_designation', 'cross_table_anomaly', 'designation_collision', 'definition', 'multi_sense_pos', 'domain_delimiter', 'nonstandard_term', 'typographical_markers', 'figure_cross_reference', 'is_a_promotion_metrics', 'is_a_promotion_criteria', 'promoted_variation', 'retained_candidate', 'annex_c_decision', 'annex_d_table', 'applicable_welds', 'multi_page_continuation', 'crack_keys', 'fsw_components_zones', 'test_positions', 'waveform_traces_intervals', 'waveform_single_pulse', 'waveform_cycle_comparison'"
+        "description": "Specific query intent: 'characteristic_path', 'branching', 'circle_legend_count', 'joining_methods', 'epistemic_admission', 'table_a3_cross_reference', 'suffix_modifiers', 'obsolete_processes', 'letter_designation', 'cross_table_anomaly', 'designation_collision', 'definition', 'multi_sense_pos', 'domain_delimiter', 'nonstandard_term', 'typographical_markers', 'figure_cross_reference', 'is_a_promotion_metrics', 'is_a_promotion_criteria', 'promoted_variation', 'retained_candidate', 'annex_c_decision', 'annex_d_table', 'applicable_welds', 'multi_page_continuation', 'crack_keys', 'fsw_components_zones', 'test_positions', 'waveform_traces_intervals', 'waveform_single_pulse', 'waveform_cycle_comparison'"
       },
       "target_entities": {
         "type": "array",
@@ -506,6 +506,13 @@ class DeterministicQuestionPlanner:
                 {"action_type": "disambiguate_weld_position", "target": pos_id, "parameters": {}},
             ]
 
+        # Priority 17b: Table A3 Cross-Reference Matrix
+        elif ("table a3" in q_lower or "table a.3" in q_lower) and not ("collision" in q_lower) and not ("magnetic pulse" in q_lower or "mpw" in q_lower):
+            target_div = "Normative Tables"
+            intent = "table_a3_cross_reference"
+            entities = ["Table A3"]
+            actions = [{"action_type": "query_tables", "target": "Table A3", "parameters": {}}]
+
         # Priority 18: Homograph Disambiguation (AB)
         elif re.search(r"\bAB\b", question_text) and not ("collision" in q_lower) and not ("adhesive" in q_lower and "braz" in q_lower):
             target_div = "Normative Tables"
@@ -604,7 +611,10 @@ class DeterministicQuestionPlanner:
             or any(t.startswith("Table A") for t in inferred_tbls)
         ):
             target_div = "Normative Tables"
-            if "table a4" in q_lower or "suffix" in q_lower or "application mode" in q_lower or "Table A4" in inferred_tbls:
+            if ("table a3" in q_lower or "table a.3" in q_lower or "Table A3" in inferred_tbls) and not ("magnetic pulse" in q_lower or "mpw" in q_lower):
+                intent = "table_a3_cross_reference"
+                target = "Table A3"
+            elif "table a4" in q_lower or "suffix" in q_lower or "application mode" in q_lower or "Table A4" in inferred_tbls:
                 intent = "suffix_modifiers"
                 target = "Table A4"
             elif "table a5" in q_lower or "obsolete" in q_lower or "discontinued" in q_lower or "Table A5" in inferred_tbls:
@@ -1087,6 +1097,168 @@ def _compose_annex_a_chart_answer(
     }
 
 
+def _compose_table_a3_cross_reference(
+    plan: Dict[str, Any],
+    question_text: str,
+    tables_graph: Dict[str, Any],
+    stores: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Dynamically compose Table A3 cross-reference answers joined with Table A1/A2 and Clause 4 glossary."""
+    table_a3 = tables_graph.get("table_a3")
+    if not table_a3:
+        raise ValueError("INSUFFICIENT_EVIDENCE: Table A3 missing in tables store")
+
+    glossary = stores.get("glossary") if stores else None
+    if not glossary or not glossary.get("entries"):
+        raise ValueError("INSUFFICIENT_EVIDENCE: Glossary store missing or empty")
+
+    q_lower = question_text.lower()
+    operations = []
+    provenance = []
+    elements_present = ["Table A3"]
+
+    # Candidate entities from plan
+    target_entities = plan.get("target_entities")
+    cand_entities = []
+    if target_entities:
+        for ent in target_entities:
+            if isinstance(ent, str):
+                ent_clean = ent.strip()
+                if ent_clean.lower() not in ["table a3", "table a.3"]:
+                    cand_entities.append(ent_clean)
+
+    # Word tokens for exact designation matching
+    q_tokens = [re.sub(r"[^A-Za-z0-9\-]", "", t).upper() for t in question_text.split()]
+
+    matched_rows = []
+    for row in table_a3:
+        desig = row.get("designation")
+        proc = row.get("process")
+        if not desig or not proc:
+            continue
+        desig_upper = desig.upper()
+        proc_lower = proc.lower()
+
+        is_match = False
+        if len(desig_upper) >= 2 and desig_upper in q_tokens:
+            if desig_upper == "IS":
+                raw_words = [re.sub(r"[^A-Za-z0-9\-]", "", w) for w in question_text.split()]
+                if "IS" in raw_words or any(c.upper() == "IS" for c in cand_entities):
+                    is_match = True
+            else:
+                is_match = True
+        elif len(desig_upper) == 1 and any(c.upper() == desig_upper for c in cand_entities):
+            is_match = True
+        elif proc_lower in q_lower:
+            is_match = True
+        elif any(c.upper() == desig_upper or c.lower() == proc_lower for c in cand_entities):
+            is_match = True
+
+        if is_match and row not in matched_rows:
+            matched_rows.append(row)
+
+    # Source anomalies check
+    source_anomalies = tables_graph.get("source_anomalies")
+    relevant_anomalies = []
+    if source_anomalies:
+        for a in source_anomalies:
+            a_desig = a.get("designation")
+            a_code = a.get("code")
+            if any(r.get("designation") in [a_desig, a_code] for r in matched_rows) or (
+                ("anomaly" in q_lower or "anomalies" in q_lower or "collision" in q_lower or "discrepancy" in q_lower)
+                and (a_desig in q_tokens or (a_code and a_code in q_tokens))
+            ):
+                relevant_anomalies.append(a)
+
+    table_a1 = tables_graph.get("table_a1")
+
+    if matched_rows:
+        operations.append({"operation": "query_table_a3_cross_reference", "matches": len(matched_rows), "status": "executed"})
+        details = []
+        for r in matched_rows:
+            d = r.get("designation")
+            p = r.get("process")
+            pg = r.get("page")
+            pdf = r.get("pdf_index")
+            if not d or not p or not pg or not pdf:
+                raise ValueError("INSUFFICIENT_EVIDENCE: Incomplete row fields in Table A3 store")
+            provenance.append(f"obs:pdf:{pdf}:table:Table A3")
+            elements_present.extend([d, p])
+
+            # Cross-reference Table A1
+            t1_groups = []
+            if table_a1:
+                t1_matches = [t1r for t1r in table_a1 if t1r.get("designation") == d]
+                for t1r in t1_matches:
+                    parent = t1r.get("parent_process")
+                    if parent and parent not in t1_groups:
+                        t1_groups.append(parent)
+            t1_str = f", classified under {', '.join(t1_groups)} in Table A1" if t1_groups else ""
+
+            # Clause 4 join
+            g_entry = lookup_glossary_term(p, glossary)
+            if not g_entry:
+                g_entry = lookup_glossary_term(d, glossary)
+
+            c4_str = ""
+            if g_entry:
+                c4_def = g_entry.get("definition")
+                c4_pg = g_entry.get("printed_page")
+                if c4_def and c4_pg:
+                    c4_pdf = c4_pg + 12
+                    provenance.append(f"obs:pdf:{c4_pdf}:clause:Clause_4")
+                    c4_str = f" Defined in Clause 4 (p. {c4_pg}): \"{c4_def}\""
+                    elements_present.append(c4_def[:30])
+
+            # Anomaly note
+            anom_notes = []
+            for an in relevant_anomalies:
+                if an.get("designation") == d or an.get("code") == d:
+                    corrob = an.get("corroboration")
+                    if corrob:
+                        anom_notes.append(f" [Source Anomaly: {corrob}]")
+            anom_str = "".join(anom_notes)
+
+            details.append(f"• {d} = {p} (Table A3 printed p. {pg}, PDF index {pdf}{t1_str}).{c4_str}{anom_str}")
+
+        answer_text = (
+            f"In AWS A3.0M/A3.0:2020 Table A3 (Alphabetical Cross-Reference to Table A1 by Process Letter Designation, "
+            f"printed pp. 72–73), the queried designations/processes map as follows:\n"
+            + "\n".join(details)
+        )
+    else:
+        # General Table A3 summary or anomaly query
+        operations.append({"operation": "summarize_table_a3", "status": "executed"})
+        provenance.extend(["obs:pdf:84:table:Table A3", "obs:pdf:85:table:Table A3"])
+        elements_present.extend(["134", "Alphabetical Cross-Reference", "AB", "W"])
+
+        anom_summary = ""
+        if relevant_anomalies:
+            anom_details = []
+            for an in relevant_anomalies:
+                an_id = an.get("id")
+                an_title = an.get("title")
+                an_corrob = an.get("corroboration")
+                anom_details.append(f"- {an_id} ({an_title}): {an_corrob}")
+            anom_summary = "\n\nDocumented Table A3 Anomalies:\n" + "\n".join(anom_details)
+
+        answer_text = (
+            f"In AWS A3.0M/A3.0:2020, Table A3 (Alphabetical Cross-Reference to Table A1 by Process Letter Designation, "
+            f"printed pp. 72–73, PDF index 84–85) catalogs exactly {len(table_a3)} standardized process letter designations "
+            f"in alphabetical order from AB (adhesive bonding) through W (welding). It provides an alphabetical index "
+            f"correlating each letter designation with its official process name, Table A1 parent grouping, and normative Clause 4 definition.{anom_summary}"
+        )
+
+    return {
+        "status": "PASS",
+        "answer": answer_text,
+        "operations": operations,
+        "operations_count": len(operations),
+        "elements_present": list(dict.fromkeys(elements_present)),
+        "normative_provenance": list(dict.fromkeys(provenance)),
+    }
+
+
 def _compose_normative_tables_answer(
     plan: Dict[str, Any],
     question_text: str,
@@ -1115,6 +1287,10 @@ def _compose_normative_tables_answer(
             "elements_present": [f"Table A{tbl_num}", "does not exist", "Table A1 through Table A5"],
             "normative_provenance": ["obs:pdf:83-86:annex_a_tables"],
         }
+
+    # Table A3 Cross-Reference Matrix
+    if (intent == "table_a3_cross_reference" or "table a3" in q_lower or "table a.3" in q_lower) and not ("magnetic pulse" in q_lower or "mpw" in q_lower):
+        return _compose_table_a3_cross_reference(plan, question_text, tables_graph, stores=stores)
 
     # Table A1 USW Distinct Parent Process Groups Anomaly
     if ("usw" in q_lower or "ultrasonic" in q_lower) and ("distinct parent" in q_lower or "two distinct" in q_lower or "pages 69" in q_lower or intent == "cross_table_anomaly"):
@@ -2349,7 +2525,11 @@ def execute_whole_standard_plan(
         if un_result:
             return un_result
 
-    # Gate 6.3 Blind Hardening Compositional Handlers
+    # Gate 6.3 Blind Hardening & Gate 6.4 Compositional Handlers
+    if intent == "table_a3_cross_reference":
+        tables_graph = stores.get("tables", {})
+        return _compose_table_a3_cross_reference(plan, question_text, tables_graph, stores=stores)
+
     if intent == "decode_process_designations":
         return _exec_decode_process_designations(entities, question_text, stores=stores)
 

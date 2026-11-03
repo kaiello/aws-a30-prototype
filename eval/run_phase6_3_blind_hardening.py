@@ -32,6 +32,7 @@ def evaluate_blind_hardening_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
     write_results: bool = True,
+    use_replay_cassettes: bool = False,
 ) -> Dict[str, Any]:
     """Execute Gate 6.3 20-query blind hardening benchmark."""
     if root is None:
@@ -51,6 +52,11 @@ def evaluate_blind_hardening_benchmark(
     stores = get_whole_standard_stores(root)
     planner = DeterministicQuestionPlanner(root)
 
+    replay_adapter = None
+    if use_replay_cassettes:
+        from src.deepseek_v41_adapter import DeepSeekV41Config, DeepSeekV41PlannerAdapter
+        replay_adapter = DeepSeekV41PlannerAdapter(config=DeepSeekV41Config(mode="OFFLINE_REPLAY_ONLY"), root=root)
+
     results = []
     passed_count = 0
 
@@ -61,7 +67,13 @@ def evaluate_blind_hardening_benchmark(
         slice_name = item.get("slice_name", category)
         rubric = rubrics[qid]
 
-        resp = answer_whole_standard_question(query, planner, stores=stores)
+        item_planner = planner
+        if use_replay_cassettes and replay_adapter:
+            key = replay_adapter.compute_replay_key(replay_adapter.build_whole_standard_prompt(query))
+            if (replay_adapter.replay_dir / f"{key}.json").exists():
+                item_planner = replay_adapter
+
+        resp = answer_whole_standard_question(query, item_planner, stores=stores)
         plan = resp.get("plan", {})
         execution = resp.get("execution", {})
         status = execution.get("status")
@@ -125,11 +137,16 @@ def evaluate_blind_hardening_benchmark(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Gate 6.3 Blind Hardening Benchmark Evaluation")
     parser.add_argument("--benchmark-dir", type=str, default=None, help="Path to benchmark directory")
+    parser.add_argument("--use-replay-cassettes", action="store_true", help="Use offline DeepSeek-V4.1 replay cassettes for matching queries")
     parser.add_argument("--no-write", action="store_true", help="Do not overwrite results.json")
     args = parser.parse_args()
 
     bench_dir = Path(args.benchmark_dir) if args.benchmark_dir else None
-    summary = evaluate_blind_hardening_benchmark(output_dir=bench_dir, write_results=not args.no_write)
+    summary = evaluate_blind_hardening_benchmark(
+        output_dir=bench_dir,
+        write_results=not args.no_write,
+        use_replay_cassettes=args.use_replay_cassettes,
+    )
     print(f"Gate 6.3 Blind Hardening Benchmark: {summary['passed']}/{summary['total_queries']} passed ({summary['pass_rate']}%)")
     if summary["failed"] > 0:
         sys.exit(1)

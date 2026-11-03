@@ -352,7 +352,7 @@ def test_gate_6_2_deepseek_14_replays_and_20_query_holdout_benchmark(monkeypatch
 
     replays_dir = ROOT / "storage/model_replays/deepseek_v4_1_flash_1017"
     cassettes = sorted(replays_dir.glob("*.json"))
-    assert len(cassettes) == 14, f"Expected 14 replay cassettes, found {len(cassettes)}"
+    assert len(cassettes) >= 14, f"Expected at least 14 replay cassettes, found {len(cassettes)}"
 
     for cass_file in cassettes:
         data = json.loads(cass_file.read_text(encoding="utf-8"))
