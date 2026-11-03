@@ -6,7 +6,7 @@
 **Production Release Tag:** `v1.6.3-blind-hardening` (merged on `main`)  
 **Repository:** `https://github.com/kaiello/aws-a30-prototype`  
 **Google Drive Mirror:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)  
-**Full Regression Test Suite:** `1,505 passed, 8 skipped, 0 failures, 0 warnings`  
+**Full Regression Test Suite:** `1,507 passed, 8 skipped, 0 failures, 0 warnings`  
 
 ---
 
@@ -344,7 +344,7 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable G621-4 (Hardened 12-Target Store Mutation Suite):** Verified mutations 8–12 fail catastrophically through `answer_whole_standard_question` raising `ValueError("INSUFFICIENT_EVIDENCE")`.
 - [x] **Deliverable G621-5 (42/42 Cryptographic Hash Locks & Test Suite in `tests/test_gate_6_2_1_multi_action_closure.py`):** 39 prior locked hashes + 3 `phase6_2_generalization_holdout_002` benchmark files locked under CI; full regression suite passing at 1,494 passed, 8 skipped, 0 failures, 0 warnings.
 
-## Gate 6.2.2: Post-6.2.1 Closeout Hygiene, Google Drive 42-Artifact Mirror Parity, Repo Doc Alignment & Post-Merge Audit Bundle
+## Gate 6.2.2: Post-6.2.1 Closeout Hygiene, Google Drive 42-Artifact Mirror Parity, Repo Doc Alignment & Post-Merge Audit Bundle (Tagged `v1.6.2.2-closeout-hygiene`)
 
 - [x] **Deliverable G622-1 (Complete 42-Artifact Google Drive Mirror Collection):** Updated `collect_reviewable_files` in `src/sync_drive_mirror.py` to collect all 41 non-PDF locked artifacts, scripts, and benchmark results without omissions.
 - [x] **Deliverable G622-2 (Document Hash & Pagination Alignment):** Corrected rows #36 and #37 SHA-256 digests in ledger tables, aligned test count to 1,499 passed, 8 skipped, and fixed Clause 4 weld position pagination.

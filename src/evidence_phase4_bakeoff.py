@@ -1091,6 +1091,7 @@ def _compose_normative_tables_answer(
     plan: Dict[str, Any],
     question_text: str,
     tables_graph: Dict[str, Any],
+    stores: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Dynamically compose Slice B answers from Phase 2 tables_graph.json without literal fallbacks."""
     if not tables_graph:
@@ -1182,25 +1183,33 @@ def _compose_normative_tables_answer(
         au_entry = next((s for s in t4["suffixes"] if s.get("suffix") == "-AU"), None)
         if not au_entry or not au_entry.get("mode"):
             raise ValueError("INSUFFICIENT_EVIDENCE: -AU suffix mode missing in Table A4 store")
-        t4_title = t4.get("title") or "Table A4"
+        t4_title = t4.get("title")
+        if not t4_title:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Table A4 title missing in store")
         t4_page = t4.get("page")
         if not t4_page:
             raise ValueError("INSUFFICIENT_EVIDENCE: Table A4 page missing in store")
 
         if "rule and format" in q_lower or "definitions that distinguish" in q_lower or "distinguish the six" in q_lower:
-            t4_note = t4.get("note") or "Append suffix to process designation with a hyphen."
+            t4_note = t4.get("note")
+            if not t4_note:
+                raise ValueError("INSUFFICIENT_EVIDENCE: Table A4 note missing in store")
             operations.append({"operation": "query_table_a4_suffixes", "status": "executed"})
             provenance.append(f"obs:pdf:{t4_page+12}:table:Table A4")
             provenance.append("obs:pdf:174:clause:C1.3_5")
 
-            from src.evidence_clause4_glossary import lookup_glossary_term
+            glossary = stores.get("glossary", {}) if stores else {}
+            if not glossary or not glossary.get("entries"):
+                raise ValueError("INSUFFICIENT_EVIDENCE: Glossary store missing or empty")
             mode_details = []
             for s in t4["suffixes"]:
                 suf = s["suffix"]
                 m_name = s["mode"]
-                g_entry = lookup_glossary_term(m_name)
-                c4_def = g_entry.get("definition") if g_entry else ""
-                c4_page = g_entry.get("printed_page") if g_entry else t4_page
+                g_entry = lookup_glossary_term(m_name, glossary)
+                if not g_entry or not g_entry.get("definition") or not g_entry.get("printed_page"):
+                    raise ValueError(f"INSUFFICIENT_EVIDENCE: Glossary entry, definition, or page missing for application mode {m_name}")
+                c4_def = g_entry["definition"]
+                c4_page = g_entry["printed_page"]
                 mode_details.append(f"- {suf} = {m_name} (Clause 4, p. {c4_page}): \"{c4_def}\"")
                 elements_present.extend([suf, m_name])
 
@@ -1234,19 +1243,23 @@ def _compose_normative_tables_answer(
             operations.append({"operation": "query_table_a5_obsolete", "status": "executed"})
             provenance.append("obs:pdf:86:table:Table A5")
             queried_procs = [r for r in t5 if any(k in (r.get("process") or "").lower() or k == (r.get("designation") or "").lower() for k in ["block brazing", "bb", "shielded carbon arc welding", "caw-s"])]
-            from src.evidence_clause4_glossary import lookup_glossary_term
+            if not queried_procs:
+                raise ValueError("INSUFFICIENT_EVIDENCE: Queried obsolete processes not found in Table A5")
+            glossary = stores.get("glossary", {}) if stores else {}
+            if not glossary or not glossary.get("entries"):
+                raise ValueError("INSUFFICIENT_EVIDENCE: Glossary store missing or empty")
             details = []
             for qp in queried_procs:
                 p_name = qp.get("process")
                 d_name = qp.get("designation")
                 if not d_name or not p_name:
                     raise ValueError(f"INSUFFICIENT_EVIDENCE: Process or designation missing in Table A5 store for {p_name}")
-                g_entry = lookup_glossary_term(p_name)
-                c4_def = g_entry.get("definition") if g_entry else ""
-                c4_page = g_entry.get("printed_page") if g_entry else 74
-                detail_str = f"• {p_name} (designation: {d_name}) is an obsolete process cataloged in Table A5 (p. 74)"
-                if c4_def:
-                    detail_str += f" and defined in Clause 4 (p. {c4_page}) as: \"{c4_def}\""
+                g_entry = lookup_glossary_term(p_name, glossary)
+                if not g_entry or not g_entry.get("definition") or not g_entry.get("printed_page"):
+                    raise ValueError(f"INSUFFICIENT_EVIDENCE: Definition or page missing in glossary for obsolete process {p_name}")
+                c4_def = g_entry["definition"]
+                c4_page = g_entry["printed_page"]
+                detail_str = f"• {p_name} (designation: {d_name}) is an obsolete process cataloged in Table A5 (p. 74) and defined in Clause 4 (p. {c4_page}) as: \"{c4_def}\""
                 details.append(detail_str)
                 elements_present.extend([p_name, d_name])
 
@@ -2102,11 +2115,13 @@ def _exec_decode_process_designations(
     if not glossary:
         glossary = stores.get("glossary", {})
     t1 = tables.get("table_a1", [])
+    if not t1:
+        raise ValueError("INSUFFICIENT_EVIDENCE: Table A1 missing in tables store")
+    if not glossary or not glossary.get("entries"):
+        raise ValueError("INSUFFICIENT_EVIDENCE: Glossary store missing or empty")
     t2 = tables.get("table_a2", [])
     t3 = tables.get("table_a3", [])
     t5 = tables.get("table_a5", [])
-
-    from src.evidence_clause4_glossary import lookup_glossary_term
 
     operations = []
     provenance = []
@@ -2135,7 +2150,7 @@ def _exec_decode_process_designations(
         page = (row_t1.get("page") if row_t1 else None) or (row_t2.get("page") if row_t2 else None) or (row_t3.get("page") if row_t3 else None) or (row_t5.get("page") if row_t5 else 74)
 
         if not proc_name:
-            g_entry = lookup_glossary_term(code_clean)
+            g_entry = lookup_glossary_term(code_clean, glossary)
             if g_entry:
                 proc_name = g_entry.get("term")
                 desig = g_entry.get("designation") or desig
@@ -2144,9 +2159,11 @@ def _exec_decode_process_designations(
         if not proc_name:
             continue
 
-        g_entry = lookup_glossary_term(proc_name) or lookup_glossary_term(desig)
-        def_text = g_entry.get("definition") if g_entry else ""
-        c4_page = g_entry.get("printed_page") if g_entry else page
+        g_entry = lookup_glossary_term(proc_name, glossary) or lookup_glossary_term(desig, glossary)
+        if not g_entry or not g_entry.get("definition") or not g_entry.get("printed_page"):
+            raise ValueError(f"INSUFFICIENT_EVIDENCE: Definition or page missing in glossary for {proc_name}")
+        def_text = g_entry["definition"]
+        c4_page = g_entry["printed_page"]
 
         operations.append({"operation": "decode_process_designation", "designation": desig, "process": proc_name, "status": "executed"})
         if page:
@@ -2161,31 +2178,38 @@ def _exec_decode_process_designations(
             desc += f" — Defined as: \"{def_text}\""
             elements_present.append(def_text[:40])
 
-        if g_entry:
-            figs = g_entry.get("cross_references", {}).get("figures", [])
-            if figs:
-                fig_strs = [f"Figure {f}" if not str(f).startswith("Figure") else str(f) for f in figs]
-                desc += f" [Cross-references: {', '.join(fig_strs)}]"
-                elements_present.extend(fig_strs)
-            see_also = g_entry.get("cross_references", {}).get("see_also", [])
-            if see_also:
-                elements_present.extend(see_also)
+        figs = g_entry.get("cross_references", {}).get("figures", [])
+        if figs:
+            fig_strs = [f"Figure {f}" if not str(f).startswith("Figure") else str(f) for f in figs]
+            desc += f" [Cross-references: {', '.join(fig_strs)}]"
+            elements_present.extend(fig_strs)
+        see_also = g_entry.get("cross_references", {}).get("see_also", [])
+        if see_also:
+            elements_present.extend(see_also)
 
         decoded_sections.append(desc)
 
     # Special handling for GTAW See-Also Chain and Figure B36
     if any(c.upper() == "GTAW" for c in clean_codes):
-        gtaw_entry = lookup_glossary_term("gas tungsten arc welding")
-        hot_wire = lookup_glossary_term("hot wire welding")
-        gtaw_p = lookup_glossary_term("pulsed gas tungsten arc welding")
-        pulsed_weld = lookup_glossary_term("pulsed welding, arc welding") or lookup_glossary_term("pulsed welding")
+        gtaw_entry = lookup_glossary_term("gas tungsten arc welding", glossary)
+        if not gtaw_entry or not gtaw_entry.get("definition"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: GTAW glossary entry missing in store")
+        hot_wire = lookup_glossary_term("hot wire welding", glossary)
+        if not hot_wire or not hot_wire.get("definition") or not hot_wire.get("printed_page"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: hot wire welding glossary entry missing in store")
+        gtaw_p = lookup_glossary_term("pulsed gas tungsten arc welding", glossary)
+        if not gtaw_p or not gtaw_p.get("definition") or not gtaw_p.get("printed_page"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: GTAW-P glossary entry missing in store")
+        pulsed_weld = lookup_glossary_term("pulsed welding, arc welding", glossary) or lookup_glossary_term("pulsed welding", glossary)
+        if not pulsed_weld or not pulsed_weld.get("definition") or not pulsed_weld.get("printed_page"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: pulsed welding glossary entry missing in store")
 
         gtaw_details = [
             f"\nGTAW Nomenclature and Cross-Referenced See-Also Chain:",
             f"• Visual Reference: Figure B36 (Gas Tungsten Arc Welding Torch Nomenclature, printed p. 141, PDF index 153).",
-            f"• hot wire welding (Clause 4, p. {hot_wire.get('printed_page', 32) if hot_wire else 32}): \"{hot_wire.get('definition') if hot_wire else ''}\"",
-            f"• pulsed gas tungsten arc welding (GTAW-P) (Clause 4, p. {gtaw_p.get('printed_page', 46) if gtaw_p else 46}): \"{gtaw_p.get('definition') if gtaw_p else ''}\"",
-            f"• pulsed welding, arc welding (Clause 4, p. {pulsed_weld.get('printed_page', 46) if pulsed_weld else 46}): \"{pulsed_weld.get('definition') if pulsed_weld else ''}\""
+            f"• hot wire welding (Clause 4, p. {hot_wire['printed_page']}): \"{hot_wire['definition']}\"",
+            f"• pulsed gas tungsten arc welding (GTAW-P) (Clause 4, p. {gtaw_p['printed_page']}): \"{gtaw_p['definition']}\"",
+            f"• pulsed welding, arc welding (Clause 4, p. {pulsed_weld['printed_page']}): \"{pulsed_weld['definition']}\""
         ]
         decoded_sections.append("\n".join(gtaw_details))
         provenance.append("obs:pdf:153:figure:Figure B36")
@@ -2209,19 +2233,28 @@ def _exec_decode_process_designations(
 
     # Special handling for EBW physical pressure ranges
     if any("EBW" in c.upper() for c in clean_codes) or "pressure range" in question_text.lower():
-        ebw_hv = lookup_glossary_term("high vacuum electron beam welding")
-        ebw_mv = lookup_glossary_term("medium vacuum electron beam welding")
-        ebw_nv = lookup_glossary_term("nonvacuum electron beam welding")
+        ebw_hv = lookup_glossary_term("high vacuum electron beam welding", glossary)
+        if not ebw_hv or not ebw_hv.get("definition") or not ebw_hv.get("printed_page"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: EBW-HV glossary entry missing in store")
+        ebw_mv = lookup_glossary_term("medium vacuum electron beam welding", glossary)
+        if not ebw_mv or not ebw_mv.get("definition") or not ebw_mv.get("printed_page"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: EBW-MV glossary entry missing in store")
+        ebw_nv = lookup_glossary_term("nonvacuum electron beam welding", glossary)
+        if not ebw_nv or not ebw_nv.get("definition") or not ebw_nv.get("printed_page"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: EBW-NV glossary entry missing in store")
         decoded_sections.append(
             "\nPhysical operating pressure ranges distinguishing EBW process variations:\n"
-            f"1. EBW-HV (High vacuum electron beam welding, Clause 4 p. {ebw_hv.get('printed_page', 32) if ebw_hv else 32}): "
-            f"Operates at high vacuum pressures, specifically: \"{ebw_hv.get('definition') if ebw_hv else ''}\" (10^-4 to 10^-1 Pa [10^-6 to 10^-3 Torr])\n"
-            f"2. EBW-MV (Medium vacuum electron beam welding, Clause 4 p. {ebw_mv.get('printed_page', 38) if ebw_mv else 38}): "
-            f"Operates at medium vacuum pressures, specifically: \"{ebw_mv.get('definition') if ebw_mv else ''}\" (0.1 to 100 Pa [10^-3 to 1 Torr])\n"
-            f"3. EBW-NV (Nonvacuum electron beam welding, Clause 4 p. {ebw_nv.get('printed_page', 41) if ebw_nv else 41}): "
-            f"Operates at atmospheric pressure, specifically: \"{ebw_nv.get('definition') if ebw_nv else ''}\""
+            f"1. EBW-HV (High vacuum electron beam welding, Clause 4 p. {ebw_hv['printed_page']}): "
+            f"Operates at high vacuum pressures, specifically: \"{ebw_hv['definition']}\" (10^-4 to 10^-1 Pa [10^-6 to 10^-3 Torr])\n"
+            f"2. EBW-MV (Medium vacuum electron beam welding, Clause 4 p. {ebw_mv['printed_page']}): "
+            f"Operates at medium vacuum pressures, specifically: \"{ebw_mv['definition']}\" (0.1 to 100 Pa [10^-3 to 1 Torr])\n"
+            f"3. EBW-NV (Nonvacuum electron beam welding, Clause 4 p. {ebw_nv['printed_page']}): "
+            f"Operates at atmospheric pressure, specifically: \"{ebw_nv['definition']}\""
         )
         elements_present.extend(["high vacuum", "medium vacuum", "nonvacuum", "atmospheric", "torr", "Pa", "10^-4", "10^-1"])
+
+    if not decoded_sections:
+        raise ValueError("INSUFFICIENT_EVIDENCE: No process designations could be decoded from stores")
 
     answer = "In AWS A3.0M/A3.0:2020:\n" + "\n".join(decoded_sections)
     return {
@@ -2240,7 +2273,6 @@ def execute_whole_standard_plan(
     stores: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Execute plan dynamically against whole-standard stores with zero hardcoding and zero silent fallbacks."""
-    from src.evidence_clause4_glossary import lookup_glossary_term
     if stores is None:
         stores = get_whole_standard_stores(ROOT)
 
@@ -2322,9 +2354,19 @@ def execute_whole_standard_plan(
         return _exec_decode_process_designations(entities, question_text, stores=stores)
 
     if (intent == "applicable_welds" or (bool(re.search(r"\bfigure\s*b1\b", q_lower)) and "applicable" in q_lower)) and not ("all five" in q_lower or "five basic joint types" in q_lower or "panels (a) through (e)" in q_lower):
-        b1_path = ROOT / "storage/evidence_v2/annex_b_complete_001/figure_b1_store.json"
-        b1_data = json.loads(b1_path.read_text(encoding="utf-8")) if b1_path.exists() else {}
-        app_welds = b1_data.get("applicable_welds_by_joint", {})
+        fig_b1 = stores.get("annex_b_complete", {}).get("figures", {}).get("Figure B1")
+        if not fig_b1:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B1 missing in Annex B store")
+        
+        # Load applicable welds data
+        app_welds = fig_b1.get("applicable_welds_by_joint")
+        if not app_welds:
+            b1_path = ROOT / "storage/evidence_v2/annex_b_complete_001/figure_b1_store.json"
+            if b1_path.exists():
+                b1_data = json.loads(b1_path.read_text(encoding="utf-8"))
+                app_welds = b1_data.get("applicable_welds_by_joint", {})
+            else:
+                app_welds = {}
         
         joint_key = "T-JOINT"
         for j in ["T-JOINT", "BUTT JOINT", "CORNER JOINT", "LAP JOINT", "PARALLEL JOINT", "EDGE JOINT"]:
@@ -2332,20 +2374,38 @@ def execute_whole_standard_plan(
                 joint_key = j
                 break
         
+        panel_map = {
+            "BUTT JOINT": "(A)",
+            "CORNER JOINT": "(B)",
+            "T-JOINT": "(C)",
+            "LAP JOINT": "(D)",
+            "PARALLEL JOINT": "(E)",
+            "EDGE JOINT": "(E)",
+        }
+        sub_panel = panel_map.get(joint_key)
+        if not sub_panel:
+            raise ValueError(f"INSUFFICIENT_EVIDENCE: Sub-panel mapping missing for joint type {joint_key}")
+
         welds = app_welds.get(joint_key, [])
-        from src.evidence_clause4_glossary import lookup_glossary_term
-        j_term = lookup_glossary_term(joint_key.lower())
-        j_def = j_term.get("definition") if j_term else ""
-        j_page = j_term.get("printed_page", 60) if j_term else 60
+        if not welds:
+            raise ValueError(f"INSUFFICIENT_EVIDENCE: Applicable welds missing in store for {joint_key}")
+
+        glossary = stores.get("glossary", {})
+        if not glossary or not glossary.get("entries"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Glossary store missing or empty")
+        j_term = lookup_glossary_term(joint_key.lower(), glossary)
+        if not j_term or not j_term.get("definition") or not j_term.get("printed_page"):
+            raise ValueError(f"INSUFFICIENT_EVIDENCE: Definition or page missing in glossary for {joint_key}")
+        j_def = j_term["definition"]
+        j_page = j_term["printed_page"]
         
         operations = [{"operation": "query_figure_b1_applicable_welds", "joint_type": joint_key, "count": len(welds), "status": "executed"}]
         provenance = ["obs:pdf:94:figure:Figure B1", f"obs:clause4:p{j_page}:{joint_key.lower().replace('-', '_')}"]
         elements_present = ["Figure B1", joint_key, str(len(welds))] + welds
-        if j_def:
-            elements_present.append(j_def[:40])
+        elements_present.append(j_def[:40])
             
         answer = (
-            f"In AWS A3.0M/A3.0:2020 Figure B1 (Joint Types, printed p. 82, PDF index 94), sub-diagram (C) illustrates the {joint_key}. "
+            f"In AWS A3.0M/A3.0:2020 Figure B1 (Joint Types, printed p. 82, PDF index 94), sub-diagram {sub_panel} illustrates the {joint_key}. "
             f"There are exactly {len(welds)} applicable weld types for a {joint_key}:\n"
             + "\n".join(f"• {w}" for w in welds) +
             f"\n\nIn Clause 4 (printed p. {j_page}), '{joint_key.lower()}' is defined as: \"{j_def}\""
@@ -2360,10 +2420,17 @@ def execute_whole_standard_plan(
         }
 
     if intent == "test_positions_tabulation" or ("rotation of face" in q_lower and "flat" in q_lower):
-        from src.evidence_clause4_glossary import lookup_glossary_term
-        flat_term = lookup_glossary_term("flat welding position")
-        flat_def = flat_term.get("definition") if flat_term else ""
-        flat_page = flat_term.get("printed_page", 25) if flat_term else 25
+        fig_b16b = stores.get("annex_b_complete", {}).get("figures", {}).get("Figure B16B")
+        if not fig_b16b:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B16B missing in Annex B store")
+        glossary = stores.get("glossary", {})
+        if not glossary or not glossary.get("entries"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Glossary store missing or empty")
+        flat_term = lookup_glossary_term("flat welding position", glossary)
+        if not flat_term or not flat_term.get("definition") or not flat_term.get("printed_page"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Flat welding position definition or page missing in glossary store")
+        flat_def = flat_term["definition"]
+        flat_page = flat_term["printed_page"]
         
         operations = [{"operation": "query_figure_b16b_tabulation", "position": "Flat", "status": "executed"}]
         provenance = ["obs:pdf:115:figure:Figure B16B", f"obs:clause4:p{flat_page}:flat_welding_position"]
@@ -2371,8 +2438,7 @@ def execute_whole_standard_plan(
             "Figure B16B", "Flat", "150° to 210°", "0° to 15°", "Diagram Reference: A",
             "Welding Position Diagram for Fillet Welds in Plate", "Tabulation of Positions of Fillet Welds"
         ]
-        if flat_def:
-            elements_present.append(flat_def[:40])
+        elements_present.append(flat_def[:40])
             
         answer = (
             "In AWS A3.0M/A3.0:2020 Figure B16B (Welding Position Diagram for Fillet Welds in Plate, printed p. 103, PDF index 115), "
@@ -2398,9 +2464,10 @@ def execute_whole_standard_plan(
         }
 
     if intent == "reverse_figure_lookup" or (division == "Figure B21" and ("what figure" in q_lower or "which figure" in q_lower or "position of beam" in q_lower)):
-        b21_path = ROOT / "storage/evidence_v2/annex_b_complete_001/figure_b21_store.json"
-        b21_data = json.loads(b21_path.read_text(encoding="utf-8")) if b21_path.exists() else {}
-        title = b21_data.get("official_title") or "Position of Beam, Filler Material, Gun, or Torch"
+        fig_b21 = stores.get("annex_b_complete", {}).get("figures", {}).get("Figure B21")
+        if not fig_b21 or not fig_b21.get("official_title"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B21 metadata missing in store")
+        title = fig_b21["official_title"]
         
         operations = [{"operation": "query_figure_b21_nomenclature", "status": "executed"}]
         provenance = ["obs:pdf:124:figure:Figure B21"]
@@ -2428,13 +2495,19 @@ def execute_whole_standard_plan(
         }
 
     if intent == "temper_beads" or ("temper bead" in q_lower and "figure b23" in q_lower):
-        from src.evidence_clause4_glossary import lookup_glossary_term
+        fig_b23 = stores.get("annex_b_complete", {}).get("figures", {}).get("Figure B23")
+        if not fig_b23:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B23 missing in Annex B store")
+        glossary = stores.get("glossary", {})
+        if not glossary or not glossary.get("entries"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Glossary store missing or empty")
         tb_terms = ["temper pass", "temper bead", "temper bead sequence", "toe temper pass", "toe temper bead"]
         def_lines = []
         for t in tb_terms:
-            g = lookup_glossary_term(t)
-            if g:
-                def_lines.append(f"• {t} (Clause 4, p. {g.get('printed_page')}): \"{g.get('definition')}\"")
+            g = lookup_glossary_term(t, glossary)
+            if not g or not g.get("definition") or not g.get("printed_page"):
+                raise ValueError(f"INSUFFICIENT_EVIDENCE: Definition or page missing in glossary for temper bead term {t}")
+            def_lines.append(f"• {t} (Clause 4, p. {g['printed_page']}): \"{g['definition']}\"")
                 
         operations = [{"operation": "query_figure_b23_temper_beads", "sub_panel": "(J)", "status": "executed"}]
         provenance = ["obs:pdf:128:figure:Figure B23:panel_j"] + [f"obs:clause4:p60:{t.replace(' ', '_')}" for t in tb_terms]
@@ -2467,7 +2540,12 @@ def execute_whole_standard_plan(
         }
 
     if intent == "waveform_comparison_and_intervals" or (("figure b49" in q_lower and "figure b50" in q_lower) or ("cool time" in q_lower and "quench time" in q_lower and "resistance" in q_lower)):
-        from src.evidence_clause4_glossary import lookup_glossary_term
+        b4_figs = stores.get("annex_b_archetype4", {}).get("figure_summaries", {})
+        if "Figure B49" not in b4_figs or "Figure B50" not in b4_figs:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B49 or B50 missing in Archetype 4 store")
+        glossary = stores.get("glossary", {})
+        if not glossary or not glossary.get("entries"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Glossary store missing or empty")
         intervals = [
             "squeeze time", "preweld interval", "preheat time", "upslope time", "weld time",
             "weld interval", "heat time", "cool time", "pulse time", "downslope time",
@@ -2475,10 +2553,14 @@ def execute_whole_standard_plan(
         ]
         interval_defs = []
         for iv in intervals:
-            g = lookup_glossary_term(f"{iv}, resistance welding") or lookup_glossary_term(iv)
-            if g:
-                interval_defs.append(f"• {g.get('term')} (Clause 4, p. {g.get('printed_page')}): \"{g.get('definition')}\"")
+            g = lookup_glossary_term(f"{iv}, resistance welding", glossary) or lookup_glossary_term(iv, glossary)
+            if not g or not g.get("definition") or not g.get("printed_page"):
+                raise ValueError(f"INSUFFICIENT_EVIDENCE: Definition or page missing in glossary for interval {iv}")
+            interval_defs.append(f"• {g.get('term')} (Clause 4, p. {g.get('printed_page')}): \"{g.get('definition')}\"")
                 
+        if not interval_defs:
+            raise ValueError("INSUFFICIENT_EVIDENCE: No interval definitions found for Figures B49 and B50")
+
         operations = [{"operation": "compare_figures_b49_and_b50", "status": "executed"}]
         provenance = ["obs:pdf:165:figure:Figure B49", "obs:pdf:165:figure:Figure B50"]
         elements_present = [
@@ -2511,7 +2593,16 @@ def execute_whole_standard_plan(
         }
 
     if intent == "safety_incorrect_terms" or ("c2.3" in q_lower or ("personal safety" in q_lower and "incorrect" in q_lower) or ("ground clamp" in q_lower and "workpiece connection" in q_lower)):
-        from src.evidence_clause4_glossary import lookup_glossary_term
+        annex_c = stores.get("annex_c_d", {}).get("annex_c")
+        if not annex_c:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Annex C missing in annex_c_d store")
+        fig_b34 = stores.get("annex_b_complete", {}).get("figures", {}).get("Figure B34")
+        if not fig_b34:
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B34 missing in Annex B store")
+        glossary = stores.get("glossary", {})
+        if not glossary or not glossary.get("entries"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Glossary store missing or empty")
+
         c23_text = (
             "Per Annex C Clause C2.3 (printed p. 163, PDF index 175) and the Foreword of AWS A3.0M/A3.0:2020: "
             "Terms are categorized as either standard or nonstandard. No other designation, such as preferred or nonpreferred, "
@@ -2526,16 +2617,19 @@ def execute_whole_standard_plan(
         ]
         term_lines = []
         for nt, st, p in terms_info:
-            g = lookup_glossary_term(nt)
-            def_str = g.get("definition") if g else f"A nonstandard and incorrect term for {st}."
+            g = lookup_glossary_term(nt, glossary)
+            if not g or not g.get("definition"):
+                raise ValueError(f"INSUFFICIENT_EVIDENCE: Nonstandard term {nt} definition missing in glossary")
+            def_str = g["definition"]
             term_lines.append(f"• {nt} (Clause 4, p. {p}): \"{def_str}\" — Standard term: {st}")
             
         std_terms = ["workpiece connection", "workpiece connector", "workpiece lead", "electrode lead", "ground connection"]
         std_lines = []
         for st in std_terms:
-            g = lookup_glossary_term(st)
-            if g:
-                std_lines.append(f"• {st} (Clause 4, p. {g.get('printed_page')}): \"{g.get('definition')}\"")
+            g = lookup_glossary_term(st, glossary)
+            if not g or not g.get("definition") or not g.get("printed_page"):
+                raise ValueError(f"INSUFFICIENT_EVIDENCE: Standard term {st} definition or page missing in glossary")
+            std_lines.append(f"• {st} (Clause 4, p. {g['printed_page']}): \"{g['definition']}\"")
                 
         operations = [{"operation": "query_safety_incorrect_terms", "clause": "C2.3", "status": "executed"}]
         provenance = [
@@ -2572,13 +2666,20 @@ def execute_whole_standard_plan(
         }
 
     if intent == "annex_c_and_d_revisions" or (("c1.5.6" in q_lower and "c1.5.7" in q_lower) or ("parallel joint" in q_lower and "nondestructive examination" in q_lower)):
-        from src.evidence_clause4_glossary import lookup_glossary_term
+        annex_c_d = stores.get("annex_c_d", {}) if stores else {}
+        if not annex_c_d or not annex_c_d.get("annex_c") or not annex_c_d.get("annex_d"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Annex C/D store missing or incomplete")
+        glossary = stores.get("glossary", {}) if stores else {}
+        if not glossary or not glossary.get("entries"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Glossary store missing or empty")
+
         c4_terms = ["joint", "joint type", "parallel joint", "edge joint", "nondestructive examination", "nondestructive evaluation", "nondestructive inspection", "nondestructive testing"]
         c4_defs = []
         for t in c4_terms:
-            g = lookup_glossary_term(t)
-            if g:
-                c4_defs.append(f"• {t} (Clause 4, p. {g.get('printed_page')}): \"{g.get('definition')}\"")
+            g = lookup_glossary_term(t, glossary)
+            if not g or not g.get("definition") or not g.get("printed_page"):
+                raise ValueError(f"INSUFFICIENT_EVIDENCE: Definition or page missing in glossary for Annex C/D term {t}")
+            c4_defs.append(f"• {t} (Clause 4, p. {g.get('printed_page')}): \"{g.get('definition')}\"")
                 
         operations = [{"operation": "query_annex_c_and_d_revisions", "clauses": ["C1.5.6", "C1.5.7"], "status": "executed"}]
         provenance = [
@@ -2877,7 +2978,7 @@ def execute_whole_standard_plan(
 
     if is_tables_query:
         tables_graph = stores.get("tables", {})
-        return _compose_normative_tables_answer(plan, question_text, tables_graph)
+        return _compose_normative_tables_answer(plan, question_text, tables_graph, stores=stores)
 
     # Route 3: Slice F — Annex B Archetype 4 Waveforms
     is_waveform_query = (

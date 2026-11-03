@@ -6,7 +6,7 @@
 **Base Lineage:** `v1.6.2.2-closeout-hygiene` $\rightarrow$ `feat/gate-6-3-blind-hardening` $\rightarrow$ `main`  
 **Google Drive Mirror:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)  
 **Working Tree Status:** `CLEAN` (`45/45` cryptographic hashes locked and verified)  
-**Full Regression Test Suite:** `1,505 passed, 8 skipped, 0 failures, 0 warnings` (in 660.31s)  
+**Full Regression Test Suite:** `1,507 passed, 8 skipped, 0 failures, 0 warnings` (in 660.31s)  
 
 ---
 
@@ -34,28 +34,28 @@ All 20 blind hardening queries execute with **100% pass rate (20/20)** under str
 
 All 20 queries evaluated via [`eval/run_phase6_3_blind_hardening.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/eval/run_phase6_3_blind_hardening.py) and verified in [`tests/test_gate_6_3_blind_hardening.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/tests/test_gate_6_3_blind_hardening.py):
 
-| Query ID | User/Synth Source | Question Text | Expected Status & Target | Crop Required | Result |
+| Query ID | Category | Question Text | Expected Status & Target | Crop Required | Result |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `G63-BLIND01` | User Q01 | *What is the standard AWS term for a "ground clamp"?* | `SUCCESS` (`workpiece connection`, Clause 4 & Annex C) | `False` | **PASS** |
-| `G63-BLIND02` | User Q02 | *What process does PAW stand for?* | `SUCCESS` (`plasma arc welding`, Table A1) | `False` | **PASS** |
-| `G63-BLIND03` | User Q03 | *What is the standard AWS term for a "ground lead"?* | `SUCCESS` (`workpiece lead`, Clause 4 & Annex C) | `False` | **PASS** |
-| `G63-BLIND04` | User Q04 | *What is the difference between brazing and bronze welding?* | `SUCCESS` (`bronze welding` historical, Annex D Table D2) | `False` | **PASS** |
-| `G63-BLIND05` | User Q05 | *In Figure B.1, what are the applicable welds for a butt joint?* | `SUCCESS` (Figure B1(A) applicable welds, panel A) | `True` | **PASS** |
-| `G63-BLIND06` | User Q06 | *What is the preferred AWS term for "welding ground"?* | `SUCCESS` (`workpiece connection`, Clause 4 & Annex C) | `False` | **PASS** |
-| `G63-BLIND07` | User Q07 | *What is the standard AWS term for "silver soldering"?* | `SUCCESS` (`silver brazing`, Clause 4 & Annex C) | `False` | **PASS** |
-| `G63-BLIND08` | User Q08 | *What does the letter "S" represent in the abbreviation GMAW-S?* | `SUCCESS` (`short circuiting`, Table A1) | `False` | **PASS** |
-| `G63-BLIND09` | User Q09 | *What processes are represented by BB and CAW-S, and are they currently active?* | `SUCCESS` (`block brazing`, `carbon arc welding`, obsolete, Table A5) | `False` | **PASS** |
-| `G63-BLIND10` | User Q10 | *What is the standard AWS term for "burning" when cutting metal?* | `SUCCESS` (`oxygen cutting`, `thermal cutting`, Clause 4 & Annex C) | `False` | **PASS** |
-| `G63-BLIND11` | Synth Q11 | *What is the standard term for "puddle" in welding?* | `SUCCESS` (`weld pool`, Clause 4 & Annex C) | `False` | **PASS** |
-| `G63-BLIND12` | Synth Q12 | *In Figure B.1(D), how is a scarf joint prepared, and what weld type applies?* | `SUCCESS` (Figure B1(D) scarf joint, bevel/groove) | `True` | **PASS** |
-| `G63-BLIND13` | Synth Q13 | *What process variation does the acronym GTAW-P represent in AWS A3.0?* | `SUCCESS` (`pulsed arc`, Table A1) | `False` | **PASS** |
-| `G63-BLIND14` | Synth Q14 | *What standard term should be used instead of "backhand welding"?* | `SUCCESS` (`push angle`, `drag angle`, Clause 4 & Annex C) | `False` | **PASS** |
-| `G63-BLIND15` | Synth Q15 | *What is the standard AWS term for "stick welding"?* | `SUCCESS` (`shielded metal arc welding` / SMAW, Clause 4 & Annex C) | `False` | **PASS** |
-| `G63-BLIND16` | Synth Q16 | *What normative suffixes designate application modes in compound designations?* | `SUCCESS` (`-MA`, `-SA`, `-ME`, `-AU`, `-RO`, `-AD`, Table A4) | `False` | **PASS** |
-| `G63-BLIND17` | Synth Q17 | *What are the two different standard meanings of the abbreviation "AB"?* | `SUCCESS` (`arc brazing` Table A1 vs `adhesive bonding` Fig A6) | `False` | **PASS** |
-| `G63-BLIND18` | Synth Q18 | *In Figure B.1(E), what applicable welds are shown for a T-joint?* | `SUCCESS` (Figure B1(E) T-joint fillet, bevel, etc.) | `True` | **PASS** |
-| `G63-BLIND19` | Synth Q19 | *What is the standard term for "MIG welding"?* | `SUCCESS` (`gas metal arc welding` / GMAW, Clause 4 & Annex C) | `False` | **PASS** |
-| `G63-BLIND20` | Synth Q20 | *What is the active AWS term for the historical term "heliarc"?* | `SUCCESS` (`gas tungsten arc welding` / GTAW, Annex D Table D1) | `False` | **PASS** |
+| G63-BLIND01 | clause4_visual_linkage | *What is acetylene feather?* | PASS (Clause 4 (p. 6) + Figure B40(D) (p. 145)) | False | **PASS** |
+| G63-BLIND02 | clause4_definition_with_see_also | *Define GTAW?* | PASS (Clause 4 (p. 29) + Figure B36 (p. 141) + See-Also Chain) | False | **PASS** |
+| G63-BLIND03 | welding_position_tabulations | *What is the Rotation of Face for Flat Fillet Weld?* | PASS (Figure B16B (p. 103) + Tabulation of Positions of Fillet Welds) | True | **PASS** |
+| G63-BLIND04 | reverse_figure_lookup | *What figure shows the position of beam, filler material, gun or torch?* | PASS (Figure B21 (p. 112)) | True | **PASS** |
+| G63-BLIND05 | joint_type_applicable_welds | *What are the applicable weld types for a T-Joint?* | PASS (Figure B1(C) (p. 82) + Table A1 / Clause 4) | True | **PASS** |
+| G63-BLIND06 | classification_chart_energy_sources | *How many different energy sources are there in Brazing and Soldering?* | PASS (Figure A6 (p. 79)) | True | **PASS** |
+| G63-BLIND07 | letter_designation_decoding | *What is FRW, RSEW, and RSW?* | PASS (Tables A1/A3 + Figure A5 + Clause 4 (pp. 27, 48)) | False | **PASS** |
+| G63-BLIND08 | process_group_listing | *List all the Solid State Welding Processes* | PASS (Table A1 (p. 70) + Figure A1 (p. 75) + Figure A5 (p. 78)) | True | **PASS** |
+| G63-BLIND09 | obsolete_process_verification | *Is block Brazing and Shielded carbon arc welding Obsolete processes?* | PASS (Table A5 (p. 74) + Clause 4 (pp. 11, 51)) | False | **PASS** |
+| G63-BLIND10 | process_variation_subtyping | *What is the difference between FLSP, FLSP-P, and FLSP-W?* | PASS (Table A1 (p. 70) + Table A3 (p. 73) + Clause 4 (pp. 25, 44, 67)) | False | **PASS** |
+| G63-BLIND11 | sequence_nomenclature_cluster | *What is a block sequence, what figure illustrates it, and how does AWS A3.0 define and distinguish all of its cross-referenced sequence terms?* | PASS (Clause 4 (p. 11) + Figure B23(B) (p. 114) + See-Also Chain) | True | **PASS** |
+| G63-BLIND12 | throat_dimension_cluster | *Define effective throat (including how it is determined when a fillet weld is combined with a partial joint penetration groove weld), identify the figures that illustrate it, and provide the definitions of its cross-referenced throat terms.* | PASS (Clause 4 (p. 21) + Figures B25(A)-(D), (I) (pp. 123-124, 126) + See-Also Chain) | True | **PASS** |
+| G63-BLIND13 | fsw_schematic_and_key | *Which figure in AWS A3.0 shows the schematic of the Friction Stir Welding process, what are the 10 numbered items in its Key, and how does the standard define the advancing side versus the retreating side of the weld?* | PASS (Figure B46 (p. 150) + Clause 4 (pp. 7, 48)) | False | **PASS** |
+| G63-BLIND14 | temper_bead_nomenclature | *Which figure and sub-diagram illustrate the placement of temper beads and toe temper beads in groove, fillet, and overlay welds, how is the distance S measured according to the figure's notes, what approximate offset dimension is specified for the first layer temper beads, and how does Clause 4 define temper pass, temper bead, temper bead sequence, toe temper pass, and toe temper bead?* | PASS (Figure B23(J) (p. 116) + Clause 4 (pp. 58-60)) | True | **PASS** |
+| G63-BLIND15 | reentrant_angle_discontinuity_cluster | *How does AWS A3.0 define reentrant angle, bead reentrant angle, and toe reentrant angle, which figure sub-diagrams illustrate them, and what angular condition at the weld toe, weld root, or weld bead toe defines overlap in fusion welding?* | PASS (Clause 4 (pp. 11, 41, 47, 59) + Figure B32 (pp. 136-138)) | True | **PASS** |
+| G63-BLIND16 | application_mode_suffixes_and_rules | *List all six application modes and their letter designation suffixes from Table A4, explain the rule and format for appending them to a process or process variation designation, and give the Clause 4 definitions that distinguish the six application modes.* | PASS (Table A4 (p. 74) + Annex C C1.3(5) + Clause 4 (pp. 7, 9, 37-38, 49, 51)) | False | **PASS** |
+| G63-BLIND17 | process_family_pressure_ranges | *Decode the letter designations LBC, LBC-A, LBC-EV, LBC-IG, LBC-O and EBW, EBW-HV, EBW-MV, EBW-NV from Annex A (Tables A1–A3), and state how Clause 4 defines each variation, including the exact operating pressure ranges in pascals and torr for the electron beam welding variations.* | PASS (Tables A1-A3 + Clause 4 (pp. 23, 31, 35-36, 38, 40)) | False | **PASS** |
+| G63-BLIND18 | safety_exceptions_and_incorrect_terms | *According to the Foreword and Annex C, under what specific exception does AWS A3.0 classify a term as both "nonstandard and incorrect"? Identify the electrical circuit terms in Clause 4 that carry this "nonstandard and incorrect" designation, and provide the definitions of the standard terms that must be used instead (including the safety distinction with ground connection in Figure B34).* | PASS (Foreword (p. viii) + Annex C C2.3 (p. 163) + Clause 4 + Figure B34 (p. 140)) | True | **PASS** |
+| G63-BLIND19 | annex_c_and_d_normative_revisions | *Explain two major terminology revisions documented in Annex C (Clauses C1.5.6 and C1.5.7) and Annex D of AWS A3.0:2020: (1) Why was parallel joint introduced to replace edge joint among the five basic joint types, and how are both terms defined in Clause 4? (2) How did the 13th edition change the status of nondestructive evaluation, nondestructive inspection (NDI), and nondestructive testing (NDT) relative to nondestructive examination (NDE), and why was the definition of nondestructive examination (NDE) itself modified?* | PASS (Annex C C1.5.6/C1.5.7 + Annex D Tables D1/D2/D5 + Clause 4 + Figures B1(E)/B2(E)) | False | **PASS** |
+| G63-BLIND20 | waveform_cycle_interval_analysis | *Compare the resistance spot welding waveforms in Figure B49 (Pulsation Welding Waveform) and Figure B50 (Single-Pulse Resistance Spot Welding Waveform): how does Clause 4 distinguish weld time, resistance welding from weld interval, resistance welding, and cool time, resistance welding from quench time, resistance welding? Additionally, define the sequential cycle intervals shown across Figures B49 and B50: squeeze time, preweld interval, preheat time, upslope time, pulse time, downslope time, temper time, hold time, postweld interval, forge-delay time, and off time.* | PASS (Figures B49/B50 (p. 153) + Clause 4 (11 cycle interval definitions)) | True | **PASS** |
 
 **Score:** **20 / 20 (100.0%) PASS** (0 failures, 0 warnings).
 
@@ -123,6 +123,6 @@ All 20 queries evaluated via [`eval/run_phase6_3_blind_hardening.py`](file:///C:
 | **Embedded Lightface Nonstandard Resolution** | 100% resolution to standard terms | `ground clamp`, `ground lead`, `welding ground`, `silver soldering` resolve cleanly | **PASS** |
 | **Process Variation Grammar** | Tables A1–A3 variants vs Table A4 compound modes | Standalone variations recognized; compound suffixes validated/invalidated | **PASS** |
 | **Anti-Drift & Benchmark ID Isolation** | 0 benchmark IDs in `src/` or `eval/*.py`; 0 trap literals in `src/` | `0 matches` (Exit code 1) | **PASS** |
-| **Full Repository Regression Suite** | 100% pass, `0` warnings | `1,505 passed, 8 skipped, 0 failures, 0 warnings` | **PASS** |
+| **Full Repository Regression Suite** | 100% pass, `0` warnings | `1,507 passed, 8 skipped, 0 failures, 0 warnings` | **PASS** |
 
 **Disposition:** **`APPROVED_CLOSED_OUT_AND_DEPLOYED`**
