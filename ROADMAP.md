@@ -186,4 +186,54 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable 4 (`src/evidence_whole_standard_cli.py` & `src/evidence_phase4_bakeoff.py`):** CLI `--expand` flag returning structured neighborhood, NER receipt, and ranked figures; multi-hop execution branch for compound validation, test positions, disambiguation, and see-also cross references.
 - [x] **Deliverable 5 (34/34 Cryptographic Hash Locks & Regression Suite in `tests/test_gate_6_1_semantic_graph.py`):** 29 prior locked hashes + 3 Gate 6.1 benchmark files + 2 new DeepSeek-V4.1 replay cassettes locked under CI; full regression suite passing at 1,482 passed, 8 skipped, 0 failures, 0 warnings.
 
+---
 
+## 7. Gate 6.2 Store-Driven Multi-Operation Composition, Zero-Canned-Prose AST Hardening & 20-Query Holdout
+
+### Benchmark Slices ([`storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json))
+
+| Slice | Category / Focus | Query IDs | Target Stores & Coverage | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Slice 1** | Generalized Dynamic Taxonomy Subtypes | `G62-GEN01` – `G62-GEN04` | `is_a_promotion_store.json` + `Table A1` (OFC, SAW, RSEW, GMAW variations) | `100.0% PASS (4/4)` |
+| **Slice 2** | Dynamic See-Also Expansion across Unseen Hubs | `G62-GEN05` – `G62-GEN08` | `glossary_store.json` (backfire, welding cycle, defect, joint type cross-references) | `100.0% PASS (4/4)` |
+| **Slice 3** | Comprehensive Weld Test Position Disambiguation | `G62-GEN09` – `G62-GEN12` | Clause 4 (p. 5/6) + Figures B16A–C, B17–B20 (3G, 4G, 5G, 3F, 4F plate vs pipe) | `100.0% PASS (4/4)` |
+| **Slice 4** | Generalized Cross-Store & Multi-Validation Operations | `G62-GEN13` – `G62-GEN16` | Table A5 / A1 / A2 (`FOW` vs `FSW`, `OFC-P-ME` vs invalid `GMAW-X-SA`, `GTAW-AU-MA`) | `100.0% PASS (4/4)` |
+| **Slice 5** | Offline DeepSeek Multi-Hop Replay over Composers | `G62-GEN17` – `G62-GEN20` | `DeepSeek-V4.1-Flash-1017` replay cassettes over 3-tier compound, diagram cycles & FSW | `100.0% PASS (4/4)` |
+
+### Deliverables Checklist
+
+- [x] **Deliverable G62-1 (Store-Driven Multi-Operation Action Composers in `src/evidence_phase4_bakeoff.py`):** 7 atomic, zero-canned-prose composers (`_exec_lookup_taxonomy_subtypes`, `_exec_expand_cross_references`, `_exec_weld_position_sense`, `_exec_disambiguate_homograph`, `_exec_compound_lookup_and_validation`, `_exec_compare_historical_and_active`, `_exec_polysemous_diagram_and_glossary`) reading dynamically from canonical stores.
+- [x] **Deliverable G62-2 (Zero-Canned-Prose AST Guard & 12-Target Store Mutation Degradation Suite in `tests/test_gate_6_2_store_driven_composition.py`):** AST guard enforcing zero string literal fallbacks in `.get(key, '...')` across all 10 composers; 12-target store mutation degradation suite proving catastrophic failure (`INSUFFICIENT_EVIDENCE`) when store keys/data are emptied.
+- [x] **Deliverable G62-3 (Offline DeepSeek 14-Replay Suite with Epistemic Quarantine):** 14 content-addressed `DeepSeek-V4.1-Flash-1017` replay cassettes executing in `< 1 ms` under socket isolation (`socket.socket` blocked, 0 network calls).
+- [x] **Deliverable G62-4 (20-Query Unseen Generalization Holdout Benchmark):** `storage/evidence_v2/phase6_2_generalization_holdout_001/{questions.json, rubric.json, results.json}` and `eval/run_phase6_2_generalization_holdout.py`, achieving **20 / 20 (100.0%)** across all 5 slices (`G62-GEN01` through `G62-GEN20`).
+- [x] **Deliverable G62-5 (39/39 Cryptographic Hash Locks & Anti-Drift Zero-Tolerance):** 34 prior locked hashes + 5 Gate 6.2 artifacts cryptographically locked under CI; 0 benchmark question IDs and 0 trap literals in `src/`; full regression suite passing at 100%.
+
+---
+
+## 9. Gate 6.2.1 Multi-Action Composition, Holdout 002 & 42-Hash Closeout
+
+### Benchmark Slices ([`storage/evidence_v2/phase6_2_generalization_holdout_002/questions.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/evidence_v2/phase6_2_generalization_holdout_002/questions.json))
+
+| Slice | Category / Focus | Query IDs | Target Stores & Coverage | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Slice 1** | Generalized Dynamic Taxonomy Subtypes | `G62-GEN01` – `G62-GEN04` | `is_a_promotion_store.json` + `Table A1` (OFC, SAW, RSEW, GMAW variations) | `100.0% PASS (4/4)` |
+| **Slice 2** | Dynamic See-Also Expansion across Unseen Hubs | `G62-GEN05` – `G62-GEN08` | `glossary_store.json` (backfire, welding cycle, defect, agglomerated flux cross-references) | `100.0% PASS (4/4)` |
+| **Slice 3** | Comprehensive Weld Test Position Disambiguation | `G62-GEN09` – `G62-GEN12` | Clause 4 (p. 5/6) + Figures B16A–C, B17–B20 (3G, 4G, 5G, 3F, 4F plate vs pipe) | `100.0% PASS (4/4)` |
+| **Slice 4** | Generalized Cross-Store & Multi-Validation Operations | `G62-GEN13` – `G62-GEN16` | Table A5 / A1 / A2 (`FOW` vs `FSW`, `OFC-P-ME` vs invalid `GMAW-X-SA`, `GTAW-AU-MA`) | `100.0% PASS (4/4)` |
+| **Slice 5** | Offline DeepSeek Multi-Hop Replay over Composers | `G62-GEN17` – `G62-GEN20` | `DeepSeek-V4.1-Flash-1017` replay cassettes over 3-tier compound, diagram cycles & FSW | `100.0% PASS (4/4)` |
+
+### Deliverables Checklist
+
+- [x] **Deliverable G621-1 (Modular Multi-Action Composition & Zero-Canned-Prose Elimination):** Replaced all remaining legacy template strings in `src/evidence_phase4_bakeoff.py` (`invalid_compound_suffix`, `compound_designation`, `polysemous_callout_and_glossary`, angle clusters, Figure B6/B12/B25/B33/B46) with modular store-driven composability.
+- [x] **Deliverable G621-2 (Unweakened `holdout_002` Benchmark):** Established `storage/evidence_v2/phase6_2_generalization_holdout_002/` scoring **20 / 20 (100.0%)** without weakening rubrics or relaxing modality requirements.
+- [x] **Deliverable G621-3 (Dynamic Table Derivations in NER & NLQ):** Standardized dynamic Table A1/A2/A3/A4/A5 derivations across `src/welding_ner.py` and `src/semantic_nlq_expander.py`.
+- [x] **Deliverable G621-4 (Hardened 12-Target Store Mutation Suite):** Verified mutations 8–12 fail catastrophically through `answer_whole_standard_question` raising `ValueError("INSUFFICIENT_EVIDENCE")`.
+- [x] **Deliverable G621-5 (42/42 Cryptographic Hash Locks & Test Suite in `tests/test_gate_6_2_1_multi_action_closure.py`):** 39 prior locked hashes + 3 `phase6_2_generalization_holdout_002` benchmark files locked under CI; full regression suite passing at 1,499 passed, 8 skipped, 0 failures, 0 warnings.
+
+## Gate 6.2.2: Post-6.2.1 Closeout Hygiene, Google Drive 42-Artifact Mirror Parity, Repo Doc Alignment & Post-Merge Audit Bundle
+
+- [x] **Deliverable G622-1 (Complete 42-Artifact Google Drive Mirror Collection):** Updated `collect_reviewable_files` in `src/sync_drive_mirror.py` to collect all 41 non-PDF locked artifacts, scripts, and benchmark results without omissions.
+- [x] **Deliverable G622-2 (Document Hash & Pagination Alignment):** Corrected rows #36 and #37 SHA-256 digests in ledger tables, aligned test count to 1,499 passed, 8 skipped, and fixed Clause 4 weld position pagination.
+- [x] **Deliverable G622-3 (AST Zero-Fallback Expansion):** Enforced AST zero-fallback guard on `execute_whole_standard_plan` across `tests/test_gate_5_hardening.py` and `tests/test_gate_6_2_store_driven_composition.py`, eliminating inline fallback strings.
+- [x] **Deliverable G622-4 (Evaluator CLI Enhancements & Genus-Scoped Cross-References):** Added `--benchmark-dir` and `--use-replay-cassettes` CLI flags to `eval/run_phase6_2_generalization_holdout.py` and isolated single-subtype cross-reference expansion.
+- [x] **Deliverable G622-5 (42/42 Locked Hash Verification & Full Suite Baseline):** Maintained 100% byte-identity across all 42 locked repository artifacts with full test suite passing at 1,499 passed, 8 skipped.
