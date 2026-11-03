@@ -3,10 +3,10 @@
 **Target Standard:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions Including Terms for Adhesive Bonding, Brazing, Soldering, Thermal Cutting, and Thermal Spraying*, 13th Edition, 190 PDF pages)  
 **Source PDF SHA-256:** `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d`  
 **Coordinate Formula:** $\text{printed\_page} = \text{pdf\_index} - 12 = \text{viewer\_page} - 13$ (for main text & annexes starting at Clause 1, printed p. 1 = PDF index 13)  
-**Production Release Tag:** `v1.6.1-ner-semantic-graph` (merged on `main`)  
+**Production Release Tag:** `v1.6.2.1-multi-action-closure` (merged on `main`)  
 **Repository:** `https://github.com/kaiello/aws-a30-prototype`  
 **Google Drive Mirror:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)  
-**Full Regression Test Suite:** `1,482 passed, 8 skipped, 0 failures, 0 warnings`  
+**Full Regression Test Suite:** `1,494 passed, 8 skipped, 0 failures, 0 warnings`  
 
 ---
 
@@ -305,5 +305,28 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable G62-3 (Offline DeepSeek 14-Replay Suite with Epistemic Quarantine):** 14 content-addressed `DeepSeek-V4.1-Flash-1017` replay cassettes executing in `< 1 ms` under socket isolation (`socket.socket` blocked, 0 network calls).
 - [x] **Deliverable G62-4 (20-Query Unseen Generalization Holdout Benchmark):** `storage/evidence_v2/phase6_2_generalization_holdout_001/{questions.json, rubric.json, results.json}` and `eval/run_phase6_2_generalization_holdout.py`, achieving **20 / 20 (100.0%)** across all 5 slices (`G62-GEN01` through `G62-GEN20`).
 - [x] **Deliverable G62-5 (39/39 Cryptographic Hash Locks & Anti-Drift Zero-Tolerance):** 34 prior locked hashes + 5 Gate 6.2 artifacts cryptographically locked under CI; 0 benchmark question IDs and 0 trap literals in `src/`; full regression suite passing at 100%.
+
+---
+
+## 9. Gate 6.2.1 Multi-Action Composition, Holdout 002 & 42-Hash Closeout
+
+### Benchmark Slices ([`storage/evidence_v2/phase6_2_generalization_holdout_002/questions.json`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/storage/evidence_v2/phase6_2_generalization_holdout_002/questions.json))
+
+| Slice | Category / Focus | Query IDs | Target Stores & Coverage | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Slice 1** | Generalized Dynamic Taxonomy Subtypes | `G62-GEN01` – `G62-GEN04` | `is_a_promotion_store.json` + `Table A1` (OFC, SAW, RSEW, GMAW variations) | `100.0% PASS (4/4)` |
+| **Slice 2** | Dynamic See-Also Expansion across Unseen Hubs | `G62-GEN05` – `G62-GEN08` | `glossary_store.json` (backfire, welding cycle, defect, agglomerated flux cross-references) | `100.0% PASS (4/4)` |
+| **Slice 3** | Comprehensive Weld Test Position Disambiguation | `G62-GEN09` – `G62-GEN12` | Clause 4 (p. 5/6) + Figures B16A–C, B17–B20 (3G, 4G, 5G, 3F, 4F plate vs pipe) | `100.0% PASS (4/4)` |
+| **Slice 4** | Generalized Cross-Store & Multi-Validation Operations | `G62-GEN13` – `G62-GEN16` | Table A5 / A1 / A2 (`FOW` vs `FSW`, `OFC-P-ME` vs invalid `GMAW-X-SA`, `GTAW-AU-MA`) | `100.0% PASS (4/4)` |
+| **Slice 5** | Offline DeepSeek Multi-Hop Replay over Composers | `G62-GEN17` – `G62-GEN20` | `DeepSeek-V4.1-Flash-1017` replay cassettes over 3-tier compound, diagram cycles & FSW | `100.0% PASS (4/4)` |
+
+### Deliverables Checklist
+
+- [x] **Deliverable G621-1 (Modular Multi-Action Composition & Zero-Canned-Prose Elimination):** Replaced all remaining legacy template strings in `src/evidence_phase4_bakeoff.py` (`invalid_compound_suffix`, `compound_designation`, `polysemous_callout_and_glossary`, angle clusters, Figure B6/B12/B25/B33/B46) with modular store-driven composability.
+- [x] **Deliverable G621-2 (Unweakened `holdout_002` Benchmark):** Established `storage/evidence_v2/phase6_2_generalization_holdout_002/` scoring **20 / 20 (100.0%)** without weakening rubrics or relaxing modality requirements.
+- [x] **Deliverable G621-3 (Dynamic Table Derivations in NER & NLQ):** Standardized dynamic Table A1/A2/A3/A4/A5 derivations across `src/welding_ner.py` and `src/semantic_nlq_expander.py`.
+- [x] **Deliverable G621-4 (Hardened 12-Target Store Mutation Suite):** Verified mutations 8–12 fail catastrophically through `answer_whole_standard_question` raising `ValueError("INSUFFICIENT_EVIDENCE")`.
+- [x] **Deliverable G621-5 (42/42 Cryptographic Hash Locks & Test Suite in `tests/test_gate_6_2_1_multi_action_closure.py`):** 39 prior locked hashes + 3 `phase6_2_generalization_holdout_002` benchmark files locked under CI; full regression suite passing at 1,494 passed, 8 skipped, 0 failures, 0 warnings.
+
 
 

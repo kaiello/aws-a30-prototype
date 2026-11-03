@@ -32,6 +32,7 @@ def evaluate_generalization_holdout_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
     write_results: bool = True,
+    use_replay_for_slice5: bool = False,
 ) -> Dict[str, Any]:
     """Execute Gate 6.2 20-query store-driven composition and generalization holdout benchmark."""
     if root is None:
@@ -49,7 +50,12 @@ def evaluate_generalization_holdout_benchmark(
     rubrics = rubric_data["rubrics"]
 
     stores = get_whole_standard_stores(root)
-    planner = DeterministicQuestionPlanner(root)
+    deterministic_planner = DeterministicQuestionPlanner(root)
+
+    replay_adapter = None
+    if use_replay_for_slice5:
+        from src.deepseek_v41_adapter import DeepSeekV41Config, DeepSeekV41PlannerAdapter
+        replay_adapter = DeepSeekV41PlannerAdapter(config=DeepSeekV41Config(mode="OFFLINE_REPLAY_ONLY"), root=root)
 
     results = []
     passed_count = 0
@@ -61,7 +67,13 @@ def evaluate_generalization_holdout_benchmark(
         slice_name = item.get("slice_name", category)
         rubric = rubrics[qid]
 
-        resp = answer_whole_standard_question(query, planner, stores=stores)
+        item_planner = deterministic_planner
+        if use_replay_for_slice5 and replay_adapter:
+            key = replay_adapter.compute_replay_key(replay_adapter.build_whole_standard_prompt(query))
+            if (replay_adapter.replay_dir / f"{key}.json").exists():
+                item_planner = replay_adapter
+
+        resp = answer_whole_standard_question(query, item_planner, stores=stores)
         plan = resp.get("plan", {})
         execution = resp.get("execution", {})
         status = execution.get("status")
@@ -141,9 +153,15 @@ def evaluate_generalization_holdout_benchmark(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Gate 6.2 Generalization Holdout Benchmark")
     parser.add_argument("--root", type=Path, default=ROOT, help="Project root directory")
-    parser.add_argument("--output-dir", type=Path, default=None, help="Output directory for benchmark")
+    parser.add_argument("--benchmark-dir", "--output-dir", dest="output_dir", type=Path, default=None, help="Benchmark directory containing questions.json and rubric.json")
+    parser.add_argument("--use-replay-cassettes", action="store_true", help="Use DeepSeek replay adapter for Slice 5 queries")
     parser.add_argument("--no-write", action="store_true", help="Do not write results to disk (dry run)")
     args = parser.parse_args()
 
-    payload = evaluate_generalization_holdout_benchmark(root=args.root, output_dir=args.output_dir, write_results=not args.no_write)
+    payload = evaluate_generalization_holdout_benchmark(
+        root=args.root,
+        output_dir=args.output_dir,
+        write_results=not args.no_write,
+        use_replay_for_slice5=args.use_replay_cassettes,
+    )
     sys.exit(0 if payload["gate_status"] == "PASS" else 1)
