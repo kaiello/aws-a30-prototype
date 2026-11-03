@@ -228,7 +228,7 @@ class SemanticExpander:
                 self.canonical_to_abbrevs.setdefault(term_lower, []).append(desig_upper)
                 self.all_recognized_lexicon.add(desig_upper.lower())
 
-        # 2. Table A1 & Table A2 Process Abbreviations
+        # 2. Table A1, Table A2, & Table A3 Process Abbreviations
         table_a1 = tables.get("table_a1", [])
         for row in table_a1:
             proc = row.get("process", "").strip()
@@ -247,6 +247,42 @@ class SemanticExpander:
                 }
                 self.canonical_to_abbrevs.setdefault(proc_lower, []).append(desig_upper)
                 self.all_recognized_lexicon.add(desig_upper.lower())
+
+        table_a2 = tables.get("table_a2", [])
+        for row in table_a2:
+            proc = row.get("process", "").strip()
+            desig = row.get("designation")
+            page = row.get("page", 71)
+            if proc:
+                self.all_recognized_lexicon.add(proc.lower())
+            if desig:
+                d_upper = desig.upper().strip()
+                if d_upper not in self.abbrev_to_canonical:
+                    self.abbrev_to_canonical[d_upper] = {
+                        "canonical_term": proc,
+                        "parent_process": None,
+                        "source_authority": f"Table A2 (p. {page})",
+                    }
+                    self.canonical_to_abbrevs.setdefault(proc.lower(), []).append(d_upper)
+                    self.all_recognized_lexicon.add(d_upper.lower())
+
+        table_a3 = tables.get("table_a3", [])
+        for row in table_a3:
+            proc = row.get("process", "").strip()
+            desig = row.get("designation")
+            page = row.get("page", 72)
+            if proc:
+                self.all_recognized_lexicon.add(proc.lower())
+            if desig:
+                d_upper = desig.upper().strip()
+                if d_upper not in self.abbrev_to_canonical:
+                    self.abbrev_to_canonical[d_upper] = {
+                        "canonical_term": proc,
+                        "parent_process": None,
+                        "source_authority": f"Table A3 (p. {page})",
+                    }
+                    self.canonical_to_abbrevs.setdefault(proc.lower(), []).append(d_upper)
+                    self.all_recognized_lexicon.add(d_upper.lower())
 
         # 3. Table A4 Application Mode Suffixes
         table_a4 = tables.get("table_a4", {})
@@ -379,6 +415,28 @@ class SemanticExpander:
         for k, v in shop_floor_aliases.items():
             self.alias_pivot_map[k] = v
             self.all_recognized_lexicon.add(k)
+
+        # Embedded lightface nonstandard & incorrect electrical terms from Clause 4 entries
+        pat_embedded = re.compile(
+            r"(?:\.\s+)([a-zA-Z0-9][a-zA-Z0-9\s\-,/()]{1,60}?)\.\s+((?:A\s+nonstandard(?:\s+and\s+incorrect)?\s+term|An\s+incorrect\s+term)[^.]*\.)"
+        )
+        for e in entries:
+            ft = e.get("full_text", "")
+            page = e.get("printed_page", 17)
+            for m in pat_embedded.finditer(ft):
+                subterm = m.group(1).strip()
+                sub_def = m.group(2).strip()
+                sub_lower = subterm.lower()
+                if sub_lower == e.get("term", "").lower():
+                    continue
+                m_target = re.search(r"(?:when used for|for)\s+([a-zA-Z0-9\s\-,/()]+?)(?:\.|$)", sub_def)
+                target_std = m_target.group(1).strip() if m_target else subterm
+                self.alias_pivot_map[sub_lower] = {
+                    "canonical_term": target_std,
+                    "source_authority": f"Clause 4 (p. {page})",
+                    "resolution_type": "NONSTANDARD_TERM",
+                }
+                self.all_recognized_lexicon.add(sub_lower)
 
         # 6. Compound Process Codes (e.g. GTAW-P, GMAW-S, FCAW-G, FCAW-S)
         promoted = is_a_store.get("promoted_is_a", [])
@@ -1014,8 +1072,11 @@ class SemanticExpander:
 
         # D. Annex B Figure Titles Inverted Match
         if not inferred_figures:
+            q_clean = re.sub(r'[^a-z0-9]+', ' ', q_lower).strip()
             for title_lower, fig_id in self.annex_b_titles_index.items():
-                if title_lower in q_lower:
+                title_clean = re.sub(r'[^a-z0-9]+', ' ', title_lower).strip()
+                t_words = [w for w in title_clean.split() if len(w) > 2 and w not in ["and", "the", "for", "with"]]
+                if title_clean in q_clean or (len(t_words) >= 3 and sum(w in q_clean.split() for w in t_words) / len(t_words) >= 0.75):
                     if fig_id not in inferred_figures:
                         inferred_figures.append(fig_id)
                         alias_expansions.append({
