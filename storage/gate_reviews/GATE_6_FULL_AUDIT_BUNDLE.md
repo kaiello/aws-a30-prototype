@@ -1,8 +1,8 @@
 # Gate 6 Full Production Audit Bundle
-Generated at: 2026-11-03T22:09:22.133319+00:00
-Branch: `fix/gate-6-4-1-provenance-integrity`
-Commit: `8f8616e102c440fadbc72aeb5ad7ea4a4c40d9fc`
-Clean Working Tree: `False`
+Generated at: 2026-11-03T22:27:11.234092+00:00
+Branch: `main`
+Commit: `debb4afd648a3e80aad9ad0c22ed56df770778ee`
+Clean Working Tree: `True`
 
 ## Preflight Verification
 - Whole Standard Preflight Status: `CLEAR_WHOLE_STANDARD_CONTRACT`
