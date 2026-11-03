@@ -1932,8 +1932,8 @@ def execute_whole_standard_plan(
     if stores is None:
         stores = get_whole_standard_stores(ROOT)
 
-    division = plan.get("target_division", "Clause 4")
-    intent = plan.get("intent", "general_query")
+    division = plan.get("target_division") or "Clause 4"
+    intent = plan.get("intent") or "general_query"
     entities = plan.get("target_entities", [])
     q_lower = question_text.lower()
 
@@ -2270,7 +2270,9 @@ def execute_whole_standard_plan(
     if division == "Figure B7" or "edge shape" in q_lower or "edge shapes" in q_lower:
         b_complete = stores.get("annex_b_complete", {})
         fig_info = b_complete.get("figures", {}).get("Figure B7", {})
-        title = fig_info.get("official_title", "Edge Shapes")
+        if not fig_info or not fig_info.get("official_title"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Figure B7 official title missing in store")
+        title = fig_info.get("official_title")
         return {
             "status": "PASS",
             "answer": (
@@ -2326,8 +2328,10 @@ def execute_whole_standard_plan(
     if ("undercut" in q_lower or "undercutting" in q_lower) and not ("part of speech" in q_lower):
         glossary = stores.get("glossary", {})
         uc_term = lookup_glossary_term("undercut", glossary)
-        def_text = uc_term.get("definition") if uc_term else "A groove melted into the base metal adjacent to the weld toe or weld root and left unfilled by weld metal. See Figures B32(C) and B32(D)."
-        page = uc_term.get("printed_page", 60) if uc_term else 60
+        if not uc_term or not uc_term.get("definition"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Definition missing for undercut in glossary store")
+        def_text = uc_term.get("definition")
+        page = uc_term.get("printed_page")
         return {
             "status": "PASS",
             "answer": (
@@ -2344,8 +2348,10 @@ def execute_whole_standard_plan(
     if "coalescence" in q_lower:
         glossary = stores.get("glossary", {})
         coal_term = lookup_glossary_term("coalescence", glossary)
-        def_text = coal_term.get("definition") if coal_term else "The growing together or growth into one body of the materials being joined."
-        page = coal_term.get("printed_page", 15) if coal_term else 15
+        if not coal_term or not coal_term.get("definition"):
+            raise ValueError("INSUFFICIENT_EVIDENCE: Definition missing for coalescence in glossary store")
+        def_text = coal_term.get("definition")
+        page = coal_term.get("printed_page")
         return {
             "status": "PASS",
             "answer": (

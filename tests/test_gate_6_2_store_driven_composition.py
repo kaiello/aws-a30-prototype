@@ -232,6 +232,7 @@ def test_gate_6_2_ast_zero_fallbacks_and_12_target_store_mutations():
         "_exec_compound_lookup_and_validation",
         "_exec_compare_historical_and_active",
         "_exec_polysemous_diagram_and_glossary",
+        "execute_whole_standard_plan",
     ]
 
     violations = []
