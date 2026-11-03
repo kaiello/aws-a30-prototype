@@ -3,10 +3,10 @@
 **Target Standard:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions Including Terms for Adhesive Bonding, Brazing, Soldering, Thermal Cutting, and Thermal Spraying*, 13th Edition, 190 PDF pages)  
 **Source PDF SHA-256:** `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d`  
 **Coordinate Formula:** $\text{printed\_page} = \text{pdf\_index} - 12 = \text{viewer\_page} - 13$ (for main text & annexes starting at Clause 1, printed p. 1 = PDF index 13)  
-**Production Release Tag:** `v1.6.3-blind-hardening` (merged on `main`)  
+**Production Release Tag:** `v1.6.4.1-provenance-integrity` (merged on `main`)  
 **Repository:** `https://github.com/kaiello/aws-a30-prototype`  
 **Google Drive Mirror:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)  
-**Full Regression Test Suite:** `1,507 passed, 8 skipped, 0 failures, 0 warnings`  
+**Full Regression Test Suite:** `1,514 passed, 8 skipped, 0 failures, 0 warnings`  
 
 ---
 
@@ -385,3 +385,16 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable G64-3 (Annex B Spatial Callout Deep Traversal for Figures B33 & B46):** Deepened Figure B33 (13 crack locations) and Figure B46 (10 FSW key items & zones) in `src/archetype_spatial_callout.py` to join spatial callouts with Clause 4 definitions (advancing/retreating side, tool shoulder, probe, TMAZ, HAZ, crack types) and high-res crop provenance.
 - [x] **Deliverable G64-4 (Whole-Standard CLI & Agent Skills Modernization):** Added `--table-a3` and `--offline` to `src/evidence_whole_standard_cli.py`, modernizing `.agents/skills/aws-a30-ner-and-routing/SKILL.md` (correct alphabetical weld test position Clause 4 pagination `1F`–`4F` and `1G`–`3G` on printed p. 5, `4G`–`6GR` on printed p. 6; documented Table A3 CLI and capabilities).
 - [x] **Deliverable G64-5 (51/51 Cryptographic Hash Locks & Test Suite in `tests/test_gate_6_4_comprehensive_enhancements.py`):** Added Artifacts #46–#51 to the immutability ledger, verified all 51 cryptographic hashes under CI, and scored 7/7 (100%) on `tests/test_gate_6_4_comprehensive_enhancements.py`.
+
+---
+
+## 12. Gate 6.4.1: Provenance Integrity Remediation (Quarantined Synthetic Fixtures, Grounded B46 Labels, Store-Derived Table A3 & Zero Disk Reads)
+
+### Deliverables Checklist
+
+- [x] **Deliverable G641-1 (Synthetic Cassette Quarantine & Honest Replay Accounting - PROV-6.4-1, EVAL-6.4-7):** Quarantined the 6 synthetic fixtures from `storage/model_replays/deepseek_v4_1_flash_1017/` to `storage/model_replays/deterministic_planner_fixtures/` with `model_id: "DeterministicQuestionPlanner"`, `epistemic_tag: "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT"`, and `cassette_origin: "synthetic_planner_fixture"`. Committed reproducible generator `scripts/generate_deterministic_planner_fixtures.py`. Updated `eval/run_phase6_3_blind_hardening.py` to support `--use-fixtures` and `--strict-replay`, reporting 14 genuine DeepSeek model replays and 6 quarantined fixtures.
+- [x] **Deliverable G641-2 (Grounded Figure B46 Labels & Zero Fabricated Prose - PROV-6.4-2):** Eliminated fabricated Clause 4 definitions for "Tool Shoulder" and "Probe" in `src/archetype_spatial_callout.py`. Emits verified key-item labels from Annex B store and real Clause 4 definitions for `advancing side` and `retreating side`, explicitly noting that tool shoulder and probe have no separate normative definition entries in Clause 4.
+- [x] **Deliverable G641-3 (Dynamically Derived Table A3 Range & Word-Boundary Subsumption - PROV-6.4-3, EXEC-6.4-5):** Dynamically derived Table A3 range `AB` (`adhesive bonding`) through `WS` (`wave soldering`), `printed pp. 72–73`, `PDF index 84–85` strictly from `table_a3` store, removing hardcoded `"W"`. Implemented word-boundary matching and subsumption filtering in `_compose_table_a3_cross_reference` so `torch brazing` returns only `TB` and `gas tungsten arc welding` returns only `GTAW`.
+- [x] **Deliverable G641-4 (Zero Direct Disk Reads & Structural Intent Routing - EXEC-6.4-4, EXEC-6.4-6):** Eliminated direct `open(...)` calls to `glossary_store.json` in `src/archetype_spatial_callout.py`, utilizing injected stores. Constrained `elements_present` strictly to strings appearing in `answer_text`. Refactored Priority 17b and Priority 22 in `src/evidence_phase4_bakeoff.py` to route on structural intent (`table a1` + primary process grouping) rather than brittle process exclusions.
+- [x] **Deliverable G641-5 (Bundle Target Separation, Strengthened AST Guards & Full Regression - HYG-6.4-9, TEST-6.4-8):** Removed Gate 5 targets from `scripts/build_gate_6_bundle.py` and restored genuine Gate 5 bundle (`508,291` bytes). Enforced AST checks on `src/archetype_spatial_callout.py` (0 `open()`, 0 `.read_text()` / `.read_bytes()`, 0 fabricated strings). Regression baseline verified at 1,514 passed, 8 skipped, 0 failures, 0 warnings.
+

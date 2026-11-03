@@ -7,10 +7,10 @@
 ## 1. Executive Summary & Current System Baseline
 
 - **Standard Document:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions*, 190 PDF pages / 162 ingested canonical store pages)
-- **Current Production Release Tag:** `v1.6.4-comprehensive-enhancements` (on `main`)
+- **Current Production Release Tag:** `v1.6.4.1-provenance-integrity` (on `main`)
 - **Working Tree Status:** `CLEAN`, `0` uncommitted files, synchronized with remote `origin/main`
-- **Full Regression Test Suite:** **`1,522 passed, 8 skipped, 0 failures, 0 warnings`**
-- **Cryptographic Immutability Ledger:** **51 / 51 Locked SHA-256 Artifacts (`MATCH`)**
+- **Full Regression Test Suite:** **`1,514 passed, 8 skipped, 0 failures, 0 warnings`** (1,522 total tests)
+- **Cryptographic Immutability Ledger:** **51 / 51 Locked SHA-256 Artifacts (`MATCH` across 45 baseline + 6 quarantined planner fixtures)**
 - **Canonical Repository:** `C:\Users\kenai\Documents\Codex\2026-10-21\task\aws-a2-source-aware-ingest`
 - **GitHub Remote:** [`https://github.com/kaiello/aws-a30-prototype.git`](https://github.com/kaiello/aws-a30-prototype.git) (`origin`)
 - **Google Drive 1:1 Mirror:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror --target "G:\My Drive\git_projects\aws-a30-prototype"`)
@@ -38,7 +38,9 @@ Gate 6.3 established an authoritative 20-question blind holdout benchmark (`Q01`
 5. **Evaluation Script:** [`eval/run_phase6_3_blind_hardening.py`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/eval/run_phase6_3_blind_hardening.py) supports `--benchmark-dir` and `--no-write`.
 6. **Documentation & Deliverables:**
    - [`GATE_6_3_CHECKOUT_CARD.md`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/GATE_6_3_CHECKOUT_CARD.md)
-   - [`ROADMAP.md`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/ROADMAP.md) (updated to baseline 1,505 tests, 45 hashes)
+   - [`GATE_6_4_CHECKOUT_CARD.md`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/GATE_6_4_CHECKOUT_CARD.md)
+   - [`GATE_6_4_1_CHECKOUT_CARD.md`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/GATE_6_4_1_CHECKOUT_CARD.md)
+   - [`ROADMAP.md`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/ROADMAP.md) (updated to baseline 1,514 passed / 1,522 total tests, 51 hashes: 45 baseline + 6 quarantined planner fixtures)
    - [`goal.md`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/goal.md) & [`docs/goal.md`](file:///C:/Users/kenai/Documents/Codex/2026-10-21/task/aws-a2-source-aware-ingest/docs/goal.md)
    - Q&A Reports: [`C:\Users\kenai\Downloads\hardening_questions_full_20.docx`](file:///C:/Users/kenai/Downloads/hardening_questions_full_20.docx) and [`.md`](file:///C:/Users/kenai/Downloads/hardening_questions_full_20.md).
 

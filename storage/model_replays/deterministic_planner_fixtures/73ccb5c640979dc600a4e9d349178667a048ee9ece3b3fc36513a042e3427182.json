@@ -1,9 +1,9 @@
 {
-  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "model_id": "DeterministicQuestionPlanner",
   "replay_key": "73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182",
   "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: Is block Brazing and Shielded carbon arc welding Obsolete processes?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
   "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
-  "raw_model_output": "{\"target_division\": \"Normative Tables\", \"intent\": \"obsolete_processes\", \"target_entities\": [\"Table A5\"], \"actions\": [{\"action_type\": \"query_tables\", \"target\": \"Table A5\", \"parameters\": {}}], \"reason\": \"DeepSeek-V4.1 trace: Propose structured plan for obsolete_process_verification targeting Normative Tables.\"}",
+  "raw_model_output": "{\"target_division\": \"Normative Tables\", \"intent\": \"obsolete_processes\", \"target_entities\": [\"Table A5\"], \"actions\": [{\"action_type\": \"query_tables\", \"target\": \"Table A5\", \"parameters\": {}}], \"reason\": \"Deterministic planner trace: Captured plan for obsolete_process_verification targeting Normative Tables.\"}",
   "parsed_plan": {
     "target_division": "Normative Tables",
     "intent": "obsolete_processes",
@@ -17,7 +17,8 @@
         "parameters": {}
       }
     ],
-    "reason": "DeepSeek-V4.1 trace: Propose structured plan for obsolete_process_verification targeting Normative Tables."
+    "reason": "Deterministic planner trace: Captured plan for obsolete_process_verification targeting Normative Tables."
   },
-  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+  "epistemic_tag": "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT",
+  "cassette_origin": "synthetic_planner_fixture"
 }

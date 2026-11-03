@@ -66,6 +66,7 @@ FILES = [
     "GATE_6_2_2_CHECKOUT_CARD.md",
     "GATE_6_3_CHECKOUT_CARD.md",
     "GATE_6_4_CHECKOUT_CARD.md",
+    "GATE_6_4_1_CHECKOUT_CARD.md",
     "docs/FULL_PROMPT.md",
 ]
 
@@ -128,8 +129,6 @@ Clean Working Tree: `{is_clean}`
     for target in [
         ROOT / "GATE_6_FULL_AUDIT_BUNDLE.md",
         ROOT / "storage" / "gate_reviews" / "GATE_6_FULL_AUDIT_BUNDLE.md",
-        ROOT / "GATE_5_FULL_AUDIT_BUNDLE.md",
-        ROOT / "storage" / "gate_reviews" / "GATE_5_FULL_AUDIT_BUNDLE.md",
     ]:
         target.write_text(output_text, encoding="utf-8")
         print(f"Generated {target} ({len(output_text.encode('utf-8'))} bytes)")

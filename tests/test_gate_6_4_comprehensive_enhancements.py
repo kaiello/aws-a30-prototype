@@ -48,17 +48,21 @@ from src.evidence_whole_standard_cli import main as cli_main
 from tests.test_gate_6_3_blind_hardening import ALL_45_LOCKED_HASHES
 
 # ---------------------------------------------------------------------------
-# All 51 Cryptographically Locked Artifact Hashes (Gate 6.4 Baseline)
+# All 51 Cryptographically Locked Artifact Hashes (Gate 6.4.1 Baseline)
 # ---------------------------------------------------------------------------
+SYNTHETIC_FIXTURE_HASHES: Dict[str, str] = {
+    # 6 Synthetic Planner Fixtures (Quarantined from model replays per PROV-6.4-1 / Gate 6.4.1)
+    "storage/model_replays/deterministic_planner_fixtures/07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec.json": "ea4cb468af3dc574f06940672fa2b33537b236140c4e6de3cc5c20b849f6908f",
+    "storage/model_replays/deterministic_planner_fixtures/1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c.json": "85e7876785e941ce4ba8bff4c8284be4070827f6c26437431f0120fd8a20d71f",
+    "storage/model_replays/deterministic_planner_fixtures/73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182.json": "4f164b170792437eb74b96b64a946d4717a870c1ca98e65da2223ba69206a935",
+    "storage/model_replays/deterministic_planner_fixtures/78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f.json": "3134d3405387ab421f2c1a31879c776bd3c219ba29dd83ba3973ede8b70d2c46",
+    "storage/model_replays/deterministic_planner_fixtures/c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033.json": "128aa1a26fe77450a76f51d669fc50a6c1a89c89d8c0a87d8473b259a8de771c",
+    "storage/model_replays/deterministic_planner_fixtures/d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7.json": "b21d7621afc83a115b5b4bda999798cf23a39fd1f2c496f8b8d40751193af3cd",
+}
+
 ALL_51_LOCKED_HASHES: Dict[str, str] = {
     **ALL_45_LOCKED_HASHES,
-    # 6 DeepSeek Offline Replay Cassettes (Gate 6.4 Expansion to 20 Cassettes)
-    "storage/model_replays/deepseek_v4_1_flash_1017/07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec.json": "6b9b5f3d17afdba5859a4b75114876681308098ba96da860327c56a5739478a7",
-    "storage/model_replays/deepseek_v4_1_flash_1017/1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c.json": "1ff122410c75893e47771d4af0fccb2243e81e0df2417eccc51a63ecf5482ffc",
-    "storage/model_replays/deepseek_v4_1_flash_1017/73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182.json": "dd4a7a19ca1c8a3327fcc031bb046427f218dc103f15bd4627bfaf044ab330dc",
-    "storage/model_replays/deepseek_v4_1_flash_1017/78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f.json": "0c8d9d97c74a4fd51327f9cb6df1a4f93a97f0c5c9251ac877c71c58eacc7f1a",
-    "storage/model_replays/deepseek_v4_1_flash_1017/c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033.json": "eb60b4a70c60bcfbc8a521aed76fda62f41f9c21bbc43ede727b30a9767b3198",
-    "storage/model_replays/deepseek_v4_1_flash_1017/d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7.json": "b75fe39c9afea284c639a024296b0b251e45fda8e4d3a309088a54c36120a449",
+    **SYNTHETIC_FIXTURE_HASHES,
 }
 
 
@@ -77,7 +81,7 @@ def test_gate_6_4_all_51_locked_hashes():
 
 
 def test_gate_6_4_replay_and_deterministic_20_20(monkeypatch):
-    """Verify 20/20 (100.0%) pass rate on blind hardening benchmark in BOTH deterministic and replay modes."""
+    """Verify 20/20 (100.0%) pass rate on blind hardening benchmark in BOTH deterministic and fixture replay modes."""
     def _blocked_socket(*args, **kwargs):
         raise RuntimeError("NETWORK_ACCESS_BLOCKED: Tests must run 100% offline.")
 
@@ -88,31 +92,34 @@ def test_gate_6_4_replay_and_deterministic_20_20(monkeypatch):
     rubric = json.loads((benchmark_dir / "rubric.json").read_text(encoding="utf-8"))
     stores = get_whole_standard_stores(ROOT)
 
+    from eval.run_phase6_3_blind_hardening import DeterministicFixtureAdapter, evaluate_blind_hardening_benchmark
     from src.deepseek_v41_adapter import DeepSeekV41PlannerAdapter
 
     planner = DeterministicQuestionPlanner(root=ROOT)
+    fixtures_dir = ROOT / "storage/model_replays/deterministic_planner_fixtures"
+    fixture_adapter = DeterministicFixtureAdapter(fixtures_dir)
     replay_adapter = DeepSeekV41PlannerAdapter(root=ROOT)
 
     modes = [
         ("deterministic", False),
-        ("replay_cassettes", True),
+        ("fixture_replays", True),
     ]
 
-    for mode_name, use_replays in modes:
+    for mode_name, use_fixtures in modes:
         passed = 0
         failures = []
-        replay_used_count = 0
+        fixture_used_count = 0
         for item in questions:
             qid = item["id"]
             q_text = item["query"]
             rub = rubric["rubrics"][qid]
 
             item_planner = planner
-            if use_replays:
+            if use_fixtures:
                 key = replay_adapter.compute_replay_key(replay_adapter.build_whole_standard_prompt(q_text))
-                if (replay_adapter.replay_dir / f"{key}.json").exists():
-                    item_planner = replay_adapter
-                    replay_used_count += 1
+                if (fixtures_dir / f"{key}.json").exists():
+                    item_planner = fixture_adapter
+                    fixture_used_count += 1
 
             res = answer_whole_standard_question(q_text, planner=item_planner, stores=stores)
             ans = res.get("answer", "")
@@ -131,11 +138,22 @@ def test_gate_6_4_replay_and_deterministic_20_20(monkeypatch):
             else:
                 failures.append(f"[{mode_name}] {qid}: status={status_match}, crop={crop_match}, missing={req_missing}, forbidden={forb_hits}")
 
-        if use_replays:
-            assert replay_used_count == 6, f"Expected exactly 6 replay cassettes invoked, got {replay_used_count}"
+        if use_fixtures:
+            assert fixture_used_count == 6, f"Expected exactly 6 fixtures invoked, got {fixture_used_count}"
 
         assert not failures, f"Failures in mode {mode_name} ({len(failures)}/20):\n" + "\n".join(failures)
         assert passed == 20, f"[{mode_name}] Expected 20/20 passes, got {passed}"
+
+    # Also verify evaluator reporting metrics
+    summary = evaluate_blind_hardening_benchmark(root=ROOT, write_results=False, use_replay_cassettes=True, use_fixtures=True)
+    assert summary["model_replays_count"] == 0
+    assert summary["synthetic_fixtures_count"] == 6
+    assert summary["deterministic_fallbacks_count"] == 14
+    assert summary["passed"] == 20
+
+    # Verify strict replay raises on missing model replay
+    with pytest.raises(RuntimeError, match="Strict replay failure"):
+        evaluate_blind_hardening_benchmark(root=ROOT, write_results=False, use_replay_cassettes=True, strict_replay=True)
 
 
 def test_gate_6_4_table_a3_queries():
@@ -168,7 +186,21 @@ def test_gate_6_4_table_a3_queries():
     assert res_sum["execution"]["status"] == "PASS"
     assert "134" in res_sum["answer"]
     assert "AB" in res_sum["answer"]
-    assert "W" in res_sum["answer"]
+    assert "WS" in res_sum["answer"]
+    assert "W" not in res_sum["execution"]["elements_present"]
+
+    # 5. Word-boundary & subsumption filtering: torch brazing (must not return B)
+    res_tb = answer_whole_standard_question("In Table A3, what is torch brazing?", stores=stores)
+    assert res_tb["execution"]["status"] == "PASS"
+    assert "TB" in res_tb["answer"]
+    assert "torch brazing" in res_tb["answer"]
+    assert "B" not in res_tb["execution"]["elements_present"]
+
+    # 6. Word-boundary & subsumption filtering: GTAW (must not return AW)
+    res_gtaw = answer_whole_standard_question("Table A3 letter designation for gas tungsten arc welding", stores=stores)
+    assert res_gtaw["execution"]["status"] == "PASS"
+    assert "GTAW" in res_gtaw["answer"]
+    assert "AW" not in res_gtaw["execution"]["elements_present"]
 
 
 def test_gate_6_4_table_a3_store_mutation_degradation():
@@ -194,7 +226,7 @@ def test_gate_6_4_annex_b_deep_traversal():
     b_figures = stores["annex_b_complete"]["figures"]
 
     # Figure B33: Crack Types
-    res_b33 = compose_spatial_callout_answer({"query": "Figure B33 crack types", "figure_id": "Figure B33"}, b_figures)
+    res_b33 = compose_spatial_callout_answer({"query": "Figure B33 crack types", "figure_id": "Figure B33"}, stores)
     assert res_b33["status"] == "PASS"
     assert res_b33["key_count"] == 13
     assert len(res_b33["key_items"]) == 13
@@ -211,8 +243,12 @@ def test_gate_6_4_annex_b_deep_traversal():
     assert any("crater_crack" in prov for prov in res_b33["normative_provenance"])
     assert any("toe_crack" in prov for prov in res_b33["normative_provenance"])
 
+    # Verify elements_present is a strict subset of what appears in answer_text
+    for el in res_b33["elements_present"]:
+        assert el in res_b33["answer_text"] or el.lower() in res_b33["answer_text"].lower(), f"Element '{el}' claimed but missing in answer text"
+
     # Figure B46: Friction Stir Welding Schematic
-    res_b46 = compose_spatial_callout_answer({"query": "Figure B46 FSW", "figure_id": "Figure B46"}, b_figures)
+    res_b46 = compose_spatial_callout_answer({"query": "Figure B46 FSW", "figure_id": "Figure B46"}, stores)
     assert res_b46["status"] == "PASS"
     assert "Advancing Side" in res_b46["elements_present"]
     assert "Retreating Side" in res_b46["elements_present"]
@@ -225,8 +261,14 @@ def test_gate_6_4_annex_b_deep_traversal():
     assert "Clause 4, p. 48" in res_b46["answer_text"]  # retreating side
     assert "Tool Shoulder (Figure B46 Item 5)" in res_b46["answer_text"]
     assert "Probe (Figure B46 Item 6)" in res_b46["answer_text"]
+    assert "note that 'tool shoulder' has no separate normative definition entry in Clause 4" in res_b46["answer_text"]
+    assert "note that 'probe' has no separate normative definition entry in Clause 4" in res_b46["answer_text"]
     assert any("advancing_side" in prov for prov in res_b46["normative_provenance"])
     assert any("retreating_side" in prov for prov in res_b46["normative_provenance"])
+
+    # Verify elements_present is a strict subset of what appears in answer_text
+    for el in res_b46["elements_present"]:
+        assert el in res_b46["answer_text"] or el.lower() in res_b46["answer_text"].lower(), f"Element '{el}' claimed but missing in answer text"
 
 
 def test_gate_6_4_cli_offline_commands():
@@ -303,5 +345,22 @@ def test_gate_6_4_ast_zero_fallbacks_across_all_13_functions():
                                     if get_arg == "intent" and v.value == "general_query":
                                         continue
                                     violations.append(f"{node.name}:{sub.lineno}: .get(...) or '{v.value}' fallback")
+
+    # 4. AST check for archetype_spatial_callout.py (zero open, zero disk reads, zero fake definitions)
+    spatial_file = ROOT / "src/archetype_spatial_callout.py"
+    spatial_tree = ast.parse(spatial_file.read_text(encoding="utf-8"))
+    for node in ast.walk(spatial_tree):
+        if isinstance(node, ast.FunctionDef) and node.name == "compose_spatial_callout_answer":
+            for sub in ast.walk(node):
+                # No open() or read_text calls
+                if isinstance(sub, ast.Call):
+                    if isinstance(sub.func, ast.Name) and sub.func.id == "open":
+                        violations.append(f"compose_spatial_callout_answer:{sub.lineno}: banned direct open() call in composer")
+                    elif isinstance(sub.func, ast.Attribute) and sub.func.attr in ["read_text", "read_bytes"]:
+                        violations.append(f"compose_spatial_callout_answer:{sub.lineno}: banned direct disk read .{sub.func.attr}() in composer")
+                # No fabricated Clause 4 definitions masquerading as quotes
+                if isinstance(sub, ast.Constant) and isinstance(sub.value, str):
+                    if "The contoured cylindrical shoulder" in sub.value or "The profiled pin projecting" in sub.value:
+                        violations.append(f"compose_spatial_callout_answer:{sub.lineno}: fabricated definition prose detected: '{sub.value[:40]}...'")
 
     assert not violations, f"Found {len(violations)} AST zero-fallback violation(s):\n" + "\n".join(violations)
