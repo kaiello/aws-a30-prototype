@@ -123,4 +123,30 @@ Following the completion of Gate 6.2.1 (`v1.6.2.1-multi-action-closure`), an adv
 - [x] **Evaluator CLI Parity:** Both `--benchmark-dir` and `--use-replay-cassettes` fully functional; holdout 001 and holdout 002 both 20/20 PASS.
 - [x] **Anti-Drift Compliance:** `0` hardcoded benchmark question IDs in `src/` and `eval/*.py`.
 
+---
+
+## 5. Post-Checkout Remediation Patch & Final Verification (`v1.6.2.2-closeout-hygiene`)
+
+Following the initial checkout draft, a drop-in remediation patch was executed to eliminate three residual hygiene items:
+1. **`EXEC-DRIFT-6.2.2-C` (AST Zero-Fallback Expansion)**:
+   - Added `execute_whole_standard_plan` to `composer_functions` in `tests/test_gate_5_hardening.py` and `tests/test_gate_6_2_store_driven_composition.py`.
+   - Replaced inline fallback string defaults in `execute_whole_standard_plan` (`src/evidence_phase4_bakeoff.py`) for `Figure B7` (`official_title`), `undercut` (`definition`), and `coalescence` (`definition`) with strict `ValueError("INSUFFICIENT_EVIDENCE: ...")` checks.
+   - Refactored `.get("target_division") or "Clause 4"` and `.get("intent") or "general_query"` to single-argument calls to guarantee zero AST warnings.
+2. **`DOC-DRIFT-6.2.2-A` (Document Hash & Baseline Parity)**:
+   - Corrected holdout 001 rubric and results digests in `ROADMAP.md` Part G (`bb18c854...` and `dfe96330...`).
+   - Standardized baseline regression count to `1,499 passed, 8 skipped` across `ROADMAP.md`, `goal.md`, and `docs/goal.md`.
+   - Expanded `goal.md` Part G to enumerate all 42 locked repository artifacts.
+   - Mirrored updated documentation to `C:\Users\kenai\Downloads\`.
+3. **`DOC-DRIFT-6.2.2-B` (Formatting & Control Character Sanitization)**:
+   - Stripped stray control characters (`\x07`, `\x0b`, `\x0c`) from `ROADMAP.md`.
+   - Verified clean UTF-8 formatting across all repository documentation and audit cards.
+
+### Final Verification Receipts
+- **Git Commits**:
+  - `596baea`: `fix(gate-6.2.2): apply drop-in remediation for residual AST fallbacks and doc parity`
+  - `b411ee0`: `docs(gate-6.2.2): update post-merge audit bundles with residual remediation`
+- **Release Tag**: `v1.6.2.2-closeout-hygiene` (updated to `b411ee0` and force-pushed to `origin`)
+- **Full Test Suite**: `1,499 passed, 8 skipped in 603.13s` (0 failures, 0 warnings)
+- **Drive Mirror Sync**: `G:\My Drive\git_projects\aws-a30-prototype` synchronized (1,184 reviewable files, 45,349,063 bytes, git state summary at `b411ee0`).
+
 **Final Verdict:** `APPROVED_CLOSED_OUT_AND_DEPLOYED`
