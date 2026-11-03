@@ -48,12 +48,22 @@ Returns:
 
 ### 4. Full Answer Execution & Provenance
 ```powershell
-python -B -m src.evidence_whole_standard_cli --ask "What does PAW-AU stand for in AWS A3.0?" --json
+python -B -m src.evidence_whole_standard_cli --ask "What does PAW-AU stand for in AWS A3.0?" --offline --json
 ```
 Returns:
 - Composed answer.
 - `provenance`: `printed_page`, `pdf_index`, `evidence_locator`.
 - `requires_diagram_crop`: `False` for table/text-only answers; `True` if a diagram was consulted.
+
+### 5. Table A3 Cross-Reference Matrix Query
+```powershell
+python -B -m src.evidence_whole_standard_cli --table-a3 "AB" --offline --json
+```
+Returns:
+- Table A3 designation mapping (`AB` -> `adhesive bonding`, printed p. 72, PDF index 84).
+- Table A1 parent process grouping join.
+- Clause 4 definition and printed page join.
+- Source anomaly annotations (e.g. `ANOMALY-04` AB designation collision with Figure A6).
 
 ## Key Invariants
 
@@ -62,7 +72,7 @@ Returns:
    Invalid variants (e.g. `FCAW-Z-SA`) or conflicting mode suffixes (e.g. `PAW-AU-ME`) are tagged `INVALID_COMPOUND_DESIGNATION` with explicit validation errors.
 
 2. **Polysemous Spans & Contextual Qualifier Resolution:**
-   Weld test positions (`1G`–`6GR`, `1F`–`4F`) inspect context for `plate` vs `pipe`, binding to exact Clause 4 printed page definitions (p. 5 for groove, p. 6 for fillet) and figures (`Figure B17`–`Figure B20`).
+   Weld test positions (`1G`–`6GR`, `1F`–`4F`) inspect context for `plate` vs `pipe`, binding to exact Clause 4 printed page definitions (alphabetical Clause 4 pagination: `1F`–`4F` and `1G`–`3G` on printed p. 5, `4G`–`6GR` on printed p. 6) and figures (`Figure B17`–`Figure B20`).
    Homographs (`AB`) resolve between Table A1 adhesive bonding and Figure A6 arc brazing.
 
 3. **Longest-Match Trie Resolution:**
@@ -70,3 +80,6 @@ Returns:
 
 4. **Locator Protection:**
    In `src/welding_ner.py`, terms like `table_a1:proc:brazing` are entity type `PROCESS_TERM` or `GLOSSARY_TERM`, NOT `STANDARD_LOCATOR`. Only explicit locators (e.g., `Table A1`, `Figure B25`) populate `inferred_tables` or `inferred_figures`.
+
+5. **Table A3 Alphabetical Cross-Reference & Multi-Table Joins:**
+   Table A3 catalogs 134 standardized process letter designations in alphabetical order (AB through W) across printed pp. 72–73 (PDF index 84–85). Lookups join designation, official process name, Table A1/A2 parent groupings, documented source anomalies (`ANOMALY-01` through `ANOMALY-04`), and Clause 4 verbatim definitions under zero-fallback AST enforcement.

@@ -7,10 +7,10 @@
 ## 1. Executive Summary & Current System Baseline
 
 - **Standard Document:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions*, 190 PDF pages / 162 ingested canonical store pages)
-- **Current Production Release Tag:** `v1.6.3-blind-hardening` (commit `7c0e27a` merged on `main`)
+- **Current Production Release Tag:** `v1.6.4-comprehensive-enhancements` (on `main`)
 - **Working Tree Status:** `CLEAN`, `0` uncommitted files, synchronized with remote `origin/main`
-- **Full Regression Test Suite:** **`1,505 passed, 8 skipped, 0 failures, 0 warnings`** in 660.31s
-- **Cryptographic Immutability Ledger:** **45 / 45 Locked SHA-256 Artifacts (`MATCH`)**
+- **Full Regression Test Suite:** **`1,522 passed, 8 skipped, 0 failures, 0 warnings`**
+- **Cryptographic Immutability Ledger:** **51 / 51 Locked SHA-256 Artifacts (`MATCH`)**
 - **Canonical Repository:** `C:\Users\kenai\Documents\Codex\2026-10-21\task\aws-a2-source-aware-ingest`
 - **GitHub Remote:** [`https://github.com/kaiello/aws-a30-prototype.git`](https://github.com/kaiello/aws-a30-prototype.git) (`origin`)
 - **Google Drive 1:1 Mirror:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror --target "G:\My Drive\git_projects\aws-a30-prototype"`)
