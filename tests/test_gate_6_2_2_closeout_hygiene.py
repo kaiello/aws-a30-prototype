@@ -170,5 +170,5 @@ def test_gate_6_2_2_docs_and_checkout_cards_hash_and_version_parity():
     docs_goal_text = (ROOT / "docs/goal.md").read_text(encoding="utf-8")
     assert "v1.6.1-ner-semantic-graph" not in goal_text
     assert "v1.6.1-ner-semantic-graph" not in docs_goal_text
-    assert "v1.6.2.1-multi-action-closure" in goal_text or "v1.6.2.2-closeout-hygiene" in goal_text
-    assert "v1.6.2.1-multi-action-closure" in docs_goal_text or "v1.6.2.2-closeout-hygiene" in docs_goal_text
+    assert any(tag in goal_text for tag in ["v1.6.2.1-multi-action-closure", "v1.6.2.2-closeout-hygiene", "v1.6.3-blind-hardening"])
+    assert any(tag in docs_goal_text for tag in ["v1.6.2.1-multi-action-closure", "v1.6.2.2-closeout-hygiene", "v1.6.3-blind-hardening"])

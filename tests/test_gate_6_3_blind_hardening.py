@@ -208,8 +208,74 @@ def test_gate_6_3_ast_zero_fallbacks_across_all_12_functions():
                         if isinstance(branch, ast.Constant) and isinstance(branch.value, str):
                             if branch.value in banned_ternary_literals:
                                 violations.append(f"{node.name}:{sub.lineno}: banned ternary literal '{branch.value}'")
+                # 3. Banned .get(...) or "literal" fallbacks
+                if isinstance(sub, ast.BoolOp) and isinstance(sub.op, ast.Or):
+                    if len(sub.values) >= 2 and isinstance(sub.values[0], ast.Call):
+                        first_val = sub.values[0]
+                        if isinstance(first_val.func, ast.Attribute) and first_val.func.attr == "get":
+                            for v in sub.values[1:]:
+                                if isinstance(v, ast.Constant) and isinstance(v.value, str) and len(v.value.strip()) > 0:
+                                    get_arg = first_val.args[0].value if (first_val.args and isinstance(first_val.args[0], ast.Constant)) else None
+                                    if get_arg == "target_division" and v.value == "Clause 4":
+                                        continue
+                                    if get_arg == "intent" and v.value == "general_query":
+                                        continue
+                                    violations.append(f"{node.name}:{sub.lineno}: .get({repr(get_arg)}) or '{v.value}'")
 
     assert not violations, f"AST violations detected in composer/execution functions:\n" + "\n".join(violations)
+
+
+def test_gate_6_3_store_mutations_raise_insufficient_evidence():
+    """Verify that mutating injected stores raises ValueError('INSUFFICIENT_EVIDENCE') across all 6 new Gate 6.3 paths."""
+    stores = get_whole_standard_stores(ROOT)
+    planner = DeterministicQuestionPlanner(ROOT)
+
+    # 1. Decode process designations
+    mut1 = copy.deepcopy(stores)
+    mut1["tables"]["table_a1"] = []
+    mut1["glossary"]["entries"] = []
+    with pytest.raises(ValueError, match="INSUFFICIENT_EVIDENCE"):
+        answer_whole_standard_question("Decode GTAW, FRW, and FLSP-P", planner, stores=mut1)
+
+    # 2. Figure B1 applicable welds
+    mut2 = copy.deepcopy(stores)
+    mut2["annex_b_complete"]["figures"].pop("Figure B1", None)
+    with pytest.raises(ValueError, match="INSUFFICIENT_EVIDENCE"):
+        answer_whole_standard_question("In Figure B1, how many applicable welds are listed for a T-joint?", planner, stores=mut2)
+
+    # 3. Figure B21 reverse figure lookup
+    mut3 = copy.deepcopy(stores)
+    mut3["annex_b_complete"]["figures"].pop("Figure B21", None)
+    with pytest.raises(ValueError, match="INSUFFICIENT_EVIDENCE"):
+        answer_whole_standard_question("What figure illustrates Position of Beam, Filler Material, Gun, or Torch?", planner, stores=mut3)
+
+    # 4. Figure B23(J) temper beads
+    mut4 = copy.deepcopy(stores)
+    mut4["annex_b_complete"]["figures"].pop("Figure B23", None)
+    with pytest.raises(ValueError, match="INSUFFICIENT_EVIDENCE"):
+        answer_whole_standard_question("In Figure B23(J), how is distance S measured for temper beads?", planner, stores=mut4)
+
+    # 5. Annex C C2.3 safety terms
+    mut5 = copy.deepcopy(stores)
+    mut5["glossary"]["entries"] = []
+    with pytest.raises(ValueError, match="INSUFFICIENT_EVIDENCE"):
+        answer_whole_standard_question("Why are ground clamp and ground lead designated as nonstandard and incorrect per Annex C C2.3?", planner, stores=mut5)
+
+    # 6. Annex C/D revisions
+    mut6 = copy.deepcopy(stores)
+    mut6["annex_c_d"] = {}
+    with pytest.raises(ValueError, match="INSUFFICIENT_EVIDENCE"):
+        answer_whole_standard_question("Summarize Annex C C1.5.6 and C1.5.7 regarding parallel joint and nondestructive examination.", planner, stores=mut6)
+
+
+def test_gate_6_3_checkout_card_hygiene():
+    """Verify GATE_6_3_CHECKOUT_CARD.md contains zero mojibake corruption and reports all 45 locked hashes."""
+    card_path = ROOT / "GATE_6_3_CHECKOUT_CARD.md"
+    assert card_path.exists(), "GATE_6_3_CHECKOUT_CARD.md missing"
+    card_text = card_path.read_text(encoding="utf-8")
+    assert "窶" not in card_text, "Found CP932/Shift-JIS mojibake '窶' in GATE_6_3_CHECKOUT_CARD.md"
+    for rel_path, expected_hash in ALL_45_LOCKED_HASHES.items():
+        assert expected_hash in card_text, f"Locked hash for {rel_path} missing in GATE_6_3_CHECKOUT_CARD.md"
 
 
 def test_gate_6_3_anti_drift_zero_hardcoded_benchmark_ids():

@@ -7,7 +7,7 @@
 ## 1. Project Overview & Gate Status Summary
 
 - **Standard Document:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions*, 190 PDF pages / 162 ingested canonical store pages)
-- **Current Test Suite Baseline:** `1,505 passed, 8 skipped, 0 failures, 0 warnings`
+- **Current Test Suite Baseline:** `1,507 passed, 8 skipped, 0 failures, 0 warnings`
 - **Active Milestone:** **Gate 6.3 — Blind Hardening Benchmark & Generalization Hardening** (`feat/gate-6-3-blind-hardening` $\rightarrow$ `main`, tagged `v1.6.3-blind-hardening`)
 - **Canonical Repository:** `C:\Users\kenai\Documents\Codex\2026-10-21\task\aws-a2-source-aware-ingest`
 - **Mirror Destination:** `G:\My Drive\git_projects\aws-a30-prototype` (synchronized via `python -B -m src.sync_drive_mirror`)
@@ -35,7 +35,7 @@
 | **Gate 6.2** | Store-Driven Multi-Operation Composition, Zero-Canned-Prose AST Hardening & 20-Query Holdout | `feat/gate-6-2-store-driven-composition` $\rightarrow$ `main` (`v1.6.2-store-driven-composition`) | `PASSED & MERGED` — 7 atomic store-driven action composers, AST zero-fallback guard across all 10 composers, 12-target store mutation degradation suite, 14 offline DeepSeek-V4.1 replays, 20/20 (100.0%) holdout benchmark, `39/39` locked SHA-256 artifacts, `1,489 passed, 8 skipped`. |
 | **Gate 6.2.1** | Multi-Action Closure, Hardened Store-Mutation Tests & Generalization Holdout 002 | `feat/gate-6-2-1-multi-action-closure` $\rightarrow$ `main` (`v1.6.2.1-multi-action-closure`) | `PASSED & MERGED` — Modular multi-action composition, zero canned prose in all composers, unweakened holdout_002 benchmark (20/20 PASS, 100.0%), dynamic table derivations in NER & NLQ expander, 12-target store mutations passing through `answer_whole_standard_question`, 42/42 locked SHA-256 artifacts, 1,494 passed, 8 skipped. |
 | **Gate 6.2.2** | Post-6.2.1 Closeout Hygiene, Google Drive 42-Artifact Mirror Parity, Repo Doc Alignment & Post-Merge Audit Bundle | `feat/gate-6-2-2-closeout-hygiene` $\rightarrow$ `main` (`v1.6.2.2-closeout-hygiene`) | `PASSED & MERGED` — Complete 42-artifact mirror collection in sync_drive_mirror.py, doc-hash accuracy (#36, #37), alphabetical Clause 4 pagination, post-merge audit bundle on main, holdout evaluator --benchmark-dir / --use-replay-cassettes, AST zero-fallback coverage for execute_whole_standard_plan, and genus-scoped cross-references. |
-| **Gate 6.3** | **Blind Hardening Benchmark & Generalization Hardening** | `feat/gate-6-3-blind-hardening` $\rightarrow$ `main` (`v1.6.3-blind-hardening`) | `PASSED & MERGED` — 20/20 (100.0%) blind hardening holdout benchmark (Q01–Q20), dynamic process variation grammar (Table A1–A3 vs Table A4 compound mode suffixes), embedded lightface nonstandard term resolution, AST zero-fallback coverage across 12 functions, 45/45 locked SHA-256 artifacts, 1,505 passed, 8 skipped. |
+| **Gate 6.3** | **Blind Hardening Benchmark & Generalization Hardening** | `feat/gate-6-3-blind-hardening` $\rightarrow$ `main` (`v1.6.3-blind-hardening`) | `PASSED & MERGED` — 20/20 (100.0%) blind hardening holdout benchmark (Q01–Q20), dynamic process variation grammar (Table A1–A3 vs Table A4 compound mode suffixes), embedded lightface nonstandard term resolution, AST zero-fallback coverage across 12 functions, 45/45 locked SHA-256 artifacts, 1,507 passed, 8 skipped. |
 
 ---
 
