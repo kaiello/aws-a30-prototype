@@ -1,9 +1,9 @@
 {
-  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "model_id": "DeterministicQuestionPlanner",
   "replay_key": "07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec",
   "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: Which figure and sub-diagram illustrate the placement of temper beads and toe temper beads in groove, fillet, and overlay welds, how is the distance S measured according to the figure's notes, what approximate offset dimension is specified for the first layer temper beads, and how does Clause 4 define temper pass, temper bead, temper bead sequence, toe temper pass, and toe temper bead?\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
   "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
-  "raw_model_output": "{\"target_division\": \"Figure B23\", \"intent\": \"temper_beads\", \"target_entities\": [\"Figure B23\", \"temper beads\", \"toe temper bead\"], \"actions\": [{\"action_type\": \"query_figure\", \"target\": \"Figure B23\", \"parameters\": {\"sub_panel\": \"(J)\"}}], \"reason\": \"DeepSeek-V4.1 trace: Propose structured plan for temper_bead_nomenclature targeting Figure B23.\"}",
+  "raw_model_output": "{\"target_division\": \"Figure B23\", \"intent\": \"temper_beads\", \"target_entities\": [\"Figure B23\", \"temper beads\", \"toe temper bead\"], \"actions\": [{\"action_type\": \"query_figure\", \"target\": \"Figure B23\", \"parameters\": {\"sub_panel\": \"(J)\"}}], \"reason\": \"Deterministic planner trace: Captured plan for temper_bead_nomenclature targeting Figure B23.\"}",
   "parsed_plan": {
     "target_division": "Figure B23",
     "intent": "temper_beads",
@@ -21,7 +21,8 @@
         }
       }
     ],
-    "reason": "DeepSeek-V4.1 trace: Propose structured plan for temper_bead_nomenclature targeting Figure B23."
+    "reason": "Deterministic planner trace: Captured plan for temper_bead_nomenclature targeting Figure B23."
   },
-  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+  "epistemic_tag": "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT",
+  "cassette_origin": "synthetic_planner_fixture"
 }

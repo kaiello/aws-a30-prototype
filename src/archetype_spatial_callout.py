@@ -986,6 +986,10 @@ def compose_spatial_callout_answer(
             fig_id = "Figure B1"
 
     fig_store = unified_store.get(fig_id, {})
+    if not fig_store and "figures" in unified_store:
+        fig_store = unified_store["figures"].get(fig_id, {})
+    if not fig_store and "annex_b_complete" in unified_store:
+        fig_store = unified_store["annex_b_complete"].get("figures", {}).get(fig_id, {})
     if not fig_store:
         return {
             "status": "NOT_FOUND",
@@ -1099,22 +1103,19 @@ def compose_spatial_callout_answer(
         count = len(key_nodes) if key_nodes else len(crack_key_titles)
         key_items_str = ", ".join(f"{idx} {k}" for idx, k in enumerate(crack_key_titles, 1))
 
-        # Deep traversal: Join with Clause 4 definitions for key crack terms
+        # Deep traversal: Join with Clause 4 definitions for key crack terms using strictly injected store
         glossary = None
         if isinstance(query_or_params, dict) and query_or_params.get("glossary"):
             glossary = query_or_params.get("glossary")
         elif "glossary" in unified_store:
             glossary = unified_store.get("glossary")
-        else:
-            glossary_path = Path(__file__).resolve().parent.parent / "storage/evidence_v2/clause4_ingest_001/glossary_store.json"
-            if glossary_path.exists():
-                with open(glossary_path, "r", encoding="utf-8") as gf:
-                    glossary = json.load(gf)
 
         definitions_text = []
         key_terms_to_define = ["crater crack", "toe crack", "underbead crack", "lamellar tear", "root crack"]
-        normative_prov = [f"obs:pdf:139:figure:{fig_id}"]
-        if glossary:
+        pdf_idx = fig_store.get("pages", [[151, 139]])[0][0] if fig_store.get("pages") else 151
+        normative_prov = [f"obs:pdf:{pdf_idx}:figure:{fig_id}"]
+        emitted_c4_terms = []
+        if glossary and glossary.get("entries"):
             from src.evidence_phase3_qa import lookup_glossary_term
             for kt in key_terms_to_define:
                 g_entry = lookup_glossary_term(kt, glossary)
@@ -1122,7 +1123,11 @@ def compose_spatial_callout_answer(
                     c4_def = g_entry.get("definition")
                     c4_pg = g_entry.get("printed_page")
                     c4_pdf = c4_pg + 12
-                    definitions_text.append(f"• {kt.title()} (Clause 4, p. {c4_pg}): \"{c4_def}\"")
+                    if c4_def.strip().startswith("See Figure"):
+                        definitions_text.append(f"• {kt.title()} (Clause 4, p. {c4_pg}): Cross-reference to Figure B33 (\"{c4_def}\")")
+                    else:
+                        definitions_text.append(f"• {kt.title()} (Clause 4, p. {c4_pg}): \"{c4_def}\"")
+                    emitted_c4_terms.append(kt.title())
                     normative_prov.append(f"obs:pdf:{c4_pdf}:clause:{kt.replace(' ', '_')}")
 
         def_block = ("\n\nNormative Clause 4 Definitions for Key Crack Types:\n" + "\n".join(definitions_text)) if definitions_text else ""
@@ -1130,6 +1135,8 @@ def compose_spatial_callout_answer(
             f"In {fig_id} ({fig_store.get('official_title')}), there are {count} numbered crack key items in the legend: "
             f"{key_items_str}.{def_block}"
         )
+        elements_cand = [fig_id, str(count)] + crack_key_titles + emitted_c4_terms
+        elements_present = [e for e in dict.fromkeys(elements_cand) if e in ans or e.lower() in ans.lower()]
         return {
             "status": "PASS",
             "answer_text": ans,
@@ -1137,7 +1144,7 @@ def compose_spatial_callout_answer(
             "key_count": count,
             "key_items": crack_key_titles,
             "callout_labels": crack_key_titles,
-            "elements_present": [fig_id, str(count)] + crack_key_titles + [kt.title() for kt in key_terms_to_define],
+            "elements_present": elements_present,
             "normative_provenance": list(dict.fromkeys(normative_prov)),
         }
 
@@ -1153,15 +1160,11 @@ def compose_spatial_callout_answer(
             glossary = query_or_params.get("glossary")
         elif "glossary" in unified_store:
             glossary = unified_store.get("glossary")
-        else:
-            glossary_path = Path(__file__).resolve().parent.parent / "storage/evidence_v2/clause4_ingest_001/glossary_store.json"
-            if glossary_path.exists():
-                with open(glossary_path, "r", encoding="utf-8") as gf:
-                    glossary = json.load(gf)
 
         definitions_text = []
-        normative_prov = [f"obs:pdf:150:figure:{fig_id}"]
-        if glossary:
+        pdf_idx = fig_store.get("pages", [[162, 150]])[0][0] if fig_store.get("pages") else 162
+        normative_prov = [f"obs:pdf:{pdf_idx}:figure:{fig_id}"]
+        if glossary and glossary.get("entries"):
             from src.evidence_phase3_qa import lookup_glossary_term
             for ft in ["advancing side", "retreating side"]:
                 g_entry = lookup_glossary_term(ft, glossary)
@@ -1173,12 +1176,13 @@ def compose_spatial_callout_answer(
                     normative_prov.append(f"obs:pdf:{c4_pdf}:clause:{ft.replace(' ', '_')}")
 
         definitions_text.append(
-            '• Tool Shoulder (Figure B46 Item 5): The contoured cylindrical shoulder of the weld tool that contacts '
-            'the workpiece surface under axial force, generating frictional heating and constraining the plasticized weld metal.'
+            "• Tool Shoulder (Figure B46 Item 5): Illustrated as Item 5 in Figure B46 legend; note that 'tool shoulder' has no separate normative definition entry in Clause 4."
         )
         definitions_text.append(
-            '• Probe (Figure B46 Item 6): The profiled pin projecting from the tool shoulder into the joint line that shears, '
-            'stirs, and forges the plasticized material across the advancing and retreating sides to form the weld nugget.'
+            "• Probe (Figure B46 Item 6): Illustrated as Item 6 in Figure B46 legend; note that 'probe' has no separate normative definition entry in Clause 4."
+        )
+        definitions_text.append(
+            "• TMAZ & Stir Zone: Thermo-mechanically affected zone (TMAZ) and Stir Zone / Weld Nugget are illustrated microstructural zones in Figure B46 without dedicated Clause 4 definition entries."
         )
         def_block = "\n\nKey Tool and Microstructural Zone Descriptions:\n" + "\n".join(definitions_text)
         ans = (
@@ -1188,12 +1192,14 @@ def compose_spatial_callout_answer(
             f"Microstructural zones: Advancing Side, Retreating Side, Tool Shoulder, Probe, Exit Hole, Stir Zone / Weld Nugget, "
             f"Thermo-mechanically affected zone (TMAZ), and Heat-affected zone (HAZ).{def_block}"
         )
+        elements_cand = [fig_id, "Advancing Side", "Retreating Side", "Tool Shoulder", "Probe", "HAZ", "TMAZ"]
+        elements_present = [e for e in dict.fromkeys(elements_cand) if e in ans or e.lower() in ans.lower()]
         return {
             "status": "PASS",
             "answer_text": ans,
             "figure_id": fig_id,
             "callout_labels": fsw_callouts,
-            "elements_present": [fig_id, "Advancing Side", "Retreating Side", "Tool Shoulder", "Probe", "HAZ", "TMAZ"],
+            "elements_present": elements_present,
             "normative_provenance": list(dict.fromkeys(normative_prov)),
         }
 

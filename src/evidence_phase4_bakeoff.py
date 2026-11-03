@@ -507,7 +507,11 @@ class DeterministicQuestionPlanner:
             ]
 
         # Priority 17b: Table A3 Cross-Reference Matrix
-        elif ("table a3" in q_lower or "table a.3" in q_lower) and not ("collision" in q_lower) and not ("magnetic pulse" in q_lower or "mpw" in q_lower):
+        elif (
+            ("table a3" in q_lower or "table a.3" in q_lower)
+            and not ("collision" in q_lower)
+            and not ("table a1" in q_lower and ("primary process" in q_lower or "process grouping" in q_lower or "grouping" in q_lower or "classified" in q_lower))
+        ):
             target_div = "Normative Tables"
             intent = "table_a3_cross_reference"
             entities = ["Table A3"]
@@ -611,7 +615,19 @@ class DeterministicQuestionPlanner:
             or any(t.startswith("Table A") for t in inferred_tbls)
         ):
             target_div = "Normative Tables"
-            if ("table a3" in q_lower or "table a.3" in q_lower or "Table A3" in inferred_tbls) and not ("magnetic pulse" in q_lower or "mpw" in q_lower):
+            if (
+                "table a3" in q_lower
+                or "table a.3" in q_lower
+                or "Table A3" in inferred_tbls
+            ) and not (
+                "table a1" in q_lower
+                and (
+                    "primary process" in q_lower
+                    or "process grouping" in q_lower
+                    or "grouping" in q_lower
+                    or "classified" in q_lower
+                )
+            ):
                 intent = "table_a3_cross_reference"
                 target = "Table A3"
             elif "table a4" in q_lower or "suffix" in q_lower or "application mode" in q_lower or "Table A4" in inferred_tbls:
@@ -1149,13 +1165,32 @@ def _compose_table_a3_cross_reference(
                 is_match = True
         elif len(desig_upper) == 1 and any(c.upper() == desig_upper for c in cand_entities):
             is_match = True
-        elif proc_lower in q_lower:
+        elif re.search(rf"\b{re.escape(proc_lower)}\b", q_lower):
             is_match = True
         elif any(c.upper() == desig_upper or c.lower() == proc_lower for c in cand_entities):
             is_match = True
 
         if is_match and row not in matched_rows:
             matched_rows.append(row)
+
+    # Substring process suppression: if row A's process is a strict substring of row B's process,
+    # and row B was matched in the query, suppress row A unless row A's designation was explicitly in q_tokens
+    if len(matched_rows) > 1:
+        filtered_rows = []
+        for r in matched_rows:
+            r_proc = r.get("process", "").lower()
+            r_desig = r.get("designation", "").upper()
+            is_subsumed = False
+            if r_desig not in q_tokens and not any(c.upper() == r_desig for c in cand_entities):
+                for other in matched_rows:
+                    if other is not r:
+                        other_proc = other.get("process", "").lower()
+                        if r_proc != other_proc and r_proc in other_proc and other_proc in q_lower:
+                            is_subsumed = True
+                            break
+            if not is_subsumed:
+                filtered_rows.append(r)
+        matched_rows = filtered_rows
 
     # Source anomalies check
     source_anomalies = tables_graph.get("source_anomalies")
@@ -1171,6 +1206,10 @@ def _compose_table_a3_cross_reference(
                 relevant_anomalies.append(a)
 
     table_a1 = tables_graph.get("table_a1")
+    pages = sorted({r.get("page") for r in table_a3 if r.get("page")})
+    pdf_indices = sorted({r.get("pdf_index") for r in table_a3 if r.get("pdf_index")})
+    pages_str = f"printed pp. {pages[0]}–{pages[-1]}" if len(pages) > 1 else f"printed p. {pages[0]}"
+    pdf_str = f"PDF index {pdf_indices[0]}–{pdf_indices[-1]}" if len(pdf_indices) > 1 else f"PDF index {pdf_indices[0]}"
 
     if matched_rows:
         operations.append({"operation": "query_table_a3_cross_reference", "matches": len(matched_rows), "status": "executed"})
@@ -1223,14 +1262,23 @@ def _compose_table_a3_cross_reference(
 
         answer_text = (
             f"In AWS A3.0M/A3.0:2020 Table A3 (Alphabetical Cross-Reference to Table A1 by Process Letter Designation, "
-            f"printed pp. 72–73), the queried designations/processes map as follows:\n"
+            f"{pages_str}), the queried designations/processes map as follows:\n"
             + "\n".join(details)
         )
     else:
         # General Table A3 summary or anomaly query
         operations.append({"operation": "summarize_table_a3", "status": "executed"})
-        provenance.extend(["obs:pdf:84:table:Table A3", "obs:pdf:85:table:Table A3"])
-        elements_present.extend(["134", "Alphabetical Cross-Reference", "AB", "W"])
+        first_desig = table_a3[0].get("designation")
+        first_proc = table_a3[0].get("process")
+        last_desig = table_a3[-1].get("designation")
+        last_proc = table_a3[-1].get("process")
+
+        for pdf_idx in pdf_indices:
+            provenance.append(f"obs:pdf:{pdf_idx}:table:Table A3")
+
+        elements_present.extend([str(len(table_a3)), "Alphabetical Cross-Reference", first_desig])
+        if last_desig:
+            elements_present.append(last_desig)
 
         anom_summary = ""
         if relevant_anomalies:
@@ -1244,8 +1292,8 @@ def _compose_table_a3_cross_reference(
 
         answer_text = (
             f"In AWS A3.0M/A3.0:2020, Table A3 (Alphabetical Cross-Reference to Table A1 by Process Letter Designation, "
-            f"printed pp. 72–73, PDF index 84–85) catalogs exactly {len(table_a3)} standardized process letter designations "
-            f"in alphabetical order from AB (adhesive bonding) through W (welding). It provides an alphabetical index "
+            f"{pages_str}, {pdf_str}) catalogs exactly {len(table_a3)} standardized process letter designations "
+            f"in alphabetical order from {first_desig} ({first_proc}) through {last_desig} ({last_proc}). It provides an alphabetical index "
             f"correlating each letter designation with its official process name, Table A1 parent grouping, and normative Clause 4 definition.{anom_summary}"
         )
 
@@ -1289,7 +1337,7 @@ def _compose_normative_tables_answer(
         }
 
     # Table A3 Cross-Reference Matrix
-    if (intent == "table_a3_cross_reference" or "table a3" in q_lower or "table a.3" in q_lower) and not ("magnetic pulse" in q_lower or "mpw" in q_lower):
+    if intent == "table_a3_cross_reference":
         return _compose_table_a3_cross_reference(plan, question_text, tables_graph, stores=stores)
 
     # Table A1 USW Distinct Parent Process Groups Anomaly

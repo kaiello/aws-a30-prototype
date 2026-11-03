@@ -1,9 +1,9 @@
 {
-  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "model_id": "DeterministicQuestionPlanner",
   "replay_key": "d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7",
   "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: Compare the resistance spot welding waveforms in Figure B49 (Pulsation Welding Waveform) and Figure B50 (Single-Pulse Resistance Spot Welding Waveform): how does Clause 4 distinguish weld time, resistance welding from weld interval, resistance welding, and cool time, resistance welding from quench time, resistance welding? Additionally, define the sequential cycle intervals shown across Figures B49 and B50: squeeze time, preweld interval, preheat time, upslope time, pulse time, downslope time, temper time, hold time, postweld interval, forge-delay time, and off time.\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
   "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
-  "raw_model_output": "{\"target_division\": \"Figure B49 / Figure B50\", \"intent\": \"waveform_comparison_and_intervals\", \"target_entities\": [\"Figure B49\", \"Figure B50\", \"pulsation welding\", \"single-pulse\"], \"actions\": [{\"action_type\": \"compare_waveforms\", \"target\": \"Figure B49 / Figure B50\", \"parameters\": {}}], \"reason\": \"DeepSeek-V4.1 trace: Propose structured plan for waveform_cycle_interval_analysis targeting Figure B49 / Figure B50.\"}",
+  "raw_model_output": "{\"target_division\": \"Figure B49 / Figure B50\", \"intent\": \"waveform_comparison_and_intervals\", \"target_entities\": [\"Figure B49\", \"Figure B50\", \"pulsation welding\", \"single-pulse\"], \"actions\": [{\"action_type\": \"compare_waveforms\", \"target\": \"Figure B49 / Figure B50\", \"parameters\": {}}], \"reason\": \"Deterministic planner trace: Captured plan for waveform_cycle_interval_analysis targeting Figure B49 / Figure B50.\"}",
   "parsed_plan": {
     "target_division": "Figure B49 / Figure B50",
     "intent": "waveform_comparison_and_intervals",
@@ -20,7 +20,8 @@
         "parameters": {}
       }
     ],
-    "reason": "DeepSeek-V4.1 trace: Propose structured plan for waveform_cycle_interval_analysis targeting Figure B49 / Figure B50."
+    "reason": "Deterministic planner trace: Captured plan for waveform_cycle_interval_analysis targeting Figure B49 / Figure B50."
   },
-  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+  "epistemic_tag": "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT",
+  "cassette_origin": "synthetic_planner_fixture"
 }

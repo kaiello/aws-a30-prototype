@@ -28,13 +28,34 @@ from src.evidence_phase4_bakeoff import (
 )
 
 
+class DeterministicFixtureAdapter:
+    """Adapter to load quarantined synthetic planner fixtures for benchmark verification."""
+    def __init__(self, fixtures_dir: Path):
+        self.fixtures_dir = fixtures_dir
+
+    def plan_with_semantic_expansion(self, question_text: str, req_dir: Optional[Path] = None, stores: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        return self.plan_whole_standard_question(question_text, req_dir=req_dir, stores=stores)
+
+    def plan_whole_standard_question(self, question_text: str, req_dir: Optional[Path] = None, stores: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        from src.deepseek_v41_adapter import DeepSeekV41Config, DeepSeekV41PlannerAdapter
+        adapter = DeepSeekV41PlannerAdapter(config=DeepSeekV41Config(mode="OFFLINE_REPLAY_ONLY"))
+        key = adapter.compute_replay_key(adapter.build_whole_standard_prompt(question_text))
+        fixture_p = self.fixtures_dir / f"{key}.json"
+        if not fixture_p.exists():
+            raise ValueError(f"INSUFFICIENT_EVIDENCE: Missing fixture for key {key} at {fixture_p}")
+        data = json.loads(fixture_p.read_text(encoding="utf-8"))
+        return data.get("parsed_plan", {})
+
+
 def evaluate_blind_hardening_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
     write_results: bool = True,
     use_replay_cassettes: bool = False,
+    strict_replay: bool = False,
+    use_fixtures: bool = False,
 ) -> Dict[str, Any]:
-    """Execute Gate 6.3 20-query blind hardening benchmark."""
+    """Execute Gate 6.3 20-query blind hardening benchmark with transparent replay accounting."""
     if root is None:
         root = ROOT
     if output_dir is None:
@@ -57,8 +78,13 @@ def evaluate_blind_hardening_benchmark(
         from src.deepseek_v41_adapter import DeepSeekV41Config, DeepSeekV41PlannerAdapter
         replay_adapter = DeepSeekV41PlannerAdapter(config=DeepSeekV41Config(mode="OFFLINE_REPLAY_ONLY"), root=root)
 
+    fixtures_dir = root / "storage/model_replays/deterministic_planner_fixtures"
+
     results = []
     passed_count = 0
+    replayed_model_count = 0
+    synthetic_fixtures_count = 0
+    deterministic_fallbacks_count = 0
 
     for item in questions:
         qid = item["id"]
@@ -68,10 +94,27 @@ def evaluate_blind_hardening_benchmark(
         rubric = rubrics[qid]
 
         item_planner = planner
+        planner_source = "deterministic_planner"
         if use_replay_cassettes and replay_adapter:
             key = replay_adapter.compute_replay_key(replay_adapter.build_whole_standard_prompt(query))
-            if (replay_adapter.replay_dir / f"{key}.json").exists():
+            model_cassette_p = replay_adapter.replay_dir / f"{key}.json"
+            fixture_p = fixtures_dir / f"{key}.json"
+
+            if model_cassette_p.exists():
                 item_planner = replay_adapter
+                planner_source = "deepseek_v4_1_replay_cassette"
+                replayed_model_count += 1
+            elif use_fixtures and fixture_p.exists():
+                # Quarantined fixture
+                item_planner = DeterministicFixtureAdapter(fixtures_dir)
+                planner_source = "synthetic_planner_fixture"
+                synthetic_fixtures_count += 1
+            else:
+                if strict_replay:
+                    raise RuntimeError(f"Strict replay failure: no genuine model replay cassette found for query {qid} ({key})")
+                deterministic_fallbacks_count += 1
+        else:
+            deterministic_fallbacks_count += 1
 
         resp = answer_whole_standard_question(query, item_planner, stores=stores)
         plan = resp.get("plan", {})
@@ -115,6 +158,7 @@ def evaluate_blind_hardening_benchmark(
             "answer_preview": answer[:160] + "..." if len(answer) > 160 else answer,
             "primary_target": rubric.get("primary_target"),
             "evidence_locator": execution.get("evidence_locator"),
+            "planner_source": planner_source,
         })
 
     summary = {
@@ -124,6 +168,9 @@ def evaluate_blind_hardening_benchmark(
         "passed": passed_count,
         "failed": len(questions) - passed_count,
         "pass_rate": round(passed_count / len(questions) * 100, 2),
+        "model_replays_count": replayed_model_count,
+        "synthetic_fixtures_count": synthetic_fixtures_count,
+        "deterministic_fallbacks_count": deterministic_fallbacks_count,
         "results": results,
     }
 
@@ -138,6 +185,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Gate 6.3 Blind Hardening Benchmark Evaluation")
     parser.add_argument("--benchmark-dir", type=str, default=None, help="Path to benchmark directory")
     parser.add_argument("--use-replay-cassettes", action="store_true", help="Use offline DeepSeek-V4.1 replay cassettes for matching queries")
+    parser.add_argument("--strict-replay", action="store_true", help="Fail if any query cannot be served by a genuine model replay cassette")
+    parser.add_argument("--use-fixtures", action="store_true", help="Allow fallback to quarantined synthetic planner fixtures")
     parser.add_argument("--no-write", action="store_true", help="Do not overwrite results.json")
     args = parser.parse_args()
 
@@ -146,7 +195,10 @@ if __name__ == "__main__":
         output_dir=bench_dir,
         write_results=not args.no_write,
         use_replay_cassettes=args.use_replay_cassettes,
+        strict_replay=args.strict_replay,
+        use_fixtures=args.use_fixtures,
     )
     print(f"Gate 6.3 Blind Hardening Benchmark: {summary['passed']}/{summary['total_queries']} passed ({summary['pass_rate']}%)")
+    print(f"  Model Replays: {summary['model_replays_count']} | Synthetic Fixtures: {summary['synthetic_fixtures_count']} | Deterministic Fallbacks: {summary['deterministic_fallbacks_count']}")
     if summary["failed"] > 0:
         sys.exit(1)

@@ -1,9 +1,9 @@
 {
-  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "model_id": "DeterministicQuestionPlanner",
   "replay_key": "78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f",
   "normalized_prompt": "AWS A3.0M/A3.0:2020 Question Planning Contract\nSchema Version: chart-question-actions-1.0\nQuestion: According to the Foreword and Annex C, under what specific exception does AWS A3.0 classify a term as both \"nonstandard and incorrect\"? Identify the electrical circuit terms in Clause 4 that carry this \"nonstandard and incorrect\" designation, and provide the definitions of the standard terms that must be used instead (including the safety distinction with ground connection in Figure B34).\nInstructions: Propose a structured multi-hop JSON plan over Clause 4, Tables A1-A5, Figures A1-A6, Figures B1-B54.",
   "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
-  "raw_model_output": "{\"target_division\": \"Annex C / Clause 4\", \"intent\": \"safety_incorrect_terms\", \"target_entities\": [\"ground clamp\", \"ground lead\", \"welding ground\", \"silver soldering\", \"workpiece connection\", \"ground connection\", \"Figure B34\"], \"actions\": [{\"action_type\": \"query_safety_incorrect_terms\", \"target\": \"C2.3\", \"parameters\": {}}], \"reason\": \"DeepSeek-V4.1 trace: Propose structured plan for safety_exceptions_and_incorrect_terms targeting Annex C / Clause 4.\"}",
+  "raw_model_output": "{\"target_division\": \"Annex C / Clause 4\", \"intent\": \"safety_incorrect_terms\", \"target_entities\": [\"ground clamp\", \"ground lead\", \"welding ground\", \"silver soldering\", \"workpiece connection\", \"ground connection\", \"Figure B34\"], \"actions\": [{\"action_type\": \"query_safety_incorrect_terms\", \"target\": \"C2.3\", \"parameters\": {}}], \"reason\": \"Deterministic planner trace: Captured plan for safety_exceptions_and_incorrect_terms targeting Annex C / Clause 4.\"}",
   "parsed_plan": {
     "target_division": "Annex C / Clause 4",
     "intent": "safety_incorrect_terms",
@@ -23,7 +23,8 @@
         "parameters": {}
       }
     ],
-    "reason": "DeepSeek-V4.1 trace: Propose structured plan for safety_exceptions_and_incorrect_terms targeting Annex C / Clause 4."
+    "reason": "Deterministic planner trace: Captured plan for safety_exceptions_and_incorrect_terms targeting Annex C / Clause 4."
   },
-  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+  "epistemic_tag": "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT",
+  "cassette_origin": "synthetic_planner_fixture"
 }

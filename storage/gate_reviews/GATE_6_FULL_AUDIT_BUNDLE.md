@@ -1,14 +1,14 @@
 # Gate 6 Full Production Audit Bundle
-Generated at: 2026-11-03T21:42:03.607291+00:00
-Branch: `main`
-Commit: `ff4209e20a462bb85790b92ac02d054317a0a997`
-Clean Working Tree: `True`
+Generated at: 2026-11-03T22:09:22.133319+00:00
+Branch: `fix/gate-6-4-1-provenance-integrity`
+Commit: `8f8616e102c440fadbc72aeb5ad7ea4a4c40d9fc`
+Clean Working Tree: `False`
 
 ## Preflight Verification
 - Whole Standard Preflight Status: `CLEAR_WHOLE_STANDARD_CONTRACT`
 - DeepSeek Replay Preflight Status: `CLEAR_DEEPSEEK_REPLAY_PREFLIGHT`
 - DeepSeek Preflight Smoke Queries Replayed: `4`
-- DeepSeek Replay Cassettes Verified on Disk: `20`
+- DeepSeek Replay Cassettes Verified on Disk: `14`
 
 ## Cryptographic Locks (All 51 Artifacts)
 - `data/AWS_A3.0_2020.pdf`: `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d` (MATCH)
@@ -56,12 +56,12 @@ Clean Working Tree: `True`
 - `storage/evidence_v2/phase6_3_blind_hardening_001/questions.json`: `be8ee997284de16cb367042a09206d77950344b59f14c68f5ba9ac0123141b5b` (MATCH)
 - `storage/evidence_v2/phase6_3_blind_hardening_001/rubric.json`: `a575cd1833cd2d041b6359abdadeff71a728430e155d49d8bdf70205e50ff22c` (MATCH)
 - `storage/evidence_v2/phase6_3_blind_hardening_001/results.json`: `18f247c1abb8b96d0a52081e0f8fabb32a74dcaced77143bf9ece518cd19c4c2` (MATCH)
-- `storage/model_replays/deepseek_v4_1_flash_1017/07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec.json`: `6b9b5f3d17afdba5859a4b75114876681308098ba96da860327c56a5739478a7` (MATCH)
-- `storage/model_replays/deepseek_v4_1_flash_1017/1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c.json`: `1ff122410c75893e47771d4af0fccb2243e81e0df2417eccc51a63ecf5482ffc` (MATCH)
-- `storage/model_replays/deepseek_v4_1_flash_1017/73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182.json`: `dd4a7a19ca1c8a3327fcc031bb046427f218dc103f15bd4627bfaf044ab330dc` (MATCH)
-- `storage/model_replays/deepseek_v4_1_flash_1017/78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f.json`: `0c8d9d97c74a4fd51327f9cb6df1a4f93a97f0c5c9251ac877c71c58eacc7f1a` (MATCH)
-- `storage/model_replays/deepseek_v4_1_flash_1017/c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033.json`: `eb60b4a70c60bcfbc8a521aed76fda62f41f9c21bbc43ede727b30a9767b3198` (MATCH)
-- `storage/model_replays/deepseek_v4_1_flash_1017/d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7.json`: `b75fe39c9afea284c639a024296b0b251e45fda8e4d3a309088a54c36120a449` (MATCH)
+- `storage/model_replays/deterministic_planner_fixtures/07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec.json`: `ea4cb468af3dc574f06940672fa2b33537b236140c4e6de3cc5c20b849f6908f` (MATCH)
+- `storage/model_replays/deterministic_planner_fixtures/1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c.json`: `85e7876785e941ce4ba8bff4c8284be4070827f6c26437431f0120fd8a20d71f` (MATCH)
+- `storage/model_replays/deterministic_planner_fixtures/73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182.json`: `4f164b170792437eb74b96b64a946d4717a870c1ca98e65da2223ba69206a935` (MATCH)
+- `storage/model_replays/deterministic_planner_fixtures/78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f.json`: `3134d3405387ab421f2c1a31879c776bd3c219ba29dd83ba3973ede8b70d2c46` (MATCH)
+- `storage/model_replays/deterministic_planner_fixtures/c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033.json`: `128aa1a26fe77450a76f51d669fc50a6c1a89c89d8c0a87d8473b259a8de771c` (MATCH)
+- `storage/model_replays/deterministic_planner_fixtures/d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7.json`: `b21d7621afc83a115b5b4bda999798cf23a39fd1f2c496f8b8d40751193af3cd` (MATCH)
 
 === FILE: storage/gate_reviews/gate_5_review_packet.md ===
 
@@ -15089,7 +15089,11 @@ class DeterministicQuestionPlanner:
             ]
 
         # Priority 17b: Table A3 Cross-Reference Matrix
-        elif ("table a3" in q_lower or "table a.3" in q_lower) and not ("collision" in q_lower) and not ("magnetic pulse" in q_lower or "mpw" in q_lower):
+        elif (
+            ("table a3" in q_lower or "table a.3" in q_lower)
+            and not ("collision" in q_lower)
+            and not ("table a1" in q_lower and ("primary process" in q_lower or "process grouping" in q_lower or "grouping" in q_lower or "classified" in q_lower))
+        ):
             target_div = "Normative Tables"
             intent = "table_a3_cross_reference"
             entities = ["Table A3"]
@@ -15193,7 +15197,19 @@ class DeterministicQuestionPlanner:
             or any(t.startswith("Table A") for t in inferred_tbls)
         ):
             target_div = "Normative Tables"
-            if ("table a3" in q_lower or "table a.3" in q_lower or "Table A3" in inferred_tbls) and not ("magnetic pulse" in q_lower or "mpw" in q_lower):
+            if (
+                "table a3" in q_lower
+                or "table a.3" in q_lower
+                or "Table A3" in inferred_tbls
+            ) and not (
+                "table a1" in q_lower
+                and (
+                    "primary process" in q_lower
+                    or "process grouping" in q_lower
+                    or "grouping" in q_lower
+                    or "classified" in q_lower
+                )
+            ):
                 intent = "table_a3_cross_reference"
                 target = "Table A3"
             elif "table a4" in q_lower or "suffix" in q_lower or "application mode" in q_lower or "Table A4" in inferred_tbls:
@@ -15731,13 +15747,32 @@ def _compose_table_a3_cross_reference(
                 is_match = True
         elif len(desig_upper) == 1 and any(c.upper() == desig_upper for c in cand_entities):
             is_match = True
-        elif proc_lower in q_lower:
+        elif re.search(rf"\b{re.escape(proc_lower)}\b", q_lower):
             is_match = True
         elif any(c.upper() == desig_upper or c.lower() == proc_lower for c in cand_entities):
             is_match = True
 
         if is_match and row not in matched_rows:
             matched_rows.append(row)
+
+    # Substring process suppression: if row A's process is a strict substring of row B's process,
+    # and row B was matched in the query, suppress row A unless row A's designation was explicitly in q_tokens
+    if len(matched_rows) > 1:
+        filtered_rows = []
+        for r in matched_rows:
+            r_proc = r.get("process", "").lower()
+            r_desig = r.get("designation", "").upper()
+            is_subsumed = False
+            if r_desig not in q_tokens and not any(c.upper() == r_desig for c in cand_entities):
+                for other in matched_rows:
+                    if other is not r:
+                        other_proc = other.get("process", "").lower()
+                        if r_proc != other_proc and r_proc in other_proc and other_proc in q_lower:
+                            is_subsumed = True
+                            break
+            if not is_subsumed:
+                filtered_rows.append(r)
+        matched_rows = filtered_rows
 
     # Source anomalies check
     source_anomalies = tables_graph.get("source_anomalies")
@@ -15753,6 +15788,10 @@ def _compose_table_a3_cross_reference(
                 relevant_anomalies.append(a)
 
     table_a1 = tables_graph.get("table_a1")
+    pages = sorted({r.get("page") for r in table_a3 if r.get("page")})
+    pdf_indices = sorted({r.get("pdf_index") for r in table_a3 if r.get("pdf_index")})
+    pages_str = f"printed pp. {pages[0]}–{pages[-1]}" if len(pages) > 1 else f"printed p. {pages[0]}"
+    pdf_str = f"PDF index {pdf_indices[0]}–{pdf_indices[-1]}" if len(pdf_indices) > 1 else f"PDF index {pdf_indices[0]}"
 
     if matched_rows:
         operations.append({"operation": "query_table_a3_cross_reference", "matches": len(matched_rows), "status": "executed"})
@@ -15805,14 +15844,23 @@ def _compose_table_a3_cross_reference(
 
         answer_text = (
             f"In AWS A3.0M/A3.0:2020 Table A3 (Alphabetical Cross-Reference to Table A1 by Process Letter Designation, "
-            f"printed pp. 72–73), the queried designations/processes map as follows:\n"
+            f"{pages_str}), the queried designations/processes map as follows:\n"
             + "\n".join(details)
         )
     else:
         # General Table A3 summary or anomaly query
         operations.append({"operation": "summarize_table_a3", "status": "executed"})
-        provenance.extend(["obs:pdf:84:table:Table A3", "obs:pdf:85:table:Table A3"])
-        elements_present.extend(["134", "Alphabetical Cross-Reference", "AB", "W"])
+        first_desig = table_a3[0].get("designation")
+        first_proc = table_a3[0].get("process")
+        last_desig = table_a3[-1].get("designation")
+        last_proc = table_a3[-1].get("process")
+
+        for pdf_idx in pdf_indices:
+            provenance.append(f"obs:pdf:{pdf_idx}:table:Table A3")
+
+        elements_present.extend([str(len(table_a3)), "Alphabetical Cross-Reference", first_desig])
+        if last_desig:
+            elements_present.append(last_desig)
 
         anom_summary = ""
         if relevant_anomalies:
@@ -15826,8 +15874,8 @@ def _compose_table_a3_cross_reference(
 
         answer_text = (
             f"In AWS A3.0M/A3.0:2020, Table A3 (Alphabetical Cross-Reference to Table A1 by Process Letter Designation, "
-            f"printed pp. 72–73, PDF index 84–85) catalogs exactly {len(table_a3)} standardized process letter designations "
-            f"in alphabetical order from AB (adhesive bonding) through W (welding). It provides an alphabetical index "
+            f"{pages_str}, {pdf_str}) catalogs exactly {len(table_a3)} standardized process letter designations "
+            f"in alphabetical order from {first_desig} ({first_proc}) through {last_desig} ({last_proc}). It provides an alphabetical index "
             f"correlating each letter designation with its official process name, Table A1 parent grouping, and normative Clause 4 definition.{anom_summary}"
         )
 
@@ -15871,7 +15919,7 @@ def _compose_normative_tables_answer(
         }
 
     # Table A3 Cross-Reference Matrix
-    if (intent == "table_a3_cross_reference" or "table a3" in q_lower or "table a.3" in q_lower) and not ("magnetic pulse" in q_lower or "mpw" in q_lower):
+    if intent == "table_a3_cross_reference":
         return _compose_table_a3_cross_reference(plan, question_text, tables_graph, stores=stores)
 
     # Table A1 USW Distinct Parent Process Groups Anomaly
@@ -19063,13 +19111,34 @@ from src.evidence_phase4_bakeoff import (
 )
 
 
+class DeterministicFixtureAdapter:
+    """Adapter to load quarantined synthetic planner fixtures for benchmark verification."""
+    def __init__(self, fixtures_dir: Path):
+        self.fixtures_dir = fixtures_dir
+
+    def plan_with_semantic_expansion(self, question_text: str, req_dir: Optional[Path] = None, stores: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        return self.plan_whole_standard_question(question_text, req_dir=req_dir, stores=stores)
+
+    def plan_whole_standard_question(self, question_text: str, req_dir: Optional[Path] = None, stores: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        from src.deepseek_v41_adapter import DeepSeekV41Config, DeepSeekV41PlannerAdapter
+        adapter = DeepSeekV41PlannerAdapter(config=DeepSeekV41Config(mode="OFFLINE_REPLAY_ONLY"))
+        key = adapter.compute_replay_key(adapter.build_whole_standard_prompt(question_text))
+        fixture_p = self.fixtures_dir / f"{key}.json"
+        if not fixture_p.exists():
+            raise ValueError(f"INSUFFICIENT_EVIDENCE: Missing fixture for key {key} at {fixture_p}")
+        data = json.loads(fixture_p.read_text(encoding="utf-8"))
+        return data.get("parsed_plan", {})
+
+
 def evaluate_blind_hardening_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
     write_results: bool = True,
     use_replay_cassettes: bool = False,
+    strict_replay: bool = False,
+    use_fixtures: bool = False,
 ) -> Dict[str, Any]:
-    """Execute Gate 6.3 20-query blind hardening benchmark."""
+    """Execute Gate 6.3 20-query blind hardening benchmark with transparent replay accounting."""
     if root is None:
         root = ROOT
     if output_dir is None:
@@ -19092,8 +19161,13 @@ def evaluate_blind_hardening_benchmark(
         from src.deepseek_v41_adapter import DeepSeekV41Config, DeepSeekV41PlannerAdapter
         replay_adapter = DeepSeekV41PlannerAdapter(config=DeepSeekV41Config(mode="OFFLINE_REPLAY_ONLY"), root=root)
 
+    fixtures_dir = root / "storage/model_replays/deterministic_planner_fixtures"
+
     results = []
     passed_count = 0
+    replayed_model_count = 0
+    synthetic_fixtures_count = 0
+    deterministic_fallbacks_count = 0
 
     for item in questions:
         qid = item["id"]
@@ -19103,10 +19177,27 @@ def evaluate_blind_hardening_benchmark(
         rubric = rubrics[qid]
 
         item_planner = planner
+        planner_source = "deterministic_planner"
         if use_replay_cassettes and replay_adapter:
             key = replay_adapter.compute_replay_key(replay_adapter.build_whole_standard_prompt(query))
-            if (replay_adapter.replay_dir / f"{key}.json").exists():
+            model_cassette_p = replay_adapter.replay_dir / f"{key}.json"
+            fixture_p = fixtures_dir / f"{key}.json"
+
+            if model_cassette_p.exists():
                 item_planner = replay_adapter
+                planner_source = "deepseek_v4_1_replay_cassette"
+                replayed_model_count += 1
+            elif use_fixtures and fixture_p.exists():
+                # Quarantined fixture
+                item_planner = DeterministicFixtureAdapter(fixtures_dir)
+                planner_source = "synthetic_planner_fixture"
+                synthetic_fixtures_count += 1
+            else:
+                if strict_replay:
+                    raise RuntimeError(f"Strict replay failure: no genuine model replay cassette found for query {qid} ({key})")
+                deterministic_fallbacks_count += 1
+        else:
+            deterministic_fallbacks_count += 1
 
         resp = answer_whole_standard_question(query, item_planner, stores=stores)
         plan = resp.get("plan", {})
@@ -19150,6 +19241,7 @@ def evaluate_blind_hardening_benchmark(
             "answer_preview": answer[:160] + "..." if len(answer) > 160 else answer,
             "primary_target": rubric.get("primary_target"),
             "evidence_locator": execution.get("evidence_locator"),
+            "planner_source": planner_source,
         })
 
     summary = {
@@ -19159,6 +19251,9 @@ def evaluate_blind_hardening_benchmark(
         "passed": passed_count,
         "failed": len(questions) - passed_count,
         "pass_rate": round(passed_count / len(questions) * 100, 2),
+        "model_replays_count": replayed_model_count,
+        "synthetic_fixtures_count": synthetic_fixtures_count,
+        "deterministic_fallbacks_count": deterministic_fallbacks_count,
         "results": results,
     }
 
@@ -19173,6 +19268,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Gate 6.3 Blind Hardening Benchmark Evaluation")
     parser.add_argument("--benchmark-dir", type=str, default=None, help="Path to benchmark directory")
     parser.add_argument("--use-replay-cassettes", action="store_true", help="Use offline DeepSeek-V4.1 replay cassettes for matching queries")
+    parser.add_argument("--strict-replay", action="store_true", help="Fail if any query cannot be served by a genuine model replay cassette")
+    parser.add_argument("--use-fixtures", action="store_true", help="Allow fallback to quarantined synthetic planner fixtures")
     parser.add_argument("--no-write", action="store_true", help="Do not overwrite results.json")
     args = parser.parse_args()
 
@@ -19181,8 +19278,11 @@ if __name__ == "__main__":
         output_dir=bench_dir,
         write_results=not args.no_write,
         use_replay_cassettes=args.use_replay_cassettes,
+        strict_replay=args.strict_replay,
+        use_fixtures=args.use_fixtures,
     )
     print(f"Gate 6.3 Blind Hardening Benchmark: {summary['passed']}/{summary['total_queries']} passed ({summary['pass_rate']}%)")
+    print(f"  Model Replays: {summary['model_replays_count']} | Synthetic Fixtures: {summary['synthetic_fixtures_count']} | Deterministic Fallbacks: {summary['deterministic_fallbacks_count']}")
     if summary["failed"] > 0:
         sys.exit(1)
 
@@ -21198,17 +21298,21 @@ from src.evidence_whole_standard_cli import main as cli_main
 from tests.test_gate_6_3_blind_hardening import ALL_45_LOCKED_HASHES
 
 # ---------------------------------------------------------------------------
-# All 51 Cryptographically Locked Artifact Hashes (Gate 6.4 Baseline)
+# All 51 Cryptographically Locked Artifact Hashes (Gate 6.4.1 Baseline)
 # ---------------------------------------------------------------------------
+SYNTHETIC_FIXTURE_HASHES: Dict[str, str] = {
+    # 6 Synthetic Planner Fixtures (Quarantined from model replays per PROV-6.4-1 / Gate 6.4.1)
+    "storage/model_replays/deterministic_planner_fixtures/07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec.json": "ea4cb468af3dc574f06940672fa2b33537b236140c4e6de3cc5c20b849f6908f",
+    "storage/model_replays/deterministic_planner_fixtures/1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c.json": "85e7876785e941ce4ba8bff4c8284be4070827f6c26437431f0120fd8a20d71f",
+    "storage/model_replays/deterministic_planner_fixtures/73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182.json": "4f164b170792437eb74b96b64a946d4717a870c1ca98e65da2223ba69206a935",
+    "storage/model_replays/deterministic_planner_fixtures/78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f.json": "3134d3405387ab421f2c1a31879c776bd3c219ba29dd83ba3973ede8b70d2c46",
+    "storage/model_replays/deterministic_planner_fixtures/c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033.json": "128aa1a26fe77450a76f51d669fc50a6c1a89c89d8c0a87d8473b259a8de771c",
+    "storage/model_replays/deterministic_planner_fixtures/d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7.json": "b21d7621afc83a115b5b4bda999798cf23a39fd1f2c496f8b8d40751193af3cd",
+}
+
 ALL_51_LOCKED_HASHES: Dict[str, str] = {
     **ALL_45_LOCKED_HASHES,
-    # 6 DeepSeek Offline Replay Cassettes (Gate 6.4 Expansion to 20 Cassettes)
-    "storage/model_replays/deepseek_v4_1_flash_1017/07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec.json": "6b9b5f3d17afdba5859a4b75114876681308098ba96da860327c56a5739478a7",
-    "storage/model_replays/deepseek_v4_1_flash_1017/1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c.json": "1ff122410c75893e47771d4af0fccb2243e81e0df2417eccc51a63ecf5482ffc",
-    "storage/model_replays/deepseek_v4_1_flash_1017/73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182.json": "dd4a7a19ca1c8a3327fcc031bb046427f218dc103f15bd4627bfaf044ab330dc",
-    "storage/model_replays/deepseek_v4_1_flash_1017/78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f.json": "0c8d9d97c74a4fd51327f9cb6df1a4f93a97f0c5c9251ac877c71c58eacc7f1a",
-    "storage/model_replays/deepseek_v4_1_flash_1017/c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033.json": "eb60b4a70c60bcfbc8a521aed76fda62f41f9c21bbc43ede727b30a9767b3198",
-    "storage/model_replays/deepseek_v4_1_flash_1017/d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7.json": "b75fe39c9afea284c639a024296b0b251e45fda8e4d3a309088a54c36120a449",
+    **SYNTHETIC_FIXTURE_HASHES,
 }
 
 
@@ -21227,7 +21331,7 @@ def test_gate_6_4_all_51_locked_hashes():
 
 
 def test_gate_6_4_replay_and_deterministic_20_20(monkeypatch):
-    """Verify 20/20 (100.0%) pass rate on blind hardening benchmark in BOTH deterministic and replay modes."""
+    """Verify 20/20 (100.0%) pass rate on blind hardening benchmark in BOTH deterministic and fixture replay modes."""
     def _blocked_socket(*args, **kwargs):
         raise RuntimeError("NETWORK_ACCESS_BLOCKED: Tests must run 100% offline.")
 
@@ -21238,31 +21342,34 @@ def test_gate_6_4_replay_and_deterministic_20_20(monkeypatch):
     rubric = json.loads((benchmark_dir / "rubric.json").read_text(encoding="utf-8"))
     stores = get_whole_standard_stores(ROOT)
 
+    from eval.run_phase6_3_blind_hardening import DeterministicFixtureAdapter, evaluate_blind_hardening_benchmark
     from src.deepseek_v41_adapter import DeepSeekV41PlannerAdapter
 
     planner = DeterministicQuestionPlanner(root=ROOT)
+    fixtures_dir = ROOT / "storage/model_replays/deterministic_planner_fixtures"
+    fixture_adapter = DeterministicFixtureAdapter(fixtures_dir)
     replay_adapter = DeepSeekV41PlannerAdapter(root=ROOT)
 
     modes = [
         ("deterministic", False),
-        ("replay_cassettes", True),
+        ("fixture_replays", True),
     ]
 
-    for mode_name, use_replays in modes:
+    for mode_name, use_fixtures in modes:
         passed = 0
         failures = []
-        replay_used_count = 0
+        fixture_used_count = 0
         for item in questions:
             qid = item["id"]
             q_text = item["query"]
             rub = rubric["rubrics"][qid]
 
             item_planner = planner
-            if use_replays:
+            if use_fixtures:
                 key = replay_adapter.compute_replay_key(replay_adapter.build_whole_standard_prompt(q_text))
-                if (replay_adapter.replay_dir / f"{key}.json").exists():
-                    item_planner = replay_adapter
-                    replay_used_count += 1
+                if (fixtures_dir / f"{key}.json").exists():
+                    item_planner = fixture_adapter
+                    fixture_used_count += 1
 
             res = answer_whole_standard_question(q_text, planner=item_planner, stores=stores)
             ans = res.get("answer", "")
@@ -21281,11 +21388,22 @@ def test_gate_6_4_replay_and_deterministic_20_20(monkeypatch):
             else:
                 failures.append(f"[{mode_name}] {qid}: status={status_match}, crop={crop_match}, missing={req_missing}, forbidden={forb_hits}")
 
-        if use_replays:
-            assert replay_used_count == 6, f"Expected exactly 6 replay cassettes invoked, got {replay_used_count}"
+        if use_fixtures:
+            assert fixture_used_count == 6, f"Expected exactly 6 fixtures invoked, got {fixture_used_count}"
 
         assert not failures, f"Failures in mode {mode_name} ({len(failures)}/20):\n" + "\n".join(failures)
         assert passed == 20, f"[{mode_name}] Expected 20/20 passes, got {passed}"
+
+    # Also verify evaluator reporting metrics
+    summary = evaluate_blind_hardening_benchmark(root=ROOT, write_results=False, use_replay_cassettes=True, use_fixtures=True)
+    assert summary["model_replays_count"] == 0
+    assert summary["synthetic_fixtures_count"] == 6
+    assert summary["deterministic_fallbacks_count"] == 14
+    assert summary["passed"] == 20
+
+    # Verify strict replay raises on missing model replay
+    with pytest.raises(RuntimeError, match="Strict replay failure"):
+        evaluate_blind_hardening_benchmark(root=ROOT, write_results=False, use_replay_cassettes=True, strict_replay=True)
 
 
 def test_gate_6_4_table_a3_queries():
@@ -21318,7 +21436,21 @@ def test_gate_6_4_table_a3_queries():
     assert res_sum["execution"]["status"] == "PASS"
     assert "134" in res_sum["answer"]
     assert "AB" in res_sum["answer"]
-    assert "W" in res_sum["answer"]
+    assert "WS" in res_sum["answer"]
+    assert "W" not in res_sum["execution"]["elements_present"]
+
+    # 5. Word-boundary & subsumption filtering: torch brazing (must not return B)
+    res_tb = answer_whole_standard_question("In Table A3, what is torch brazing?", stores=stores)
+    assert res_tb["execution"]["status"] == "PASS"
+    assert "TB" in res_tb["answer"]
+    assert "torch brazing" in res_tb["answer"]
+    assert "B" not in res_tb["execution"]["elements_present"]
+
+    # 6. Word-boundary & subsumption filtering: GTAW (must not return AW)
+    res_gtaw = answer_whole_standard_question("Table A3 letter designation for gas tungsten arc welding", stores=stores)
+    assert res_gtaw["execution"]["status"] == "PASS"
+    assert "GTAW" in res_gtaw["answer"]
+    assert "AW" not in res_gtaw["execution"]["elements_present"]
 
 
 def test_gate_6_4_table_a3_store_mutation_degradation():
@@ -21344,7 +21476,7 @@ def test_gate_6_4_annex_b_deep_traversal():
     b_figures = stores["annex_b_complete"]["figures"]
 
     # Figure B33: Crack Types
-    res_b33 = compose_spatial_callout_answer({"query": "Figure B33 crack types", "figure_id": "Figure B33"}, b_figures)
+    res_b33 = compose_spatial_callout_answer({"query": "Figure B33 crack types", "figure_id": "Figure B33"}, stores)
     assert res_b33["status"] == "PASS"
     assert res_b33["key_count"] == 13
     assert len(res_b33["key_items"]) == 13
@@ -21361,8 +21493,12 @@ def test_gate_6_4_annex_b_deep_traversal():
     assert any("crater_crack" in prov for prov in res_b33["normative_provenance"])
     assert any("toe_crack" in prov for prov in res_b33["normative_provenance"])
 
+    # Verify elements_present is a strict subset of what appears in answer_text
+    for el in res_b33["elements_present"]:
+        assert el in res_b33["answer_text"] or el.lower() in res_b33["answer_text"].lower(), f"Element '{el}' claimed but missing in answer text"
+
     # Figure B46: Friction Stir Welding Schematic
-    res_b46 = compose_spatial_callout_answer({"query": "Figure B46 FSW", "figure_id": "Figure B46"}, b_figures)
+    res_b46 = compose_spatial_callout_answer({"query": "Figure B46 FSW", "figure_id": "Figure B46"}, stores)
     assert res_b46["status"] == "PASS"
     assert "Advancing Side" in res_b46["elements_present"]
     assert "Retreating Side" in res_b46["elements_present"]
@@ -21375,8 +21511,14 @@ def test_gate_6_4_annex_b_deep_traversal():
     assert "Clause 4, p. 48" in res_b46["answer_text"]  # retreating side
     assert "Tool Shoulder (Figure B46 Item 5)" in res_b46["answer_text"]
     assert "Probe (Figure B46 Item 6)" in res_b46["answer_text"]
+    assert "note that 'tool shoulder' has no separate normative definition entry in Clause 4" in res_b46["answer_text"]
+    assert "note that 'probe' has no separate normative definition entry in Clause 4" in res_b46["answer_text"]
     assert any("advancing_side" in prov for prov in res_b46["normative_provenance"])
     assert any("retreating_side" in prov for prov in res_b46["normative_provenance"])
+
+    # Verify elements_present is a strict subset of what appears in answer_text
+    for el in res_b46["elements_present"]:
+        assert el in res_b46["answer_text"] or el.lower() in res_b46["answer_text"].lower(), f"Element '{el}' claimed but missing in answer text"
 
 
 def test_gate_6_4_cli_offline_commands():
@@ -21453,6 +21595,23 @@ def test_gate_6_4_ast_zero_fallbacks_across_all_13_functions():
                                     if get_arg == "intent" and v.value == "general_query":
                                         continue
                                     violations.append(f"{node.name}:{sub.lineno}: .get(...) or '{v.value}' fallback")
+
+    # 4. AST check for archetype_spatial_callout.py (zero open, zero disk reads, zero fake definitions)
+    spatial_file = ROOT / "src/archetype_spatial_callout.py"
+    spatial_tree = ast.parse(spatial_file.read_text(encoding="utf-8"))
+    for node in ast.walk(spatial_tree):
+        if isinstance(node, ast.FunctionDef) and node.name == "compose_spatial_callout_answer":
+            for sub in ast.walk(node):
+                # No open() or read_text calls
+                if isinstance(sub, ast.Call):
+                    if isinstance(sub.func, ast.Name) and sub.func.id == "open":
+                        violations.append(f"compose_spatial_callout_answer:{sub.lineno}: banned direct open() call in composer")
+                    elif isinstance(sub.func, ast.Attribute) and sub.func.attr in ["read_text", "read_bytes"]:
+                        violations.append(f"compose_spatial_callout_answer:{sub.lineno}: banned direct disk read .{sub.func.attr}() in composer")
+                # No fabricated Clause 4 definitions masquerading as quotes
+                if isinstance(sub, ast.Constant) and isinstance(sub.value, str):
+                    if "The contoured cylindrical shoulder" in sub.value or "The profiled pin projecting" in sub.value:
+                        violations.append(f"compose_spatial_callout_answer:{sub.lineno}: fabricated definition prose detected: '{sub.value[:40]}...'")
 
     assert not violations, f"Found {len(violations)} AST zero-fallback violation(s):\n" + "\n".join(violations)
 
@@ -22756,6 +22915,87 @@ All 20 blind hardening queries execute 100% offline with zero network calls in b
 ## 5. Clean UTF-8 Validation
 
 This checkout card has been authored and verified under strict UTF-8 encoding. All special characters (em-dashes `—`, en-dashes `–`, bullets `•`, mathematical arrows `$\rightarrow$`) are clean UTF-8 literals with 0 Shift-JIS / CP932 mojibake artifacts.
+
+
+=== FILE: GATE_6_4_1_CHECKOUT_CARD.md ===
+
+# Gate 6.4.1 Checkout & Closeout Card: Provenance Integrity Remediation
+
+**Repository:** `C:\Users\kenai\Documents\Codex\2026-10-21\task\aws-a2-source-aware-ingest`  
+**Base Commit / Tag on `main`:** `8f8616e` (`v1.6.4-comprehensive-enhancements`)  
+**Target Branch:** `fix/gate-6-4-1-provenance-integrity` $\rightarrow$ `main`  
+**Release Tag:** `v1.6.4.1-provenance-integrity`  
+**Google Drive Mirror:** `G:\My Drive\git_projects\aws-a30-prototype`  
+
+---
+
+## 1. Executive Summary & Forensic Audit Remediation
+
+Following the release of Gate 6.4 (`v1.6.4`), an immediate forensic audit identified 9 integrity and hygiene findings (3 provenance defects, 3 execution drifts, 1 evaluation accounting drift, 1 test coverage drift, and 1 bundle hygiene drift). Gate 6.4.1 completely remediates all 9 findings under the project's non-negotiable principle: **all emitted platform content must be rigorously grounded in verified source evidence with uncompromised provenance.**
+
+### Remediation Ledger (All 9 Findings Resolved)
+
+| Finding ID | Severity | Description | Remediation Implemented in Gate 6.4.1 |
+| :--- | :---: | :--- | :--- |
+| **`PROV-6.4-1`** | 🔴 Critical | 6 synthetic cassettes mislabeled as DeepSeek model outputs | Quarantined from `storage/model_replays/deepseek_v4_1_flash_1017/` to `storage/model_replays/deterministic_planner_fixtures/` with `model_id: "DeterministicQuestionPlanner"`, `epistemic_tag: "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT"`, and `cassette_origin: "synthetic_planner_fixture"`. Committed reproducible generator `scripts/generate_deterministic_planner_fixtures.py`. Accurate accounting: exactly 14 genuine DeepSeek cassettes locked. |
+| **`PROV-6.4-2`** | 🔴 Critical | Fabricated Clause 4 definitions for Figure B46 "Tool Shoulder" and "Probe" | Removed all fabricated definition strings in `src/archetype_spatial_callout.py`. Emitted verified Figure B46 key-item labels from Annex B store and real Clause 4 definitions for `advancing side` and `retreating side`. Explicitly and truthfully notes that `tool shoulder`, `probe`, `TMAZ`, and `stir zone` have no separate normative definition entries in Clause 4. |
+| **`PROV-6.4-3`** | 🟠 High | Table A3 summary hardcoded false range "AB through W" | In `_compose_table_a3_cross_reference` (`src/evidence_phase4_bakeoff.py`), dynamically derived the first designation (`AB`), first process (`adhesive bonding`), last designation (`WS`), last process (`wave soldering`), page range (`printed pp. 72–73`), and PDF range (`PDF index 84–85`) strictly from `table_a3` store. Removed literal `"W"` from `elements_present`. |
+| **`EXEC-6.4-4`** | 🟠 High | Direct disk reads (`open(...)`) in spatial callout composer | Eliminated direct `open(...)` calls to `glossary_store.json` in `src/archetype_spatial_callout.py`. Strictly uses injected stores. Constrained `elements_present` to a strict subset of strings genuinely appearing in `answer_text`. Handled "See Figure B33" cross-references transparently. |
+| **`EXEC-6.4-5`** | 🟡 Medium | Substring over-matching in Table A3 cross-referencing | Implemented word-boundary regex matching (`re.search(rf"\b{re.escape(proc_lower)}\b", q_lower)`) and strict subsumption filtering: if row A's process is a substring of matched row B's process, row A is suppressed unless explicitly designated. "torch brazing" now returns only `TB` (not `B`), and "gas tungsten arc welding" returns only `GTAW` (not `AW`). |
+| **`EXEC-6.4-6`** | 🟡 Medium | Brittle repeated keyword exclusion lists (`"magnetic pulse"`, `"mpw"`) | Refactored Priority 17b, Priority 22, and `_compose_normative_tables_answer` in `src/evidence_phase4_bakeoff.py` to route based on structural intent rather than hardcoded process names. Queries specifically targeting Table A1 primary process classifications route to Table A1 without polluting Table A3 logic. |
+| **`EVAL-6.4-7`** | 🟡 Medium | Silent fallback and non-transparent replay accounting | Updated `eval/run_phase6_3_blind_hardening.py` to record `planner_source` per query and report exact counts for `model_replays_count`, `synthetic_fixtures_count`, and `deterministic_fallbacks_count`. Added `--strict-replay` flag that fails if any query lacks a genuine model replay cassette. Added `--use-fixtures` flag for synthetic fixture testing. |
+| **`TEST-6.4-8`** | 🟡 Medium | Missing AST checks for direct disk reads and definition prose in spatial callers | Expanded `test_gate_6_4_ast_zero_fallbacks_across_all_13_functions` in `tests/test_gate_6_4_comprehensive_enhancements.py` to inspect `src/archetype_spatial_callout.py`, asserting 0 `open()` calls, 0 `.read_text()` / `.read_bytes()` calls, and 0 fabricated definition strings. Added property assertion that `elements_present` $\subseteq$ `answer_text`. |
+| **`HYG-6.4-9`** | ⚪ Low | `build_gate_6_bundle.py` overwriting Gate 5 audit bundles | Removed Gate 5 targets from `scripts/build_gate_6_bundle.py`. Restored genuine Gate 5 audit bundle (508,291 bytes) via `scripts/build_gate_5_bundle.py`. Gate 6 bundle now exclusively generates Gate 6 bundle targets. |
+
+---
+
+## 2. Benchmark Evaluation Transparency (Gate 6.3 Blind Hardening)
+
+Running `eval/run_phase6_3_blind_hardening.py` across different operational modes produces transparent, verified accounting:
+
+1. **Deterministic Mode (`--no-write`):**
+   - Result: **20/20 passed (100.0%)**
+   - Accounting: `Model Replays: 0 | Synthetic Fixtures: 0 | Deterministic Fallbacks: 20`
+2. **Model Replay Mode (`--no-write --use-replay-cassettes`):**
+   - Result: **20/20 passed (100.0%)**
+   - Accounting: `Model Replays: 0 | Synthetic Fixtures: 0 | Deterministic Fallbacks: 20` (unmatched queries transparently fall back to deterministic planner)
+3. **Fixture-Augmented Mode (`--no-write --use-replay-cassettes --use-fixtures`):**
+   - Result: **20/20 passed (100.0%)**
+   - Accounting: `Model Replays: 0 | Synthetic Fixtures: 6 | Deterministic Fallbacks: 14`
+4. **Strict Model Replay Mode (`--no-write --use-replay-cassettes --strict-replay`):**
+   - Result: **Strict replay failure** with `RuntimeError: Strict replay failure: no genuine model replay cassette found for query G63-BLIND01` (truthful failure on unrecorded queries).
+
+---
+
+## 3. Cryptographic Lock Ledger (All 51 Locked Artifacts)
+
+### Immutable Baseline (All 45 Releases Hashes 100% Unchanged)
+All 45 baseline hashes match byte-for-byte with zero drift:
+- `#1`–`#14`: Phase 4/5/6 Ingestion, Graph, and Table stores.
+- `#15`–`#28`: Exactly **14 genuine DeepSeek-V4.1-Flash-1017 replay cassettes** under `storage/model_replays/deepseek_v4_1_flash_1017/`.
+- `#29`–`#45`: Evaluation benchmark suites (Gate 5.5, Gate 6.0, Gate 6.1, Gate 6.2, Gate 6.2.1, Gate 6.3).
+
+### Quarantined Synthetic Planner Fixtures (6 Artifacts)
+Stored under `storage/model_replays/deterministic_planner_fixtures/` with `epistemic_tag: "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT"`:
+
+| Index | Rel Path | SHA-256 Digest | Status |
+| :---: | :--- | :--- | :---: |
+| 46 | `storage/model_replays/deterministic_planner_fixtures/07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec.json` | `ea4cb468af3dc574f06940672fa2b33537b236140c4e6de3cc5c20b849f6908f` | MATCH |
+| 47 | `storage/model_replays/deterministic_planner_fixtures/1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c.json` | `85e7876785e941ce4ba8bff4c8284be4070827f6c26437431f0120fd8a20d71f` | MATCH |
+| 48 | `storage/model_replays/deterministic_planner_fixtures/73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182.json` | `4f164b170792437eb74b96b64a946d4717a870c1ca98e65da2223ba69206a935` | MATCH |
+| 49 | `storage/model_replays/deterministic_planner_fixtures/78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f.json` | `3134d3405387ab421f2c1a31879c776bd3c219ba29dd83ba3973ede8b70d2c46` | MATCH |
+| 50 | `storage/model_replays/deterministic_planner_fixtures/c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033.json` | `128aa1a26fe77450a76f51d669fc50a6c1a89c89d8c0a87d8473b259a8de771c` | MATCH |
+| 51 | `storage/model_replays/deterministic_planner_fixtures/d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7.json` | `b21d7621afc83a115b5b4bda999798cf23a39fd1f2c496f8b8d40751193af3cd` | MATCH |
+
+---
+
+## 4. Verification Sign-off
+
+- **Unit Test Suite:** `tests/test_gate_6_4_comprehensive_enhancements.py` passed 7/7 (100%).
+- **Bakeoff Test Suite:** `tests/test_gate_4_production_bakeoff.py` passed 8/8 (100%).
+- **Store Composition Suite:** `tests/test_gate_6_2_store_driven_composition.py` passed 7/7 (100%).
+- **AST Zero-Fallback & Zero-Disk-Read Guard:** Passed with 0 violations across all 13 composer functions and `compose_spatial_callout_answer`.
+- **Offline Integrity:** 100% offline socket isolation verified (`0` network calls).
 
 
 === FILE: docs/FULL_PROMPT.md ===
