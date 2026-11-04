@@ -58,6 +58,7 @@ FILES = [
     "tests/test_gate_6_2_2_closeout_hygiene.py",
     "tests/test_gate_6_3_blind_hardening.py",
     "tests/test_gate_6_4_comprehensive_enhancements.py",
+    "tests/test_gate_6_5_provenance_and_shared_path.py",
     "GATE_6_0_CHECKOUT_CARD.md",
     "GATE_6_1_CHECKOUT_CARD.md",
     "GATE_6_2_CHECKOUT_CARD.md",
@@ -67,6 +68,8 @@ FILES = [
     "GATE_6_3_CHECKOUT_CARD.md",
     "GATE_6_4_CHECKOUT_CARD.md",
     "GATE_6_4_1_CHECKOUT_CARD.md",
+    "GATE_6_5_CHECKOUT_CARD.md",
+    "docs/AWS_A30_ARCHITECTURE_RECOMMENDATIONS.md",
     "docs/FULL_PROMPT.md",
 ]
 

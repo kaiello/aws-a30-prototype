@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 import sys
 from typing import Any, Dict, Optional
@@ -50,7 +51,7 @@ class DeterministicFixtureAdapter:
 def evaluate_blind_hardening_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
-    write_results: bool = True,
+    write_results: bool = False,
     use_replay_cassettes: bool = False,
     strict_replay: bool = False,
     use_fixtures: bool = False,
@@ -73,6 +74,11 @@ def evaluate_blind_hardening_benchmark(
     stores = get_whole_standard_stores(root)
     planner = DeterministicQuestionPlanner(root)
 
+    cov_file = root / "storage/manifests/coverage_manifest.json"
+    cov_data = json.loads(cov_file.read_text(encoding="utf-8")) if cov_file.exists() else {}
+    ingested_pdf_pages = set(cov_data.get("page_accounting", {}).get("ingested_pdf_indices_1_based", []))
+    excluded_pdf_pages = set(cov_data.get("page_accounting", {}).get("excluded_pdf_indices_1_based", []))
+
     replay_adapter = None
     if use_replay_cassettes:
         from src.deepseek_v41_adapter import DeepSeekV41Config, DeepSeekV41PlannerAdapter
@@ -82,6 +88,11 @@ def evaluate_blind_hardening_benchmark(
 
     results = []
     passed_count = 0
+    content_passed = 0
+    coord_passed = 0
+    crop_passed = 0
+    body_meta_passed = 0
+    planner_breakdown = {}
     replayed_model_count = 0
     synthetic_fixtures_count = 0
     deterministic_fallbacks_count = 0
@@ -116,6 +127,10 @@ def evaluate_blind_hardening_benchmark(
         else:
             deterministic_fallbacks_count += 1
 
+        if planner_source not in planner_breakdown:
+            planner_breakdown[planner_source] = {"total": 0, "passed": 0}
+        planner_breakdown[planner_source]["total"] += 1
+
         resp = answer_whole_standard_question(query, item_planner, stores=stores)
         plan = resp.get("plan", {})
         execution = resp.get("execution", {})
@@ -127,19 +142,79 @@ def evaluate_blind_hardening_benchmark(
         exp_status = rubric["expected_status"]
         status_match = (status == exp_status)
 
-        # Check required elements
+        # 1. Content check (required/forbidden elements)
         req_missing = [req for req in rubric["required_elements"] if req.lower() not in answer.lower()]
-        # Check forbidden elements
         forb_hit = [forb for forb in rubric["forbidden_elements"] if forb.lower() in answer.lower()]
+        content_ok = status_match and (len(req_missing) == 0) and (len(forb_hit) == 0)
+        if content_ok:
+            content_passed += 1
 
-        # Check conditional diagram crop requirement
-        exp_req_crop = rubric.get("requires_diagram_crop")
+        # 2. Coordinate Formula Gate
+        p_page = resp.get("printed_page")
+        p_pdf = resp.get("pdf_index")
+        coord_ok = (
+            isinstance(p_page, int)
+            and isinstance(p_pdf, int)
+            and (p_pdf - p_page == 12)
+            and (p_pdf in ingested_pdf_pages)
+            and (p_pdf not in excluded_pdf_pages)
+        )
+        if coord_ok:
+            coord_passed += 1
+
+        # 3. Crop-to-Locator Identity Gate & Abstention Gate
+        crop_path = resp.get("crop_path")
         act_req_crop = resp.get("requires_diagram_crop")
-        crop_match = (exp_req_crop is None) or (act_req_crop == exp_req_crop)
+        exp_req_crop = rubric.get("requires_diagram_crop")
 
-        test_passed = status_match and (len(req_missing) == 0) and (len(forb_hit) == 0) and crop_match
+        crop_identity_ok = True
+        if act_req_crop:
+            if not crop_path or not (root / crop_path).exists():
+                crop_identity_ok = False
+            else:
+                loc_str = (resp.get("evidence_locator") or execution.get("evidence_locator") or "").lower()
+                m_loc = re.search(r"figure_([ab]\d+[a-z]*)", loc_str)
+                m_crop = re.search(r"(?:figure_)?([ab]\d+[a-z]*)", Path(crop_path).name.lower())
+                if m_loc and m_crop and m_loc.group(1) != m_crop.group(1):
+                    crop_identity_ok = False
+        else:
+            if crop_path is not None:
+                crop_identity_ok = False
+
+        crop_match = (exp_req_crop is None) or (act_req_crop == exp_req_crop and crop_identity_ok)
+        if crop_match:
+            crop_passed += 1
+
+        # 4. Body-to-Metadata Consistency Gate
+        body_p_matches = [int(m) for m in re.findall(r"(?:printed\s+p\.?|p\.)\s*(\d+)", answer, re.IGNORECASE)]
+        body_pdf_matches = [int(m) for m in re.findall(r"PDF\s+(?:index\s+)?(\d+)", answer, re.IGNORECASE)]
+        prov_pdf_matches = [int(m) for m in re.findall(r"obs:pdf:(\d+):", " ".join(execution.get("normative_provenance", [])))]
+
+        body_meta_ok = True
+        if exp_status != "ABSTAIN_OUT_OF_SCOPE":
+            if body_p_matches and p_page not in body_p_matches:
+                if not (prov_pdf_matches and p_pdf in prov_pdf_matches):
+                    elem_spans = {
+                        "table_a1": range(69, 72),
+                        "figure_b23": range(114, 117),
+                        "annex_c": range(159, 165),
+                        "table_a3": range(72, 74),
+                    }
+                    loc_key = str(execution.get("evidence_locator", "")).split(":")[0]
+                    span = elem_spans.get(loc_key)
+                    if not (span and p_page in span and any(bp in span for bp in body_p_matches)):
+                        body_meta_ok = False
+            if body_pdf_matches and p_pdf not in body_pdf_matches:
+                if not (prov_pdf_matches and p_pdf in prov_pdf_matches):
+                    body_meta_ok = False
+        if body_meta_ok:
+            body_meta_passed += 1
+
+        # 5. Overall Strict Pass Gate
+        test_passed = content_ok and crop_match and coord_ok and body_meta_ok
         if test_passed:
             passed_count += 1
+            planner_breakdown[planner_source]["passed"] += 1
 
         results.append({
             "id": qid,
@@ -149,8 +224,13 @@ def evaluate_blind_hardening_benchmark(
             "passed": test_passed,
             "status_match": status_match,
             "crop_match": crop_match,
+            "coord_match": coord_ok,
+            "body_meta_match": body_meta_ok,
             "actual_status": status,
             "expected_status": exp_status,
+            "printed_page": p_page,
+            "pdf_index": p_pdf,
+            "crop_path": crop_path,
             "requires_diagram_crop": act_req_crop,
             "expected_requires_diagram_crop": exp_req_crop,
             "required_elements_missing": req_missing,
@@ -161,13 +241,27 @@ def evaluate_blind_hardening_benchmark(
             "planner_source": planner_source,
         })
 
+    total_q = len(questions)
     summary = {
         "gate": "Gate 6.3",
         "benchmark": "phase6_3_blind_hardening_001",
-        "total_queries": len(questions),
+        "total_queries": total_q,
         "passed": passed_count,
-        "failed": len(questions) - passed_count,
-        "pass_rate": round(passed_count / len(questions) * 100, 2),
+        "failed": total_q - passed_count,
+        "pass_rate": round(passed_count / total_q * 100, 2),
+        "answer_content_accuracy": round(content_passed / total_q * 100, 2),
+        "coordinate_provenance_accuracy": round(coord_passed / total_q * 100, 2),
+        "crop_locator_consistency": round(crop_passed / total_q * 100, 2),
+        "body_metadata_alignment": round(body_meta_passed / total_q * 100, 2),
+        "overall_strict_pass_rate": round(passed_count / total_q * 100, 2),
+        "planner_breakdown": {
+            src: {
+                "total": stats["total"],
+                "passed": stats["passed"],
+                "pass_rate": round(stats["passed"] / stats["total"] * 100, 2) if stats["total"] else 0.0,
+            }
+            for src, stats in planner_breakdown.items()
+        },
         "model_replays_count": replayed_model_count,
         "synthetic_fixtures_count": synthetic_fixtures_count,
         "deterministic_fallbacks_count": deterministic_fallbacks_count,
@@ -187,13 +281,14 @@ if __name__ == "__main__":
     parser.add_argument("--use-replay-cassettes", action="store_true", help="Use offline DeepSeek-V4.1 replay cassettes for matching queries")
     parser.add_argument("--strict-replay", action="store_true", help="Fail if any query cannot be served by a genuine model replay cassette")
     parser.add_argument("--use-fixtures", action="store_true", help="Allow fallback to quarantined synthetic planner fixtures")
+    parser.add_argument("--write", action="store_true", help="Explicitly overwrite results.json")
     parser.add_argument("--no-write", action="store_true", help="Do not overwrite results.json")
     args = parser.parse_args()
 
     bench_dir = Path(args.benchmark_dir) if args.benchmark_dir else None
     summary = evaluate_blind_hardening_benchmark(
         output_dir=bench_dir,
-        write_results=not args.no_write,
+        write_results=(args.write and not args.no_write),
         use_replay_cassettes=args.use_replay_cassettes,
         strict_replay=args.strict_replay,
         use_fixtures=args.use_fixtures,
