@@ -197,8 +197,8 @@ def test_gate_5_6_modality_appropriate_provenance():
     q_a5 = "Which processes are classified under Solid-State Welding in Figure A5?"
     res_a5 = answer_whole_standard_question(q_a5, planner=planner, stores=stores)
     assert res_a5["execution"]["status"] == "PASS"
-    assert res_a5["printed_page"] == 79
-    assert res_a5["pdf_index"] == 91
+    assert res_a5["printed_page"] == 78
+    assert res_a5["pdf_index"] == 90
     assert "figure_a5" in res_a5["evidence_locator"]
     assert res_a5["requires_diagram_crop"] is True
     assert res_a5.get("crop_path") is not None

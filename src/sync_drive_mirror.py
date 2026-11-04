@@ -90,6 +90,10 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
         if p.is_file() and p not in collected:
             collected.append(p)
 
+    for p in base_dir.glob("CONTINUATION_*.md"):
+        if p.is_file() and p not in collected:
+            collected.append(p)
+
     # 2. src/ (.py and .json files, excluding __pycache__)
     src_dir = base_dir / "src"
     if src_dir.is_dir():

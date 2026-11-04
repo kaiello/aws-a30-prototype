@@ -268,26 +268,26 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 
 | Query ID | Category / Focus | Query Topic & Standard Target | Status |
 | :--- | :--- | :--- | :--- |
-| `G63-BLIND01` | Nonstandard Term Resolution | `ground clamp` $\rightarrow$ `workpiece connection` (Clause 4 & Annex C) | `100.0% PASS` |
-| `G63-BLIND02` | Process Acronym Lookup | `PAW` $\rightarrow$ `plasma arc welding` (Table A1) | `100.0% PASS` |
-| `G63-BLIND03` | Nonstandard Term Resolution | `ground lead` $\rightarrow$ `workpiece lead` (Clause 4 & Annex C) | `100.0% PASS` |
-| `G63-BLIND04` | Historical Term Differentiation | `brazing` vs `bronze welding` historical status (Annex D Table D2) | `100.0% PASS` |
-| `G63-BLIND05` | Spatial Callout Diagram | Butt joint applicable weld types (Figure B1(A)) | `100.0% PASS` |
-| `G63-BLIND06` | Nonstandard Term Resolution | `welding ground` $\rightarrow$ `workpiece connection` (Clause 4 & Annex C) | `100.0% PASS` |
-| `G63-BLIND07` | Nonstandard Term Resolution | `silver soldering` $\rightarrow$ `silver brazing` (Clause 4 & Annex C) | `100.0% PASS` |
-| `G63-BLIND08` | Process Variation Parsing | `GMAW-S` $\rightarrow$ Gas Metal Arc Welding - Short Circuiting (Table A1) | `100.0% PASS` |
-| `G63-BLIND09` | Obsolete Process Classification | `BB` & `CAW-S` obsolete process status (Table A5) | `100.0% PASS` |
-| `G63-BLIND10` | Nonstandard Term Resolution | `burning` $\rightarrow$ `oxygen cutting` / `thermal cutting` (Clause 4 & Annex C) | `100.0% PASS` |
-| `G63-BLIND11` | Nonstandard Term Resolution | `puddle` $\rightarrow$ `weld pool` (Clause 4 & Annex C) | `100.0% PASS` |
-| `G63-BLIND12` | Spatial Callout Diagram | Scarf joint member preparation and groove weld applicability (Figure B1(D)) | `100.0% PASS` |
-| `G63-BLIND13` | Process Variation Parsing | `GTAW-P` $\rightarrow$ Gas Tungsten Arc Welding - Pulsed Arc (Table A1) | `100.0% PASS` |
-| `G63-BLIND14` | Nonstandard Term Resolution | `backhand welding` $\rightarrow$ `push angle` vs `drag angle` (Clause 4 & Annex C) | `100.0% PASS` |
-| `G63-BLIND15` | Nonstandard Term Resolution | `stick welding` $\rightarrow$ `shielded metal arc welding` (SMAW) (Clause 4 & Annex C) | `100.0% PASS` |
-| `G63-BLIND16` | Normative Suffix Notation | Table A4 compound application mode suffixes (`-MA`, `-SA`, `-ME`, `-AU`, `-RO`, `-AD`) | `100.0% PASS` |
-| `G63-BLIND17` | Homograph Disambiguation | `AB` $\rightarrow$ `arc brazing` (Table A1/A2) vs `adhesive bonding` (Figure A6) | `100.0% PASS` |
-| `G63-BLIND18` | Spatial Callout Diagram | T-joint panel (E) applicable welds (Figure B1(E)) | `100.0% PASS` |
-| `G63-BLIND19` | Nonstandard Term Resolution | `mig welding` $\rightarrow$ `gas metal arc welding` (GMAW) (Clause 4 & Annex C) | `100.0% PASS` |
-| `G63-BLIND20` | Nonstandard Term Resolution | `heliarc` $\rightarrow$ `gas tungsten arc welding` (GTAW) (Annex D Table D1) | `100.0% PASS` |
+| `G63-BLIND01` | Clause 4 Linked Visual Nomenclature | `acetylene feather` definition and Figure B40 reference | `100.0% PASS` |
+| `G63-BLIND02` | Root Process Definitions & See-Also Expansions | `GTAW` definition and Figure B36 reference | `100.0% PASS` |
+| `G63-BLIND03` | Welding Position Tabulations & Angular Limits | Flat fillet weld rotation of face ($150^\circ$ to $210^\circ$) via Figure B16B | `100.0% PASS` |
+| `G63-BLIND04` | Reverse Figure Concept Search | Position of beam, filler material, gun, or torch (Figure B21, p. 112) | `100.0% PASS` |
+| `G63-BLIND05` | Joint Type to Applicable Weld Taxonomy | T-joint applicable weld types via Figure B1(C) | `100.0% PASS` |
+| `G63-BLIND06` | Annex A Classification Chart Topology | Figure A6 Brazing and Soldering top-level energy sources (Chemical, Electrical) | `100.0% PASS` |
+| `G63-BLIND07` | Multi-Process Designation Decoding & Definitions | Decode `FRW`, `RSEW`, and `RSW` from Table A1 and Clause 4 | `100.0% PASS` |
+| `G63-BLIND08` | Major Process Group Enumeration | Solid-State Welding process enumeration via Table A1 and Figure A5 (p. 78) | `100.0% PASS` |
+| `G63-BLIND09` | Obsolete Process Verification & Status | Obsolete status of `BB` (block brazing) and `CAW-S` (shielded carbon arc) via Table A5 | `100.0% PASS` |
+| `G63-BLIND10` | Process Variation Subtyping & Suffix Grammar | Differentiate `FLSP`, `FLSP-P`, and `FLSP-W` via Table A1 and Clause 4 | `100.0% PASS` |
+| `G63-BLIND11` | Sequence Nomenclature Cluster & Linked Figures | Block sequence definition, Figure B23, and linked sequence terms | `100.0% PASS` |
+| `G63-BLIND12` | Geometric Throat Cluster & Multi-Figure Reference | Effective throat definition, Figure B25, and throat terminology cluster | `100.0% PASS` |
+| `G63-BLIND13` | Figure Schematic Key Enumeration & Directional Senses | Figure B46 Friction Stir Welding 10 key items and advancing/retreating side | `100.0% PASS` |
+| `G63-BLIND14` | Sub-Diagram Measurement Notes & Temper Bead Cluster | Figure B23(J) temper beads, distance S measurement, and temper bead definitions | `100.0% PASS` |
+| `G63-BLIND15` | Angle Cluster & Weld Discontinuity Multi-Diagrams | Reentrant angle, bead/toe reentrant angles, Figure B32, and overlap | `100.0% PASS` |
+| `G63-BLIND16` | Suffix Modifiers, Appending Grammar & Mode Definitions | Table A4 application mode suffixes (`-AD`, `-AU`, `-MA`, `-ME`, `-RO`, `-SA`) | `100.0% PASS` |
+| `G63-BLIND17` | Multi-Family Process Decoding & Vacuum Pressure Limits | `LBC` and `EBW` variations, operating pressure ranges, and definitions | `100.0% PASS` |
+| `G63-BLIND18` | Personal Safety Exception & Nonstandard/Incorrect Terms | Nonstandard & incorrect terms (`ground clamp`, `ground lead`), safety exception, Figure B34 | `100.0% PASS` |
+| `G63-BLIND19` | Edition Revision Decisions & Normative Rationale | Annex C C1.5.6/C1.5.7 parallel joint vs edge joint, NDE/NDI/NDT revisions | `100.0% PASS` |
+| `G63-BLIND20` | Dual Waveform Comparison & 11 Cycle Interval Definitions | Figure B49 and B50 resistance spot welding waveforms and 11 cycle intervals | `100.0% PASS` |
 
 ### Deliverables Checklist
 
@@ -321,3 +321,31 @@ Every non-refusal answer includes universal page coordinates (`printed_page`, `p
 - [x] **Deliverable G641-4 (Zero Direct Disk Reads & Structural Intent Routing - EXEC-6.4-4, EXEC-6.4-6):** Eliminated direct `open(...)` calls to `glossary_store.json` in `src/archetype_spatial_callout.py`, utilizing injected stores. Constrained `elements_present` strictly to strings appearing in `answer_text`. Refactored Priority 17b and Priority 22 in `src/evidence_phase4_bakeoff.py` to route on structural intent (`table a1` + primary process grouping) rather than brittle process exclusions.
 - [x] **Deliverable G641-5 (Bundle Target Separation, Strengthened AST Guards & Full Regression - HYG-6.4-9, TEST-6.4-8):** Removed Gate 5 targets from `scripts/build_gate_6_bundle.py` and restored genuine Gate 5 bundle (`508,291` bytes). Enforced AST checks on `src/archetype_spatial_callout.py` (0 `open()`, 0 `.read_text()` / `.read_bytes()`, 0 fabricated strings). Regression baseline verified at 1,514 passed, 8 skipped, 0 failures, 0 warnings.
 
+---
+
+## 13. Gate 6.5: Authoritative Provenance Unification, Shared Application Path, Checkout Reconciliation & Independent Claim/Coordinate Evaluator
+
+### Scope & Architectural Summary
+Following the forensic architecture assessment (`AWS_A30_ARCHITECTURE_RECOMMENDATIONS.md`), Gate 6.5 executes Phases 1–3 of the strategic modernization:
+- **Decision Ledger (D1–D6):**
+  - **D1 (Retain Evidence-First Architecture):** ACCEPT. Retain 45 locked stores; reject wholesale OCR or ungrounded similarity retrieval.
+  - **D2 (Authoritative Provenance Registry):** ACCEPT. Corrected `ANNEX_A_PAGES` (A1=75/87, A2=76/88, A3=76/88, A4=77/89, A5=78/90, A6=79/91); eliminated overwrite bugs in `_enrich_and_validate_provenance`; prioritized B53 locator over B49 keywords; aligned Table A3 GTAW to p. 73 / PDF 85.
+  - **D3 (Shared Execution Path):** ACCEPT. Added `evidence_version="whole_standard"` to `src/query.py` (`async_query`/`run_query`) and `src/web.py` (`/api/query`), unifying CLI, web demo, and evaluator paths under `answer_whole_standard_question`.
+  - **D4 (Checkout Card & Question Table Reconciliation):** ACCEPT. Synchronized `GATE_6_4_CHECKOUT_CARD.md`, `ROADMAP.md`, `goal.md`, and `docs/goal.md` with exact 20 questions and 51 locked hashes.
+  - **D5 (Independent Provenance & Coordinate Evaluator):** ACCEPT. Upgraded `eval/run_phase6_3_blind_hardening.py` with 5 structural provenance gates (coordinate formula, body-metadata consistency, crop-locator identity, modality/abstention, and granular metric reporting).
+  - **D6 (Sequenced Roadmap):** Stage Bakeoff #16 (reader qualification with gold evidence) in Gate 6.6, and Bakeoff #8 (ColQwen2.5/ColPali visual retrieval comparison) in Gate 6.7.
+
+### Deliverables Checklist
+
+- [x] **Deliverable G65-1 (Authoritative Provenance Registry & Zero-Overwrite Contract):** Aligned `ANNEX_A_PAGES` to physical PDF page allocation (`storage/manifests/coverage_manifest.json`), eliminating off-by-one +1 placing Figure A6 on excluded blank divider p. 80 / PDF 92. Guarded composer coordinates in `_enrich_modality_provenance` from keyword overwrites (Table A3 GTAW preserved at 73/85, B53 preserved at 157/169 with `figure_b53:interval:upslope_and_downslope`, Figure B23(J) preserved at 116/128). Fixed Annex B crop resolver regex to avoid prefix overmatching (`figure_b1*.png` matching `figure_b10...`).
+- [x] **Deliverable G65-2 (Shared Application, CLI & Evaluator Execution Path):** Integrated `evidence_version="whole_standard"` into `src/query.py` (`async_query` and `run_query`) and `src/web.py` (`/api/query`), forwarding queries directly through `answer_whole_standard_question` and returning unified evidence packets with preserved `planner_source`.
+- [x] **Deliverable G65-3 (Independent Provenance, Coordinate & Crop-Identity Evaluator):** Upgraded `eval/run_phase6_3_blind_hardening.py` with 5 mandatory structural provenance gates (Coordinate Formula, Body-to-Metadata Alignment, Crop-to-Locator Identity, Modality/Abstention, and Granular Metric Reporting), scoring 20/20 (100.0%) across all 5 gates.
+- [x] **Deliverable G65-4 (Reconcile Stale Checkout Cards & Question Tables):** Corrected Section 2 in `GATE_6_4_CHECKOUT_CARD.md` with exact 20 questions from `questions.json`; updated Section 3 hash table with quarantined fixture metadata; synchronized Section 10 in `ROADMAP.md`, `goal.md`, and `docs/goal.md`; added `CONTINUATION_*.md` glob to `src/sync_drive_mirror.py`.
+- [x] **Deliverable G65-5 (Gate 6.5 Verification Suite in `tests/test_gate_6_5_provenance_and_shared_path.py`):** Author comprehensive test suite asserting exact Annex A coordinates, B53/B49 locator dispatch, Table A3 GTAW consistency, shared `/api/query` execution, evaluator rejection of bad provenance, and checkout card cryptographic parity.
+
+---
+
+## 14. Subsequent Roadmap Staging: Gates 6.6 & 6.7
+
+- **Gate 6.6 (Phase 4 — Reader Qualification with Gold Evidence & DeepSeek Cassette Capture):** Supply verified gold source crops/pages directly to candidate multimodal readers (Bakeoff #16), separating extraction/interpretation/binding failure classes, and capture genuine `DeepSeek-V4.1` cassettes for any remaining unrecorded queries in a separate isolated worktree.
+- **Gate 6.7 (Phase 5 — Bounded ColQwen2.5 / ColPali Visual Retrieval Comparison):** Compare the repaired deterministic baseline against a pinned ColQwen2.5/ColPali visual page retriever on demonstrated retrieval misses (Bakeoff #8), reporting case-by-case rescues vs. harms under a fixed reader and evidence budget.

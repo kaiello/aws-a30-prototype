@@ -25,26 +25,26 @@ All 20 blind hardening queries execute 100% offline with zero network calls in b
 
 | QID | Benchmark Query Text | Deterministic Status | Replay Mode Status | Operations Count | Required Elements Present | Diagram Crop Flag |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| `G63-BLIND01` | What does FCAW-G-SA designate, what is its base process, and how is it classified in Figure A4? | PASS | PASS | 2 | FCAW, gas shielded, semiautomatic | False |
-| `G63-BLIND02` | Is GMAW-S an application mode suffix or a standardized process variation, and what does it designate? | PASS | PASS | 2 | short circuiting, variation, not suffix | False |
-| `G63-BLIND03` | In Figure B1, how many applicable welds are listed for a T-joint, and what are they? | PASS | PASS | 2 | T-joint, (C), fillet, bevel-groove | True |
-| `G63-BLIND04` | What figure illustrates Position of Beam, Filler Material, Gun, or Torch? | PASS | PASS | 1 | Figure B21, printed p. 104, PDF 116 | True |
-| `G63-BLIND05` | How are 1G, 2G, 3G, and 4G groove weld test positions for plate defined in Clause 4 and Figure B16A? | PASS | PASS | 2 | 1G, 2G, 3G, 4G, flat, horizontal, vertical, overhead | True |
-| `G63-BLIND06` | In Figure B6, how are bevel face, groove face, root face, and groove angle defined? | PASS | PASS | 2 | bevel face, groove face, root face, groove angle | True |
-| `G63-BLIND07` | What does Table A1 and Clause 4 assign to the letter designations GTAW, FRW, and FLSP-P? | PASS | PASS | 3 | gas tungsten arc, friction, powder flame spraying | False |
-| `G63-BLIND08` | What letter designation is assigned to magnetic pulse welding, and under which process group is it classified? | PASS | PASS | 1 | MPW, solid-state welding | False |
-| `G63-BLIND09` | What were the historical letter designations for block brazing and shielded carbon arc welding in Table A5? | PASS | PASS | 2 | BB, CAW-S, obsolete, Table A5 | False |
-| `G63-BLIND10` | In Clause 4, how is undercut defined, what classification does it belong to, and which figure illustrates it? | PASS | PASS | 1 | undercut, discontinuity, Figure B32 | False |
-| `G63-BLIND11` | What is coalescence and why is it fundamental to welding and brazing? | PASS | PASS | 1 | coalescence, growing together into one body | False |
-| `G63-BLIND12` | In Figure B12, what are starting weld tab, runoff tab, sump, and split pipe backing? | PASS | PASS | 2 | starting weld tab, run-off tab, sump, split pipe | True |
-| `G63-BLIND13` | What does Table A1 assign to laser beam cutting with oxygen, gas, and air? | PASS | PASS | 3 | LBC-O, LBC-IG, LBC-A | False |
-| `G63-BLIND14` | In Figure B23(J), how is distance S measured for temper beads, and what Clause 4 terms govern temper beads? | PASS | PASS | 2 | Figure B23(J), distance S, temper bead, temper pass | True |
-| `G63-BLIND15` | How does Table A1 classify electron beam welding with high, medium, and nonvacuum? | PASS | PASS | 3 | EBW-HV, EBW-MV, EBW-NV | False |
-| `G63-BLIND16` | What are the six application mode suffixes defined in Table A4, and what is the hyphenation rule? | PASS | PASS | 1 | -AD, -AU, -MA, -ME, -RO, -SA, hyphen | False |
-| `G63-BLIND17` | What subcommittee decisions in Annex C C1.5.6 and C1.5.7 govern brazing and soldering terms? | PASS | PASS | 2 | C1.5.6, C1.5.7, braze, solder, Tables D1/D2/D5 | False |
-| `G63-BLIND18` | Why are ground clamp and ground lead designated as nonstandard and incorrect per Annex C C2.3? | PASS | PASS | 2 | work clamp, workpiece lead, Figure B34, safety | True |
-| `G63-BLIND19` | In Table A1, why does ultrasonic welding (USW) appear under two distinct parent process groups? | PASS | PASS | 1 | USW, solid-state welding, ultrasonic joining, anomaly | False |
-| `G63-BLIND20` | Compare Figure B49 pulsation welding waveform and Figure B50 single-pulse waveform cycle intervals. | PASS | PASS | 2 | Figure B49, Figure B50, pulsation, single-pulse | True |
+| `G63-BLIND01` | What is acetylene feather? | PASS | PASS | 4 | acetylene feather, carburizing, oxyacetylene flame, Figure B40 | False |
+| `G63-BLIND02` | Define GTAW? | PASS | PASS | 6 | gas tungsten arc welding, GTAW, tungsten electrode, Figure B36 | False |
+| `G63-BLIND03` | What is the Rotation of Face for Flat Fillet Weld? | PASS | PASS | 3 | 150° to 210°, Figure B16B, Flat | True |
+| `G63-BLIND04` | What figure shows the position of beam, filler material, gun or torch? | PASS | PASS | 2 | Figure B21, Position of Beam, Filler Material, Gun, or Torch | True |
+| `G63-BLIND05` | What are the applicable weld types for a T-Joint? | PASS | PASS | 13 | Figure B1, T-Joint, fillet, bevel-groove | True |
+| `G63-BLIND06` | How many different energy sources are there in Brazing and Soldering? | PASS | PASS | 4 | Figure A6, Chemical, Electrical, 2 | True |
+| `G63-BLIND07` | What is FRW, RSEW, and RSW? | PASS | PASS | 6 | friction welding, FRW, resistance seam welding, RSEW | False |
+| `G63-BLIND08` | List all the Solid State Welding Processes | PASS | PASS | 18 | coextrusion welding, CEW, cold welding, CW | True |
+| `G63-BLIND09` | Is block Brazing and Shielded carbon arc welding Obsolete processes? | PASS | PASS | 6 | Table A5, obsolete, block brazing, BB | False |
+| `G63-BLIND10` | What is the difference between FLSP, FLSP-P, and FLSP-W? | PASS | PASS | 6 | flame spraying, FLSP, powder flame spraying, FLSP-P | False |
+| `G63-BLIND11` | What is a block sequence, what figure illustrates it, and how does AWS A3.0 define and distinguish all of its cross-referenced sequence terms? | PASS | PASS | 6 | block sequence, Figure B23, cascade sequence, cross-sectional sequence | True |
+| `G63-BLIND12` | Define effective throat (including how it is determined when a fillet weld is combined with a partial joint penetration groove weld), identify the figures that illustrate it, and provide the definitions of its cross-referenced throat terms. | PASS | PASS | 5 | effective throat, partial joint penetration groove weld, B25, actual throat | True |
+| `G63-BLIND13` | Which figure in AWS A3.0 shows the schematic of the Friction Stir Welding process, what are the 10 numbered items in its Key, and how does the standard define the advancing side versus the retreating side of the weld? | PASS | PASS | 13 | Figure B46, Base Metal, Direction of Tool Rotation, Weld Tool | False |
+| `G63-BLIND14` | Which figure and sub-diagram illustrate the placement of temper beads and toe temper beads in groove, fillet, and overlay welds, how is the distance S measured according to the figure's notes, what approximate offset dimension is specified for the first layer temper beads, and how does Clause 4 define temper pass, temper bead, temper bead sequence, toe temper pass, and toe temper bead? | PASS | PASS | 10 | Figure B23, (J), distance S, parallel to the base metal surface | True |
+| `G63-BLIND15` | How does AWS A3.0 define reentrant angle, bead reentrant angle, and toe reentrant angle, which figure sub-diagrams illustrate them, and what angular condition at the weld toe, weld root, or weld bead toe defines overlap in fusion welding? | PASS | PASS | 6 | reentrant angle, bead reentrant angle, toe reentrant angle, Figure B32 | True |
+| `G63-BLIND16` | List all six application modes and their letter designation suffixes from Table A4, explain the rule and format for appending them to a process or process variation designation, and give the Clause 4 definitions that distinguish the six application modes. | PASS | PASS | 14 | Table A4, -AD, -AU, -MA | False |
+| `G63-BLIND17` | Decode the letter designations LBC, LBC-A, LBC-EV, LBC-IG, LBC-O and EBW, EBW-HV, EBW-MV, EBW-NV from Annex A (Tables A1–A3), and state how Clause 4 defines each variation, including the exact operating pressure ranges in pascals and torr for the electron beam welding variations. | PASS | PASS | 20 | laser beam cutting, LBC, laser beam air cutting, LBC-A | False |
+| `G63-BLIND18` | According to the Foreword and Annex C, under what specific exception does AWS A3.0 classify a term as both "nonstandard and incorrect"? Identify the electrical circuit terms in Clause 4 that carry this "nonstandard and incorrect" designation, and provide the definitions of the standard terms that must be used instead (including the safety distinction with ground connection in Figure B34). | PASS | PASS | 9 | personal safety, ground clamp, ground lead, welding ground | True |
+| `G63-BLIND19` | Explain two major terminology revisions documented in Annex C (Clauses C1.5.6 and C1.5.7) and Annex D of AWS A3.0:2020: (1) Why was parallel joint introduced to replace edge joint among the five basic joint types, and how are both terms defined in Clause 4? (2) How did the 13th edition change the status of nondestructive evaluation, nondestructive inspection (NDI), and nondestructive testing (NDT) relative to nondestructive examination (NDE), and why was the definition of nondestructive examination (NDE) itself modified? | PASS | PASS | 11 | parallel joint, edge joint, Clause 4, Table D5 | False |
+| `G63-BLIND20` | Compare the resistance spot welding waveforms in Figure B49 (Pulsation Welding Waveform) and Figure B50 (Single-Pulse Resistance Spot Welding Waveform): how does Clause 4 distinguish weld time, resistance welding from weld interval, resistance welding, and cool time, resistance welding from quench time, resistance welding? Additionally, define the sequential cycle intervals shown across Figures B49 and B50: squeeze time, preweld interval, preheat time, upslope time, pulse time, downslope time, temper time, hold time, postweld interval, forge-delay time, and off time. | PASS | PASS | 17 | Figure B49, Figure B50, weld time, weld interval | True |
 
 ---
 
@@ -97,12 +97,15 @@ All 20 blind hardening queries execute 100% offline with zero network calls in b
 | 43 | `storage/evidence_v2/phase6_3_blind_hardening_001/questions.json` | `be8ee997284de16cb367042a09206d77950344b59f14c68f5ba9ac0123141b5b` | MATCH |
 | 44 | `storage/evidence_v2/phase6_3_blind_hardening_001/rubric.json` | `a575cd1833cd2d041b6359abdadeff71a728430e155d49d8bdf70205e50ff22c` | MATCH |
 | 45 | `storage/evidence_v2/phase6_3_blind_hardening_001/results.json` | `18f247c1abb8b96d0a52081e0f8fabb32a74dcaced77143bf9ece518cd19c4c2` | MATCH |
-| 46 | `storage/model_replays/deepseek_v4_1_flash_1017/07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec.json` | `6b9b5f3d17afdba5859a4b75114876681308098ba96da860327c56a5739478a7` | MATCH |
-| 47 | `storage/model_replays/deepseek_v4_1_flash_1017/1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c.json` | `1ff122410c75893e47771d4af0fccb2243e81e0df2417eccc51a63ecf5482ffc` | MATCH |
-| 48 | `storage/model_replays/deepseek_v4_1_flash_1017/73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182.json` | `dd4a7a19ca1c8a3327fcc031bb046427f218dc103f15bd4627bfaf044ab330dc` | MATCH |
-| 49 | `storage/model_replays/deepseek_v4_1_flash_1017/78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f.json` | `0c8d9d97c74a4fd51327f9cb6df1a4f93a97f0c5c9251ac877c71c58eacc7f1a` | MATCH |
-| 50 | `storage/model_replays/deepseek_v4_1_flash_1017/c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033.json` | `eb60b4a70c60bcfbc8a521aed76fda62f41f9c21bbc43ede727b30a9767b3198` | MATCH |
-| 51 | `storage/model_replays/deepseek_v4_1_flash_1017/d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7.json` | `b75fe39c9afea284c639a024296b0b251e45fda8e4d3a309088a54c36120a449` | MATCH |
+| 46 | `storage/model_replays/deterministic_planner_fixtures/07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec.json` | `ea4cb468af3dc574f06940672fa2b33537b236140c4e6de3cc5c20b849f6908f` | MATCH (Quarantined in Gate 6.4.1) |
+| 47 | `storage/model_replays/deterministic_planner_fixtures/1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c.json` | `85e7876785e941ce4ba8bff4c8284be4070827f6c26437431f0120fd8a20d71f` | MATCH (Quarantined in Gate 6.4.1) |
+| 48 | `storage/model_replays/deterministic_planner_fixtures/73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182.json` | `4f164b170792437eb74b96b64a946d4717a870c1ca98e65da2223ba69206a935` | MATCH (Quarantined in Gate 6.4.1) |
+| 49 | `storage/model_replays/deterministic_planner_fixtures/78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f.json` | `3134d3405387ab421f2c1a31879c776bd3c219ba29dd83ba3973ede8b70d2c46` | MATCH (Quarantined in Gate 6.4.1) |
+| 50 | `storage/model_replays/deterministic_planner_fixtures/c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033.json` | `128aa1a26fe77450a76f51d669fc50a6c1a89c89d8c0a87d8473b259a8de771c` | MATCH (Quarantined in Gate 6.4.1) |
+| 51 | `storage/model_replays/deterministic_planner_fixtures/d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7.json` | `b21d7621afc83a115b5b4bda999798cf23a39fd1f2c496f8b8d40751193af3cd` | MATCH (Quarantined in Gate 6.4.1) |
+
+> [!NOTE]
+> Artifacts #46–#51 were quarantined in Gate 6.4.1 (`PROV-6.4-1`) from `deepseek_v4_1_flash_1017/` to `deterministic_planner_fixtures/` to maintain 100% genuine model replay provenance. See `GATE_6_4_1_CHECKOUT_CARD.md` for full forensic audit documentation.
 
 ---
 

@@ -228,8 +228,80 @@ async def async_query(
 ) -> dict:
     started = time.perf_counter()
     if (not isinstance(evidence_version, str) or not isinstance(v2_reader, str)
-            or evidence_version not in {"v1", "v2"} or v2_reader not in {"extractive", "local"}):
+            or evidence_version not in {"v1", "v2", "whole_standard", "ws"} or v2_reader not in {"extractive", "local"}):
         raise ValueError("Unsupported evidence version or reader")
+    if evidence_version in {"whole_standard", "ws"}:
+        from src.evidence_phase4_bakeoff import answer_whole_standard_question, get_whole_standard_stores, DeterministicQuestionPlanner
+        from src.config import BASE_DIR
+        try:
+            stores = get_whole_standard_stores(BASE_DIR)
+            planner = DeterministicQuestionPlanner(root=BASE_DIR)
+            ws_res = answer_whole_standard_question(query_str, planner=planner, stores=stores)
+
+            answer_text = ws_res.get("answer", "")
+            exec_data = ws_res.get("execution", {})
+            figures, tables = _resolve_display_assets(query_str + "\n" + answer_text)
+
+            crop_path = ws_res.get("crop_path")
+            if crop_path:
+                fig_id = ws_res.get("evidence_locator", "").split(":")[0].upper().replace("_", " ")
+                figures.append({
+                    "figure_id": fig_id,
+                    "image_path": str(crop_path),
+                    "image_paths": [str(crop_path)],
+                    "source_anchors": [f"pdf_page_{ws_res.get('pdf_index')}"],
+                    "asset_status": "complete",
+                    "relationship": "diagram_crop"
+                })
+
+            planner_source = (
+                ws_res.get("plan", {}).get("receipt_metadata", {}).get("planner_source")
+                or ws_res.get("plan", {}).get("planner_source")
+                or "deterministic_planner"
+            )
+
+            result = {
+                "query": query_str,
+                "answer": answer_text,
+                "citations": {
+                    "printed_page": ws_res.get("printed_page"),
+                    "pdf_index": ws_res.get("pdf_index"),
+                    "evidence_locator": ws_res.get("evidence_locator"),
+                },
+                "grounded_claims": [
+                    {"claim_text": answer_text, "source_locator": ws_res.get("evidence_locator")}
+                ] if answer_text else [],
+                "resolved_figures": figures,
+                "resolved_tables": tables,
+                "see_also": extract_see_also_terms(answer_text),
+                "answer_outcome": "supported" if exec_data.get("status") in {"PASS", "CONTRADICTION_REFUTED"} else "refusal" if exec_data.get("status") == "ABSTAIN_OUT_OF_SCOPE" else "insufficient_evidence",
+                "answer_origin": "whole_standard_stores",
+                "answer_assessment": {
+                    "status": "SUPPORTED_REVIEWED_FACTS" if exec_data.get("status") in {"PASS", "CONTRADICTION_REFUTED"} else "OUT_OF_SCOPE" if exec_data.get("status") == "ABSTAIN_OUT_OF_SCOPE" else "INSUFFICIENT_EVIDENCE",
+                    "validated": True if exec_data.get("status") in {"PASS", "CONTRADICTION_REFUTED"} else False,
+                    "citation_support": "exact" if ws_res.get("evidence_locator") else "none",
+                    "assessment_scope": "whole_standard_normative_stores"
+                },
+                "printed_page": ws_res.get("printed_page"),
+                "pdf_index": ws_res.get("pdf_index"),
+                "evidence_locator": ws_res.get("evidence_locator"),
+                "requires_diagram_crop": ws_res.get("requires_diagram_crop", False),
+                "crop_path": crop_path,
+                "normative_provenance": exec_data.get("normative_provenance", []),
+                "plan": ws_res.get("plan"),
+                "execution": exec_data,
+                "planner_source": planner_source,
+                "timings_ms": {
+                    "total": round((time.perf_counter() - started) * 1000, 3)
+                }
+            }
+            return result
+        except ValueError as ve:
+            if "INSUFFICIENT_EVIDENCE" in str(ve):
+                return _query_failure(query_str, "INSUFFICIENT_EVIDENCE", str(ve))
+            return _query_failure(query_str, "EXECUTION_FAILED", str(ve))
+        except Exception as e:
+            return _query_failure(query_str, "EXECUTION_FAILED", f"Whole standard query failed: {e}")
     if evidence_version == "v2":
         from src.evidence_sources import load_query_evidence
         from src.evidence_v2 import EvidenceStore
@@ -398,7 +470,7 @@ def main():
     parser.add_argument("--api-key", type=str, default=None, help="Custom API key (overrides .env)")
     parser.add_argument("--model", type=str, default=None, help="Custom model name (e.g. gpt-4o, gemini-2.0-flash, deepseek-chat)")
     parser.add_argument("--base-url", type=str, default=None, help="Custom base URL (for OpenAI, Ollama, Groq, etc.)")
-    parser.add_argument("--evidence-version", choices=["v1", "v2"], default="v1")
+    parser.add_argument("--evidence-version", choices=["v1", "v2", "whole_standard", "ws"], default="v1")
     parser.add_argument("--v2-reader", choices=["extractive", "local"], default="extractive")
     args = parser.parse_args()
 

@@ -27,6 +27,7 @@ from src.evidence_phase4_bakeoff import (
 def evaluate_nlq_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
+    write_results: bool = False,
 ) -> Dict[str, Any]:
     """Execute Gate 5.5 15-query NLQ benchmark against public QA entrypoint."""
     if root is None:
@@ -108,10 +109,13 @@ def evaluate_nlq_benchmark(
 
     results_file = output_dir / "results.json"
     results_json = json.dumps(output_payload, indent=2) + "\n"
-    with open(results_file, "w", encoding="utf-8", newline="\n") as f:
-        f.write(results_json)
+    if write_results:
+        with open(results_file, "w", encoding="utf-8", newline="\n") as f:
+            f.write(results_json)
+        sha256 = hashlib.sha256(results_file.read_bytes()).hexdigest()
+    else:
+        sha256 = hashlib.sha256(results_json.encode("utf-8")).hexdigest()
 
-    sha256 = hashlib.sha256(results_file.read_bytes()).hexdigest()
     output_payload["results_sha256"] = sha256
 
     return output_payload
@@ -121,7 +125,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run Gate 5.5 NLQ Benchmark")
     parser.add_argument("--root", type=Path, default=ROOT, help="Project root directory")
     parser.add_argument("--output-dir", type=Path, default=None, help="Output benchmark directory")
+    parser.add_argument("--write-results", action="store_true", help="Write results.json to disk")
     args = parser.parse_args()
+    summary = evaluate_nlq_benchmark(root=args.root, output_dir=args.output_dir, write_results=args.write_results)
 
     payload = evaluate_nlq_benchmark(root=args.root, output_dir=args.output_dir)
     print(f"Gate 5.5 NLQ Benchmark: {payload['passed']}/{payload['total_queries']} passed ({payload['pass_rate_percent']:.1f}%)")
