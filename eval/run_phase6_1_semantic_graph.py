@@ -31,7 +31,7 @@ from src.evidence_phase4_bakeoff import (
 def evaluate_semantic_graph_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
-    write_results: bool = True,
+    write_results: bool = False,
 ) -> Dict[str, Any]:
     """Execute Gate 6.1 15-query NER, 3-tier grammar and semantic graph benchmark."""
     if root is None:

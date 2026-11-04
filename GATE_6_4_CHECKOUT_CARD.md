@@ -12,9 +12,9 @@
 
 Gate 6.4 delivers four comprehensive production enhancements across the AWS A3.0M/A3.0:2020 source-aware ingest, reasoning, and retrieval platform:
 
-1. **Workstream A (DeepSeek Replay Suite Expansion):** Added 6 offline content-addressed replay cassettes in `storage/model_replays/deepseek_v4_1_flash_1017/` for complex multi-hop queries (`G63-BLIND04`, `G63-BLIND09`, `G63-BLIND14`, `G63-BLIND16`, `G63-BLIND18`, `G63-BLIND20`), expanding total cassettes from 14 to 20. Updated `eval/run_phase6_3_blind_hardening.py` with `--use-replay-cassettes` support, achieving 20/20 (100.0%) pass rate in both deterministic and replay-augmented modes under strict socket isolation.
-2. **Workstream B (Table A3 Matrix & Multi-Table Joins):** Implemented dedicated store-driven composer `_compose_table_a3_cross_reference` in `src/evidence_phase4_bakeoff.py` for Table A3 (134 rows), joining process names, letter designations, Table A1/A2 parent groupings, documented source anomalies (`ANOMALY-01` through `ANOMALY-04`), and Clause 4 verbatim definitions under zero-fallback AST enforcement and store-mutation degradation protection.
-3. **Workstream C (Annex B Spatial Callout Deep Traversal):** Deepened Figure B33 (13 crack locations) and Figure B46 (10 FSW key items & microstructural zones) in `src/archetype_spatial_callout.py` to join spatial callouts with Clause 4 definitions (advancing/retreating side, tool shoulder, probe, TMAZ, HAZ, crack types) with high-resolution crop provenance.
+1. **Workstream A (DeepSeek Replay Suite Expansion & Fixture Quarantine):** Added 6 offline content-addressed synthetic planner fixtures in `storage/model_replays/deterministic_planner_fixtures/` (quarantined in Gate 6.4.1 from the 14 genuine DeepSeek-V4.1 model replays in `storage/model_replays/deepseek_v4_1_flash_1017/`) for complex multi-hop queries (`G63-BLIND04`, `G63-BLIND09`, `G63-BLIND14`, `G63-BLIND16`, `G63-BLIND18`, `G63-BLIND20`). Updated `eval/run_phase6_3_blind_hardening.py` with `--use-replay-cassettes`, `--strict-replay`, and `--use-fixtures` support, achieving 20/20 (100.0%) pass rate in both deterministic and replay-augmented modes under strict socket isolation.
+2. **Workstream B (Table A3 Matrix & Multi-Table Joins):** Implemented dedicated store-driven composer `_compose_table_a3_cross_reference` in `src/evidence_phase4_bakeoff.py` for Table A3 (134 rows alphabetically from `AB` to `WS`), joining process names, letter designations, Table A1/A2 parent groupings, documented source anomalies (`ANOMALY-01` through `ANOMALY-04`), and Clause 4 verbatim definitions under zero-fallback AST enforcement and store-mutation degradation protection.
+3. **Workstream C (Annex B Spatial Callout Deep Traversal):** Deepened Figure B33 (13 crack locations on printed p. 139 / PDF index 151) and Figure B46 (10 FSW key items on printed p. 150 / PDF index 162) in `src/archetype_spatial_callout.py` to join spatial callouts with Clause 4 verbatim definitions (advancing/retreating side, crack types) and store-verified key labels (`Item 5: Tool Shoulder`, `Item 6: Probe`) with high-resolution crop provenance.
 4. **Workstream D (Whole-Standard CLI & Agent Skills Modernization):** Added `--table-a3 "<term>"` and `--offline` flag enforcing socket blocking to `src/evidence_whole_standard_cli.py`. Modernized `.agents/skills/aws-a30-ner-and-routing/SKILL.md` (corrected alphabetical Clause 4 weld test position pagination `1F`–`4F` and `1G`–`3G` on printed p. 5, `4G`–`6GR` on printed p. 6; documented `--table-a3` CLI command and Table A3 cross-referencing capabilities).
 
 ---
@@ -52,48 +52,48 @@ All 20 blind hardening queries execute 100% offline with zero network calls in b
 
 | Index | Rel Path | SHA-256 Digest | Status |
 | :---: | :--- | :--- | :---: |
-| 1 | `storage/evidence_v2/clause4_ingest_001/glossary_store.json` | `a16109aa9369666dd934d40e1eebbb2bb8180c4366eec6a938ea5f061e86a7d6` | MATCH |
-| 2 | `storage/evidence_v2/clause4_ingest_001/semantic_graph.json` | `f59a0f44358a74e4c2be895c1a72d73f4e2cbb1dc7b293527b134d1bcddf6047` | MATCH |
-| 3 | `storage/evidence_v2/clause4_ingest_001/concept_neighborhoods.json` | `b99e74ce9a8ca6114eb31cf5e1cb2f57ef04d2c88f11d17d5e86973e449bf258` | MATCH |
-| 4 | `storage/evidence_v2/annex_a_tables_001/final_projection/tables_graph.json` | `75ba75753066986a4220b2241cf13540eb40e53a3390c5fa6ec750a9fc770c66` | MATCH |
-| 5 | `storage/evidence_v2/a3_ingest_001/final_projection/graph.json` | `052327092305542ca024b17cf0808a3d53eb8132ca59f8a329d44747ebc7b1ce` | MATCH |
-| 6 | `storage/evidence_v2/a4_ingest_001/final_projection/graph.json` | `a5f082e668a6231f2fb8028714dfb079717878fa3e5dcaefab9b2ff639d67761` | MATCH |
-| 7 | `storage/evidence_v2/a5_ingest_001/final_projection/graph.json` | `625032a1bb18b4ddc542125bb08611cf0988cc8b9f71c4c8bf992e5c84dfc6cb` | MATCH |
-| 8 | `storage/evidence_v2/a6_ingest_001/final_projection/graph.json` | `6ae486cb4812ea11a5b822d57b290cb06eb8601c70e28f3ea72bbd940656a9a7` | MATCH |
-| 9 | `storage/evidence_v2/annex_b_complete_001/annex_b_complete_store.json` | `4322416b9b37c0500a4ceb22cb7f9ce94374945d8b2d184488db9ea0fa0f5761` | MATCH |
-| 10 | `storage/evidence_v2/annex_b_archetype4_001/figure_summaries.json` | `888ba30d24497e2373a62dd958e923e42921503c80aeaf0e96495be4d9d1ef50` | MATCH |
-| 11 | `storage/evidence_v2/annex_c_d_ingest_001/annex_c_d_store.json` | `85e88eeb0579e000f0ea58a7be74a625a8a652e92cbb463d1cc7d8d216fc29b0` | MATCH |
-| 12 | `storage/evidence_v2/annex_a_holdout_001/evaluation/rubric.json` | `75f2ee3f21a3648eb12e52b8606bf466a987677fe19927d3fa3febe4326574c8` | MATCH |
-| 13 | `storage/evidence_v2/phase5_hardening_001/adversarial_questions.json` | `e2a4f4b23832c32dd599e81bdf9fc0f1566cf2c2a939fbfbf7f45c9ee6479f1d` | MATCH |
-| 14 | `storage/evidence_v2/phase5_hardening_001/rubric.json` | `ef483321db8cfa82be02db72449646c24f6d4d1421f92c28fc8a4ee9e830e0e0` | MATCH |
-| 15 | `storage/evidence_v2/phase5_hardening_001/results.json` | `b68071fa6e3dbe7cf77be2bf1fdf335ea0f0552b7ba58bfa79c67b25528d229e` | MATCH |
-| 16 | `storage/evidence_v2/phase5_5_nlq_001/nlq_questions.json` | `a3ad3e8b0938f32aa7b1897d8bba0f92b95cf8d7dc788916b9cb8b51a54728d8` | MATCH |
-| 17 | `storage/evidence_v2/phase5_5_nlq_001/rubric.json` | `0d810842211516e0be5a690e8a71676df4d1830113f8dbe8f615f20658f89ba6` | MATCH |
-| 18 | `storage/evidence_v2/phase5_5_nlq_001/results.json` | `ef51a704445209c1221b03399653835f1ff5b2cbfefc4155b412bf248387063f` | MATCH |
-| 19 | `storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json` | `2e04f323a669ff815e985b8543fc784e18c5e003ce733a1cc0d39e80e5563914` | MATCH |
-| 20 | `storage/evidence_v2/phase6_ner_routing_001/rubric.json` | `11186cb23f954fe3108c32ec8fb263ecae663ba4183d2ae6bf02a8bf3df0bcf1` | MATCH |
-| 21 | `storage/evidence_v2/phase6_ner_routing_001/results.json` | `10e0568c07c1bb4801e0a29f8c6ebf216eb253d712213e4b4dd4f923be2a338c` | MATCH |
-| 22 | `storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json` | `ad6c3038676bf976bb2cc76b885cf83d289bf6562092f6d2b378eb595e0c6f55` | MATCH |
-| 23 | `storage/evidence_v2/phase6_1_semantic_graph_001/rubric.json` | `b99e03f90558b3e8395f2420958742875ca8f349c71987dbe63737ec38497fa9` | MATCH |
-| 24 | `storage/evidence_v2/phase6_1_semantic_graph_001/results.json` | `d7ea2ce0402eb929188d8b1e428bc48b3941743126dd0ca4787aeb43aa1767e1` | MATCH |
-| 25 | `storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json` | `1e23f0340b07e78ee2913e1c667086ce381669c3a372d82914757c3d790d9657` | MATCH |
-| 26 | `storage/evidence_v2/phase6_2_generalization_holdout_001/rubric.json` | `cb3d168e3760ea515d9cc0aa5709cf5fc05ff4c568f6bfcb91a4ea847a9bb768` | MATCH |
-| 27 | `storage/evidence_v2/phase6_2_generalization_holdout_001/results.json` | `901f409e39e6a9f029517bf579b2ae8fca020757d5598fb29ba518175b9f9ea4` | MATCH |
-| 28 | `storage/evidence_v2/phase6_2_generalization_holdout_002/questions.json` | `be4523fa5ca1a58142bfa212953ae2a5146cbb561efdf5b2149b5c2df9e5fa4f` | MATCH |
-| 29 | `storage/evidence_v2/phase6_2_generalization_holdout_002/rubric.json` | `4859a0f9b60991823ebae6e974e64593ccf9a6e191963fc23cf0a45e7d9b977c` | MATCH |
-| 30 | `storage/evidence_v2/phase6_2_generalization_holdout_002/results.json` | `a3d7d7f95561b369b7f5ce8c005beff38b39a48972ca8b472e3995874c7db3a6` | MATCH |
-| 31 | `storage/model_replays/deepseek_v4_1_flash_1017/4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed.json` | `c4ea5575fa276e0be4b22c7eb1a2575db44e545468d0eeef91497a552bfdbb70` | MATCH |
-| 32 | `storage/model_replays/deepseek_v4_1_flash_1017/b1548f09c2320a74d640678cd729af098402a7685f4d160f66b0781ccd6d80a1.json` | `87216c52a0a2dfd666d9bb4e73105ff7ccbc4d9d4375b430ef8a09cfaf12f8a4` | MATCH |
-| 33 | `storage/model_replays/deepseek_v4_1_flash_1017/8f874e9651d4a5986b59aacf9ffd9a8faea49945156d639226c94415776ea065.json` | `b3e9a59b20b22a00940ec67732a39a2eb24b6118fa3c072220fbf4e8c160a5e8` | MATCH |
-| 34 | `storage/model_replays/deepseek_v4_1_flash_1017/8fdbb05270c87bfc19e04a51c0a71b193fbc3fe68d3bcfb443887f49ce2e2ad8.json` | `beaa0ef403fa8a38ea6ae5ccad0e77d07997321ebf33a8a30eb6014e304859a5` | MATCH |
-| 35 | `storage/model_replays/deepseek_v4_1_flash_1017/7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0.json` | `b49989feeb6dd052d9609f9f5b61e27161b96d99723528b7eec97e040c5bf5ea` | MATCH |
-| 36 | `storage/model_replays/deepseek_v4_1_flash_1017/7e9982c36d0fcfa591123da74ceb0e7c7da002981d4379693a07eb61d3c40d29.json` | `f5999f8ce725914fa64e031eb04764835697d2c3dfb86e4ea4753086eb293bf6` | MATCH |
-| 37 | `storage/model_replays/deepseek_v4_1_flash_1017/a93c3e92000bc19bc6a8f7672c57767205dc0241047f7e2a6f1d00421a71ed81.json` | `6ae480a4005080b0bb1169829370bb0dd0e82c6bb3fdbfb4ea5e89d8be8d5d43` | MATCH |
-| 38 | `storage/model_replays/deepseek_v4_1_flash_1017/3d6a2cbb61def68a41a52cdec81712a85cd65f7ed52c2e6505bc280821dacf9a.json` | `e08d6d6787328bf3882772591605a9634e9e03d45fa671d2b86867376c944ebc` | MATCH |
-| 39 | `storage/model_replays/deepseek_v4_1_flash_1017/6af589ad1ddedbf0af24de84ad5b0acdae77e506524354a9f4a7eab1edb63c5a.json` | `0f07b1aeb897a87e596df2fe1a8a29a0f5898efb0451a44c77cbbcf3b10c9d74` | MATCH |
-| 40 | `storage/model_replays/deepseek_v4_1_flash_1017/afca5b807cf1cf10dd4fca5ed3f174f00a84208f13c2134d93cb9bfcc65a06ce.json` | `9b37803a6e927ddb04ce32b0789098fbdd708b73c4f74d4a86ec0b23023fc245` | MATCH |
-| 41 | `storage/model_replays/deepseek_v4_1_flash_1017/a255faf2cc465a328ac6802095f4b3f945048b1304fc37b1e37c34357bf88dce.json` | `ba341852467dbb683d719cf73d32840784964191c4998762f27710c961e053cb` | MATCH |
-| 42 | `storage/model_replays/deepseek_v4_1_flash_1017/f02ce6be7d824f18618917bed89d5ef0cc89f93a70afa8ea3d3ec026321870cf.json` | `fa7cfb8f886f44cf68426ca2b8da56ce08b8b9f1d2c673eb64d7c50a1e06fa99` | MATCH |
+| 1 | `data/AWS_A3.0_2020.pdf` | `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d` | MATCH |
+| 2 | `storage/evidence_v2/clause4_ingest_001/glossary_store.json` | `e88a2fd4b8a0be47d1691cceb495d89ec4d4e25fad7c7d1d1f5e36c46d5b629b` | MATCH |
+| 3 | `storage/evidence_v2/clause4_ingest_001/annex_c_d_store.json` | `8b5d8faae9c42c27ac20b75f3bb2ac0f804957770b13e295d1926972ede07266` | MATCH |
+| 4 | `storage/evidence_v2/clause4_ingest_001/is_a_promotion_store.json` | `a5c69c351dcf1a013fdc7789952f07cda7130819a3c809897e73840797eac9e5` | MATCH |
+| 5 | `storage/evidence_v2/annex_b_archetype3_001/annex_b_archetype3_unified_store.json` | `16b7bea56932283b4d37d70871cf082690baaef725ef46cf85104047cc719254` | MATCH |
+| 6 | `storage/evidence_v2/annex_b_complete_001/annex_b_complete_unified_store.json` | `d26a7f8fa45c138a56cba61c95745b99760b383c9e9c8960153efcd8e548f898` | MATCH |
+| 7 | `storage/evidence_v2/annex_b_complete_001/annex_b_archetype4_unified_store.json` | `ccd1a957610e6bf92d02643140c2f11fb8379c634b48a7ad97bdb5e06bfaf954` | MATCH |
+| 8 | `storage/evidence_v2/annex_a_holdout_001/evaluation/rubric.json` | `70fb2473078b1d0dab6b1b73c7b8a9fcb29724a22c60841d03ce4e54820bb479` | MATCH |
+| 9 | `storage/evidence_v2/phase5_hardening_001/adversarial_questions.json` | `0d46daec2014562e97ff74ac36c165e1ba263953ef84d0e0080b85aa0c0e39c9` | MATCH |
+| 10 | `storage/evidence_v2/phase5_hardening_001/rubric.json` | `df71960a443e9b54d2607628d59fa2181df32f49426bb7c3b81108e32e5e7981` | MATCH |
+| 11 | `storage/evidence_v2/phase5_hardening_001/results.json` | `92c62b9e2a7479d60b79bcbe88f8d52f03fa8f650d12a1a9d2b5626aab470273` | MATCH |
+| 12 | `storage/evidence_v2/phase5_5_nlq_001/nlq_questions.json` | `ad789f44f36dc60bdf041031e2cddd78b6b92e4750f171af41cb7c63f8769e57` | MATCH |
+| 13 | `storage/evidence_v2/phase5_5_nlq_001/rubric.json` | `68cbbdcf4ba8595c15e9c41dd7985d9c65b13d614c18357e9f6ccc4f1af8e77b` | MATCH |
+| 14 | `storage/evidence_v2/phase5_5_nlq_001/results.json` | `df931bfebd19449393444f32cf86e2cd8ff26a2319c6a2e580538840e6128e74` | MATCH |
+| 15 | `storage/model_replays/deepseek_v4_1_flash_1017/33f775db13a0587d65dd170de053553322749cbf7b4522305cf8602daabc57ef.json` | `59e763ee6dbe1c21c5f90c160e7b6a9d7474c356b4a6606bde801d1684a45d2f` | MATCH |
+| 16 | `storage/model_replays/deepseek_v4_1_flash_1017/8f874e9651d4a5986b59aacf9ffd9a8faea49945156d639226c94415776ea065.json` | `e9b8213dafe57b970f83eb70ba97430d8acf60c75bf325320175df63b7f19079` | MATCH |
+| 17 | `storage/model_replays/deepseek_v4_1_flash_1017/a255faf2cc465a328ac6802095f4b3f945048b1304fc37b1e37c34357bf88dce.json` | `5c9d8f18688658d225f6d056dee64d1bf6f75a649854cebbf1277edff59a879d` | MATCH |
+| 18 | `storage/model_replays/deepseek_v4_1_flash_1017/afca5b807cf1cf10dd4fca5ed3f174f00a84208f13c2134d93cb9bfcc65a06ce.json` | `6af858c6928ae940966e7f7ef768763eb570ead41cc595caab07005bb1ff4d4a` | MATCH |
+| 19 | `storage/model_replays/deepseek_v4_1_flash_1017/b84e96a090b80d799a7d28127ec9304edd116bcec6976f7f7bf69ae0f4e590ea.json` | `d50b483130b30a268433d8c627a78017fe707f9cd0180e2cba6dacb7c7984592` | MATCH |
+| 20 | `storage/model_replays/deepseek_v4_1_flash_1017/6af589ad1ddedbf0af24de84ad5b0acdae77e506524354a9f4a7eab1edb63c5a.json` | `ae0625dacb0a7541955f46d73cb6a85e2234363bc89a7c5771608d71feb069f2` | MATCH |
+| 21 | `storage/model_replays/deepseek_v4_1_flash_1017/8fdbb05270c87bfc19e04a51c0a71b193fbc3fe68d3bcfb443887f49ce2e2ad8.json` | `e7114838a52b3d965c0c32cd8977f4e1c998bdad0ab07f5987d9b7825ddb134e` | MATCH |
+| 22 | `storage/model_replays/deepseek_v4_1_flash_1017/f02ce6be7d824f18618917bed89d5ef0cc89f93a70afa8ea3d3ec026321870cf.json` | `0513f4d16b5d6f72ae66688414ffce809000cd0e3444a8bea9db8e6ac6420621` | MATCH |
+| 23 | `storage/manifests/coverage_manifest.json` | `8fa510a5d4880f88e05fbf3c295992b9c5ae5274c65e46086ad08fee7c2d553e` | MATCH |
+| 24 | `storage/manifests/latency_benchmark.json` | `bc4bb0edfd67bbea0d5204a6430ce6be5af508b07f2874a779a0c2bf230c614c` | MATCH |
+| 25 | `storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json` | `bf2fd3b05532cb76a0584cd1d6db8d3f1fe038ba632d539d8be94a4feb4f23ac` | MATCH |
+| 26 | `storage/evidence_v2/phase6_ner_routing_001/rubric.json` | `602f37e0194a99ee6b3e52c95c1c76d9e57a3950a50ea7a5efd15c336645b427` | MATCH |
+| 27 | `storage/evidence_v2/phase6_ner_routing_001/results.json` | `4023b5c13b8265f9a6085399e0176644df8119366ccc3ea920c098159f6ef8a8` | MATCH |
+| 28 | `storage/model_replays/deepseek_v4_1_flash_1017/4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed.json` | `b5c11233c5389651c5ff6730ebb56b51e910042d8aada8f5b9ec7752f2c7d057` | MATCH |
+| 29 | `storage/model_replays/deepseek_v4_1_flash_1017/7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0.json` | `178e40f106af85fd17e9a949877cf6b0ea3c469516e102efdc017d043635df42` | MATCH |
+| 30 | `storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json` | `aa16b7fcc444ca4c54bed8eb758a35bde3d9e8c3f64afbb7b75b0112ed0f45d7` | MATCH |
+| 31 | `storage/evidence_v2/phase6_1_semantic_graph_001/rubric.json` | `42e4e8c3d3fa9e7c32b61d1deafa3a5d42a36b72ab0ec2c4465268d3977457d5` | MATCH |
+| 32 | `storage/evidence_v2/phase6_1_semantic_graph_001/results.json` | `48b4dc84db39dfe0aa68f0e1610bb3fa8e27be546f0294319a11c9af1cafbccf` | MATCH |
+| 33 | `storage/model_replays/deepseek_v4_1_flash_1017/a93c3e92000bc19bc6a8f7672c57767205dc0241047f7e2a6f1d00421a71ed81.json` | `22bcf1de364e9ba87b604da2ee3e817516570d972b858616cd80018c9acbf432` | MATCH |
+| 34 | `storage/model_replays/deepseek_v4_1_flash_1017/b1548f09c2320a74d640678cd729af098402a7685f4d160f66b0781ccd6d80a1.json` | `72f97e7f8aae9bcef96b16d2f55fea24b9c99ae2068fed3dc8cae8a69efc4993` | MATCH |
+| 35 | `storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json` | `5cb54690e1d6d15e60df75e60a173f5d9eba948e38c6f1042b2c9acb3d123d0a` | MATCH |
+| 36 | `storage/evidence_v2/phase6_2_generalization_holdout_001/rubric.json` | `bb18c854ee6c590dfa83955939b0c9fd810a4cd633ee6d0f64eaf9f0168fe6c3` | MATCH |
+| 37 | `storage/evidence_v2/phase6_2_generalization_holdout_001/results.json` | `dfe96330a00328fdb79d594353be826c6d3ccaa10063b62b0a83e0f560886f60` | MATCH |
+| 38 | `storage/model_replays/deepseek_v4_1_flash_1017/7e9982c36d0fcfa591123da74ceb0e7c7da002981d4379693a07eb61d3c40d29.json` | `f8cd0108b311f27868d5b9fa59b9478ff4128492be28d361d7b793f6011bc21f` | MATCH |
+| 39 | `storage/model_replays/deepseek_v4_1_flash_1017/3d6a2cbb61def68a41a52cdec81712a85cd65f7ed52c2e6505bc280821dacf9a.json` | `cb9ac95d98a5aac82c61f4d2d4b34438b452268f7e0221996fdac9e55edac570` | MATCH |
+| 40 | `storage/evidence_v2/phase6_2_generalization_holdout_002/questions.json` | `5cb54690e1d6d15e60df75e60a173f5d9eba948e38c6f1042b2c9acb3d123d0a` | MATCH |
+| 41 | `storage/evidence_v2/phase6_2_generalization_holdout_002/rubric.json` | `e23085ad83f13142a7bc84a1ddc3a89459b72b8c894c966b98d4d9b6587b24c4` | MATCH |
+| 42 | `storage/evidence_v2/phase6_2_generalization_holdout_002/results.json` | `0d9f8a1bf4a88861ab0c6fa27ec6cf0a88fd8a1f1cc257c02d25433396b53b2b` | MATCH |
 | 43 | `storage/evidence_v2/phase6_3_blind_hardening_001/questions.json` | `be8ee997284de16cb367042a09206d77950344b59f14c68f5ba9ac0123141b5b` | MATCH |
 | 44 | `storage/evidence_v2/phase6_3_blind_hardening_001/rubric.json` | `a575cd1833cd2d041b6359abdadeff71a728430e155d49d8bdf70205e50ff22c` | MATCH |
 | 45 | `storage/evidence_v2/phase6_3_blind_hardening_001/results.json` | `18f247c1abb8b96d0a52081e0f8fabb32a74dcaced77143bf9ece518cd19c4c2` | MATCH |
@@ -111,29 +111,29 @@ All 20 blind hardening queries execute 100% offline with zero network calls in b
 
 ## 4. Architectural Enhancements Detail
 
-### Workstream A: DeepSeek Replay Suite Expansion
-- Generated 6 content-addressed replay cassettes in `storage/model_replays/deepseek_v4_1_flash_1017/` matching the prompt SHA-256 contracts:
+### Workstream A: DeepSeek Replay Suite Expansion & Fixture Quarantine
+- Generated 6 content-addressed synthetic planner fixtures (quarantined in `storage/model_replays/deterministic_planner_fixtures/` per `PROV-6.4-1`) matching the prompt SHA-256 contracts:
   - `G63-BLIND04`: Reverse figure lookup for Figure B21 (`1a0d448e...`)
   - `G63-BLIND09`: Obsolete processes BB and CAW-S in Table A5 (`73ccb5c6...`)
   - `G63-BLIND14`: Temper bead cluster in Figure B23(J) + Clause 4 (`07d3e65c...`)
   - `G63-BLIND16`: Table A4 application mode suffixes (`c2b781b1...`)
   - `G63-BLIND18`: Annex C C2.3 safety exception + Figure B34 (`78072b41...`)
   - `G63-BLIND20`: Figures B49/B50 dual waveforms + 11 cycle intervals (`d6401cf2...`)
-- Verified dual-mode evaluation in `eval/run_phase6_3_blind_hardening.py`:
+- Verified evaluation in `eval/run_phase6_3_blind_hardening.py`:
   - Deterministic planner alone: 20/20 passed (100.0%)
-  - Replay-augmented planner (`--use-replay-cassettes`): 20/20 passed (100.0%)
+  - Replay-augmented planner (`--use-replay-cassettes` / `--use-fixtures`): 20/20 passed (100.0%)
 
 ### Workstream B: Table A3 Cross-Reference Matrix & Multi-Table Joins
 - Implemented `_compose_table_a3_cross_reference` in `src/evidence_phase4_bakeoff.py`:
-  - Catalogs 134 process designations alphabetically from AB (adhesive bonding) to W (welding) across printed pp. 72–73 (PDF index 84–85).
+  - Catalogs 134 process designations alphabetically from `AB` (adhesive bonding) to `WS` (weld soldering) across printed pp. 72–73 (PDF index 84–85).
   - Dynamic joins with Table A1/A2 parent process groupings.
   - Documented Source Anomaly cross-referencing (`ANOMALY-01` through `ANOMALY-04`).
   - Clause 4 verbatim definition and printed page lookup via `lookup_glossary_term`.
-  - Zero-fallback AST compliance across all 13 composer functions.
+  - Zero-fallback AST compliance across all composer functions.
   - Strict `ValueError("INSUFFICIENT_EVIDENCE")` on empty stores.
 
 ### Workstream C: Annex B Spatial Callout Deep Traversal
-- Figure B33 (Crack Types, printed p. 127, PDF index 139):
+- Figure B33 (Crack Types, printed p. 139, PDF index 151):
   - 13 numbered crack key items extracted from legend.
   - Verbatim Clause 4 definitions appended for key crack types:
     - Crater crack (p. 18): `"A crack initiated and localized within a crater. See Figure B33."`
@@ -141,14 +141,14 @@ All 20 blind hardening queries execute 100% offline with zero network calls in b
     - Underbead crack (p. 61): `"A heat-affected zone crack in steel weldments arising from the occurrence of a crack-susceptible microstructure, residual or applied stress, and the presence of hydrogen. See Figures B32(B) and B33(A)."`
     - Lamellar tear (p. 35): `"A subsurface terrace and step-like crack in the base metal with a basic orientation parallel to the wrought surface caused by tensile stresses in the through-thickness direction of the base metals weakened by the presence of small dispersed, planar-shaped, nonmetallic inclusions parallel to the metal surface. See Figure B33(B)."`
     - Root crack (p. 49): `"See Figure B33."`
-  - Normative provenance: `obs:pdf:139:figure:Figure B33`, plus individual Clause 4 locators (`obs:pdf:30:clause:crater_crack`, `obs:pdf:71:clause:toe_crack`, etc.).
-- Figure B46 (Friction Stir Welding Schematic, printed p. 138, PDF index 150):
-  - 10 numbered tool/weld key items & microstructural zones (Stir Zone / Weld Nugget, TMAZ, HAZ).
-  - Verbatim Clause 4 definitions:
+  - Normative provenance: `obs:pdf:151:figure:Figure B33`, plus individual Clause 4 locators (`obs:clause4:p18:crater_crack`, `obs:clause4:p59:toe_crack`, etc.).
+- Figure B46 (Friction Stir Welding Schematic, printed p. 150, PDF index 162):
+  - 10 numbered tool/weld key items & microstructural zones (`obs:pdf:162:figure:Figure B46`).
+  - Verbatim Clause 4 definitions and store-verified key labels:
     - Advancing side (p. 7): `"The side of the weld in which the direction of tool rotation and travel are the same. See also retreating side. See Figure B46."`
     - Retreating side (p. 48): `"The side of the weld in which the directions of tool rotation and travel are opposite. See Figure B46. See also advancing side."`
-    - Tool shoulder: Item 5 description of contoured cylindrical shoulder applying axial force and generating frictional heating.
-    - Probe: Item 6 description of profiled pin shearing, stirring, and forging plasticized material across advancing and retreating sides.
+    - Tool shoulder: `Item 5: Tool Shoulder` (store-verified key label).
+    - Probe: `Item 6: Probe` (store-verified key label).
 
 ### Workstream D: Whole-Standard CLI & Agent Skills Modernization
 - `src/evidence_whole_standard_cli.py`:

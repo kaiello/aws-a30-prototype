@@ -353,7 +353,7 @@ def execute_phase3_plan(
 
         # Archetype 3: Spatial Callout & Tabular Figures
         else:
-            res = compose_spatial_callout_answer({"query": question_text, "figure_id": fig_id}, {fig_id: fig_store})
+            res = compose_spatial_callout_answer({"query": question_text, "figure_id": fig_id, "glossary": glossary_store}, {fig_id: fig_store, "glossary": glossary_store})
             answer_text = res.get("answer_text", "")
             elements_present.extend(res.get("elements_present", []) or [])
             provenance.extend(res.get("normative_provenance", []) or [])
