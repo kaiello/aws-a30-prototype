@@ -224,7 +224,8 @@ async def async_query(
     model_name: Optional[str] = None,
     base_url: Optional[str] = None,
     evidence_version: str = "v1",
-    v2_reader: str = "extractive"
+    v2_reader: str = "extractive",
+    diagnostic_track: Optional[str] = None,
 ) -> dict:
     started = time.perf_counter()
     if (not isinstance(evidence_version, str) or not isinstance(v2_reader, str)
@@ -235,8 +236,21 @@ async def async_query(
         from src.config import BASE_DIR
         try:
             stores = get_whole_standard_stores(BASE_DIR)
-            planner = DeterministicQuestionPlanner(root=BASE_DIR)
-            ws_res = answer_whole_standard_question(query_str, planner=planner, stores=stores)
+            arm_map = {"gold_arm_a": "A", "gold_arm_b": "B", "gold_arm_c": "C"}
+            if diagnostic_track in arm_map:
+                from src.reader_qualification import (
+                    build_gold_evidence_packet,
+                    compose_from_gold_arm,
+                    prepare_reader_evidence_arm,
+                )
+                gold_pkt = build_gold_evidence_packet(query_str, stores=stores, root=BASE_DIR)
+                arm_pkt = prepare_reader_evidence_arm(gold_pkt, arm=arm_map[diagnostic_track])
+                ws_res = compose_from_gold_arm(query_str, arm_pkt, stores=stores)
+                active_track = diagnostic_track
+            else:
+                planner = DeterministicQuestionPlanner(root=BASE_DIR)
+                ws_res = answer_whole_standard_question(query_str, planner=planner, stores=stores)
+                active_track = "retrieved_whole_standard"
 
             answer_text = ws_res.get("answer", "")
             exec_data = ws_res.get("execution", {})
@@ -244,7 +258,7 @@ async def async_query(
 
             crop_path = ws_res.get("crop_path")
             if crop_path:
-                fig_id = ws_res.get("evidence_locator", "").split(":")[0].upper().replace("_", " ")
+                fig_id = (ws_res.get("evidence_locator") or "").split(":")[0].upper().replace("_", " ")
                 figures.append({
                     "figure_id": fig_id,
                     "image_path": str(crop_path),
@@ -255,9 +269,9 @@ async def async_query(
                 })
 
             planner_source = (
-                ws_res.get("plan", {}).get("receipt_metadata", {}).get("planner_source")
-                or ws_res.get("plan", {}).get("planner_source")
-                or "deterministic_planner"
+                (ws_res.get("plan") or {}).get("receipt_metadata", {}).get("planner_source")
+                or (ws_res.get("plan") or {}).get("planner_source")
+                or (f"reader_qualification_{active_track}" if active_track != "retrieved_whole_standard" else "deterministic_planner")
             )
 
             result = {
@@ -274,10 +288,10 @@ async def async_query(
                 "resolved_figures": figures,
                 "resolved_tables": tables,
                 "see_also": extract_see_also_terms(answer_text),
-                "answer_outcome": "supported" if exec_data.get("status") in {"PASS", "CONTRADICTION_REFUTED"} else "refusal" if exec_data.get("status") == "ABSTAIN_OUT_OF_SCOPE" else "insufficient_evidence",
+                "answer_outcome": "supported" if exec_data.get("status") in {"PASS", "CONTRADICTION_REFUTED"} else "refusal" if exec_data.get("status") in {"ABSTAIN_OUT_OF_SCOPE", "REFUSAL_OUT_OF_SCOPE"} else "insufficient_evidence",
                 "answer_origin": "whole_standard_stores",
                 "answer_assessment": {
-                    "status": "SUPPORTED_REVIEWED_FACTS" if exec_data.get("status") in {"PASS", "CONTRADICTION_REFUTED"} else "OUT_OF_SCOPE" if exec_data.get("status") == "ABSTAIN_OUT_OF_SCOPE" else "INSUFFICIENT_EVIDENCE",
+                    "status": "SUPPORTED_REVIEWED_FACTS" if exec_data.get("status") in {"PASS", "CONTRADICTION_REFUTED"} else "OUT_OF_SCOPE" if exec_data.get("status") in {"ABSTAIN_OUT_OF_SCOPE", "REFUSAL_OUT_OF_SCOPE"} else "INSUFFICIENT_EVIDENCE",
                     "validated": True if exec_data.get("status") in {"PASS", "CONTRADICTION_REFUTED"} else False,
                     "citation_support": "exact" if ws_res.get("evidence_locator") else "none",
                     "assessment_scope": "whole_standard_normative_stores"
@@ -291,6 +305,7 @@ async def async_query(
                 "plan": ws_res.get("plan"),
                 "execution": exec_data,
                 "planner_source": planner_source,
+                "diagnostic_track": active_track,
                 "timings_ms": {
                     "total": round((time.perf_counter() - started) * 1000, 3)
                 }
@@ -443,7 +458,8 @@ def run_query(
     model_name: Optional[str] = None,
     base_url: Optional[str] = None,
     evidence_version: str = "v1",
-    v2_reader: str = "extractive"
+    v2_reader: str = "extractive",
+    diagnostic_track: Optional[str] = None,
 ) -> dict:
     """Thread-safe synchronous query executor using a persistent dedicated event loop."""
     loop = get_query_event_loop()
@@ -456,7 +472,8 @@ def run_query(
             model_name=model_name,
             base_url=base_url,
             evidence_version=evidence_version,
-            v2_reader=v2_reader
+            v2_reader=v2_reader,
+            diagnostic_track=diagnostic_track,
         ),
         loop
     )

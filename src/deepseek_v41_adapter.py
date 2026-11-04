@@ -320,3 +320,113 @@ class DeepSeekV41VisualCandidateVerifier:
             "epistemic_tag": EPISTEMIC_TAG,
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         }
+
+
+def audit_replay_coverage(
+    root: Optional[Path] = None,
+    write_manifest: bool = False,
+) -> Dict[str, Any]:
+    """Audit genuine DeepSeek-V4.1 replay cassettes vs quarantined synthetic fixtures across benchmarks."""
+    resolved_root = Path(root or ROOT).resolve()
+    adapter = DeepSeekV41PlannerAdapter(config=DeepSeekV41Config(mode="OFFLINE_REPLAY_ONLY"), root=resolved_root)
+
+    replay_dir = resolved_root / "storage" / "model_replays" / "deepseek_v4_1_flash_1017"
+    fixtures_dir = resolved_root / "storage" / "model_replays" / "deterministic_planner_fixtures"
+
+    genuine_cassettes: List[Dict[str, Any]] = []
+    if replay_dir.exists():
+        for p in sorted(replay_dir.glob("*.json")):
+            if p.name == "index.json":
+                continue
+            data = json.loads(p.read_text(encoding="utf-8"))
+            if "replay_key" in data:
+                genuine_cassettes.append({
+                    "replay_key": data["replay_key"],
+                    "file": str(p.relative_to(resolved_root)).replace("\\", "/"),
+                    "model_id": data.get("model_id"),
+                    "epistemic_tag": data.get("epistemic_tag"),
+                })
+
+    quarantined_fixtures: List[Dict[str, Any]] = []
+    if fixtures_dir.exists():
+        for p in sorted(fixtures_dir.glob("*.json")):
+            if p.name == "index.json":
+                continue
+            data = json.loads(p.read_text(encoding="utf-8"))
+            if "replay_key" in data:
+                quarantined_fixtures.append({
+                    "replay_key": data["replay_key"],
+                    "file": str(p.relative_to(resolved_root)).replace("\\", "/"),
+                    "model_id": data.get("model_id"),
+                    "epistemic_tag": data.get("epistemic_tag"),
+                })
+
+    genuine_keys = {c["replay_key"] for c in genuine_cassettes}
+    fixture_keys = {f["replay_key"] for f in quarantined_fixtures}
+
+    benchmark_specs = [
+        ("phase5_5_nlq_001", "storage/evidence_v2/phase5_5_nlq_001/nlq_questions.json"),
+        ("phase6_ner_routing_001", "storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json"),
+        ("phase6_1_semantic_graph_001", "storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json"),
+        ("phase6_2_generalization_holdout_001", "storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json"),
+        ("phase6_3_blind_hardening_001", "storage/evidence_v2/phase6_3_blind_hardening_001/questions.json"),
+        ("phase6_6_reader_qualification_001", "storage/evidence_v2/phase6_6_reader_qualification_001/questions.json"),
+    ]
+
+    benchmarks_report: Dict[str, Any] = {}
+    for bench_name, rel_q_path in benchmark_specs:
+        q_path = resolved_root / rel_q_path
+        if not q_path.exists():
+            continue
+        q_items = json.loads(q_path.read_text(encoding="utf-8"))
+        gen_cnt = 0
+        fix_cnt = 0
+        det_cnt = 0
+        query_ledger: List[Dict[str, Any]] = []
+        for item in q_items:
+            qid = item.get("id")
+            q_text = item.get("query") or item.get("question") or ""
+            r_key = adapter.compute_replay_key(adapter.build_whole_standard_prompt(q_text))
+            if r_key in genuine_keys:
+                source_class = "genuine_model_replay"
+                gen_cnt += 1
+            elif r_key in fixture_keys:
+                source_class = "quarantined_synthetic_fixture"
+                fix_cnt += 1
+            else:
+                source_class = "deterministic_planner_fallback"
+                det_cnt += 1
+            query_ledger.append({
+                "id": qid,
+                "replay_key": r_key,
+                "source_class": source_class,
+            })
+        benchmarks_report[bench_name] = {
+            "questions_file": rel_q_path,
+            "total_queries": len(q_items),
+            "genuine_model_replays": gen_cnt,
+            "quarantined_synthetic_fixtures": fix_cnt,
+            "deterministic_planner_fallbacks": det_cnt,
+            "queries": query_ledger,
+        }
+
+    manifest = {
+        "schema_version": "replay_coverage_manifest_v1.0",
+        "gate": "Gate 6.6",
+        "model_id": adapter.config.model_id,
+        "contract_sha256": adapter.contract_sha256,
+        "epistemic_tag": EPISTEMIC_TAG,
+        "genuine_model_replays_count": len(genuine_cassettes),
+        "quarantined_synthetic_fixtures_count": len(quarantined_fixtures),
+        "genuine_model_replays": genuine_cassettes,
+        "quarantined_synthetic_fixtures": quarantined_fixtures,
+        "benchmarks": benchmarks_report,
+    }
+
+    if write_manifest:
+        out_path = resolved_root / "storage" / "manifests" / "replay_coverage_manifest.json"
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    return manifest
+

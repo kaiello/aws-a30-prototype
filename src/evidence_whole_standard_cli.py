@@ -199,6 +199,82 @@ def run_table_a3_cli(term: str, as_json: bool = False) -> int:
     return 0
 
 
+def run_qualify_reader_cli(query: str, as_json: bool = False) -> int:
+    """Run 3-Arm Gold-Evidence vs Retrieved Reader Qualification on query."""
+    from src.evidence_phase4_bakeoff import (
+        answer_whole_standard_question,
+        get_whole_standard_stores,
+        DeterministicQuestionPlanner,
+    )
+    from src.reader_qualification import (
+        build_gold_evidence_packet,
+        compose_from_gold_arm,
+        prepare_reader_evidence_arm,
+    )
+
+    stores = get_whole_standard_stores(ROOT)
+    gold_packet = build_gold_evidence_packet(query, stores=stores, root=ROOT)
+    arms_out = {}
+    for arm_code, track_key in (("A", "gold_arm_a"), ("B", "gold_arm_b"), ("C", "gold_arm_c")):
+        arm_pkt = prepare_reader_evidence_arm(gold_packet, arm=arm_code)
+        arms_out[track_key] = compose_from_gold_arm(query, arm_pkt, stores=stores)
+
+    planner = DeterministicQuestionPlanner(root=ROOT)
+    retrieved_res = answer_whole_standard_question(query, planner=planner, stores=stores)
+
+    payload = {
+        "query": query,
+        "gold_packet_metadata": {
+            "status": gold_packet.get("status"),
+            "target_division": gold_packet.get("target_division"),
+            "intent": gold_packet.get("intent"),
+            "printed_page": gold_packet.get("printed_page"),
+            "pdf_index": gold_packet.get("pdf_index"),
+            "evidence_locator": gold_packet.get("evidence_locator"),
+            "requires_diagram_crop": gold_packet.get("requires_diagram_crop"),
+            "crop_path": gold_packet.get("crop_path"),
+        },
+        "tracks": {
+            "gold_arm_a": arms_out["gold_arm_a"],
+            "gold_arm_b": arms_out["gold_arm_b"],
+            "gold_arm_c": arms_out["gold_arm_c"],
+            "retrieved_whole_standard": retrieved_res,
+        },
+    }
+
+    if as_json:
+        print(json.dumps(payload, indent=2, default=str))
+    else:
+        print("=== AWS A3.0M/A3.0:2020 READER QUALIFICATION RECEIPT (GATE 6.6) ===")
+        print(f"Query: {query}")
+        print(f"Locator: {gold_packet.get('evidence_locator')} (p. {gold_packet.get('printed_page')} / PDF {gold_packet.get('pdf_index')})")
+        for t_name, t_res in payload["tracks"].items():
+            print(f"\n[{t_name}] (requires_crop={t_res.get('requires_diagram_crop')}, crop={t_res.get('crop_path')})")
+            print(f"  {t_res.get('answer', '')[:200]}")
+    return 0
+
+
+def run_replay_audit_cli(as_json: bool = False) -> int:
+    """Run Offline Replay Coverage Audit across all benchmarks."""
+    from src.deepseek_v41_adapter import audit_replay_coverage
+
+    manifest = audit_replay_coverage(root=ROOT, write_manifest=False)
+    if as_json:
+        print(json.dumps(manifest, indent=2))
+    else:
+        print("=== AWS A3.0M/A3.0:2020 REPLAY COVERAGE AUDIT (GATE 6.6) ===")
+        print(f"Genuine DeepSeek-V4.1 Replays: {manifest['genuine_model_replays_count']}")
+        print(f"Quarantined Synthetic Fixtures: {manifest['quarantined_synthetic_fixtures_count']}")
+        for b_name, b_stats in manifest["benchmarks"].items():
+            print(
+                f"  - {b_name}: total={b_stats['total_queries']}, "
+                f"genuine={b_stats['genuine_model_replays']}, "
+                f"quarantined={b_stats['quarantined_synthetic_fixtures']}, "
+                f"deterministic_fallback={b_stats['deterministic_planner_fallbacks']}"
+            )
+    return 0
+
+
 def main(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         description="Canonical Whole-Standard CLI for AWS A3.0M/A3.0:2020 (Terms & Definitions)."
@@ -209,6 +285,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     group.add_argument("--expand", type=str, help="Run store-compiled semantic graph neighborhood expansion.")
     group.add_argument("--ask", type=str, help="Execute full question answering with provenance.")
     group.add_argument("--table-a3", type=str, help="Query Table A3 cross-reference matrix by designation or process.")
+    group.add_argument("--qualify-reader", type=str, help="Run 3-arm gold-evidence vs retrieved reader qualification.")
+    group.add_argument("--replay-audit", action="store_true", help="Run offline model replay coverage audit.")
 
     parser.add_argument(
         "--planner",
@@ -242,6 +320,10 @@ def main(argv: Optional[list[str]] = None) -> int:
             return run_ask_cli(args.ask, as_json=args.json, planner_name=args.planner)
         elif args.table_a3:
             return run_table_a3_cli(args.table_a3, as_json=args.json)
+        elif args.qualify_reader:
+            return run_qualify_reader_cli(args.qualify_reader, as_json=args.json)
+        elif args.replay_audit:
+            return run_replay_audit_cli(as_json=args.json)
         return 0
     finally:
         if orig_socket is not None:
