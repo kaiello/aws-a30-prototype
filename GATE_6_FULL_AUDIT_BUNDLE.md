@@ -1,7 +1,7 @@
 # Gate 6 Full Production Audit Bundle
-Generated at: 2026-11-04T14:13:20.727662+00:00
+Generated at: 2026-11-04T14:14:00.024272+00:00
 Branch: `main`
-Commit: `4bb2ab3f3c4e664803c2b620e970541d843921e1`
+Commit: `c753a7a26b5c42b68caacb4fc9ddca3b84c26fc8`
 Clean Working Tree: `True`
 
 ## Preflight Verification
