@@ -31,7 +31,7 @@ from src.evidence_phase4_bakeoff import (
 def evaluate_ner_routing_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
-    write_results: bool = True,
+    write_results: bool = False,
 ) -> Dict[str, Any]:
     """Execute Gate 6.0 20-query NER and routing benchmark against public QA entrypoint."""
     if root is None:

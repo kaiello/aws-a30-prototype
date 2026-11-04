@@ -31,7 +31,7 @@ from src.evidence_phase4_bakeoff import (
 def evaluate_generalization_holdout_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
-    write_results: bool = True,
+    write_results: bool = False,
     use_replay_for_slice5: bool = False,
 ) -> Dict[str, Any]:
     """Execute Gate 6.2 20-query store-driven composition and generalization holdout benchmark."""

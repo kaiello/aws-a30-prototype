@@ -11,7 +11,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -26,6 +26,7 @@ from src.evidence_phase4_bakeoff import (
 def evaluate_adversarial_suite(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
+    write_results: bool = False,
 ) -> Dict[str, Any]:
     """Execute adversarial suite against public whole-standard QA entrypoint."""
     if root is None:
@@ -91,8 +92,9 @@ def evaluate_adversarial_suite(
         "results": results,
     }
 
-    out_file = output_dir / "results.json"
-    out_file.write_text(json.dumps(summary, indent=2), encoding="utf-8", newline="\n")
+    if write_results:
+        out_file = output_dir / "results.json"
+        out_file.write_text(json.dumps(summary, indent=2), encoding="utf-8", newline="\n")
     return summary
 
 

@@ -173,9 +173,13 @@ def evaluate_blind_hardening_benchmark(
                 crop_identity_ok = False
             else:
                 loc_str = (resp.get("evidence_locator") or execution.get("evidence_locator") or "").lower()
+                crop_name = Path(crop_path).name.lower()
                 m_loc = re.search(r"figure_([ab]\d+[a-z]*)", loc_str)
-                m_crop = re.search(r"(?:figure_)?([ab]\d+[a-z]*)", Path(crop_path).name.lower())
+                m_crop = re.search(r"(?:figure_)?([ab]\d+[a-z]*)", crop_name)
                 if m_loc and m_crop and m_loc.group(1) != m_crop.group(1):
+                    crop_identity_ok = False
+                m_crop_page = re.search(r"_p(\d+)(?:_|\.|$)", crop_name)
+                if m_crop_page and isinstance(p_page, int) and int(m_crop_page.group(1)) != p_page:
                     crop_identity_ok = False
         else:
             if crop_path is not None:
@@ -206,6 +210,9 @@ def evaluate_blind_hardening_benchmark(
                         body_meta_ok = False
             if body_pdf_matches and p_pdf not in body_pdf_matches:
                 if not (prov_pdf_matches and p_pdf in prov_pdf_matches):
+                    body_meta_ok = False
+            if not body_p_matches and not body_pdf_matches and prov_pdf_matches:
+                if p_pdf not in prov_pdf_matches:
                     body_meta_ok = False
         if body_meta_ok:
             body_meta_passed += 1

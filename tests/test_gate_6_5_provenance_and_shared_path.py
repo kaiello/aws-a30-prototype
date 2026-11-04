@@ -125,6 +125,32 @@ def test_gate_6_5_b53_b49_and_b44_b45_provenance():
     assert res_b45["printed_page"] == 149
     assert res_b45["pdf_index"] == 161
 
+    # Query targeting Figure B23 Panel J (printed p. 116 / PDF 128, crop p116)
+    q_b23j = (
+        "Which figure and sub-diagram illustrate the placement of temper beads and toe temper beads "
+        "in groove, fillet, and overlay welds, how is the distance S measured according to the figure's notes, "
+        "what approximate offset dimension is specified for the first layer temper beads, and how does Clause 4 "
+        "define temper pass, temper bead, temper bead sequence, toe temper pass, and toe temper bead?"
+    )
+    res_b23j = answer_whole_standard_question(q_b23j, planner=planner, stores=stores)
+    assert res_b23j["printed_page"] == 116
+    assert res_b23j["pdf_index"] == 128
+    assert res_b23j["evidence_locator"] == "figure_b23:panel_j"
+    assert res_b23j["crop_path"] == "storage/evidence_v2/annex_b_complete_001/crops/figure_b23_p116_crop_300.png"
+
+    # Query targeting Figure B46 FSW schematic key (printed p. 150 / PDF 162)
+    q_b46 = (
+        "Which figure in AWS A3.0 shows the schematic of the Friction Stir Welding process, "
+        "what are the 10 numbered items in its Key, and how does the standard define the advancing side "
+        "versus the retreating side of the weld?"
+    )
+    res_b46 = answer_whole_standard_question(q_b46, planner=planner, stores=stores)
+    assert res_b46["printed_page"] == 150
+    assert res_b46["pdf_index"] == 162
+    assert res_b46["evidence_locator"] == "figure_b46:schematic_key"
+    assert "The side of the weld in which the direction of tool rotation and travel are the same." in res_b46["answer"]
+    assert "The side of the weld in which the directions of tool rotation and travel are opposite." in res_b46["answer"]
+
 
 def test_gate_6_5_table_a3_gtaw_body_metadata_consistency():
     """Verify Table A3 GTAW returns printed p. 73 / PDF 85 without being overwritten by 72/84."""
@@ -228,27 +254,72 @@ def test_gate_6_5_evaluator_rejects_bad_provenance(monkeypatch):
     assert failed_q3["passed"] is False
     assert failed_q3["crop_match"] is False
 
+    # 5. Inject crop page mismatch (figure_b23_p114_crop_300.png on printed_page=116)
+    def _crop_page_mismatch_engine(*args, **kwargs):
+        res = answer_whole_standard_question(*args, **kwargs)
+        if "temper beads" in args[0].lower():
+            res["crop_path"] = "storage/evidence_v2/annex_b_complete_001/crops/figure_b23_p114_crop_300.png"
+        return res
+
+    monkeypatch.setattr("eval.run_phase6_3_blind_hardening.answer_whole_standard_question", _crop_page_mismatch_engine)
+    bad_summary4 = evaluate_blind_hardening_benchmark(root=ROOT, write_results=False)
+    assert bad_summary4["passed"] == 19
+    failed_q4 = next(r for r in bad_summary4["results"] if r["id"] == "G63-BLIND14")
+    assert failed_q4["passed"] is False
+    assert failed_q4["crop_match"] is False
+
+    # 6. Inject provenance-vs-metadata page mismatch (printed_page=5, pdf_index=17 on Figure B46 obs:pdf:162)
+    def _prov_page_mismatch_engine(*args, **kwargs):
+        res = answer_whole_standard_question(*args, **kwargs)
+        if "friction stir welding" in args[0].lower():
+            res["printed_page"] = 5
+            res["pdf_index"] = 17
+        return res
+
+    monkeypatch.setattr("eval.run_phase6_3_blind_hardening.answer_whole_standard_question", _prov_page_mismatch_engine)
+    bad_summary5 = evaluate_blind_hardening_benchmark(root=ROOT, write_results=False)
+    assert bad_summary5["passed"] == 19
+    failed_q5 = next(r for r in bad_summary5["results"] if r["id"] == "G63-BLIND13")
+    assert failed_q5["passed"] is False
+    assert failed_q5["body_meta_match"] is False
+
 
 def test_gate_6_5_checkout_cards_and_roadmap_match_questions_json():
-    """Verify that GATE_6_4_CHECKOUT_CARD.md, ROADMAP.md, and goal.md match questions.json and all 51 hashes."""
+    """Verify that GATE_6_4_CHECKOUT_CARD.md, GATE_6_5_CHECKOUT_CARD.md, ROADMAP.md, and goal.md match questions.json, live results, and all 51 hashes."""
     q_file = ROOT / "storage/evidence_v2/phase6_3_blind_hardening_001/questions.json"
     questions = json.loads(q_file.read_text(encoding="utf-8"))
 
-    card_text = (ROOT / "GATE_6_4_CHECKOUT_CARD.md").read_text(encoding="utf-8")
+    card64_text = (ROOT / "GATE_6_4_CHECKOUT_CARD.md").read_text(encoding="utf-8")
+    card65_text = (ROOT / "GATE_6_5_CHECKOUT_CARD.md").read_text(encoding="utf-8")
     roadmap_text = (ROOT / "ROADMAP.md").read_text(encoding="utf-8")
     goal_text = (ROOT / "goal.md").read_text(encoding="utf-8")
 
-    # Verify questions are in checkout card and roadmap
+    # Verify questions are in checkout cards and roadmap
     for item in questions:
         qid = item["id"]
-        assert qid in card_text, f"{qid} missing in GATE_6_4_CHECKOUT_CARD.md"
+        assert qid in card64_text, f"{qid} missing in GATE_6_4_CHECKOUT_CARD.md"
+        assert qid in card65_text, f"{qid} missing in GATE_6_5_CHECKOUT_CARD.md"
         assert qid in roadmap_text, f"{qid} missing in ROADMAP.md"
         assert qid in goal_text, f"{qid} missing in goal.md"
 
-    # Verify all 51 locked hashes match files on disk
+    # Verify live 20-query coordinates and locators match GATE_6_5_CHECKOUT_CARD.md Section 2
+    live_summary = evaluate_blind_hardening_benchmark(root=ROOT, write_results=False)
+    for row in live_summary["results"]:
+        qid = row["id"]
+        row_line = next((line for line in card65_text.splitlines() if f"`{qid}`" in line), None)
+        assert row_line is not None, f"Row for {qid} missing in GATE_6_5_CHECKOUT_CARD.md"
+        assert f"| {row['printed_page']} | {row['pdf_index']} |" in row_line, f"Coordinate mismatch in GATE_6_5_CHECKOUT_CARD.md for {qid}"
+        assert f"`{row['evidence_locator']}`" in row_line, f"Locator mismatch in GATE_6_5_CHECKOUT_CARD.md for {qid}"
+        assert f"`{row['crop_path']}`" in row_line, f"Crop path mismatch in GATE_6_5_CHECKOUT_CARD.md for {qid}"
+
+    # Verify all 51 locked hashes match files on disk AND appear verbatim in both checkout cards
     from tests.test_gate_6_4_comprehensive_enhancements import ALL_51_LOCKED_HASHES
     for rel_path, expected_hash in ALL_51_LOCKED_HASHES.items():
         p = ROOT / rel_path
         assert p.exists(), f"Locked artifact missing on disk: {rel_path}"
         actual_hash = hashlib.sha256(p.read_bytes()).hexdigest()
         assert actual_hash == expected_hash, f"Hash mismatch for {rel_path}: actual {actual_hash} != expected {expected_hash}"
+        assert rel_path in card64_text, f"Rel path {rel_path} missing in GATE_6_4_CHECKOUT_CARD.md"
+        assert expected_hash in card64_text, f"Hash {expected_hash} for {rel_path} missing in GATE_6_4_CHECKOUT_CARD.md"
+        assert rel_path in card65_text, f"Rel path {rel_path} missing in GATE_6_5_CHECKOUT_CARD.md"
+        assert expected_hash in card65_text, f"Hash {expected_hash} for {rel_path} missing in GATE_6_5_CHECKOUT_CARD.md"

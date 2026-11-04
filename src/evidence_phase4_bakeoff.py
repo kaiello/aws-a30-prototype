@@ -73,6 +73,15 @@ def get_whole_standard_stores(root: Optional[Path] = None) -> Dict[str, Any]:
     b_complete = p3_stores.get("b_complete_store", {})
     b_arch4 = p3_stores.get("b_archetype4_store", {})
 
+    # Pre-merge Figure B1 applicable_welds_by_joint at store initialization time
+    fig_b1_entry = b_complete.get("figures", {}).get("Figure B1")
+    if isinstance(fig_b1_entry, dict) and "applicable_welds_by_joint" not in fig_b1_entry:
+        b1_store_path = root / "storage/evidence_v2/annex_b_complete_001/figure_b1_store.json"
+        if b1_store_path.exists():
+            with open(b1_store_path, "r", encoding="utf-8") as f:
+                b1_data = json.load(f)
+            fig_b1_entry["applicable_welds_by_joint"] = b1_data.get("applicable_welds_by_joint", {})
+
     # Phase 2 tables graph
     tables_path = root / "storage/evidence_v2/annex_a_tables_001/final_projection/tables_graph.json"
     tables_store: Dict[str, Any] = {}
@@ -2361,6 +2370,7 @@ def _exec_decode_process_designations(
     provenance = []
     elements_present = []
     decoded_sections = []
+    primary_t_page: Optional[int] = None
 
     # Clean and deduplicate codes while preserving order
     clean_codes = []
@@ -2392,6 +2402,9 @@ def _exec_decode_process_designations(
 
         if not proc_name:
             continue
+
+        if primary_t_page is None and page is not None:
+            primary_t_page = int(page)
 
         g_entry = lookup_glossary_term(proc_name, glossary) or lookup_glossary_term(desig, glossary)
         if not g_entry or not g_entry.get("definition") or not g_entry.get("printed_page"):
@@ -2454,11 +2467,17 @@ def _exec_decode_process_designations(
 
     # Special handling for FLSP vs FLSP-P vs FLSP-W distinction
     if any("FLSP" in c.upper() for c in clean_codes):
+        flsp_g = lookup_glossary_term("flame spraying", glossary)
+        flsp_p_g = lookup_glossary_term("powder flame spraying", glossary)
+        flsp_w_g = lookup_glossary_term("wire flame spraying", glossary)
+        flsp_t1 = next((r for r in t1 if (r.get("designation") or "").upper() == "FLSP"), None)
+        if not flsp_g or not flsp_p_g or not flsp_w_g or not flsp_t1:
+            raise ValueError("INSUFFICIENT_EVIDENCE: FLSP entries missing in stores")
         decoded_sections.append(
             "\nConsumable Form and Process Hierarchy Distinction:\n"
-            "• FLSP (flame spraying) is the root thermal spraying process (Table A1, p. 72; Clause 4, p. 25) that can utilize surfacing material in either powder or wire form.\n"
-            "• FLSP-P (powder flame spraying, Clause 4, p. 45) is a standardized process variation specifically restricted to surfacing material in powder form.\n"
-            "• FLSP-W (wire flame spraying, Clause 4, p. 65) is a standardized process variation specifically restricted to surfacing material in wire form."
+            f"• FLSP (flame spraying) is the root thermal spraying process (Table A1, p. {flsp_t1['page']}; Clause 4, p. {flsp_g['printed_page']}) that can utilize surfacing material in either powder or wire form.\n"
+            f"• FLSP-P (powder flame spraying, Clause 4, p. {flsp_p_g['printed_page']}) is a standardized process variation specifically restricted to surfacing material in powder form.\n"
+            f"• FLSP-W (wire flame spraying, Clause 4, p. {flsp_w_g['printed_page']}) is a standardized process variation specifically restricted to surfacing material in wire form."
         )
         elements_present.extend([
             "flame spraying", "powder flame spraying", "wire flame spraying",
@@ -2491,7 +2510,7 @@ def _exec_decode_process_designations(
         raise ValueError("INSUFFICIENT_EVIDENCE: No process designations could be decoded from stores")
 
     answer = "In AWS A3.0M/A3.0:2020:\n" + "\n".join(decoded_sections)
-    return {
+    res_dict: Dict[str, Any] = {
         "status": "PASS",
         "answer": answer,
         "operations": operations,
@@ -2499,6 +2518,11 @@ def _exec_decode_process_designations(
         "elements_present": list(dict.fromkeys(elements_present)),
         "normative_provenance": list(dict.fromkeys(provenance)),
     }
+    if primary_t_page is not None:
+        res_dict["printed_page"] = primary_t_page
+        res_dict["pdf_index"] = primary_t_page + 12
+        res_dict["evidence_locator"] = "table_a1:process_letter_designations"
+    return res_dict
 
 
 def execute_whole_standard_plan(
@@ -2596,15 +2620,8 @@ def execute_whole_standard_plan(
         if not fig_b1:
             raise ValueError("INSUFFICIENT_EVIDENCE: Figure B1 missing in Annex B store")
         
-        # Load applicable welds data
-        app_welds = fig_b1.get("applicable_welds_by_joint")
-        if not app_welds:
-            b1_path = ROOT / "storage/evidence_v2/annex_b_complete_001/figure_b1_store.json"
-            if b1_path.exists():
-                b1_data = json.loads(b1_path.read_text(encoding="utf-8"))
-                app_welds = b1_data.get("applicable_welds_by_joint", {})
-            else:
-                app_welds = {}
+        # Load applicable welds data strictly from injected store
+        app_welds = fig_b1.get("applicable_welds_by_joint", {})
         
         joint_key = "T-JOINT"
         for j in ["T-JOINT", "BUTT JOINT", "CORNER JOINT", "LAP JOINT", "PARALLEL JOINT", "EDGE JOINT"]:
@@ -3435,7 +3452,7 @@ ANNEX_A_CROPS = {
 }
 
 
-def resolve_figure_crop_path(fig_id: str, root: Path = ROOT) -> Optional[str]:
+def resolve_figure_crop_path(fig_id: str, root: Path = ROOT, printed_page: Optional[int] = None) -> Optional[str]:
     """Resolve 300-DPI crop path for Annex A and Annex B figures."""
     norm_id = fig_id.strip()
     if norm_id in ANNEX_A_CROPS:
@@ -3452,6 +3469,11 @@ def resolve_figure_crop_path(fig_id: str, root: Path = ROOT) -> Optional[str]:
             pattern = re.compile(rf"^figure_b{re.escape(num_str)}(_|\.|$)", re.IGNORECASE)
             cands = sorted([p for p in crops_dir.glob("*.png") if pattern.match(p.name)])
             if cands:
+                if printed_page is not None:
+                    page_token = f"_p{printed_page}_"
+                    for cand in cands:
+                        if page_token in cand.name.lower():
+                            return str(cand.relative_to(root)).replace("\\", "/")
                 return str(cands[0].relative_to(root)).replace("\\", "/")
     return None
 
@@ -3587,14 +3609,12 @@ def _enrich_modality_provenance(
         else:
             fig_key = "Figure B49"
 
-        crop = resolve_figure_crop_path(fig_key, root)
         exec_res["requires_diagram_crop"] = True
-        exec_res["crop_path"] = crop
-
         if exec_res.get("printed_page") is not None and exec_res.get("pdf_index") is not None:
-            if exec_res.get("crop_path") is None:
-                exec_res["crop_path"] = crop
-            exec_res["requires_diagram_crop"] = True
+            if not exec_res.get("crop_path"):
+                exec_res["crop_path"] = resolve_figure_crop_path(
+                    fig_key, root, printed_page=exec_res.get("printed_page")
+                )
             return exec_res
 
         page = 153  # default
@@ -3625,6 +3645,8 @@ def _enrich_modality_provenance(
         elif fig_key == "Figure B54":
             page = 157
 
+        crop = resolve_figure_crop_path(fig_key, root, printed_page=page)
+        exec_res["crop_path"] = crop
         exec_res["printed_page"] = page
         exec_res["pdf_index"] = page + 12
 
@@ -3746,6 +3768,23 @@ def _enrich_modality_provenance(
                     page = t_entry["printed_page"]
                     term_label = str(entity)
                     break
+        if term_label == "general_term":
+            m_fig_prov = re.search(
+                r"obs:pdf:(\d+):figure:Figure\s*(B\d+[A-Za-z]*)", prov_str, re.IGNORECASE
+            )
+            m_c4_prov = re.search(r"obs:clause4:p(\d+):([a-z0-9_]+)", prov_str, re.IGNORECASE)
+            if m_fig_prov:
+                pdf_idx = int(m_fig_prov.group(1))
+                exec_res["printed_page"] = pdf_idx - 12
+                exec_res["pdf_index"] = pdf_idx
+                exec_res["evidence_locator"] = f"figure_{m_fig_prov.group(2).lower()}:schematic_key"
+                return exec_res
+            elif m_c4_prov:
+                c4_p = int(m_c4_prov.group(1))
+                exec_res["printed_page"] = c4_p
+                exec_res["pdf_index"] = c4_p + 12
+                exec_res["evidence_locator"] = f"clause4:term:{m_c4_prov.group(2)}"
+                return exec_res
         exec_res["printed_page"] = page
         exec_res["pdf_index"] = page + 12
         exec_res["evidence_locator"] = f"clause4:term:{term_label}"
