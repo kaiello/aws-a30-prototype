@@ -1,8 +1,8 @@
 # Gate 6 Full Production Audit Bundle
-Generated at: 2026-11-04T02:31:50.347334+00:00
-Branch: `feat/gate-6-5-provenance-and-shared-path`
-Commit: `ccd6bba864335f3874268f825c0c9b253cba4562`
-Clean Working Tree: `False`
+Generated at: 2026-11-04T12:49:36.860466+00:00
+Branch: `main`
+Commit: `3e1618ff6100deaad068b4dea8433267f2d4d1bd`
+Clean Working Tree: `True`
 
 ## Preflight Verification
 - Whole Standard Preflight Status: `CLEAR_WHOLE_STANDARD_CONTRACT`
@@ -14655,6 +14655,15 @@ def get_whole_standard_stores(root: Optional[Path] = None) -> Dict[str, Any]:
     b_complete = p3_stores.get("b_complete_store", {})
     b_arch4 = p3_stores.get("b_archetype4_store", {})
 
+    # Pre-merge Figure B1 applicable_welds_by_joint at store initialization time
+    fig_b1_entry = b_complete.get("figures", {}).get("Figure B1")
+    if isinstance(fig_b1_entry, dict) and "applicable_welds_by_joint" not in fig_b1_entry:
+        b1_store_path = root / "storage/evidence_v2/annex_b_complete_001/figure_b1_store.json"
+        if b1_store_path.exists():
+            with open(b1_store_path, "r", encoding="utf-8") as f:
+                b1_data = json.load(f)
+            fig_b1_entry["applicable_welds_by_joint"] = b1_data.get("applicable_welds_by_joint", {})
+
     # Phase 2 tables graph
     tables_path = root / "storage/evidence_v2/annex_a_tables_001/final_projection/tables_graph.json"
     tables_store: Dict[str, Any] = {}
@@ -16943,6 +16952,7 @@ def _exec_decode_process_designations(
     provenance = []
     elements_present = []
     decoded_sections = []
+    primary_t_page: Optional[int] = None
 
     # Clean and deduplicate codes while preserving order
     clean_codes = []
@@ -16974,6 +16984,9 @@ def _exec_decode_process_designations(
 
         if not proc_name:
             continue
+
+        if primary_t_page is None and page is not None:
+            primary_t_page = int(page)
 
         g_entry = lookup_glossary_term(proc_name, glossary) or lookup_glossary_term(desig, glossary)
         if not g_entry or not g_entry.get("definition") or not g_entry.get("printed_page"):
@@ -17036,11 +17049,17 @@ def _exec_decode_process_designations(
 
     # Special handling for FLSP vs FLSP-P vs FLSP-W distinction
     if any("FLSP" in c.upper() for c in clean_codes):
+        flsp_g = lookup_glossary_term("flame spraying", glossary)
+        flsp_p_g = lookup_glossary_term("powder flame spraying", glossary)
+        flsp_w_g = lookup_glossary_term("wire flame spraying", glossary)
+        flsp_t1 = next((r for r in t1 if (r.get("designation") or "").upper() == "FLSP"), None)
+        if not flsp_g or not flsp_p_g or not flsp_w_g or not flsp_t1:
+            raise ValueError("INSUFFICIENT_EVIDENCE: FLSP entries missing in stores")
         decoded_sections.append(
             "\nConsumable Form and Process Hierarchy Distinction:\n"
-            "• FLSP (flame spraying) is the root thermal spraying process (Table A1, p. 72; Clause 4, p. 25) that can utilize surfacing material in either powder or wire form.\n"
-            "• FLSP-P (powder flame spraying, Clause 4, p. 45) is a standardized process variation specifically restricted to surfacing material in powder form.\n"
-            "• FLSP-W (wire flame spraying, Clause 4, p. 65) is a standardized process variation specifically restricted to surfacing material in wire form."
+            f"• FLSP (flame spraying) is the root thermal spraying process (Table A1, p. {flsp_t1['page']}; Clause 4, p. {flsp_g['printed_page']}) that can utilize surfacing material in either powder or wire form.\n"
+            f"• FLSP-P (powder flame spraying, Clause 4, p. {flsp_p_g['printed_page']}) is a standardized process variation specifically restricted to surfacing material in powder form.\n"
+            f"• FLSP-W (wire flame spraying, Clause 4, p. {flsp_w_g['printed_page']}) is a standardized process variation specifically restricted to surfacing material in wire form."
         )
         elements_present.extend([
             "flame spraying", "powder flame spraying", "wire flame spraying",
@@ -17073,7 +17092,7 @@ def _exec_decode_process_designations(
         raise ValueError("INSUFFICIENT_EVIDENCE: No process designations could be decoded from stores")
 
     answer = "In AWS A3.0M/A3.0:2020:\n" + "\n".join(decoded_sections)
-    return {
+    res_dict: Dict[str, Any] = {
         "status": "PASS",
         "answer": answer,
         "operations": operations,
@@ -17081,6 +17100,11 @@ def _exec_decode_process_designations(
         "elements_present": list(dict.fromkeys(elements_present)),
         "normative_provenance": list(dict.fromkeys(provenance)),
     }
+    if primary_t_page is not None:
+        res_dict["printed_page"] = primary_t_page
+        res_dict["pdf_index"] = primary_t_page + 12
+        res_dict["evidence_locator"] = "table_a1:process_letter_designations"
+    return res_dict
 
 
 def execute_whole_standard_plan(
@@ -17178,15 +17202,8 @@ def execute_whole_standard_plan(
         if not fig_b1:
             raise ValueError("INSUFFICIENT_EVIDENCE: Figure B1 missing in Annex B store")
         
-        # Load applicable welds data
-        app_welds = fig_b1.get("applicable_welds_by_joint")
-        if not app_welds:
-            b1_path = ROOT / "storage/evidence_v2/annex_b_complete_001/figure_b1_store.json"
-            if b1_path.exists():
-                b1_data = json.loads(b1_path.read_text(encoding="utf-8"))
-                app_welds = b1_data.get("applicable_welds_by_joint", {})
-            else:
-                app_welds = {}
+        # Load applicable welds data strictly from injected store
+        app_welds = fig_b1.get("applicable_welds_by_joint", {})
         
         joint_key = "T-JOINT"
         for j in ["T-JOINT", "BUTT JOINT", "CORNER JOINT", "LAP JOINT", "PARALLEL JOINT", "EDGE JOINT"]:
@@ -18017,7 +18034,7 @@ ANNEX_A_CROPS = {
 }
 
 
-def resolve_figure_crop_path(fig_id: str, root: Path = ROOT) -> Optional[str]:
+def resolve_figure_crop_path(fig_id: str, root: Path = ROOT, printed_page: Optional[int] = None) -> Optional[str]:
     """Resolve 300-DPI crop path for Annex A and Annex B figures."""
     norm_id = fig_id.strip()
     if norm_id in ANNEX_A_CROPS:
@@ -18034,6 +18051,11 @@ def resolve_figure_crop_path(fig_id: str, root: Path = ROOT) -> Optional[str]:
             pattern = re.compile(rf"^figure_b{re.escape(num_str)}(_|\.|$)", re.IGNORECASE)
             cands = sorted([p for p in crops_dir.glob("*.png") if pattern.match(p.name)])
             if cands:
+                if printed_page is not None:
+                    page_token = f"_p{printed_page}_"
+                    for cand in cands:
+                        if page_token in cand.name.lower():
+                            return str(cand.relative_to(root)).replace("\\", "/")
                 return str(cands[0].relative_to(root)).replace("\\", "/")
     return None
 
@@ -18169,14 +18191,12 @@ def _enrich_modality_provenance(
         else:
             fig_key = "Figure B49"
 
-        crop = resolve_figure_crop_path(fig_key, root)
         exec_res["requires_diagram_crop"] = True
-        exec_res["crop_path"] = crop
-
         if exec_res.get("printed_page") is not None and exec_res.get("pdf_index") is not None:
-            if exec_res.get("crop_path") is None:
-                exec_res["crop_path"] = crop
-            exec_res["requires_diagram_crop"] = True
+            if not exec_res.get("crop_path"):
+                exec_res["crop_path"] = resolve_figure_crop_path(
+                    fig_key, root, printed_page=exec_res.get("printed_page")
+                )
             return exec_res
 
         page = 153  # default
@@ -18207,6 +18227,8 @@ def _enrich_modality_provenance(
         elif fig_key == "Figure B54":
             page = 157
 
+        crop = resolve_figure_crop_path(fig_key, root, printed_page=page)
+        exec_res["crop_path"] = crop
         exec_res["printed_page"] = page
         exec_res["pdf_index"] = page + 12
 
@@ -18328,6 +18350,23 @@ def _enrich_modality_provenance(
                     page = t_entry["printed_page"]
                     term_label = str(entity)
                     break
+        if term_label == "general_term":
+            m_fig_prov = re.search(
+                r"obs:pdf:(\d+):figure:Figure\s*(B\d+[A-Za-z]*)", prov_str, re.IGNORECASE
+            )
+            m_c4_prov = re.search(r"obs:clause4:p(\d+):([a-z0-9_]+)", prov_str, re.IGNORECASE)
+            if m_fig_prov:
+                pdf_idx = int(m_fig_prov.group(1))
+                exec_res["printed_page"] = pdf_idx - 12
+                exec_res["pdf_index"] = pdf_idx
+                exec_res["evidence_locator"] = f"figure_{m_fig_prov.group(2).lower()}:schematic_key"
+                return exec_res
+            elif m_c4_prov:
+                c4_p = int(m_c4_prov.group(1))
+                exec_res["printed_page"] = c4_p
+                exec_res["pdf_index"] = c4_p + 12
+                exec_res["evidence_locator"] = f"clause4:term:{m_c4_prov.group(2)}"
+                return exec_res
         exec_res["printed_page"] = page
         exec_res["pdf_index"] = page + 12
         exec_res["evidence_locator"] = f"clause4:term:{term_label}"
@@ -18682,7 +18721,7 @@ from src.evidence_phase4_bakeoff import (
 def evaluate_ner_routing_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
-    write_results: bool = True,
+    write_results: bool = False,
 ) -> Dict[str, Any]:
     """Execute Gate 6.0 20-query NER and routing benchmark against public QA entrypoint."""
     if root is None:
@@ -18833,7 +18872,7 @@ from src.evidence_phase4_bakeoff import (
 def evaluate_semantic_graph_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
-    write_results: bool = True,
+    write_results: bool = False,
 ) -> Dict[str, Any]:
     """Execute Gate 6.1 15-query NER, 3-tier grammar and semantic graph benchmark."""
     if root is None:
@@ -18984,7 +19023,7 @@ from src.evidence_phase4_bakeoff import (
 def evaluate_generalization_holdout_benchmark(
     root: Optional[Path] = None,
     output_dir: Optional[Path] = None,
-    write_results: bool = True,
+    write_results: bool = False,
     use_replay_for_slice5: bool = False,
 ) -> Dict[str, Any]:
     """Execute Gate 6.2 20-query store-driven composition and generalization holdout benchmark."""
@@ -19297,9 +19336,13 @@ def evaluate_blind_hardening_benchmark(
                 crop_identity_ok = False
             else:
                 loc_str = (resp.get("evidence_locator") or execution.get("evidence_locator") or "").lower()
+                crop_name = Path(crop_path).name.lower()
                 m_loc = re.search(r"figure_([ab]\d+[a-z]*)", loc_str)
-                m_crop = re.search(r"(?:figure_)?([ab]\d+[a-z]*)", Path(crop_path).name.lower())
+                m_crop = re.search(r"(?:figure_)?([ab]\d+[a-z]*)", crop_name)
                 if m_loc and m_crop and m_loc.group(1) != m_crop.group(1):
+                    crop_identity_ok = False
+                m_crop_page = re.search(r"_p(\d+)(?:_|\.|$)", crop_name)
+                if m_crop_page and isinstance(p_page, int) and int(m_crop_page.group(1)) != p_page:
                     crop_identity_ok = False
         else:
             if crop_path is not None:
@@ -19330,6 +19373,9 @@ def evaluate_blind_hardening_benchmark(
                         body_meta_ok = False
             if body_pdf_matches and p_pdf not in body_pdf_matches:
                 if not (prov_pdf_matches and p_pdf in prov_pdf_matches):
+                    body_meta_ok = False
+            if not body_p_matches and not body_pdf_matches and prov_pdf_matches:
+                if p_pdf not in prov_pdf_matches:
                     body_meta_ok = False
         if body_meta_ok:
             body_meta_passed += 1
@@ -21881,6 +21927,32 @@ def test_gate_6_5_b53_b49_and_b44_b45_provenance():
     assert res_b45["printed_page"] == 149
     assert res_b45["pdf_index"] == 161
 
+    # Query targeting Figure B23 Panel J (printed p. 116 / PDF 128, crop p116)
+    q_b23j = (
+        "Which figure and sub-diagram illustrate the placement of temper beads and toe temper beads "
+        "in groove, fillet, and overlay welds, how is the distance S measured according to the figure's notes, "
+        "what approximate offset dimension is specified for the first layer temper beads, and how does Clause 4 "
+        "define temper pass, temper bead, temper bead sequence, toe temper pass, and toe temper bead?"
+    )
+    res_b23j = answer_whole_standard_question(q_b23j, planner=planner, stores=stores)
+    assert res_b23j["printed_page"] == 116
+    assert res_b23j["pdf_index"] == 128
+    assert res_b23j["evidence_locator"] == "figure_b23:panel_j"
+    assert res_b23j["crop_path"] == "storage/evidence_v2/annex_b_complete_001/crops/figure_b23_p116_crop_300.png"
+
+    # Query targeting Figure B46 FSW schematic key (printed p. 150 / PDF 162)
+    q_b46 = (
+        "Which figure in AWS A3.0 shows the schematic of the Friction Stir Welding process, "
+        "what are the 10 numbered items in its Key, and how does the standard define the advancing side "
+        "versus the retreating side of the weld?"
+    )
+    res_b46 = answer_whole_standard_question(q_b46, planner=planner, stores=stores)
+    assert res_b46["printed_page"] == 150
+    assert res_b46["pdf_index"] == 162
+    assert res_b46["evidence_locator"] == "figure_b46:schematic_key"
+    assert "The side of the weld in which the direction of tool rotation and travel are the same." in res_b46["answer"]
+    assert "The side of the weld in which the directions of tool rotation and travel are opposite." in res_b46["answer"]
+
 
 def test_gate_6_5_table_a3_gtaw_body_metadata_consistency():
     """Verify Table A3 GTAW returns printed p. 73 / PDF 85 without being overwritten by 72/84."""
@@ -21984,30 +22056,75 @@ def test_gate_6_5_evaluator_rejects_bad_provenance(monkeypatch):
     assert failed_q3["passed"] is False
     assert failed_q3["crop_match"] is False
 
+    # 5. Inject crop page mismatch (figure_b23_p114_crop_300.png on printed_page=116)
+    def _crop_page_mismatch_engine(*args, **kwargs):
+        res = answer_whole_standard_question(*args, **kwargs)
+        if "temper beads" in args[0].lower():
+            res["crop_path"] = "storage/evidence_v2/annex_b_complete_001/crops/figure_b23_p114_crop_300.png"
+        return res
+
+    monkeypatch.setattr("eval.run_phase6_3_blind_hardening.answer_whole_standard_question", _crop_page_mismatch_engine)
+    bad_summary4 = evaluate_blind_hardening_benchmark(root=ROOT, write_results=False)
+    assert bad_summary4["passed"] == 19
+    failed_q4 = next(r for r in bad_summary4["results"] if r["id"] == "G63-BLIND14")
+    assert failed_q4["passed"] is False
+    assert failed_q4["crop_match"] is False
+
+    # 6. Inject provenance-vs-metadata page mismatch (printed_page=5, pdf_index=17 on Figure B46 obs:pdf:162)
+    def _prov_page_mismatch_engine(*args, **kwargs):
+        res = answer_whole_standard_question(*args, **kwargs)
+        if "friction stir welding" in args[0].lower():
+            res["printed_page"] = 5
+            res["pdf_index"] = 17
+        return res
+
+    monkeypatch.setattr("eval.run_phase6_3_blind_hardening.answer_whole_standard_question", _prov_page_mismatch_engine)
+    bad_summary5 = evaluate_blind_hardening_benchmark(root=ROOT, write_results=False)
+    assert bad_summary5["passed"] == 19
+    failed_q5 = next(r for r in bad_summary5["results"] if r["id"] == "G63-BLIND13")
+    assert failed_q5["passed"] is False
+    assert failed_q5["body_meta_match"] is False
+
 
 def test_gate_6_5_checkout_cards_and_roadmap_match_questions_json():
-    """Verify that GATE_6_4_CHECKOUT_CARD.md, ROADMAP.md, and goal.md match questions.json and all 51 hashes."""
+    """Verify that GATE_6_4_CHECKOUT_CARD.md, GATE_6_5_CHECKOUT_CARD.md, ROADMAP.md, and goal.md match questions.json, live results, and all 51 hashes."""
     q_file = ROOT / "storage/evidence_v2/phase6_3_blind_hardening_001/questions.json"
     questions = json.loads(q_file.read_text(encoding="utf-8"))
 
-    card_text = (ROOT / "GATE_6_4_CHECKOUT_CARD.md").read_text(encoding="utf-8")
+    card64_text = (ROOT / "GATE_6_4_CHECKOUT_CARD.md").read_text(encoding="utf-8")
+    card65_text = (ROOT / "GATE_6_5_CHECKOUT_CARD.md").read_text(encoding="utf-8")
     roadmap_text = (ROOT / "ROADMAP.md").read_text(encoding="utf-8")
     goal_text = (ROOT / "goal.md").read_text(encoding="utf-8")
 
-    # Verify questions are in checkout card and roadmap
+    # Verify questions are in checkout cards and roadmap
     for item in questions:
         qid = item["id"]
-        assert qid in card_text, f"{qid} missing in GATE_6_4_CHECKOUT_CARD.md"
+        assert qid in card64_text, f"{qid} missing in GATE_6_4_CHECKOUT_CARD.md"
+        assert qid in card65_text, f"{qid} missing in GATE_6_5_CHECKOUT_CARD.md"
         assert qid in roadmap_text, f"{qid} missing in ROADMAP.md"
         assert qid in goal_text, f"{qid} missing in goal.md"
 
-    # Verify all 51 locked hashes match files on disk
+    # Verify live 20-query coordinates and locators match GATE_6_5_CHECKOUT_CARD.md Section 2
+    live_summary = evaluate_blind_hardening_benchmark(root=ROOT, write_results=False)
+    for row in live_summary["results"]:
+        qid = row["id"]
+        row_line = next((line for line in card65_text.splitlines() if f"`{qid}`" in line), None)
+        assert row_line is not None, f"Row for {qid} missing in GATE_6_5_CHECKOUT_CARD.md"
+        assert f"| {row['printed_page']} | {row['pdf_index']} |" in row_line, f"Coordinate mismatch in GATE_6_5_CHECKOUT_CARD.md for {qid}"
+        assert f"`{row['evidence_locator']}`" in row_line, f"Locator mismatch in GATE_6_5_CHECKOUT_CARD.md for {qid}"
+        assert f"`{row['crop_path']}`" in row_line, f"Crop path mismatch in GATE_6_5_CHECKOUT_CARD.md for {qid}"
+
+    # Verify all 51 locked hashes match files on disk AND appear verbatim in both checkout cards
     from tests.test_gate_6_4_comprehensive_enhancements import ALL_51_LOCKED_HASHES
     for rel_path, expected_hash in ALL_51_LOCKED_HASHES.items():
         p = ROOT / rel_path
         assert p.exists(), f"Locked artifact missing on disk: {rel_path}"
         actual_hash = hashlib.sha256(p.read_bytes()).hexdigest()
         assert actual_hash == expected_hash, f"Hash mismatch for {rel_path}: actual {actual_hash} != expected {expected_hash}"
+        assert rel_path in card64_text, f"Rel path {rel_path} missing in GATE_6_4_CHECKOUT_CARD.md"
+        assert expected_hash in card64_text, f"Hash {expected_hash} for {rel_path} missing in GATE_6_4_CHECKOUT_CARD.md"
+        assert rel_path in card65_text, f"Rel path {rel_path} missing in GATE_6_5_CHECKOUT_CARD.md"
+        assert expected_hash in card65_text, f"Hash {expected_hash} for {rel_path} missing in GATE_6_5_CHECKOUT_CARD.md"
 
 
 === FILE: GATE_6_0_CHECKOUT_CARD.md ===
@@ -23154,9 +23271,9 @@ All 20 queries evaluated via [`eval/run_phase6_3_blind_hardening.py`](file:///C:
 
 Gate 6.4 delivers four comprehensive production enhancements across the AWS A3.0M/A3.0:2020 source-aware ingest, reasoning, and retrieval platform:
 
-1. **Workstream A (DeepSeek Replay Suite Expansion):** Added 6 offline content-addressed replay cassettes in `storage/model_replays/deepseek_v4_1_flash_1017/` for complex multi-hop queries (`G63-BLIND04`, `G63-BLIND09`, `G63-BLIND14`, `G63-BLIND16`, `G63-BLIND18`, `G63-BLIND20`), expanding total cassettes from 14 to 20. Updated `eval/run_phase6_3_blind_hardening.py` with `--use-replay-cassettes` support, achieving 20/20 (100.0%) pass rate in both deterministic and replay-augmented modes under strict socket isolation.
-2. **Workstream B (Table A3 Matrix & Multi-Table Joins):** Implemented dedicated store-driven composer `_compose_table_a3_cross_reference` in `src/evidence_phase4_bakeoff.py` for Table A3 (134 rows), joining process names, letter designations, Table A1/A2 parent groupings, documented source anomalies (`ANOMALY-01` through `ANOMALY-04`), and Clause 4 verbatim definitions under zero-fallback AST enforcement and store-mutation degradation protection.
-3. **Workstream C (Annex B Spatial Callout Deep Traversal):** Deepened Figure B33 (13 crack locations) and Figure B46 (10 FSW key items & microstructural zones) in `src/archetype_spatial_callout.py` to join spatial callouts with Clause 4 definitions (advancing/retreating side, tool shoulder, probe, TMAZ, HAZ, crack types) with high-resolution crop provenance.
+1. **Workstream A (DeepSeek Replay Suite Expansion & Fixture Quarantine):** Added 6 offline content-addressed synthetic planner fixtures in `storage/model_replays/deterministic_planner_fixtures/` (quarantined in Gate 6.4.1 from the 14 genuine DeepSeek-V4.1 model replays in `storage/model_replays/deepseek_v4_1_flash_1017/`) for complex multi-hop queries (`G63-BLIND04`, `G63-BLIND09`, `G63-BLIND14`, `G63-BLIND16`, `G63-BLIND18`, `G63-BLIND20`). Updated `eval/run_phase6_3_blind_hardening.py` with `--use-replay-cassettes`, `--strict-replay`, and `--use-fixtures` support, achieving 20/20 (100.0%) pass rate in both deterministic and replay-augmented modes under strict socket isolation.
+2. **Workstream B (Table A3 Matrix & Multi-Table Joins):** Implemented dedicated store-driven composer `_compose_table_a3_cross_reference` in `src/evidence_phase4_bakeoff.py` for Table A3 (134 rows alphabetically from `AB` to `WS`), joining process names, letter designations, Table A1/A2 parent groupings, documented source anomalies (`ANOMALY-01` through `ANOMALY-04`), and Clause 4 verbatim definitions under zero-fallback AST enforcement and store-mutation degradation protection.
+3. **Workstream C (Annex B Spatial Callout Deep Traversal):** Deepened Figure B33 (13 crack locations on printed p. 139 / PDF index 151) and Figure B46 (10 FSW key items on printed p. 150 / PDF index 162) in `src/archetype_spatial_callout.py` to join spatial callouts with Clause 4 verbatim definitions (advancing/retreating side, crack types) and store-verified key labels (`Item 5: Tool Shoulder`, `Item 6: Probe`) with high-resolution crop provenance.
 4. **Workstream D (Whole-Standard CLI & Agent Skills Modernization):** Added `--table-a3 "<term>"` and `--offline` flag enforcing socket blocking to `src/evidence_whole_standard_cli.py`. Modernized `.agents/skills/aws-a30-ner-and-routing/SKILL.md` (corrected alphabetical Clause 4 weld test position pagination `1F`–`4F` and `1G`–`3G` on printed p. 5, `4G`–`6GR` on printed p. 6; documented `--table-a3` CLI command and Table A3 cross-referencing capabilities).
 
 ---
@@ -23194,48 +23311,48 @@ All 20 blind hardening queries execute 100% offline with zero network calls in b
 
 | Index | Rel Path | SHA-256 Digest | Status |
 | :---: | :--- | :--- | :---: |
-| 1 | `storage/evidence_v2/clause4_ingest_001/glossary_store.json` | `a16109aa9369666dd934d40e1eebbb2bb8180c4366eec6a938ea5f061e86a7d6` | MATCH |
-| 2 | `storage/evidence_v2/clause4_ingest_001/semantic_graph.json` | `f59a0f44358a74e4c2be895c1a72d73f4e2cbb1dc7b293527b134d1bcddf6047` | MATCH |
-| 3 | `storage/evidence_v2/clause4_ingest_001/concept_neighborhoods.json` | `b99e74ce9a8ca6114eb31cf5e1cb2f57ef04d2c88f11d17d5e86973e449bf258` | MATCH |
-| 4 | `storage/evidence_v2/annex_a_tables_001/final_projection/tables_graph.json` | `75ba75753066986a4220b2241cf13540eb40e53a3390c5fa6ec750a9fc770c66` | MATCH |
-| 5 | `storage/evidence_v2/a3_ingest_001/final_projection/graph.json` | `052327092305542ca024b17cf0808a3d53eb8132ca59f8a329d44747ebc7b1ce` | MATCH |
-| 6 | `storage/evidence_v2/a4_ingest_001/final_projection/graph.json` | `a5f082e668a6231f2fb8028714dfb079717878fa3e5dcaefab9b2ff639d67761` | MATCH |
-| 7 | `storage/evidence_v2/a5_ingest_001/final_projection/graph.json` | `625032a1bb18b4ddc542125bb08611cf0988cc8b9f71c4c8bf992e5c84dfc6cb` | MATCH |
-| 8 | `storage/evidence_v2/a6_ingest_001/final_projection/graph.json` | `6ae486cb4812ea11a5b822d57b290cb06eb8601c70e28f3ea72bbd940656a9a7` | MATCH |
-| 9 | `storage/evidence_v2/annex_b_complete_001/annex_b_complete_store.json` | `4322416b9b37c0500a4ceb22cb7f9ce94374945d8b2d184488db9ea0fa0f5761` | MATCH |
-| 10 | `storage/evidence_v2/annex_b_archetype4_001/figure_summaries.json` | `888ba30d24497e2373a62dd958e923e42921503c80aeaf0e96495be4d9d1ef50` | MATCH |
-| 11 | `storage/evidence_v2/annex_c_d_ingest_001/annex_c_d_store.json` | `85e88eeb0579e000f0ea58a7be74a625a8a652e92cbb463d1cc7d8d216fc29b0` | MATCH |
-| 12 | `storage/evidence_v2/annex_a_holdout_001/evaluation/rubric.json` | `75f2ee3f21a3648eb12e52b8606bf466a987677fe19927d3fa3febe4326574c8` | MATCH |
-| 13 | `storage/evidence_v2/phase5_hardening_001/adversarial_questions.json` | `e2a4f4b23832c32dd599e81bdf9fc0f1566cf2c2a939fbfbf7f45c9ee6479f1d` | MATCH |
-| 14 | `storage/evidence_v2/phase5_hardening_001/rubric.json` | `ef483321db8cfa82be02db72449646c24f6d4d1421f92c28fc8a4ee9e830e0e0` | MATCH |
-| 15 | `storage/evidence_v2/phase5_hardening_001/results.json` | `b68071fa6e3dbe7cf77be2bf1fdf335ea0f0552b7ba58bfa79c67b25528d229e` | MATCH |
-| 16 | `storage/evidence_v2/phase5_5_nlq_001/nlq_questions.json` | `a3ad3e8b0938f32aa7b1897d8bba0f92b95cf8d7dc788916b9cb8b51a54728d8` | MATCH |
-| 17 | `storage/evidence_v2/phase5_5_nlq_001/rubric.json` | `0d810842211516e0be5a690e8a71676df4d1830113f8dbe8f615f20658f89ba6` | MATCH |
-| 18 | `storage/evidence_v2/phase5_5_nlq_001/results.json` | `ef51a704445209c1221b03399653835f1ff5b2cbfefc4155b412bf248387063f` | MATCH |
-| 19 | `storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json` | `2e04f323a669ff815e985b8543fc784e18c5e003ce733a1cc0d39e80e5563914` | MATCH |
-| 20 | `storage/evidence_v2/phase6_ner_routing_001/rubric.json` | `11186cb23f954fe3108c32ec8fb263ecae663ba4183d2ae6bf02a8bf3df0bcf1` | MATCH |
-| 21 | `storage/evidence_v2/phase6_ner_routing_001/results.json` | `10e0568c07c1bb4801e0a29f8c6ebf216eb253d712213e4b4dd4f923be2a338c` | MATCH |
-| 22 | `storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json` | `ad6c3038676bf976bb2cc76b885cf83d289bf6562092f6d2b378eb595e0c6f55` | MATCH |
-| 23 | `storage/evidence_v2/phase6_1_semantic_graph_001/rubric.json` | `b99e03f90558b3e8395f2420958742875ca8f349c71987dbe63737ec38497fa9` | MATCH |
-| 24 | `storage/evidence_v2/phase6_1_semantic_graph_001/results.json` | `d7ea2ce0402eb929188d8b1e428bc48b3941743126dd0ca4787aeb43aa1767e1` | MATCH |
-| 25 | `storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json` | `1e23f0340b07e78ee2913e1c667086ce381669c3a372d82914757c3d790d9657` | MATCH |
-| 26 | `storage/evidence_v2/phase6_2_generalization_holdout_001/rubric.json` | `cb3d168e3760ea515d9cc0aa5709cf5fc05ff4c568f6bfcb91a4ea847a9bb768` | MATCH |
-| 27 | `storage/evidence_v2/phase6_2_generalization_holdout_001/results.json` | `901f409e39e6a9f029517bf579b2ae8fca020757d5598fb29ba518175b9f9ea4` | MATCH |
-| 28 | `storage/evidence_v2/phase6_2_generalization_holdout_002/questions.json` | `be4523fa5ca1a58142bfa212953ae2a5146cbb561efdf5b2149b5c2df9e5fa4f` | MATCH |
-| 29 | `storage/evidence_v2/phase6_2_generalization_holdout_002/rubric.json` | `4859a0f9b60991823ebae6e974e64593ccf9a6e191963fc23cf0a45e7d9b977c` | MATCH |
-| 30 | `storage/evidence_v2/phase6_2_generalization_holdout_002/results.json` | `a3d7d7f95561b369b7f5ce8c005beff38b39a48972ca8b472e3995874c7db3a6` | MATCH |
-| 31 | `storage/model_replays/deepseek_v4_1_flash_1017/4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed.json` | `c4ea5575fa276e0be4b22c7eb1a2575db44e545468d0eeef91497a552bfdbb70` | MATCH |
-| 32 | `storage/model_replays/deepseek_v4_1_flash_1017/b1548f09c2320a74d640678cd729af098402a7685f4d160f66b0781ccd6d80a1.json` | `87216c52a0a2dfd666d9bb4e73105ff7ccbc4d9d4375b430ef8a09cfaf12f8a4` | MATCH |
-| 33 | `storage/model_replays/deepseek_v4_1_flash_1017/8f874e9651d4a5986b59aacf9ffd9a8faea49945156d639226c94415776ea065.json` | `b3e9a59b20b22a00940ec67732a39a2eb24b6118fa3c072220fbf4e8c160a5e8` | MATCH |
-| 34 | `storage/model_replays/deepseek_v4_1_flash_1017/8fdbb05270c87bfc19e04a51c0a71b193fbc3fe68d3bcfb443887f49ce2e2ad8.json` | `beaa0ef403fa8a38ea6ae5ccad0e77d07997321ebf33a8a30eb6014e304859a5` | MATCH |
-| 35 | `storage/model_replays/deepseek_v4_1_flash_1017/7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0.json` | `b49989feeb6dd052d9609f9f5b61e27161b96d99723528b7eec97e040c5bf5ea` | MATCH |
-| 36 | `storage/model_replays/deepseek_v4_1_flash_1017/7e9982c36d0fcfa591123da74ceb0e7c7da002981d4379693a07eb61d3c40d29.json` | `f5999f8ce725914fa64e031eb04764835697d2c3dfb86e4ea4753086eb293bf6` | MATCH |
-| 37 | `storage/model_replays/deepseek_v4_1_flash_1017/a93c3e92000bc19bc6a8f7672c57767205dc0241047f7e2a6f1d00421a71ed81.json` | `6ae480a4005080b0bb1169829370bb0dd0e82c6bb3fdbfb4ea5e89d8be8d5d43` | MATCH |
-| 38 | `storage/model_replays/deepseek_v4_1_flash_1017/3d6a2cbb61def68a41a52cdec81712a85cd65f7ed52c2e6505bc280821dacf9a.json` | `e08d6d6787328bf3882772591605a9634e9e03d45fa671d2b86867376c944ebc` | MATCH |
-| 39 | `storage/model_replays/deepseek_v4_1_flash_1017/6af589ad1ddedbf0af24de84ad5b0acdae77e506524354a9f4a7eab1edb63c5a.json` | `0f07b1aeb897a87e596df2fe1a8a29a0f5898efb0451a44c77cbbcf3b10c9d74` | MATCH |
-| 40 | `storage/model_replays/deepseek_v4_1_flash_1017/afca5b807cf1cf10dd4fca5ed3f174f00a84208f13c2134d93cb9bfcc65a06ce.json` | `9b37803a6e927ddb04ce32b0789098fbdd708b73c4f74d4a86ec0b23023fc245` | MATCH |
-| 41 | `storage/model_replays/deepseek_v4_1_flash_1017/a255faf2cc465a328ac6802095f4b3f945048b1304fc37b1e37c34357bf88dce.json` | `ba341852467dbb683d719cf73d32840784964191c4998762f27710c961e053cb` | MATCH |
-| 42 | `storage/model_replays/deepseek_v4_1_flash_1017/f02ce6be7d824f18618917bed89d5ef0cc89f93a70afa8ea3d3ec026321870cf.json` | `fa7cfb8f886f44cf68426ca2b8da56ce08b8b9f1d2c673eb64d7c50a1e06fa99` | MATCH |
+| 1 | `data/AWS_A3.0_2020.pdf` | `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d` | MATCH |
+| 2 | `storage/evidence_v2/clause4_ingest_001/glossary_store.json` | `e88a2fd4b8a0be47d1691cceb495d89ec4d4e25fad7c7d1d1f5e36c46d5b629b` | MATCH |
+| 3 | `storage/evidence_v2/clause4_ingest_001/annex_c_d_store.json` | `8b5d8faae9c42c27ac20b75f3bb2ac0f804957770b13e295d1926972ede07266` | MATCH |
+| 4 | `storage/evidence_v2/clause4_ingest_001/is_a_promotion_store.json` | `a5c69c351dcf1a013fdc7789952f07cda7130819a3c809897e73840797eac9e5` | MATCH |
+| 5 | `storage/evidence_v2/annex_b_archetype3_001/annex_b_archetype3_unified_store.json` | `16b7bea56932283b4d37d70871cf082690baaef725ef46cf85104047cc719254` | MATCH |
+| 6 | `storage/evidence_v2/annex_b_complete_001/annex_b_complete_unified_store.json` | `d26a7f8fa45c138a56cba61c95745b99760b383c9e9c8960153efcd8e548f898` | MATCH |
+| 7 | `storage/evidence_v2/annex_b_complete_001/annex_b_archetype4_unified_store.json` | `ccd1a957610e6bf92d02643140c2f11fb8379c634b48a7ad97bdb5e06bfaf954` | MATCH |
+| 8 | `storage/evidence_v2/annex_a_holdout_001/evaluation/rubric.json` | `70fb2473078b1d0dab6b1b73c7b8a9fcb29724a22c60841d03ce4e54820bb479` | MATCH |
+| 9 | `storage/evidence_v2/phase5_hardening_001/adversarial_questions.json` | `0d46daec2014562e97ff74ac36c165e1ba263953ef84d0e0080b85aa0c0e39c9` | MATCH |
+| 10 | `storage/evidence_v2/phase5_hardening_001/rubric.json` | `df71960a443e9b54d2607628d59fa2181df32f49426bb7c3b81108e32e5e7981` | MATCH |
+| 11 | `storage/evidence_v2/phase5_hardening_001/results.json` | `92c62b9e2a7479d60b79bcbe88f8d52f03fa8f650d12a1a9d2b5626aab470273` | MATCH |
+| 12 | `storage/evidence_v2/phase5_5_nlq_001/nlq_questions.json` | `ad789f44f36dc60bdf041031e2cddd78b6b92e4750f171af41cb7c63f8769e57` | MATCH |
+| 13 | `storage/evidence_v2/phase5_5_nlq_001/rubric.json` | `68cbbdcf4ba8595c15e9c41dd7985d9c65b13d614c18357e9f6ccc4f1af8e77b` | MATCH |
+| 14 | `storage/evidence_v2/phase5_5_nlq_001/results.json` | `df931bfebd19449393444f32cf86e2cd8ff26a2319c6a2e580538840e6128e74` | MATCH |
+| 15 | `storage/model_replays/deepseek_v4_1_flash_1017/33f775db13a0587d65dd170de053553322749cbf7b4522305cf8602daabc57ef.json` | `59e763ee6dbe1c21c5f90c160e7b6a9d7474c356b4a6606bde801d1684a45d2f` | MATCH |
+| 16 | `storage/model_replays/deepseek_v4_1_flash_1017/8f874e9651d4a5986b59aacf9ffd9a8faea49945156d639226c94415776ea065.json` | `e9b8213dafe57b970f83eb70ba97430d8acf60c75bf325320175df63b7f19079` | MATCH |
+| 17 | `storage/model_replays/deepseek_v4_1_flash_1017/a255faf2cc465a328ac6802095f4b3f945048b1304fc37b1e37c34357bf88dce.json` | `5c9d8f18688658d225f6d056dee64d1bf6f75a649854cebbf1277edff59a879d` | MATCH |
+| 18 | `storage/model_replays/deepseek_v4_1_flash_1017/afca5b807cf1cf10dd4fca5ed3f174f00a84208f13c2134d93cb9bfcc65a06ce.json` | `6af858c6928ae940966e7f7ef768763eb570ead41cc595caab07005bb1ff4d4a` | MATCH |
+| 19 | `storage/model_replays/deepseek_v4_1_flash_1017/b84e96a090b80d799a7d28127ec9304edd116bcec6976f7f7bf69ae0f4e590ea.json` | `d50b483130b30a268433d8c627a78017fe707f9cd0180e2cba6dacb7c7984592` | MATCH |
+| 20 | `storage/model_replays/deepseek_v4_1_flash_1017/6af589ad1ddedbf0af24de84ad5b0acdae77e506524354a9f4a7eab1edb63c5a.json` | `ae0625dacb0a7541955f46d73cb6a85e2234363bc89a7c5771608d71feb069f2` | MATCH |
+| 21 | `storage/model_replays/deepseek_v4_1_flash_1017/8fdbb05270c87bfc19e04a51c0a71b193fbc3fe68d3bcfb443887f49ce2e2ad8.json` | `e7114838a52b3d965c0c32cd8977f4e1c998bdad0ab07f5987d9b7825ddb134e` | MATCH |
+| 22 | `storage/model_replays/deepseek_v4_1_flash_1017/f02ce6be7d824f18618917bed89d5ef0cc89f93a70afa8ea3d3ec026321870cf.json` | `0513f4d16b5d6f72ae66688414ffce809000cd0e3444a8bea9db8e6ac6420621` | MATCH |
+| 23 | `storage/manifests/coverage_manifest.json` | `8fa510a5d4880f88e05fbf3c295992b9c5ae5274c65e46086ad08fee7c2d553e` | MATCH |
+| 24 | `storage/manifests/latency_benchmark.json` | `bc4bb0edfd67bbea0d5204a6430ce6be5af508b07f2874a779a0c2bf230c614c` | MATCH |
+| 25 | `storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json` | `bf2fd3b05532cb76a0584cd1d6db8d3f1fe038ba632d539d8be94a4feb4f23ac` | MATCH |
+| 26 | `storage/evidence_v2/phase6_ner_routing_001/rubric.json` | `602f37e0194a99ee6b3e52c95c1c76d9e57a3950a50ea7a5efd15c336645b427` | MATCH |
+| 27 | `storage/evidence_v2/phase6_ner_routing_001/results.json` | `4023b5c13b8265f9a6085399e0176644df8119366ccc3ea920c098159f6ef8a8` | MATCH |
+| 28 | `storage/model_replays/deepseek_v4_1_flash_1017/4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed.json` | `b5c11233c5389651c5ff6730ebb56b51e910042d8aada8f5b9ec7752f2c7d057` | MATCH |
+| 29 | `storage/model_replays/deepseek_v4_1_flash_1017/7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0.json` | `178e40f106af85fd17e9a949877cf6b0ea3c469516e102efdc017d043635df42` | MATCH |
+| 30 | `storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json` | `aa16b7fcc444ca4c54bed8eb758a35bde3d9e8c3f64afbb7b75b0112ed0f45d7` | MATCH |
+| 31 | `storage/evidence_v2/phase6_1_semantic_graph_001/rubric.json` | `42e4e8c3d3fa9e7c32b61d1deafa3a5d42a36b72ab0ec2c4465268d3977457d5` | MATCH |
+| 32 | `storage/evidence_v2/phase6_1_semantic_graph_001/results.json` | `48b4dc84db39dfe0aa68f0e1610bb3fa8e27be546f0294319a11c9af1cafbccf` | MATCH |
+| 33 | `storage/model_replays/deepseek_v4_1_flash_1017/a93c3e92000bc19bc6a8f7672c57767205dc0241047f7e2a6f1d00421a71ed81.json` | `22bcf1de364e9ba87b604da2ee3e817516570d972b858616cd80018c9acbf432` | MATCH |
+| 34 | `storage/model_replays/deepseek_v4_1_flash_1017/b1548f09c2320a74d640678cd729af098402a7685f4d160f66b0781ccd6d80a1.json` | `72f97e7f8aae9bcef96b16d2f55fea24b9c99ae2068fed3dc8cae8a69efc4993` | MATCH |
+| 35 | `storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json` | `5cb54690e1d6d15e60df75e60a173f5d9eba948e38c6f1042b2c9acb3d123d0a` | MATCH |
+| 36 | `storage/evidence_v2/phase6_2_generalization_holdout_001/rubric.json` | `bb18c854ee6c590dfa83955939b0c9fd810a4cd633ee6d0f64eaf9f0168fe6c3` | MATCH |
+| 37 | `storage/evidence_v2/phase6_2_generalization_holdout_001/results.json` | `dfe96330a00328fdb79d594353be826c6d3ccaa10063b62b0a83e0f560886f60` | MATCH |
+| 38 | `storage/model_replays/deepseek_v4_1_flash_1017/7e9982c36d0fcfa591123da74ceb0e7c7da002981d4379693a07eb61d3c40d29.json` | `f8cd0108b311f27868d5b9fa59b9478ff4128492be28d361d7b793f6011bc21f` | MATCH |
+| 39 | `storage/model_replays/deepseek_v4_1_flash_1017/3d6a2cbb61def68a41a52cdec81712a85cd65f7ed52c2e6505bc280821dacf9a.json` | `cb9ac95d98a5aac82c61f4d2d4b34438b452268f7e0221996fdac9e55edac570` | MATCH |
+| 40 | `storage/evidence_v2/phase6_2_generalization_holdout_002/questions.json` | `5cb54690e1d6d15e60df75e60a173f5d9eba948e38c6f1042b2c9acb3d123d0a` | MATCH |
+| 41 | `storage/evidence_v2/phase6_2_generalization_holdout_002/rubric.json` | `e23085ad83f13142a7bc84a1ddc3a89459b72b8c894c966b98d4d9b6587b24c4` | MATCH |
+| 42 | `storage/evidence_v2/phase6_2_generalization_holdout_002/results.json` | `0d9f8a1bf4a88861ab0c6fa27ec6cf0a88fd8a1f1cc257c02d25433396b53b2b` | MATCH |
 | 43 | `storage/evidence_v2/phase6_3_blind_hardening_001/questions.json` | `be8ee997284de16cb367042a09206d77950344b59f14c68f5ba9ac0123141b5b` | MATCH |
 | 44 | `storage/evidence_v2/phase6_3_blind_hardening_001/rubric.json` | `a575cd1833cd2d041b6359abdadeff71a728430e155d49d8bdf70205e50ff22c` | MATCH |
 | 45 | `storage/evidence_v2/phase6_3_blind_hardening_001/results.json` | `18f247c1abb8b96d0a52081e0f8fabb32a74dcaced77143bf9ece518cd19c4c2` | MATCH |
@@ -23253,29 +23370,29 @@ All 20 blind hardening queries execute 100% offline with zero network calls in b
 
 ## 4. Architectural Enhancements Detail
 
-### Workstream A: DeepSeek Replay Suite Expansion
-- Generated 6 content-addressed replay cassettes in `storage/model_replays/deepseek_v4_1_flash_1017/` matching the prompt SHA-256 contracts:
+### Workstream A: DeepSeek Replay Suite Expansion & Fixture Quarantine
+- Generated 6 content-addressed synthetic planner fixtures (quarantined in `storage/model_replays/deterministic_planner_fixtures/` per `PROV-6.4-1`) matching the prompt SHA-256 contracts:
   - `G63-BLIND04`: Reverse figure lookup for Figure B21 (`1a0d448e...`)
   - `G63-BLIND09`: Obsolete processes BB and CAW-S in Table A5 (`73ccb5c6...`)
   - `G63-BLIND14`: Temper bead cluster in Figure B23(J) + Clause 4 (`07d3e65c...`)
   - `G63-BLIND16`: Table A4 application mode suffixes (`c2b781b1...`)
   - `G63-BLIND18`: Annex C C2.3 safety exception + Figure B34 (`78072b41...`)
   - `G63-BLIND20`: Figures B49/B50 dual waveforms + 11 cycle intervals (`d6401cf2...`)
-- Verified dual-mode evaluation in `eval/run_phase6_3_blind_hardening.py`:
+- Verified evaluation in `eval/run_phase6_3_blind_hardening.py`:
   - Deterministic planner alone: 20/20 passed (100.0%)
-  - Replay-augmented planner (`--use-replay-cassettes`): 20/20 passed (100.0%)
+  - Replay-augmented planner (`--use-replay-cassettes` / `--use-fixtures`): 20/20 passed (100.0%)
 
 ### Workstream B: Table A3 Cross-Reference Matrix & Multi-Table Joins
 - Implemented `_compose_table_a3_cross_reference` in `src/evidence_phase4_bakeoff.py`:
-  - Catalogs 134 process designations alphabetically from AB (adhesive bonding) to W (welding) across printed pp. 72–73 (PDF index 84–85).
+  - Catalogs 134 process designations alphabetically from `AB` (adhesive bonding) to `WS` (weld soldering) across printed pp. 72–73 (PDF index 84–85).
   - Dynamic joins with Table A1/A2 parent process groupings.
   - Documented Source Anomaly cross-referencing (`ANOMALY-01` through `ANOMALY-04`).
   - Clause 4 verbatim definition and printed page lookup via `lookup_glossary_term`.
-  - Zero-fallback AST compliance across all 13 composer functions.
+  - Zero-fallback AST compliance across all composer functions.
   - Strict `ValueError("INSUFFICIENT_EVIDENCE")` on empty stores.
 
 ### Workstream C: Annex B Spatial Callout Deep Traversal
-- Figure B33 (Crack Types, printed p. 127, PDF index 139):
+- Figure B33 (Crack Types, printed p. 139, PDF index 151):
   - 13 numbered crack key items extracted from legend.
   - Verbatim Clause 4 definitions appended for key crack types:
     - Crater crack (p. 18): `"A crack initiated and localized within a crater. See Figure B33."`
@@ -23283,14 +23400,14 @@ All 20 blind hardening queries execute 100% offline with zero network calls in b
     - Underbead crack (p. 61): `"A heat-affected zone crack in steel weldments arising from the occurrence of a crack-susceptible microstructure, residual or applied stress, and the presence of hydrogen. See Figures B32(B) and B33(A)."`
     - Lamellar tear (p. 35): `"A subsurface terrace and step-like crack in the base metal with a basic orientation parallel to the wrought surface caused by tensile stresses in the through-thickness direction of the base metals weakened by the presence of small dispersed, planar-shaped, nonmetallic inclusions parallel to the metal surface. See Figure B33(B)."`
     - Root crack (p. 49): `"See Figure B33."`
-  - Normative provenance: `obs:pdf:139:figure:Figure B33`, plus individual Clause 4 locators (`obs:pdf:30:clause:crater_crack`, `obs:pdf:71:clause:toe_crack`, etc.).
-- Figure B46 (Friction Stir Welding Schematic, printed p. 138, PDF index 150):
-  - 10 numbered tool/weld key items & microstructural zones (Stir Zone / Weld Nugget, TMAZ, HAZ).
-  - Verbatim Clause 4 definitions:
+  - Normative provenance: `obs:pdf:151:figure:Figure B33`, plus individual Clause 4 locators (`obs:clause4:p18:crater_crack`, `obs:clause4:p59:toe_crack`, etc.).
+- Figure B46 (Friction Stir Welding Schematic, printed p. 150, PDF index 162):
+  - 10 numbered tool/weld key items & microstructural zones (`obs:pdf:162:figure:Figure B46`).
+  - Verbatim Clause 4 definitions and store-verified key labels:
     - Advancing side (p. 7): `"The side of the weld in which the direction of tool rotation and travel are the same. See also retreating side. See Figure B46."`
     - Retreating side (p. 48): `"The side of the weld in which the directions of tool rotation and travel are opposite. See Figure B46. See also advancing side."`
-    - Tool shoulder: Item 5 description of contoured cylindrical shoulder applying axial force and generating frictional heating.
-    - Probe: Item 6 description of profiled pin shearing, stirring, and forging plasticized material across advancing and retreating sides.
+    - Tool shoulder: `Item 5: Tool Shoulder` (store-verified key label).
+    - Probe: `Item 6: Probe` (store-verified key label).
 
 ### Workstream D: Whole-Standard CLI & Agent Skills Modernization
 - `src/evidence_whole_standard_cli.py`:
@@ -23437,26 +23554,26 @@ All 20 benchmark queries execute 100% offline with zero network calls, satisfyin
 
 | QID | Benchmark Query Text | Status | Printed Page | PDF Index | Evidence Locator | Crop Path | Required Elements Present | Strict Pass |
 | :--- | :--- | :---: | :---: | :---: | :--- | :--- | :--- | :---: |
-| `G63-BLIND01` | What is acetylene feather? | PASS | 6 | 18 | `clause4:term:acetylene_feather` | None | acetylene feather, carburizing, oxyacetylene flame, Figure B40 | PASS |
-| `G63-BLIND02` | Define GTAW? | PASS | 29 | 41 | `clause4:term:gas_tungsten_arc_welding` | None | gas tungsten arc welding, GTAW, tungsten electrode, Figure B36 | PASS |
-| `G63-BLIND03` | What is the Rotation of Face for Flat Fillet Weld? | PASS | 103 | 115 | `figure_b16b:table_details` | `figure_b16b_p103_crop_300.png` | 150° to 210°, Figure B16B, Flat | PASS |
-| `G63-BLIND04` | What figure shows the position of beam, filler material, gun or torch? | PASS | 112 | 124 | `figure_b21:diagram_details` | `figure_b21_p112_crop_300.png` | Figure B21, Position of Beam, Filler Material, Gun, or Torch | PASS |
-| `G63-BLIND05` | What are the applicable weld types for a T-Joint? | PASS | 82 | 94 | `figure_b1:panel_c_applicable_welds` | `figure_b1_p82_crop_300.png` | Figure B1, T-Joint, fillet, bevel-groove | PASS |
-| `G63-BLIND06` | How many different energy sources are there in Brazing and Soldering? | PASS | 79 | 91 | `figure_a6:hierarchy_tree` | `figure_a6_p79_crop_300.png` | Figure A6, Chemical, Electrical, 2 | PASS |
-| `G63-BLIND07` | What is FRW, RSEW, and RSW? | PASS | 27 | 39 | `tables_a1_a3:multi_process_decoding` | None | friction welding, FRW, resistance seam welding, RSEW | PASS |
-| `G63-BLIND08` | List all the Solid State Welding Processes | PASS | 75 | 87 | `figure_a1:process_family_tree` | `figure_a1_p75_crop_300.png` | coextrusion welding, CEW, cold welding, CW | PASS |
-| `G63-BLIND09` | Is block Brazing and Shielded carbon arc welding Obsolete processes? | PASS | 78 | 90 | `table_a5:obsolete_processes` | None | Table A5, obsolete, block brazing, BB | PASS |
-| `G63-BLIND10` | What is the difference between FLSP, FLSP-P, and FLSP-W? | PASS | 26 | 38 | `tables_a1_a3:multi_process_decoding` | None | flame spraying, FLSP, powder flame spraying, FLSP-P | PASS |
-| `G63-BLIND11` | What is a block sequence, what figure illustrates it, and how does AWS A3.0 define and distinguish all of its cross-referenced sequence terms? | PASS | 114 | 126 | `figure_b23:diagram_details` | `figure_b23_p114_crop_300.png` | block sequence, Figure B23, cascade sequence, cross-sectional sequence | PASS |
-| `G63-BLIND12` | Define effective throat (including how it is determined when a fillet weld is combined with a partial joint penetration groove weld), identify the figures that illustrate it, and provide the definitions of its cross-referenced throat terms. | PASS | 120 | 132 | `figure_b25:diagram_details` | `figure_b25_p120_crop_300.png` | effective throat, partial joint penetration groove weld, B25, actual throat | PASS |
-| `G63-BLIND13` | Which figure in AWS A3.0 shows the schematic of the Friction Stir Welding process, what are the 10 numbered items in its Key, and how does the standard define the advancing side versus the retreating side of the weld? | PASS | 147 | 159 | `figure_b46:diagram_details` | `figure_b46_p147_crop_300.png` | Figure B46, Base Metal, Direction of Tool Rotation, Weld Tool | PASS |
-| `G63-BLIND14` | Which figure and sub-diagram illustrate the placement of temper beads and toe temper beads in groove, fillet, and overlay welds, how is the distance S measured according to the figure's notes, what approximate offset dimension is specified for the first layer temper beads, and how does Clause 4 define temper pass, temper bead, temper bead sequence, toe temper pass, and toe temper bead? | PASS | 116 | 128 | `figure_b23:panel_j` | `figure_b23_p116_crop_300.png` | Figure B23, (J), distance S, parallel to the base metal surface | PASS |
-| `G63-BLIND15` | How does AWS A3.0 define reentrant angle, bead reentrant angle, and toe reentrant angle, which figure sub-diagrams illustrate them, and what angular condition at the weld toe, weld root, or weld bead toe defines overlap in fusion welding? | PASS | 133 | 145 | `figure_b32:diagram_details` | `figure_b32_p133_crop_300.png` | reentrant angle, bead reentrant angle, toe reentrant angle, Figure B32 | PASS |
-| `G63-BLIND16` | List all six application modes and their letter designation suffixes from Table A4, explain the rule and format for appending them to a process or process variation designation, and give the Clause 4 definitions that distinguish the six application modes. | PASS | 77 | 89 | `table_a4:letter_designation_suffixes` | None | Table A4, -AD, -AU, -MA | PASS |
-| `G63-BLIND17` | Decode the letter designations LBC, LBC-A, LBC-EV, LBC-IG, LBC-O and EBW, EBW-HV, EBW-MV, EBW-NV from Annex A (Tables A1–A3), and state how Clause 4 defines each variation, including the exact operating pressure ranges in pascals and torr for the electron beam welding variations. | PASS | 21 | 33 | `tables_a1_a3:multi_process_decoding` | None | laser beam cutting, LBC, laser beam air cutting, LBC-A | PASS |
-| `G63-BLIND18` | According to the Foreword and Annex C, under what specific exception does AWS A3.0 classify a term as both "nonstandard and incorrect"? Identify the electrical circuit terms in Clause 4 that carry this "nonstandard and incorrect" designation, and provide the definitions of the standard terms that must be used instead (including the safety distinction with ground connection in Figure B34). | PASS | 137 | 149 | `figure_b34:diagram_details` | `figure_b34_p137_crop_300.png` | personal safety, ground clamp, ground lead, welding ground | PASS |
-| `G63-BLIND19` | Explain two major terminology revisions documented in Annex C (Clauses C1.5.6 and C1.5.7) and Annex D of AWS A3.0:2020: (1) Why was parallel joint introduced to replace edge joint among the five basic joint types, and how are both terms defined in Clause 4? (2) How did the 13th edition change the status of nondestructive evaluation, nondestructive inspection (NDI), and nondestructive testing (NDT) relative to nondestructive examination (NDE), and why was the definition of nondestructive examination (NDE) itself modified? | PASS | 159 | 171 | `annex_c_and_d:historical_revisions` | None | parallel joint, edge joint, Clause 4, Table D5 | PASS |
-| `G63-BLIND20` | Compare the resistance spot welding waveforms in Figure B49 (Pulsation Welding Waveform) and Figure B50 (Single-Pulse Resistance Spot Welding Waveform): how does Clause 4 distinguish weld time, resistance welding from weld interval, resistance welding, and cool time, resistance welding from quench time, resistance welding? Additionally, define the sequential cycle intervals shown across Figures B49 and B50: squeeze time, preweld interval, preheat time, upslope time, pulse time, downslope time, temper time, hold time, postweld interval, forge-delay time, and off time. | PASS | 153 | 165 | `figures_b49_b50:waveform_comparison` | `figure_b49_p152_crop_300.png` | Figure B49, Figure B50, weld time, weld interval | PASS |
+| `G63-BLIND01` | What is acetylene feather? | PASS | 6 | 18 | `clause4:term:acetylene feather` | `None` | acetylene feather, carburizing, oxyacetylene flame, Figure B40 | PASS |
+| `G63-BLIND02` | Define GTAW? | PASS | 69 | 81 | `table_a1:process_letter_designations` | `None` | gas tungsten arc welding, GTAW, tungsten electrode, Figure B36 | PASS |
+| `G63-BLIND03` | What is the Rotation of Face for Flat Fillet Weld? | PASS | 103 | 115 | `figure_b16b:diagram_details` | `storage/evidence_v2/annex_b_complete_001/crops/figure_b16b_p103_crop_300.png` | 150° to 210°, Figure B16B, Flat | PASS |
+| `G63-BLIND04` | What figure shows the position of beam, filler material, gun or torch? | PASS | 112 | 124 | `figure_b21:diagram_details` | `storage/evidence_v2/annex_b_complete_001/crops/figure_b21_p112_crop_300.png` | Figure B21, Position of Beam, Filler Material, Gun, or Torch | PASS |
+| `G63-BLIND05` | What are the applicable weld types for a T-Joint? | PASS | 82 | 94 | `figure_b1:diagram_details` | `storage/evidence_v2/annex_b_complete_001/crops/figure_b1_p82_crop_300.png` | Figure B1, T-Joint, fillet, bevel-groove | PASS |
+| `G63-BLIND06` | How many different energy sources are there in Brazing and Soldering? | PASS | 79 | 91 | `figure_a6:brazing_and_soldering` | `storage/evidence_v2/a6_ingest_001/a6_crop_300.png` | Figure A6, Chemical, Electrical, 2 | PASS |
+| `G63-BLIND07` | What is FRW, RSEW, and RSW? | PASS | 70 | 82 | `table_a1:process_letter_designations` | `None` | friction welding, FRW, resistance seam welding, RSEW | PASS |
+| `G63-BLIND08` | List all the Solid State Welding Processes | PASS | 78 | 90 | `figure_a5:solid_state_welding` | `storage/evidence_v2/a5_ingest_001/a5_crop_300.png` | coextrusion welding, CEW, cold welding, CW | PASS |
+| `G63-BLIND09` | Is block Brazing and Shielded carbon arc welding Obsolete processes? | PASS | 74 | 86 | `table_a5:obsolete_processes` | `None` | Table A5, obsolete, block brazing, BB | PASS |
+| `G63-BLIND10` | What is the difference between FLSP, FLSP-P, and FLSP-W? | PASS | 70 | 82 | `table_a1:process_letter_designations` | `None` | flame spraying, FLSP, powder flame spraying, FLSP-P | PASS |
+| `G63-BLIND11` | What is a block sequence, what figure illustrates it, and how does AWS A3.0 define and distinguish all of its cross-referenced sequence terms? | PASS | 114 | 126 | `figure_b23:diagram_details` | `storage/evidence_v2/annex_b_complete_001/crops/figure_b23_p114_crop_300.png` | block sequence, Figure B23, cascade sequence, cross-sectional sequence | PASS |
+| `G63-BLIND12` | Define effective throat (including how it is determined when a fillet weld is combined with a partial joint penetration groove weld), identify the figures that illustrate it, and provide the definitions of its cross-referenced throat terms. | PASS | 127 | 139 | `figure_b26:diagram_details` | `storage/evidence_v2/annex_b_complete_001/crops/figure_b26_p127_crop_300.png` | effective throat, partial joint penetration groove weld, B25, actual throat | PASS |
+| `G63-BLIND13` | Which figure in AWS A3.0 shows the schematic of the Friction Stir Welding process, what are the 10 numbered items in its Key, and how does the standard define the advancing side versus the retreating side of the weld? | PASS | 150 | 162 | `figure_b46:schematic_key` | `None` | Figure B46, Base Metal, Direction of Tool Rotation, Weld Tool | PASS |
+| `G63-BLIND14` | Which figure and sub-diagram illustrate the placement of temper beads and toe temper beads in groove, fillet, and overlay welds, how is the distance S measured according to the figure's notes, what approximate offset dimension is specified for the first layer temper beads, and how does Clause 4 define temper pass, temper bead, temper bead sequence, toe temper pass, and toe temper bead? | PASS | 116 | 128 | `figure_b23:panel_j` | `storage/evidence_v2/annex_b_complete_001/crops/figure_b23_p116_crop_300.png` | Figure B23, (J), distance S, parallel to the base metal surface | PASS |
+| `G63-BLIND15` | How does AWS A3.0 define reentrant angle, bead reentrant angle, and toe reentrant angle, which figure sub-diagrams illustrate them, and what angular condition at the weld toe, weld root, or weld bead toe defines overlap in fusion welding? | PASS | 136 | 148 | `figure_b32:diagram_details` | `storage/evidence_v2/annex_b_complete_001/crops/figure_b32_p136_crop_300.png` | reentrant angle, bead reentrant angle, toe reentrant angle, Figure B32 | PASS |
+| `G63-BLIND16` | List all six application modes and their letter designation suffixes from Table A4, explain the rule and format for appending them to a process or process variation designation, and give the Clause 4 definitions that distinguish the six application modes. | PASS | 74 | 86 | `table_a4:suffix:-AU` | `None` | Table A4, -AD, -AU, -MA | PASS |
+| `G63-BLIND17` | Decode the letter designations LBC, LBC-A, LBC-EV, LBC-IG, LBC-O and EBW, EBW-HV, EBW-MV, EBW-NV from Annex A (Tables A1–A3), and state how Clause 4 defines each variation, including the exact operating pressure ranges in pascals and torr for the electron beam welding variations. | PASS | 70 | 82 | `table_a1:process_letter_designations` | `None` | laser beam cutting, LBC, laser beam air cutting, LBC-A | PASS |
+| `G63-BLIND18` | According to the Foreword and Annex C, under what specific exception does AWS A3.0 classify a term as both "nonstandard and incorrect"? Identify the electrical circuit terms in Clause 4 that carry this "nonstandard and incorrect" designation, and provide the definitions of the standard terms that must be used instead (including the safety distinction with ground connection in Figure B34). | PASS | 140 | 152 | `figure_b34:diagram_details` | `storage/evidence_v2/annex_b_complete_001/crops/figure_b34_p140_crop_300.png` | personal safety, ground clamp, ground lead, welding ground | PASS |
+| `G63-BLIND19` | Explain two major terminology revisions documented in Annex C (Clauses C1.5.6 and C1.5.7) and Annex D of AWS A3.0:2020: (1) Why was parallel joint introduced to replace edge joint among the five basic joint types, and how are both terms defined in Clause 4? (2) How did the 13th edition change the status of nondestructive evaluation, nondestructive inspection (NDI), and nondestructive testing (NDT) relative to nondestructive examination (NDE), and why was the definition of nondestructive examination (NDE) itself modified? | PASS | 159 | 171 | `annex_c:decision:C1.5.6` | `None` | parallel joint, edge joint, Clause 4, Table D5 | PASS |
+| `G63-BLIND20` | Compare the resistance spot welding waveforms in Figure B49 (Pulsation Welding Waveform) and Figure B50 (Single-Pulse Resistance Spot Welding Waveform): how does Clause 4 distinguish weld time, resistance welding from weld interval, resistance welding, and cool time, resistance welding from quench time, resistance welding? Additionally, define the sequential cycle intervals shown across Figures B49 and B50: squeeze time, preweld interval, preheat time, upslope time, pulse time, downslope time, temper time, hold time, postweld interval, forge-delay time, and off time. | PASS | 153 | 165 | `figure_b49:interval:upslope` | `storage/evidence_v2/annex_b_complete_001/crops/figure_b49_300dpi.png` | Figure B49, Figure B50, weld time, weld interval | PASS |
 
 ---
 
@@ -23464,48 +23581,48 @@ All 20 benchmark queries execute 100% offline with zero network calls, satisfyin
 
 | Index | Rel Path | SHA-256 Digest | Status |
 | :---: | :--- | :--- | :---: |
-| 1 | `storage/evidence_v2/clause4_ingest_001/glossary_store.json` | `a16109aa9369666dd934d40e1eebbb2bb8180c4366eec6a938ea5f061e86a7d6` | MATCH |
-| 2 | `storage/evidence_v2/clause4_ingest_001/semantic_graph.json` | `f59a0f44358a74e4c2be895c1a72d73f4e2cbb1dc7b293527b134d1bcddf6047` | MATCH |
-| 3 | `storage/evidence_v2/clause4_ingest_001/concept_neighborhoods.json` | `b99e74ce9a8ca6114eb31cf5e1cb2f57ef04d2c88f11d17d5e86973e449bf258` | MATCH |
-| 4 | `storage/evidence_v2/annex_a_tables_001/final_projection/tables_graph.json` | `75ba75753066986a4220b2241cf13540eb40e53a3390c5fa6ec750a9fc770c66` | MATCH |
-| 5 | `storage/evidence_v2/a3_ingest_001/final_projection/graph.json` | `052327092305542ca024b17cf0808a3d53eb8132ca59f8a329d44747ebc7b1ce` | MATCH |
-| 6 | `storage/evidence_v2/a4_ingest_001/final_projection/graph.json` | `a5f082e668a6231f2fb8028714dfb079717878fa3e5dcaefab9b2ff639d67761` | MATCH |
-| 7 | `storage/evidence_v2/clause4_ingest_001/coverage_report.json` | `8390b14c330df8fe15ba05b822d56d0d297aa1585ee588be452ff37cff9d71c1` | MATCH |
-| 8 | `storage/evidence_v2/annex_b_archetype4_001/extracted_figures.json` | `432247fc9ec178b548b29cf329ba6916568dd7ea44d56d946fc1d516ee71bf08` | MATCH |
-| 9 | `storage/evidence_v2/annex_b_archetype4_001/coverage_report.json` | `38b438ea233b2a26c483d31b0fc23bf6111be86f2b489a2e3796d744b8bc009d` | MATCH |
-| 10 | `storage/evidence_v2/annex_b_complete_001/figures_deep.json` | `c4ce569477e685f02bc0f7f95ee2ca219e9177a5606d5ef664fbbf4fba18d96b` | MATCH |
-| 11 | `storage/evidence_v2/annex_b_complete_001/coverage_report.json` | `6ae9f36f86821262d16ea48d8869ecda6378e12eb0f3299c855a90e3aa02c2e5` | MATCH |
-| 12 | `storage/evidence_v2/phase5_4_benchmark_001/questions.json` | `26d11b51e06faeebbc16ca9069d8aa1312356c54779a1f23ee71eb4010313cb1` | MATCH |
-| 13 | `storage/evidence_v2/phase5_4_benchmark_001/rubric.json` | `a3feaa30616bf8e146ebaf29e34b92b6a7ee7f8841aeef2e32f05a968a3fb70c` | MATCH |
-| 14 | `storage/evidence_v2/phase5_4_benchmark_001/results.json` | `c37eb6d95318dbb966779435bfe2ec0df1a52fef9bc7c4fbcf909d3b76cf6ca3` | MATCH |
-| 15 | `storage/evidence_v2/phase5_4_benchmark_001/coverage_report.json` | `7be33f548e64c3c3a9f0febe9d3326107386055d28fbdbba4632b49d6851b2d0` | MATCH |
-| 16 | `storage/evidence_v2/phase5_5_nlq_001/questions.json` | `100787a71676dfb3e404bf768dff863b1856cf246a482b8faae2df03d7db27d9` | MATCH |
-| 17 | `storage/evidence_v2/phase5_5_nlq_001/rubric.json` | `9b36d654ca98e1f575ee818961726a84dfc29f2dc349b1a03e1a8fa48ea0cf06` | MATCH |
-| 18 | `storage/evidence_v2/phase5_5_nlq_001/results.json` | `0d8b4bf6485d43ecbb625925faeb5001fffaeb0cb02a0a2df362cfbb00d0eb37` | MATCH |
-| 19 | `storage/evidence_v2/phase5_5_nlq_001/coverage_report.json` | `fbf2a09b30c451630135ff37651c5b8b982186835a26c48f2441dc285090f779` | MATCH |
-| 20 | `storage/model_replays/deepseek_v4_1_flash_1017/2338006b509f6e1f0eeb5571694f479bb726914f6d3ce9bc7372cf93325c866d.json` | `c9735d5dfbb7cb834927cbdb6ae59e2b0a1f0a2829b3634032d1645e7e1a3fd2` | MATCH |
-| 21 | `storage/model_replays/deepseek_v4_1_flash_1017/303fe0bba8cf4cf80687056093406aa89be6f9df8813bc3220fa820aeb294cf0.json` | `7715fbc5b3fe746a4e21a2eb2491fa9b8cfeb774a385f95d85feea8bbf029e2f` | MATCH |
-| 22 | `storage/model_replays/deepseek_v4_1_flash_1017/361e6fa0ae3e2caae8b1b11ca0f4d38c645b23d9a19c72ffbb4792ecf69fb4d7.json` | `e2a4be6cebcce0d783857ca29b87bcfe94db437eeff69094feec7209930f305c` | MATCH |
-| 23 | `storage/model_replays/deepseek_v4_1_flash_1017/5ad852fc6368d90cae254ff03975005e81fdfd15024dbdb512e32f796c561ee6.json` | `1cba3fa4c3619ea78f7aa95cc3d1797c2ae2b64d081cc93f932f93ce0dff567b` | MATCH |
-| 24 | `storage/model_replays/deepseek_v4_1_flash_1017/63251e604f210515668efbf98a72b67f1396f9a0c28e83344d3ce3d2f9748644.json` | `2f9d6c3826dd7ef0bc2d04a627cbf90c6ca7f3fb8f4803d5262243d67bcffc2a` | MATCH |
-| 25 | `storage/model_replays/deepseek_v4_1_flash_1017/746a7be7e39a5e8ff7f740a6b5791771120f2b36c2e71887342674e1e355c325.json` | `5e913076ff7a83d7351c33cbf9ba51fb53641cecfbf603e8ff8fbcbc6be6a894` | MATCH |
-| 26 | `storage/model_replays/deepseek_v4_1_flash_1017/a457492c1eb73f155998f45a0b779a5574c8715831969ec56f8f118ee6e1cbce.json` | `37d42cf38f9b9f390efc354707011d1ef8f4d5462cf82c81593ef908aa3eb128` | MATCH |
-| 27 | `storage/model_replays/deepseek_v4_1_flash_1017/dc168661685ce09bcae9fa7ff64fa4c3f760aa01cb7da4ea0f69a9b13970b135.json` | `25bc1ca7f88ea2bbd924ae0f6795f9c49ca14b0870932bb45df7df512ea50dd4` | MATCH |
-| 28 | `storage/evidence_v2/phase6_0_routing_001/questions.json` | `8c62b4c10be134c449c2d1b09b9f5e3692881cfd8c7c9ec956be8ef131cfa04a` | MATCH |
-| 29 | `storage/evidence_v2/phase6_0_routing_001/rubric.json` | `be25633fa3d95efc5861783ae89bb7373f1aee36da97ec7ee0b40eb424bf16aa` | MATCH |
-| 30 | `storage/evidence_v2/phase6_0_routing_001/results.json` | `6c107be9c049968470a18e00fc926d2524f2b1d62c589e6ebbebf75c74384ef0` | MATCH |
-| 31 | `storage/evidence_v2/phase6_0_routing_001/coverage_report.json` | `7be33f548e64c3c3a9f0febe9d3326107386055d28fbdbba4632b49d6851b2d0` | MATCH |
-| 32 | `storage/model_replays/deepseek_v4_1_flash_1017/a35f8b9ec141df90e3c5ec59837943cff66da2084c8a2cfa05d3bca2aa24e16c.json` | `df332f1712a208034db3ddba4a4b130e94119fa9787ffda42dcfd41a76813134` | MATCH |
-| 33 | `storage/model_replays/deepseek_v4_1_flash_1017/dfbfa322dd811bc294c7b8f9e0ec80a80e1a1236113b28b264103348ea08cfa3.json` | `1c30386cfb8159d337ee9bf9921e428e12140bbfa6cc37ea92cf4f79cecb4057` | MATCH |
-| 34 | `storage/evidence_v2/phase6_1_semantic_001/questions.json` | `5c21ec15525546fe183916dd6732cfd864eebbb78a5e80cb5ee1516eef316270` | MATCH |
-| 35 | `storage/evidence_v2/phase6_1_semantic_001/rubric.json` | `d121c6ba4d9fe80ddda17131804b49cb376e8fb2974fa906e57849e896434446` | MATCH |
-| 36 | `storage/evidence_v2/phase6_1_semantic_001/results.json` | `15e5898dff0007823f038f4be8d1fc4fb0d4eb0762fa2277d32906b3f7f858d4` | MATCH |
-| 37 | `storage/evidence_v2/phase6_1_semantic_001/coverage_report.json` | `7be33f548e64c3c3a9f0febe9d3326107386055d28fbdbba4632b49d6851b2d0` | MATCH |
-| 38 | `storage/model_replays/deepseek_v4_1_flash_1017/280cefc8ff1aa16d3fdf6c63da671f65bb51892f392231ffba30ef52424b9dc8.json` | `73bbbfb2cf4861e63412a80695bf7c8e96bf0f4f9104fa282b047535b4c16a62` | MATCH |
-| 39 | `storage/model_replays/deepseek_v4_1_flash_1017/a441a13437299a9b3a0cc30594a821dc3a8ce90aa4fa4fc04d7c5ee32dbba909.json` | `b23617be2d129759d54c00d414a3bfec8df60f7e914fcce7bfa5dbf5734bc1e0` | MATCH |
-| 40 | `storage/evidence_v2/phase6_2_1_closure_001/questions.json` | `da7c0337b514b872b7fef48ba98b79f8c6eb53e7f917ce5395bf1ce54f3918a9` | MATCH |
-| 41 | `storage/evidence_v2/phase6_2_1_closure_001/rubric.json` | `b54be49c065f4d1a100529e846059d040aeb7e8df6ff865feee571d8be8d98d8` | MATCH |
-| 42 | `storage/evidence_v2/phase6_2_1_closure_001/results.json` | `f31289196b27e699f0bb3b3394622a61dd079bc0607994680aa4238e55e886df` | MATCH |
+| 1 | `data/AWS_A3.0_2020.pdf` | `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d` | MATCH |
+| 2 | `storage/evidence_v2/clause4_ingest_001/glossary_store.json` | `e88a2fd4b8a0be47d1691cceb495d89ec4d4e25fad7c7d1d1f5e36c46d5b629b` | MATCH |
+| 3 | `storage/evidence_v2/clause4_ingest_001/annex_c_d_store.json` | `8b5d8faae9c42c27ac20b75f3bb2ac0f804957770b13e295d1926972ede07266` | MATCH |
+| 4 | `storage/evidence_v2/clause4_ingest_001/is_a_promotion_store.json` | `a5c69c351dcf1a013fdc7789952f07cda7130819a3c809897e73840797eac9e5` | MATCH |
+| 5 | `storage/evidence_v2/annex_b_archetype3_001/annex_b_archetype3_unified_store.json` | `16b7bea56932283b4d37d70871cf082690baaef725ef46cf85104047cc719254` | MATCH |
+| 6 | `storage/evidence_v2/annex_b_complete_001/annex_b_complete_unified_store.json` | `d26a7f8fa45c138a56cba61c95745b99760b383c9e9c8960153efcd8e548f898` | MATCH |
+| 7 | `storage/evidence_v2/annex_b_complete_001/annex_b_archetype4_unified_store.json` | `ccd1a957610e6bf92d02643140c2f11fb8379c634b48a7ad97bdb5e06bfaf954` | MATCH |
+| 8 | `storage/evidence_v2/annex_a_holdout_001/evaluation/rubric.json` | `70fb2473078b1d0dab6b1b73c7b8a9fcb29724a22c60841d03ce4e54820bb479` | MATCH |
+| 9 | `storage/evidence_v2/phase5_hardening_001/adversarial_questions.json` | `0d46daec2014562e97ff74ac36c165e1ba263953ef84d0e0080b85aa0c0e39c9` | MATCH |
+| 10 | `storage/evidence_v2/phase5_hardening_001/rubric.json` | `df71960a443e9b54d2607628d59fa2181df32f49426bb7c3b81108e32e5e7981` | MATCH |
+| 11 | `storage/evidence_v2/phase5_hardening_001/results.json` | `92c62b9e2a7479d60b79bcbe88f8d52f03fa8f650d12a1a9d2b5626aab470273` | MATCH |
+| 12 | `storage/evidence_v2/phase5_5_nlq_001/nlq_questions.json` | `ad789f44f36dc60bdf041031e2cddd78b6b92e4750f171af41cb7c63f8769e57` | MATCH |
+| 13 | `storage/evidence_v2/phase5_5_nlq_001/rubric.json` | `68cbbdcf4ba8595c15e9c41dd7985d9c65b13d614c18357e9f6ccc4f1af8e77b` | MATCH |
+| 14 | `storage/evidence_v2/phase5_5_nlq_001/results.json` | `df931bfebd19449393444f32cf86e2cd8ff26a2319c6a2e580538840e6128e74` | MATCH |
+| 15 | `storage/model_replays/deepseek_v4_1_flash_1017/33f775db13a0587d65dd170de053553322749cbf7b4522305cf8602daabc57ef.json` | `59e763ee6dbe1c21c5f90c160e7b6a9d7474c356b4a6606bde801d1684a45d2f` | MATCH |
+| 16 | `storage/model_replays/deepseek_v4_1_flash_1017/8f874e9651d4a5986b59aacf9ffd9a8faea49945156d639226c94415776ea065.json` | `e9b8213dafe57b970f83eb70ba97430d8acf60c75bf325320175df63b7f19079` | MATCH |
+| 17 | `storage/model_replays/deepseek_v4_1_flash_1017/a255faf2cc465a328ac6802095f4b3f945048b1304fc37b1e37c34357bf88dce.json` | `5c9d8f18688658d225f6d056dee64d1bf6f75a649854cebbf1277edff59a879d` | MATCH |
+| 18 | `storage/model_replays/deepseek_v4_1_flash_1017/afca5b807cf1cf10dd4fca5ed3f174f00a84208f13c2134d93cb9bfcc65a06ce.json` | `6af858c6928ae940966e7f7ef768763eb570ead41cc595caab07005bb1ff4d4a` | MATCH |
+| 19 | `storage/model_replays/deepseek_v4_1_flash_1017/b84e96a090b80d799a7d28127ec9304edd116bcec6976f7f7bf69ae0f4e590ea.json` | `d50b483130b30a268433d8c627a78017fe707f9cd0180e2cba6dacb7c7984592` | MATCH |
+| 20 | `storage/model_replays/deepseek_v4_1_flash_1017/6af589ad1ddedbf0af24de84ad5b0acdae77e506524354a9f4a7eab1edb63c5a.json` | `ae0625dacb0a7541955f46d73cb6a85e2234363bc89a7c5771608d71feb069f2` | MATCH |
+| 21 | `storage/model_replays/deepseek_v4_1_flash_1017/8fdbb05270c87bfc19e04a51c0a71b193fbc3fe68d3bcfb443887f49ce2e2ad8.json` | `e7114838a52b3d965c0c32cd8977f4e1c998bdad0ab07f5987d9b7825ddb134e` | MATCH |
+| 22 | `storage/model_replays/deepseek_v4_1_flash_1017/f02ce6be7d824f18618917bed89d5ef0cc89f93a70afa8ea3d3ec026321870cf.json` | `0513f4d16b5d6f72ae66688414ffce809000cd0e3444a8bea9db8e6ac6420621` | MATCH |
+| 23 | `storage/manifests/coverage_manifest.json` | `8fa510a5d4880f88e05fbf3c295992b9c5ae5274c65e46086ad08fee7c2d553e` | MATCH |
+| 24 | `storage/manifests/latency_benchmark.json` | `bc4bb0edfd67bbea0d5204a6430ce6be5af508b07f2874a779a0c2bf230c614c` | MATCH |
+| 25 | `storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json` | `bf2fd3b05532cb76a0584cd1d6db8d3f1fe038ba632d539d8be94a4feb4f23ac` | MATCH |
+| 26 | `storage/evidence_v2/phase6_ner_routing_001/rubric.json` | `602f37e0194a99ee6b3e52c95c1c76d9e57a3950a50ea7a5efd15c336645b427` | MATCH |
+| 27 | `storage/evidence_v2/phase6_ner_routing_001/results.json` | `4023b5c13b8265f9a6085399e0176644df8119366ccc3ea920c098159f6ef8a8` | MATCH |
+| 28 | `storage/model_replays/deepseek_v4_1_flash_1017/4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed.json` | `b5c11233c5389651c5ff6730ebb56b51e910042d8aada8f5b9ec7752f2c7d057` | MATCH |
+| 29 | `storage/model_replays/deepseek_v4_1_flash_1017/7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0.json` | `178e40f106af85fd17e9a949877cf6b0ea3c469516e102efdc017d043635df42` | MATCH |
+| 30 | `storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json` | `aa16b7fcc444ca4c54bed8eb758a35bde3d9e8c3f64afbb7b75b0112ed0f45d7` | MATCH |
+| 31 | `storage/evidence_v2/phase6_1_semantic_graph_001/rubric.json` | `42e4e8c3d3fa9e7c32b61d1deafa3a5d42a36b72ab0ec2c4465268d3977457d5` | MATCH |
+| 32 | `storage/evidence_v2/phase6_1_semantic_graph_001/results.json` | `48b4dc84db39dfe0aa68f0e1610bb3fa8e27be546f0294319a11c9af1cafbccf` | MATCH |
+| 33 | `storage/model_replays/deepseek_v4_1_flash_1017/a93c3e92000bc19bc6a8f7672c57767205dc0241047f7e2a6f1d00421a71ed81.json` | `22bcf1de364e9ba87b604da2ee3e817516570d972b858616cd80018c9acbf432` | MATCH |
+| 34 | `storage/model_replays/deepseek_v4_1_flash_1017/b1548f09c2320a74d640678cd729af098402a7685f4d160f66b0781ccd6d80a1.json` | `72f97e7f8aae9bcef96b16d2f55fea24b9c99ae2068fed3dc8cae8a69efc4993` | MATCH |
+| 35 | `storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json` | `5cb54690e1d6d15e60df75e60a173f5d9eba948e38c6f1042b2c9acb3d123d0a` | MATCH |
+| 36 | `storage/evidence_v2/phase6_2_generalization_holdout_001/rubric.json` | `bb18c854ee6c590dfa83955939b0c9fd810a4cd633ee6d0f64eaf9f0168fe6c3` | MATCH |
+| 37 | `storage/evidence_v2/phase6_2_generalization_holdout_001/results.json` | `dfe96330a00328fdb79d594353be826c6d3ccaa10063b62b0a83e0f560886f60` | MATCH |
+| 38 | `storage/model_replays/deepseek_v4_1_flash_1017/7e9982c36d0fcfa591123da74ceb0e7c7da002981d4379693a07eb61d3c40d29.json` | `f8cd0108b311f27868d5b9fa59b9478ff4128492be28d361d7b793f6011bc21f` | MATCH |
+| 39 | `storage/model_replays/deepseek_v4_1_flash_1017/3d6a2cbb61def68a41a52cdec81712a85cd65f7ed52c2e6505bc280821dacf9a.json` | `cb9ac95d98a5aac82c61f4d2d4b34438b452268f7e0221996fdac9e55edac570` | MATCH |
+| 40 | `storage/evidence_v2/phase6_2_generalization_holdout_002/questions.json` | `5cb54690e1d6d15e60df75e60a173f5d9eba948e38c6f1042b2c9acb3d123d0a` | MATCH |
+| 41 | `storage/evidence_v2/phase6_2_generalization_holdout_002/rubric.json` | `e23085ad83f13142a7bc84a1ddc3a89459b72b8c894c966b98d4d9b6587b24c4` | MATCH |
+| 42 | `storage/evidence_v2/phase6_2_generalization_holdout_002/results.json` | `0d9f8a1bf4a88861ab0c6fa27ec6cf0a88fd8a1f1cc257c02d25433396b53b2b` | MATCH |
 | 43 | `storage/evidence_v2/phase6_3_blind_hardening_001/questions.json` | `be8ee997284de16cb367042a09206d77950344b59f14c68f5ba9ac0123141b5b` | MATCH |
 | 44 | `storage/evidence_v2/phase6_3_blind_hardening_001/rubric.json` | `a575cd1833cd2d041b6359abdadeff71a728430e155d49d8bdf70205e50ff22c` | MATCH |
 | 45 | `storage/evidence_v2/phase6_3_blind_hardening_001/results.json` | `18f247c1abb8b96d0a52081e0f8fabb32a74dcaced77143bf9ece518cd19c4c2` | MATCH |
