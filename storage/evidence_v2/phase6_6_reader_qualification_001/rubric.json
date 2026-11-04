@@ -1,0 +1,418 @@
+{
+  "version": "phase6_6_reader_qualification_rubric_v1.0",
+  "total_questions": 24,
+  "rubrics": {
+    "G63-BLIND01": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "acetylene feather",
+        "carburizing",
+        "oxyacetylene flame",
+        "Figure B40"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    },
+    "G63-BLIND02": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "gas tungsten arc welding",
+        "GTAW",
+        "tungsten electrode",
+        "Figure B36",
+        "hot wire welding",
+        "pulsed gas tungsten arc welding"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    },
+    "G63-BLIND03": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "150° to 210°",
+        "Figure B16B",
+        "Flat"
+      ],
+      "forbidden_elements": [
+        "groove weld"
+      ]
+    },
+    "G63-BLIND04": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B21",
+        "Position of Beam, Filler Material, Gun, or Torch"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    },
+    "G63-BLIND05": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B1",
+        "T-Joint",
+        "fillet",
+        "bevel-groove",
+        "flare-bevel-groove",
+        "j-groove",
+        "square-groove",
+        "plug",
+        "slot",
+        "spot",
+        "seam",
+        "projection",
+        "braze"
+      ],
+      "forbidden_elements": [
+        "edge weld"
+      ]
+    },
+    "G63-BLIND06": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure A6",
+        "Chemical",
+        "Electrical",
+        "2"
+      ],
+      "forbidden_elements": [
+        "Mechanical energy"
+      ]
+    },
+    "G63-BLIND07": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "friction welding",
+        "FRW",
+        "resistance seam welding",
+        "RSEW",
+        "resistance spot welding",
+        "RSW"
+      ],
+      "forbidden_elements": [
+        "Figure A2"
+      ]
+    },
+    "G63-BLIND08": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "coextrusion welding",
+        "CEW",
+        "cold welding",
+        "CW",
+        "diffusion welding",
+        "DFW",
+        "explosion welding",
+        "EXW",
+        "forge welding",
+        "FOW",
+        "friction welding",
+        "FRW",
+        "hot pressure welding",
+        "HPW",
+        "roll welding",
+        "ROW",
+        "ultrasonic welding",
+        "USW"
+      ],
+      "forbidden_elements": [
+        "arc welding"
+      ]
+    },
+    "G63-BLIND09": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "Table A5",
+        "obsolete",
+        "block brazing",
+        "BB",
+        "shielded carbon arc welding",
+        "CAW-S"
+      ],
+      "forbidden_elements": [
+        "active"
+      ]
+    },
+    "G63-BLIND10": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "flame spraying",
+        "FLSP",
+        "powder flame spraying",
+        "FLSP-P",
+        "wire flame spraying",
+        "FLSP-W"
+      ],
+      "forbidden_elements": [
+        "Figure A5"
+      ]
+    },
+    "G63-BLIND11": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "block sequence",
+        "Figure B23",
+        "cascade sequence",
+        "cross-sectional sequence",
+        "progressive block sequence",
+        "successive block sequence"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    },
+    "G63-BLIND12": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "effective throat",
+        "partial joint penetration groove weld",
+        "B25",
+        "actual throat",
+        "theoretical throat"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    },
+    "G63-BLIND13": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "Figure B46",
+        "Base Metal",
+        "Direction of Tool Rotation",
+        "Weld Tool",
+        "Axial Force",
+        "Tool Shoulder",
+        "Probe",
+        "Advancing Side",
+        "Exit Hole",
+        "Retreating Side",
+        "Weld Face",
+        "advancing side",
+        "retreating side"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    },
+    "G63-BLIND14": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B23",
+        "(J)",
+        "distance S",
+        "parallel to the base metal surface",
+        "1 mm",
+        "temper pass",
+        "temper bead",
+        "temper bead sequence",
+        "toe temper pass",
+        "toe temper bead"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    },
+    "G63-BLIND15": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "reentrant angle",
+        "bead reentrant angle",
+        "toe reentrant angle",
+        "Figure B32",
+        "overlap",
+        "acute"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    },
+    "G63-BLIND16": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "Table A4",
+        "-AD",
+        "-AU",
+        "-MA",
+        "-ME",
+        "-RO",
+        "-SA",
+        "Adaptive control",
+        "Automatic",
+        "Manual",
+        "Mechanized",
+        "Robotic",
+        "Semiautomatic",
+        "hyphen"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    },
+    "G63-BLIND17": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "laser beam cutting",
+        "LBC",
+        "laser beam air cutting",
+        "LBC-A",
+        "laser beam evaporative cutting",
+        "LBC-EV",
+        "laser beam inert gas cutting",
+        "LBC-IG",
+        "laser beam oxygen cutting",
+        "LBC-O",
+        "electron beam welding",
+        "EBW",
+        "high vacuum electron beam welding",
+        "EBW-HV",
+        "medium vacuum electron beam welding",
+        "EBW-MV",
+        "nonvacuum electron beam welding",
+        "EBW-NV",
+        "pascals",
+        "torr"
+      ],
+      "forbidden_elements": [
+        "Figure A5"
+      ]
+    },
+    "G63-BLIND18": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "personal safety",
+        "ground clamp",
+        "ground lead",
+        "welding ground",
+        "workpiece connection",
+        "workpiece connector",
+        "workpiece lead",
+        "ground connection",
+        "Figure B34"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    },
+    "G63-BLIND19": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "parallel joint",
+        "edge joint",
+        "Clause 4",
+        "Table D5",
+        "nondestructive examination",
+        "NDE",
+        "nondestructive inspection",
+        "NDI",
+        "nondestructive testing",
+        "NDT",
+        "nondestructive evaluation"
+      ],
+      "forbidden_elements": [
+        "Figure A5"
+      ]
+    },
+    "G63-BLIND20": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B49",
+        "Figure B50",
+        "weld time",
+        "weld interval",
+        "cool time",
+        "quench time",
+        "squeeze time",
+        "preweld interval",
+        "preheat time",
+        "upslope time",
+        "pulse time",
+        "downslope time",
+        "temper time",
+        "hold time",
+        "postweld interval",
+        "forge-delay time",
+        "off time"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    },
+    "G66-DIAG01": {
+      "expected_status": "REFUSAL_OUT_OF_SCOPE",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "outside the scope",
+        "AWS A3.0M/A3.0:2020"
+      ],
+      "forbidden_elements": [
+        "Figure A",
+        "Table A1"
+      ]
+    },
+    "G66-DIAG02": {
+      "expected_status": "NOT_IN_STANDARD",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "GMAW",
+        "Table A1",
+        "Table A4",
+        "-X-AU",
+        "GMAW-X"
+      ],
+      "forbidden_elements": [
+        "Figure B"
+      ]
+    },
+    "G66-DIAG03": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": false,
+      "required_elements": [
+        "Table A5",
+        "obsolete",
+        "atomic hydrogen welding",
+        "AHW"
+      ],
+      "forbidden_elements": [
+        "Figure B"
+      ]
+    },
+    "G66-DIAG04": {
+      "expected_status": "PASS",
+      "requires_diagram_crop": true,
+      "required_elements": [
+        "Figure B53",
+        "WELDING CURRENT",
+        "ARC VOLTAGE",
+        "UPSLOPE TIME",
+        "DOWNSLOPE TIME"
+      ],
+      "forbidden_elements": [
+        "Figure A"
+      ]
+    }
+  }
+}

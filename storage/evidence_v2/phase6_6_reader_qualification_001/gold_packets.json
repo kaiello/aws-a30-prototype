@@ -1,0 +1,931 @@
+[
+  {
+    "id": "G63-BLIND01",
+    "category": "clause4_visual_linkage",
+    "slice_name": "Slice 1 — Clause 4 Linked Visual Nomenclature",
+    "question": "What is acetylene feather?",
+    "status": "PASS",
+    "target_division": "Clause 4",
+    "intent": "definition",
+    "printed_page": 6,
+    "pdf_index": 18,
+    "evidence_locator": "clause4:term:acetylene feather",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:clause4:p6:acetylene feather"
+    ],
+    "elements_present": [
+      "acetylene feather",
+      "acetylene feather"
+    ],
+    "layers": {
+      "arm_a_text": "In Clause 4 (printed p.",
+      "arm_b_text": "In Clause 4 (printed p. 6), 'acetylene feather' is defined as: \"The intense white, feathery-edged portion adjacent to the cone of a carburizing oxyacetylene flame. See Figure B40(D).\".",
+      "arm_c_text": "In Clause 4 (printed p. 6), 'acetylene feather' is defined as: \"The intense white, feathery-edged portion adjacent to the cone of a carburizing oxyacetylene flame. See Figure B40(D).\"."
+    }
+  },
+  {
+    "id": "G63-BLIND02",
+    "category": "clause4_definition_with_see_also",
+    "slice_name": "Slice 2 — Root Process Definitions and See-Also Expansions",
+    "question": "Define GTAW?",
+    "status": "PASS",
+    "target_division": "Normative Tables",
+    "intent": "decode_process_designations",
+    "printed_page": 69,
+    "pdf_index": 81,
+    "evidence_locator": "table_a1:process_letter_designations",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:pdf:81:table:Table_A",
+      "obs:clause4:p29:gas_tungsten_arc_welding",
+      "obs:pdf:153:figure:Figure B36"
+    ],
+    "elements_present": [
+      "GTAW",
+      "gas tungsten arc welding",
+      "An arc welding process using an arc betw",
+      "Figure B36",
+      "hot wire  welding and pulsed gas tungsten arc welding",
+      "Gas Tungsten Arc Welding Torch Nomenclature",
+      "141",
+      "hot wire welding",
+      "pulsed gas tungsten arc welding",
+      "GTAW-P",
+      "pulsed welding, arc welding"
+    ],
+    "layers": {
+      "arm_a_text": "In AWS A3.0M/A3.0:2020:",
+      "arm_b_text": "In AWS A3.0M/A3.0:2020:",
+      "arm_c_text": "In AWS A3.0M/A3.0:2020:\n• GTAW: gas tungsten arc welding (Table A1/A2/A3/A5, p. 69; Clause 4, p. 29) — Defined as: \"An arc welding process using an arc between a tungsten electrode (nonconsumable) and the weld pool. The process is used with shielding gas and without the application of pressure. See also hot wire welding and pulsed gas tungsten arc welding. See Figure B36.\" [Cross-references: Figure B36]\n\nGTAW Nomenclature and Cross-Referenced See-Also Chain:\n• Visual Reference: Figure B36 (Gas Tungsten Arc Welding Torch Nomenclature, printed p. 141, PDF index 153).\n• hot wire welding (Clause 4, p. 32): \"A variation of a fusion welding process in which a filler metal wire is resistance heated by current flowing through the wire as it is fed into the weld pool.\"\n• pulsed gas tungsten arc welding (GTAW-P) (Clause 4, p. 46): \"A gas tungsten arc welding process variation in which the power is pulsed. See also pulsed welding.\"\n• pulsed welding, arc welding (Clause 4, p. 46): \"A process variation in which the welding power source output cycles between low and high power levels, resulting in a lower average power.\""
+    }
+  },
+  {
+    "id": "G63-BLIND03",
+    "category": "welding_position_tabulations",
+    "slice_name": "Slice 3 — Welding Position Tabulations and Angular Limits",
+    "question": "What is the Rotation of Face for Flat Fillet Weld?",
+    "status": "PASS",
+    "target_division": "Figure B16B",
+    "intent": "test_positions_tabulation",
+    "printed_page": 103,
+    "pdf_index": 115,
+    "evidence_locator": "figure_b16b:diagram_details",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b16b_p103_crop_300.png",
+    "normative_provenance": [
+      "obs:pdf:115:figure:Figure B16B",
+      "obs:clause4:p26:flat_welding_position"
+    ],
+    "elements_present": [
+      "Figure B16B",
+      "Flat",
+      "150° to 210°",
+      "0° to 15°",
+      "Diagram Reference: A",
+      "Welding Position Diagram for Fillet Welds in Plate",
+      "Tabulation of Positions of Fillet Welds",
+      "The welding position in which welding is"
+    ],
+    "layers": {
+      "arm_a_text": "In AWS A3.0M/A3.0:2020 Figure B16B (Welding Position Diagram for Fillet Welds in Plate, printed p.",
+      "arm_b_text": "In AWS A3.0M/A3.0:2020 Figure B16B (Welding Position Diagram for Fillet Welds in Plate, printed p. 103, PDF index 115), the embedded 'Tabulation of Positions of Fillet Welds' specifies that for a Flat Fillet Weld:\n• Diagram Reference: A\n• Inclination of Axis: 0° to 15°\n• Rotation of Face: 150° to 210°\n\nFull Tabulation of Positions of Fillet Welds in Figure B16B:\n• Flat (Diagram Ref A): Inclination of Axis 0° to 15°, Rotation of Face 150° to 210°\n• Horizontal (Diagram Ref B): Inclination of Axis 0° to 15°, Rotation of Face 125° to 150° and 210° to 235°\n• Overhead (Diagram Ref C): Inclination of Axis 0° to 80°, Rotation of Face 0° to 125° and 235° to 360°\n• Vertical (Diagram Ref D): Inclination of Axis 15° to 80°, Rotation of Face 125° to 235°\n• Vertical (Diagram Ref E): Inclination of Axis 80° to 90°, Rotation of Face 0° to 360°\n\nIn Clause 4 (printed p. 26), 'flat welding position' is defined as: \"The welding position in which welding is performed from the upper side of a joint or surface in which the weld axis, at the point of welding, is approximately horizontal, and the weld face lies in an approximately horizontal plane. See Figures B16A–B16C, B17(A), B18(A), B19(A), and B20(A).\"",
+      "arm_c_text": "In AWS A3.0M/A3.0:2020 Figure B16B (Welding Position Diagram for Fillet Welds in Plate, printed p. 103, PDF index 115), the embedded 'Tabulation of Positions of Fillet Welds' specifies that for a Flat Fillet Weld:\n• Diagram Reference: A\n• Inclination of Axis: 0° to 15°\n• Rotation of Face: 150° to 210°\n\nFull Tabulation of Positions of Fillet Welds in Figure B16B:\n• Flat (Diagram Ref A): Inclination of Axis 0° to 15°, Rotation of Face 150° to 210°\n• Horizontal (Diagram Ref B): Inclination of Axis 0° to 15°, Rotation of Face 125° to 150° and 210° to 235°\n• Overhead (Diagram Ref C): Inclination of Axis 0° to 80°, Rotation of Face 0° to 125° and 235° to 360°\n• Vertical (Diagram Ref D): Inclination of Axis 15° to 80°, Rotation of Face 125° to 235°\n• Vertical (Diagram Ref E): Inclination of Axis 80° to 90°, Rotation of Face 0° to 360°\n\nIn Clause 4 (printed p. 26), 'flat welding position' is defined as: \"The welding position in which welding is performed from the upper side of a joint or surface in which the weld axis, at the point of welding, is approximately horizontal, and the weld face lies in an approximately horizontal plane. See Figures B16A–B16C, B17(A), B18(A), B19(A), and B20(A).\""
+    }
+  },
+  {
+    "id": "G63-BLIND04",
+    "category": "reverse_figure_lookup",
+    "slice_name": "Slice 4 — Reverse Figure Concept Search",
+    "question": "What figure shows the position of beam, filler material, gun or torch?",
+    "status": "PASS",
+    "target_division": "Figure B21",
+    "intent": "reverse_figure_lookup",
+    "printed_page": 112,
+    "pdf_index": 124,
+    "evidence_locator": "figure_b21:diagram_details",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b21_p112_crop_300.png",
+    "normative_provenance": [
+      "obs:pdf:124:figure:Figure B21"
+    ],
+    "elements_present": [
+      "Figure B21",
+      "Position of Beam, Filler Material, Gun, or Torch",
+      "112",
+      "(A) GROOVE WELD",
+      "(B) FILLET WELD",
+      "(C) PIPE WELD",
+      "WORK ANGLE",
+      "TRAVEL ANGLE",
+      "DRAG ANGLE",
+      "PUSH ANGLE",
+      "PROGRESSION",
+      "AXIS OF WELD"
+    ],
+    "layers": {
+      "arm_a_text": "Figure B21 (Position of Beam, Filler Material, Gun, or Torch) on printed p.",
+      "arm_b_text": "Figure B21 (Position of Beam, Filler Material, Gun, or Torch) on printed p. 112 (PDF index 124) of AWS A3.0M/A3.0:2020 illustrates the position of beam, filler material, gun, or torch.\nFigure B21 includes the following sub-diagrams and nomenclature:\n• Sub-diagram (A) GROOVE WELD\n• Sub-diagram (B) FILLET WELD\n• Sub-diagram (C) PIPE WELD\nIt defines and illustrates the critical orientation angles and vectors: WORK ANGLE, TRAVEL ANGLE, DRAG ANGLE, PUSH ANGLE, PROGRESSION, and AXIS OF WELD across welding applications.",
+      "arm_c_text": "Figure B21 (Position of Beam, Filler Material, Gun, or Torch) on printed p. 112 (PDF index 124) of AWS A3.0M/A3.0:2020 illustrates the position of beam, filler material, gun, or torch.\nFigure B21 includes the following sub-diagrams and nomenclature:\n• Sub-diagram (A) GROOVE WELD\n• Sub-diagram (B) FILLET WELD\n• Sub-diagram (C) PIPE WELD\nIt defines and illustrates the critical orientation angles and vectors: WORK ANGLE, TRAVEL ANGLE, DRAG ANGLE, PUSH ANGLE, PROGRESSION, and AXIS OF WELD across welding applications."
+    }
+  },
+  {
+    "id": "G63-BLIND05",
+    "category": "joint_type_applicable_welds",
+    "slice_name": "Slice 5 — Joint Type to Applicable Weld Taxonomy",
+    "question": "What are the applicable weld types for a T-Joint?",
+    "status": "PASS",
+    "target_division": "Figure B1",
+    "intent": "applicable_welds",
+    "printed_page": 82,
+    "pdf_index": 94,
+    "evidence_locator": "figure_b1:diagram_details",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b1_p82_crop_300.png",
+    "normative_provenance": [
+      "obs:pdf:94:figure:Figure B1",
+      "obs:clause4:p57:t_joint"
+    ],
+    "elements_present": [
+      "Figure B1",
+      "T-JOINT",
+      "11",
+      "FILLET",
+      "SLOT",
+      "BEVEL-GROOVE",
+      "SPOT",
+      "FLARE-BEVEL-GROOVE",
+      "SEAM",
+      "J-GROOVE",
+      "PROJECTION",
+      "SQUARE-GROOVE",
+      "BRAZE",
+      "PLUG",
+      "A joint type formed by a butting workpie"
+    ],
+    "layers": {
+      "arm_a_text": "In AWS A3.0M/A3.0:2020 Figure B1 (Joint Types, printed p.",
+      "arm_b_text": "In AWS A3.0M/A3.0:2020 Figure B1 (Joint Types, printed p. 82, PDF index 94), sub-diagram (C) illustrates the T-JOINT. There are exactly 11 applicable weld types for a T-JOINT:\n• FILLET\n• SLOT\n• BEVEL-GROOVE\n• SPOT\n• FLARE-BEVEL-GROOVE\n• SEAM\n• J-GROOVE\n• PROJECTION\n• SQUARE-GROOVE\n• BRAZE\n• PLUG\n\nIn Clause 4 (printed p. 57), 't-joint' is defined as: \"A joint type formed by a butting workpiece aligned approximately perpendicular to the surface of a nonbutting workpiece. See Figures B1(C), B2(C), and B10(F). See also skewed joint.\"",
+      "arm_c_text": "In AWS A3.0M/A3.0:2020 Figure B1 (Joint Types, printed p. 82, PDF index 94), sub-diagram (C) illustrates the T-JOINT. There are exactly 11 applicable weld types for a T-JOINT:\n• FILLET\n• SLOT\n• BEVEL-GROOVE\n• SPOT\n• FLARE-BEVEL-GROOVE\n• SEAM\n• J-GROOVE\n• PROJECTION\n• SQUARE-GROOVE\n• BRAZE\n• PLUG\n\nIn Clause 4 (printed p. 57), 't-joint' is defined as: \"A joint type formed by a butting workpiece aligned approximately perpendicular to the surface of a nonbutting workpiece. See Figures B1(C), B2(C), and B10(F). See also skewed joint.\""
+    }
+  },
+  {
+    "id": "G63-BLIND06",
+    "category": "classification_chart_energy_sources",
+    "slice_name": "Slice 6 — Annex A Classification Chart Topology",
+    "question": "How many different energy sources are there in Brazing and Soldering?",
+    "status": "PASS",
+    "target_division": "Annex A Charts",
+    "intent": "energy_sources",
+    "printed_page": 79,
+    "pdf_index": 91,
+    "evidence_locator": "figure_a6:brazing_and_soldering",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/a6_ingest_001/a6_crop_300.png",
+    "normative_provenance": [
+      "obs:pdf:91:figure:Figure A6"
+    ],
+    "elements_present": [
+      "Figure A6",
+      "2",
+      "Chemical",
+      "Electrical",
+      "Brazing and Soldering"
+    ],
+    "layers": {
+      "arm_a_text": "In Figure A6 (Brazing and Soldering Classification Chart, printed p.",
+      "arm_b_text": "In Figure A6 (Brazing and Soldering Classification Chart, printed p. 79, PDF index 91) of AWS A3.0M/A3.0:2020, there are exactly 2 top-level energy sources:\n1. Chemical energy, which branches into thermal sources of Flame Contact, Radiation, and Conduction; and\n2. Electrical energy, which branches into thermal sources of Arc, Resistance, Conduction, Induction, and Radiation.",
+      "arm_c_text": "In Figure A6 (Brazing and Soldering Classification Chart, printed p. 79, PDF index 91) of AWS A3.0M/A3.0:2020, there are exactly 2 top-level energy sources:\n1. Chemical energy, which branches into thermal sources of Flame Contact, Radiation, and Conduction; and\n2. Electrical energy, which branches into thermal sources of Arc, Resistance, Conduction, Induction, and Radiation."
+    }
+  },
+  {
+    "id": "G63-BLIND07",
+    "category": "letter_designation_decoding",
+    "slice_name": "Slice 7 — Multi-Process Designation Decoding & Definitions",
+    "question": "What is FRW, RSEW, and RSW?",
+    "status": "PASS",
+    "target_division": "Normative Tables",
+    "intent": "decode_process_designations",
+    "printed_page": 70,
+    "pdf_index": 82,
+    "evidence_locator": "table_a1:process_letter_designations",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:pdf:82:table:Table_A",
+      "obs:clause4:p27:friction_welding",
+      "obs:clause4:p48:resistance_seam_welding",
+      "obs:clause4:p48:resistance_spot_welding"
+    ],
+    "elements_present": [
+      "FRW",
+      "friction welding",
+      "A solid-state welding process producing ",
+      "Figure B31",
+      "Figure B31(D)",
+      "Figure B44",
+      "Figure B45",
+      "direct drive friction welding, friction stir welding, and iner- tia friction welding",
+      "RSEW",
+      "resistance seam welding",
+      "A resistance welding process producing a",
+      "Figure B14",
+      "Figure B14(D)",
+      "Figure B23",
+      "Figure B23(I)",
+      "Figure B30",
+      "Figure B30(D)",
+      "Figure B52",
+      "high-frequency seam welding and induction seam  welding",
+      "RSW",
+      "resistance spot welding",
+      "Figure B14(E)",
+      "Figure B14(F)",
+      "Figure B46",
+      "Figure B47",
+      "Figure B48",
+      "Figure B49",
+      "Figure B50"
+    ],
+    "layers": {
+      "arm_a_text": "In AWS A3.0M/A3.0:2020:",
+      "arm_b_text": "In AWS A3.0M/A3.0:2020:\n• FRW: friction welding (Table A1/A2/A3/A5, p. 70; Clause 4, p. 27) — Defined as: \"A solid-state welding process producing a weld under the compressive force contact of work- pieces rotating or moving relative to one another to produce heat and plastically displace material from the faying surfaces. See Figures B31(D), B44, and B45. See also direct drive friction welding, friction stir welding, and iner- tia friction welding.\" [Cross-references: Figure B31, Figure B31(D), Figure B44, Figure B45]\n• RSEW: resistance seam welding (Table A1/A2/A3/A5, p. 70; Clause 4, p. 48) — Defined as: \"A resistance welding process producing a weld at the faying surfaces of overlapped parts progressively along a length of a joint. The weld may be made with overlapping weld nuggets, a continuous weld nugget, or by forging the joint as it is heated to the welding temperature by resistance to the flow of the welding cur- rent. See Figures B14(D), B23(I), B30(D), and B52. See also high-frequency seam welding and induction seam welding.\" [Cross-references: Figure B14, Figure B14(D), Figure B23, Figure B23(I), Figure B30, Figure B30(D), Figure B52]\n• RSW: resistance spot welding (Table A1/A2/A3/A5, p. 70; Clause 4, p. 48) — Defined as: \"A resistance welding process producing a spot weld. See Figures B14(E), B14(F), B30(D), and B46—B50.\" [Cross-references: Figure B14, Figure B14(E), Figure B14(F), Figure B30, Figure B30(D), Figure B46, Figure B47, Figure B48, Figure B49, Figure B50]",
+      "arm_c_text": "In AWS A3.0M/A3.0:2020:\n• FRW: friction welding (Table A1/A2/A3/A5, p. 70; Clause 4, p. 27) — Defined as: \"A solid-state welding process producing a weld under the compressive force contact of work- pieces rotating or moving relative to one another to produce heat and plastically displace material from the faying surfaces. See Figures B31(D), B44, and B45. See also direct drive friction welding, friction stir welding, and iner- tia friction welding.\" [Cross-references: Figure B31, Figure B31(D), Figure B44, Figure B45]\n• RSEW: resistance seam welding (Table A1/A2/A3/A5, p. 70; Clause 4, p. 48) — Defined as: \"A resistance welding process producing a weld at the faying surfaces of overlapped parts progressively along a length of a joint. The weld may be made with overlapping weld nuggets, a continuous weld nugget, or by forging the joint as it is heated to the welding temperature by resistance to the flow of the welding cur- rent. See Figures B14(D), B23(I), B30(D), and B52. See also high-frequency seam welding and induction seam welding.\" [Cross-references: Figure B14, Figure B14(D), Figure B23, Figure B23(I), Figure B30, Figure B30(D), Figure B52]\n• RSW: resistance spot welding (Table A1/A2/A3/A5, p. 70; Clause 4, p. 48) — Defined as: \"A resistance welding process producing a spot weld. See Figures B14(E), B14(F), B30(D), and B46—B50.\" [Cross-references: Figure B14, Figure B14(E), Figure B14(F), Figure B30, Figure B30(D), Figure B46, Figure B47, Figure B48, Figure B49, Figure B50]"
+    }
+  },
+  {
+    "id": "G63-BLIND08",
+    "category": "process_group_listing",
+    "slice_name": "Slice 8 — Major Process Group Enumeration",
+    "question": "List all the Solid State Welding Processes",
+    "status": "PASS",
+    "target_division": "Normative Tables",
+    "intent": "process_group_listing",
+    "printed_page": 78,
+    "pdf_index": 90,
+    "evidence_locator": "figure_a5:solid_state_welding",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/a5_ingest_001/a5_crop_300.png",
+    "normative_provenance": [
+      "obs:pdf:82:table:Table A1",
+      "obs:pdf:90:figure:Figure A5"
+    ],
+    "elements_present": [
+      "Solid-State Welding",
+      "Table A1",
+      "Figure A5",
+      "CEW",
+      "CW",
+      "DFW",
+      "EXW",
+      "FOW",
+      "FRW",
+      "FSW",
+      "HPW",
+      "ROW",
+      "USW"
+    ],
+    "layers": {
+      "arm_a_text": "In Table A1 (Master Letter Designations of Welding and Allied Processes, printed p.",
+      "arm_b_text": "In Table A1 (Master Letter Designations of Welding and Allied Processes, printed p. 70) and Figure A1 (p. 75) / Figure A5 (p. 78) of AWS A3.0M/A3.0:2020, the Solid-State Welding (SSW) major process group includes the following processes and process variations:\n• solid-state welding (SSW)\n• coextrusion welding (CEW)\n• cold welding (CW)\n• diffusion welding (DFW)\n• hot isostatic pressure welding (HIPW)\n• explosion welding (EXW)\n• forge welding (FOW)\n• friction welding (FRW)\n• direct drive friction welding (FRW-DD)\n• friction stir welding (FSW)\n• inertia friction welding (FRW-I)\n• hot pressure welding (HPW)\n• roll welding (ROW)\n• ultrasonic welding (USW)\n\nThese encompass both root solid-state processes (such as CEW, CW, DFW, EXW, FOW, FRW, HPW, ROW, USW) and standardized variations (such as HIPW under diffusion welding, and FSW, FRW-DD, FRW-I under friction welding).",
+      "arm_c_text": "In Table A1 (Master Letter Designations of Welding and Allied Processes, printed p. 70) and Figure A1 (p. 75) / Figure A5 (p. 78) of AWS A3.0M/A3.0:2020, the Solid-State Welding (SSW) major process group includes the following processes and process variations:\n• solid-state welding (SSW)\n• coextrusion welding (CEW)\n• cold welding (CW)\n• diffusion welding (DFW)\n• hot isostatic pressure welding (HIPW)\n• explosion welding (EXW)\n• forge welding (FOW)\n• friction welding (FRW)\n• direct drive friction welding (FRW-DD)\n• friction stir welding (FSW)\n• inertia friction welding (FRW-I)\n• hot pressure welding (HPW)\n• roll welding (ROW)\n• ultrasonic welding (USW)\n\nThese encompass both root solid-state processes (such as CEW, CW, DFW, EXW, FOW, FRW, HPW, ROW, USW) and standardized variations (such as HIPW under diffusion welding, and FSW, FRW-DD, FRW-I under friction welding)."
+    }
+  },
+  {
+    "id": "G63-BLIND09",
+    "category": "obsolete_process_verification",
+    "slice_name": "Slice 9 — Obsolete Process Verification & Status",
+    "question": "Is block Brazing and Shielded carbon arc welding Obsolete processes?",
+    "status": "PASS",
+    "target_division": "Normative Tables",
+    "intent": "obsolete_processes",
+    "printed_page": 74,
+    "pdf_index": 86,
+    "evidence_locator": "table_a5:obsolete_processes",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:pdf:86:table:Table A5"
+    ],
+    "elements_present": [
+      "block brazing",
+      "BB",
+      "shielded carbon arc welding",
+      "CAW-S",
+      "Table A5",
+      "obsolete",
+      "13"
+    ],
+    "layers": {
+      "arm_a_text": "Yes.",
+      "arm_b_text": "Yes. In AWS A3.0M/A3.0:2020 Table A5 (Obsolete or Seldom Used Processes, printed p. 74), the queried processes are officially classified as obsolete:\n• block brazing (designation: BB) is an obsolete process cataloged in Table A5 (p. 74) and defined in Clause 4 (p. 11) as: \"A brazing process employing heated blocks as the heat source. This is an obsolete or seldom used process. See Table A5.\"\n• shielded carbon arc welding (designation: CAW-S) is an obsolete process cataloged in Table A5 (p. 74) and defined in Clause 4 (p. 51) as: \"A carbon arc welding process variation using shielding from the combustion of solid material fed into the arc, or from a blanket of flux on the workpieces, or both. This is an obsolete or seldom used process. See Table A5.\"\nTable A5 catalogs exactly 13 obsolete or seldom used processes retained for historical document interpretation.",
+      "arm_c_text": "Yes. In AWS A3.0M/A3.0:2020 Table A5 (Obsolete or Seldom Used Processes, printed p. 74), the queried processes are officially classified as obsolete:\n• block brazing (designation: BB) is an obsolete process cataloged in Table A5 (p. 74) and defined in Clause 4 (p. 11) as: \"A brazing process employing heated blocks as the heat source. This is an obsolete or seldom used process. See Table A5.\"\n• shielded carbon arc welding (designation: CAW-S) is an obsolete process cataloged in Table A5 (p. 74) and defined in Clause 4 (p. 51) as: \"A carbon arc welding process variation using shielding from the combustion of solid material fed into the arc, or from a blanket of flux on the workpieces, or both. This is an obsolete or seldom used process. See Table A5.\"\nTable A5 catalogs exactly 13 obsolete or seldom used processes retained for historical document interpretation."
+    }
+  },
+  {
+    "id": "G63-BLIND10",
+    "category": "process_variation_subtyping",
+    "slice_name": "Slice 10 — Process Variation Subtyping & Suffix Grammar",
+    "question": "What is the difference between FLSP, FLSP-P, and FLSP-W?",
+    "status": "PASS",
+    "target_division": "Normative Tables",
+    "intent": "decode_process_designations",
+    "printed_page": 70,
+    "pdf_index": 82,
+    "evidence_locator": "table_a1:process_letter_designations",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:pdf:82:table:Table_A",
+      "obs:clause4:p25:flame_spraying",
+      "obs:clause4:p44:powder_flame_spraying",
+      "obs:clause4:p66:wire_flame_spraying"
+    ],
+    "elements_present": [
+      "FLSP",
+      "flame spraying",
+      "A thermal spraying process in which an o",
+      "FLSP-P",
+      "powder flame spraying",
+      "A flame spraying process variation in wh",
+      "FLSP-W",
+      "wire flame spraying",
+      "powder form",
+      "wire form",
+      "surfacing material"
+    ],
+    "layers": {
+      "arm_a_text": "In AWS A3.0M/A3.0:2020:",
+      "arm_b_text": "In AWS A3.0M/A3.0:2020:\n• FLSP: flame spraying (Table A1/A2/A3/A5, p. 70; Clause 4, p. 25) — Defined as: \"A thermal spraying process in which an oxyfuel gas flame is the source of heat for melting the surfacing material. Compressed gas may or may not be used for atomizing and propelling the surfacing material to the substrate.\"\n• FLSP-P: powder flame spraying (Table A1/A2/A3/A5, p. 70; Clause 4, p. 44) — Defined as: \"A flame spraying process variation in which the surfacing material is in powder form.\"\n• FLSP-W: wire flame spraying (Table A1/A2/A3/A5, p. 70; Clause 4, p. 66) — Defined as: \"A flame spraying process variation in which the surfacing material is in wire form.\"\n\nConsumable Form and Process Hierarchy Distinction:\n• FLSP (flame spraying) is the root thermal spraying process (Table A1, p. 70; Clause 4, p. 25) that can utilize surfacing material in either powder or wire form.\n• FLSP-P (powder flame spraying, Clause 4, p. 44) is a standardized process variation specifically restricted to surfacing material in powder form.\n• FLSP-W (wire flame spraying, Clause 4, p. 66) is a standardized process variation specifically restricted to surfacing material in wire form.",
+      "arm_c_text": "In AWS A3.0M/A3.0:2020:\n• FLSP: flame spraying (Table A1/A2/A3/A5, p. 70; Clause 4, p. 25) — Defined as: \"A thermal spraying process in which an oxyfuel gas flame is the source of heat for melting the surfacing material. Compressed gas may or may not be used for atomizing and propelling the surfacing material to the substrate.\"\n• FLSP-P: powder flame spraying (Table A1/A2/A3/A5, p. 70; Clause 4, p. 44) — Defined as: \"A flame spraying process variation in which the surfacing material is in powder form.\"\n• FLSP-W: wire flame spraying (Table A1/A2/A3/A5, p. 70; Clause 4, p. 66) — Defined as: \"A flame spraying process variation in which the surfacing material is in wire form.\"\n\nConsumable Form and Process Hierarchy Distinction:\n• FLSP (flame spraying) is the root thermal spraying process (Table A1, p. 70; Clause 4, p. 25) that can utilize surfacing material in either powder or wire form.\n• FLSP-P (powder flame spraying, Clause 4, p. 44) is a standardized process variation specifically restricted to surfacing material in powder form.\n• FLSP-W (wire flame spraying, Clause 4, p. 66) is a standardized process variation specifically restricted to surfacing material in wire form."
+    }
+  },
+  {
+    "id": "G63-BLIND11",
+    "category": "sequence_nomenclature_cluster",
+    "slice_name": "Slice 11 — Sequence Nomenclature Cluster & Linked Figures",
+    "question": "What is a block sequence, what figure illustrates it, and how does AWS A3.0 define and distinguish all of its cross-referenced sequence terms?",
+    "status": "PASS",
+    "target_division": "Multi-Division",
+    "intent": "polysemous_callout_and_glossary",
+    "printed_page": 114,
+    "pdf_index": 126,
+    "evidence_locator": "figure_b23:diagram_details",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b23_p114_crop_300.png",
+    "normative_provenance": [
+      "obs:pdf:126:figure:Figure B23",
+      "obs:clause4:p11:block_sequence"
+    ],
+    "elements_present": [
+      "Figure B23",
+      "Welding Application Nomenclature",
+      "block sequence"
+    ],
+    "layers": {
+      "arm_a_text": "In Figure B23 (Welding Application Nomenclature, printed p.",
+      "arm_b_text": "In Figure B23 (Welding Application Nomenclature, printed p.",
+      "arm_c_text": "In Figure B23 (Welding Application Nomenclature, printed p. 114, PDF index 126) of AWS A3.0M/A3.0:2020, key geometry and nomenclature are illustrated: block sequence (printed p. 11: \"A distortion-control technique using a combined longitudinal and cross-sectional sequence for a continuous multiple-pass weld in which separated segments are completely or partially welded before intervening segments are welded. See Figure B23(B). See also cascade sequence, cross-sectional sequence, progressive block sequence, and successive block sequence.\")."
+    }
+  },
+  {
+    "id": "G63-BLIND12",
+    "category": "throat_dimension_cluster",
+    "slice_name": "Slice 12 — Geometric Throat Cluster & Multi-Figure Reference",
+    "question": "Define effective throat (including how it is determined when a fillet weld is combined with a partial joint penetration groove weld), identify the figures that illustrate it, and provide the definitions of its cross-referenced throat terms.",
+    "status": "PASS",
+    "target_division": "Multi-Division",
+    "intent": "polysemous_callout_and_glossary",
+    "printed_page": 127,
+    "pdf_index": 139,
+    "evidence_locator": "figure_b26:diagram_details",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b26_p127_crop_300.png",
+    "normative_provenance": [
+      "obs:pdf:139:figure:Figure B26",
+      "obs:clause4:p42:partial_joint_penetration_groove_weld",
+      "obs:clause4:p34:joint_penetration",
+      "obs:clause4:p21:effective_throat",
+      "obs:clause4:p43:penetration",
+      "obs:clause4:p24:fillet_weld"
+    ],
+    "elements_present": [
+      "Figure B26",
+      "Groove Weld Size and Joint Penetration",
+      "partial joint penetration groove weld",
+      "joint penetration",
+      "effective throat",
+      "penetration",
+      "fillet weld"
+    ],
+    "layers": {
+      "arm_a_text": "In Figure B26 (Groove Weld Size and Joint Penetration, printed p.",
+      "arm_b_text": "In Figure B26 (Groove Weld Size and Joint Penetration, printed p.",
+      "arm_c_text": "In Figure B26 (Groove Weld Size and Joint Penetration, printed p. 127, PDF index 139) of AWS A3.0M/A3.0:2020, key geometry and nomenclature are illustrated: partial joint penetration groove weld (printed p. 42: \"See partial joint penetration weld.\"); joint penetration (printed p. 34: \"In a groove weld, the distance weld metal extends from the weld face to the weld root, exclusive of weld reinforcement. See Figure B26. See groove weld size.\"); effective throat (printed p. 21: \"The minimum distance from the fillet weld face, minus any convexity, and the weld root. In the case of a fillet weld combined with a partial joint penetration groove weld, the weld root of the groove weld is used. See Figures B25(A)–(D) and B25(I). See also actual throat and theoretical throat.\"); penetration (printed p. 43: \"A nonstandard term when used for fusion depth, joint penetration, or root penetration.\"); fillet weld (printed p. 24: \"A weld of approximately triangular cross section joining two edges in a corner joint, one surface and one edge in a lap joint, or two surfaces in a T-joint.\")."
+    }
+  },
+  {
+    "id": "G63-BLIND13",
+    "category": "fsw_schematic_and_key",
+    "slice_name": "Slice 13 — Figure Schematic Key Enumeration & Directional Senses",
+    "question": "Which figure in AWS A3.0 shows the schematic of the Friction Stir Welding process, what are the 10 numbered items in its Key, and how does the standard define the advancing side versus the retreating side of the weld?",
+    "status": "PASS",
+    "target_division": "Figure B46",
+    "intent": "fsw_components_zones",
+    "printed_page": 150,
+    "pdf_index": 162,
+    "evidence_locator": "figure_b46:schematic_key",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:pdf:162:figure:Figure B46",
+      "obs:pdf:19:clause:advancing_side",
+      "obs:pdf:60:clause:retreating_side"
+    ],
+    "elements_present": [
+      "Figure B46",
+      "Advancing Side",
+      "Retreating Side",
+      "Tool Shoulder",
+      "Probe",
+      "HAZ",
+      "TMAZ"
+    ],
+    "layers": {
+      "arm_a_text": "In Figure B46 (Schematic of the Friction Stir Welding Process), key items and microstructural zones are defined: Key items: 1 Base Metal, 2 Direction of Tool Rotation, 3 Weld Tool, 4 Axial Force, 5 Tool Shoulder, 6 Probe, 7 Advancing Side of Weld, 8 Exit Hole, 9 Retreating Side of Weld, 10 Weld Face.",
+      "arm_b_text": "In Figure B46 (Schematic of the Friction Stir Welding Process), key items and microstructural zones are defined: Key items: 1 Base Metal, 2 Direction of Tool Rotation, 3 Weld Tool, 4 Axial Force, 5 Tool Shoulder, 6 Probe, 7 Advancing Side of Weld, 8 Exit Hole, 9 Retreating Side of Weld, 10 Weld Face.",
+      "arm_c_text": "In Figure B46 (Schematic of the Friction Stir Welding Process), key items and microstructural zones are defined: Key items: 1 Base Metal, 2 Direction of Tool Rotation, 3 Weld Tool, 4 Axial Force, 5 Tool Shoulder, 6 Probe, 7 Advancing Side of Weld, 8 Exit Hole, 9 Retreating Side of Weld, 10 Weld Face. Microstructural zones: Advancing Side, Retreating Side, Tool Shoulder, Probe, Exit Hole, Stir Zone / Weld Nugget, Thermo-mechanically affected zone (TMAZ), and Heat-affected zone (HAZ).\n\nKey Tool and Microstructural Zone Descriptions:\n• Advancing Side (Clause 4, p. 7): \"The side of the weld in which the direction of tool rotation and travel are the same. See also retreating side. See Figure B46.\"\n• Retreating Side (Clause 4, p. 48): \"The side of the weld in which the directions of tool rotation and travel are opposite. See Figure B46. See also advancing side.\"\n• Tool Shoulder (Figure B46 Item 5): Illustrated as Item 5 in Figure B46 legend; note that 'tool shoulder' has no separate normative definition entry in Clause 4.\n• Probe (Figure B46 Item 6): Illustrated as Item 6 in Figure B46 legend; note that 'probe' has no separate normative definition entry in Clause 4.\n• TMAZ & Stir Zone: Thermo-mechanically affected zone (TMAZ) and Stir Zone / Weld Nugget are illustrated microstructural zones in Figure B46 without dedicated Clause 4 definition entries."
+    }
+  },
+  {
+    "id": "G63-BLIND14",
+    "category": "temper_bead_nomenclature",
+    "slice_name": "Slice 14 — Sub-Diagram Measurement Notes & Temper Bead Cluster",
+    "question": "Which figure and sub-diagram illustrate the placement of temper beads and toe temper beads in groove, fillet, and overlay welds, how is the distance S measured according to the figure's notes, what approximate offset dimension is specified for the first layer temper beads, and how does Clause 4 define temper pass, temper bead, temper bead sequence, toe temper pass, and toe temper bead?",
+    "status": "PASS",
+    "target_division": "Figure B23",
+    "intent": "temper_beads",
+    "printed_page": 116,
+    "pdf_index": 128,
+    "evidence_locator": "figure_b23:panel_j",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b23_p116_crop_300.png",
+    "normative_provenance": [
+      "obs:pdf:128:figure:Figure B23:panel_j",
+      "obs:clause4:p60:temper_pass",
+      "obs:clause4:p60:temper_bead",
+      "obs:clause4:p60:temper_bead_sequence",
+      "obs:clause4:p60:toe_temper_pass",
+      "obs:clause4:p60:toe_temper_bead"
+    ],
+    "elements_present": [
+      "Figure B23",
+      "(J) TEMPER BEADS",
+      "116",
+      "distance, S",
+      "APPROX. 1 mm [0.040 in]",
+      "Note (1)",
+      "Note (2)",
+      "Note (a)",
+      "Note (b)",
+      "temper pass",
+      "temper bead",
+      "temper bead sequence",
+      "toe temper pass",
+      "toe temper bead"
+    ],
+    "layers": {
+      "arm_a_text": "In AWS A3.0M/A3.0:2020 Figure B23 (Welding Application Nomenclature, printed p.",
+      "arm_b_text": "In AWS A3.0M/A3.0:2020 Figure B23 (Welding Application Nomenclature, printed p.",
+      "arm_c_text": "In AWS A3.0M/A3.0:2020 Figure B23 (Welding Application Nomenclature, printed p. 116, PDF index 128), sub-diagram (J) TEMPER BEADS illustrates the placement of temper beads and toe temper beads in groove, fillet, and overlay welds.\n\nMeasurement of Distance S and Offset Dimension:\n• Per Figure B23 Note (1): 'The distance, S, is measured from the toe of the weld to the edge of the temper beads. Measurements shall be made parallel to the base metal surface.'\n• The specified offset dimension for the first layer temper beads is APPROX. 1 mm [0.040 in].\n• General Notes:\n  (a) Weld beads shown above may be deposited in any sequence that will result in placement of the beads as shown.\n  (b) Surface temper reinforcing beads may cover the entire weld surface or may only be placed at the toe of the weld. They may or may not be mechanically removed.\n  (2) Beads near the finished surface may be both tempering beads and surface temper reinforcing beads.\n\nClause 4 Definitions:\n• temper pass (Clause 4, p. 58): \"A weld pass used to modify the metallurgical properties of the heat-affected zone or previously deposited weld metal. The result of a temper pass is a temper bead. See Figure B23(J).\"\n• temper bead (Clause 4, p. 58): \"A weld bead resulting from a temper pass. See also cosmetic bead, intermediate bead, and smoothing bead.\"\n• temper bead sequence (Clause 4, p. 58): \"A cross-sectional sequence in a multiple-pass weld in which the order and position of weld passes result in the creation of temper beads. See Figure B23(J).\"\n• toe temper pass (Clause 4, p. 60): \"A weld pass applied to the cover bead adjacent to the weld toe in a manner to modify the metallurgical properties of the cover bead heat-affected zone. The result of a toe temper pass is a toe temper bead. See Figure B23(J).\"\n• toe temper bead (Clause 4, p. 59): \"A weld bead resulting from a toe temper pass. See Figure B23(J).\""
+    }
+  },
+  {
+    "id": "G63-BLIND15",
+    "category": "reentrant_angle_discontinuity_cluster",
+    "slice_name": "Slice 15 — Angle Cluster & Weld Discontinuity Multi-Diagrams",
+    "question": "How does AWS A3.0 define reentrant angle, bead reentrant angle, and toe reentrant angle, which figure sub-diagrams illustrate them, and what angular condition at the weld toe, weld root, or weld bead toe defines overlap in fusion welding?",
+    "status": "PASS",
+    "target_division": "Figure B32",
+    "intent": "spatial_callout",
+    "printed_page": 136,
+    "pdf_index": 148,
+    "evidence_locator": "figure_b32:diagram_details",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b32_p136_crop_300.png",
+    "normative_provenance": [
+      "obs:pdf:148:figure:Figure B32"
+    ],
+    "elements_present": [
+      "Figure B32",
+      "(I) REENTRANT ANGLES AT FILLET WELD TOES",
+      "(J) REENTRANT ANGLE AT WELD BEAD TOE",
+      "(K) REENTRANT ANGLES AT GROOVE WELD FACE AND ROOT SURFACE",
+      "(L) REENTRANT ANGLES AT GROOVE WELD FACE",
+      "(M) FILLET WELD WITH ACUTE AND OBTUSE REENTRANT ANGLES",
+      "ACUTE TOE REENTRANT ANGLE",
+      "BEAD REENTRANT ANGLE",
+      "BURN-THROUGH",
+      "FILLET WELD WITH ACUTE AND OBTUSE REENTRANT ANGLES",
+      "OBTUSE TOE REENTRANT ANGLE",
+      "OVERLAP",
+      "REENTRANT ANGLE AT WELD BEAD TOE",
+      "REENTRANT ANGLES AT FILLET WELD TOES",
+      "REENTRANT ANGLES AT GROOVE WELD FACE",
+      "REENTRANT ANGLES AT GROOVE WELD FACE AND ROOT SURFACE",
+      "SECTION A-A",
+      "TOE REENTRANT ANGLE",
+      "Toe Crack",
+      "UNDERFILL",
+      "UNFILLED CRATER",
+      "Underbead Crack"
+    ],
+    "layers": {
+      "arm_a_text": "Figure B32 (Weld Discontinuities) contains 21 unique callout labels: (I) REENTRANT ANGLES AT FILLET WELD TOES, (J) REENTRANT ANGLE AT WELD BEAD TOE, (K) REENTRANT ANGLES AT GROOVE WELD FACE AND ROOT SURFACE, (L) REENTRANT ANGLES AT GROOVE WELD FACE, (M) FILLET WELD WITH ACUTE AND OBTUSE REENTRANT ANGLES, ACUTE TOE REENTRANT ANGLE, BEAD REENTRANT ANGLE, BURN-THROUGH, FILLET WELD WITH ACUTE AND OBTUSE REENTRANT ANGLES, OBTUSE TOE REENTRANT ANGLE, OVERLAP, REENTRANT ANGLE AT WELD BEAD TOE, REENTRANT ANGLES AT FILLET WELD TOES, REENTRANT ANGLES AT GROOVE WELD FACE, REENTRANT ANGLES AT GROOVE WELD FACE AND ROOT SURFACE, SECTION A-A, TOE REENTRANT ANGLE, Toe Crack, UNDERFILL, UNFILLED CRATER, Underbead Crack.",
+      "arm_b_text": "Figure B32 (Weld Discontinuities) contains 21 unique callout labels: (I) REENTRANT ANGLES AT FILLET WELD TOES, (J) REENTRANT ANGLE AT WELD BEAD TOE, (K) REENTRANT ANGLES AT GROOVE WELD FACE AND ROOT SURFACE, (L) REENTRANT ANGLES AT GROOVE WELD FACE, (M) FILLET WELD WITH ACUTE AND OBTUSE REENTRANT ANGLES, ACUTE TOE REENTRANT ANGLE, BEAD REENTRANT ANGLE, BURN-THROUGH, FILLET WELD WITH ACUTE AND OBTUSE REENTRANT ANGLES, OBTUSE TOE REENTRANT ANGLE, OVERLAP, REENTRANT ANGLE AT WELD BEAD TOE, REENTRANT ANGLES AT FILLET WELD TOES, REENTRANT ANGLES AT GROOVE WELD FACE, REENTRANT ANGLES AT GROOVE WELD FACE AND ROOT SURFACE, SECTION A-A, TOE REENTRANT ANGLE, Toe Crack, UNDERFILL, UNFILLED CRATER, Underbead Crack.",
+      "arm_c_text": "Figure B32 (Weld Discontinuities) contains 21 unique callout labels: (I) REENTRANT ANGLES AT FILLET WELD TOES, (J) REENTRANT ANGLE AT WELD BEAD TOE, (K) REENTRANT ANGLES AT GROOVE WELD FACE AND ROOT SURFACE, (L) REENTRANT ANGLES AT GROOVE WELD FACE, (M) FILLET WELD WITH ACUTE AND OBTUSE REENTRANT ANGLES, ACUTE TOE REENTRANT ANGLE, BEAD REENTRANT ANGLE, BURN-THROUGH, FILLET WELD WITH ACUTE AND OBTUSE REENTRANT ANGLES, OBTUSE TOE REENTRANT ANGLE, OVERLAP, REENTRANT ANGLE AT WELD BEAD TOE, REENTRANT ANGLES AT FILLET WELD TOES, REENTRANT ANGLES AT GROOVE WELD FACE, REENTRANT ANGLES AT GROOVE WELD FACE AND ROOT SURFACE, SECTION A-A, TOE REENTRANT ANGLE, Toe Crack, UNDERFILL, UNFILLED CRATER, Underbead Crack."
+    }
+  },
+  {
+    "id": "G63-BLIND16",
+    "category": "application_mode_suffixes_and_rules",
+    "slice_name": "Slice 16 — Suffix Modifiers, Appending Grammar & Mode Definitions",
+    "question": "List all six application modes and their letter designation suffixes from Table A4, explain the rule and format for appending them to a process or process variation designation, and give the Clause 4 definitions that distinguish the six application modes.",
+    "status": "PASS",
+    "target_division": "Normative Tables",
+    "intent": "suffix_modifiers",
+    "printed_page": 74,
+    "pdf_index": 86,
+    "evidence_locator": "table_a4:suffix:-AU",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:pdf:86:table:Table A4",
+      "obs:pdf:174:clause:C1.3_5"
+    ],
+    "elements_present": [
+      "-AD",
+      "Adaptive control",
+      "-AU",
+      "Automatic",
+      "-MA",
+      "Manual",
+      "-ME",
+      "Mechanized",
+      "-RO",
+      "Robotic",
+      "-SA",
+      "Semiautomatic",
+      "Table A4",
+      "-AD",
+      "-AU",
+      "-MA",
+      "-ME",
+      "-RO",
+      "-SA",
+      "Adaptive control",
+      "Automatic",
+      "Manual",
+      "Mechanized",
+      "Robotic",
+      "Semiautomatic",
+      "hyphen"
+    ],
+    "layers": {
+      "arm_a_text": "In AWS A3.0M/A3.0:2020 Table A4—Suffixes for Application Mode of Welding, Joining, and Allied Processes (Suffixes for Application Mode, printed p.",
+      "arm_b_text": "In AWS A3.0M/A3.0:2020 Table A4—Suffixes for Application Mode of Welding, Joining, and Allied Processes (Suffixes for Application Mode, printed p.",
+      "arm_c_text": "In AWS A3.0M/A3.0:2020 Table A4—Suffixes for Application Mode of Welding, Joining, and Allied Processes (Suffixes for Application Mode, printed p. 74), exactly six standardized letter designation suffixes are established:\n- -AD = Adaptive control (Clause 4, p. 7): \"Pertaining to process control, which senses changes in conditions and directs the equipment to take appropriate action. See Table A4. See also automatic, manual, mechanized, robotic, and semiautomatic.\"\n- -AU = Automatic (Clause 4, p. 9): \"Pertaining to process control with equipment requiring only occasional or no observation and no manual adjustments during its operation. See Table A4. See also adaptive control, manual, mechanized, robotic, and semiautomatic.\"\n- -MA = Manual (Clause 4, p. 37): \"Pertaining to the control of a process with the torch, gun, or electrode holder held and manipulated by hand. Accessory equipment, such as part motion devices and handheld material feeders may be used. See Table A4. See also adaptive control, automatic, mechanized, robotic, and semiautomatic.\"\n- -ME = Mechanized (Clause 4, p. 38): \"Pertaining to control of a process being mechanically moved along a preset path where manual adjustments may be made by an operator in response to visual observation of the process. See Table A4. See also adaptive control, automatic, manual, robotic, and semiautomatic.\"\n- -RO = Robotic (Clause 4, p. 49): \"Pertaining to process control with equipment moving along a controlled path using controlled parameters with no manual intervention once a cycle is initiated. See Table A4. See also adaptive control, automatic, manual, mechanized, and semiautomatic.\"\n- -SA = Semiautomatic (Clause 4, p. 51): \"Pertaining to the manual application of a process with equipment controlling one or more of the process conditions. See Table A4. See also adaptive control, automatic, manual, mechanized, and robotic.\"\n\nHyphenation Rule: Per Table A4 note and Annex C C1.3(5), Application mode designator is added to a process designator in the following format: XXXX-YY, where XXXX is the process designator and YY is the application mode designator. For example, manual gas tungsten arc welding is designated as GTAW-MA. Suffixes are appended in the format XXXX-YY, where XXXX is the process letter designation and YY is the application mode suffix (e.g. GTAW-MA, GMAW-SA, SAW-AU)."
+    }
+  },
+  {
+    "id": "G63-BLIND17",
+    "category": "process_family_pressure_ranges",
+    "slice_name": "Slice 17 — Multi-Family Process Decoding & Vacuum Pressure Limits",
+    "question": "Decode the letter designations LBC, LBC-A, LBC-EV, LBC-IG, LBC-O and EBW, EBW-HV, EBW-MV, EBW-NV from Annex A (Tables A1–A3), and state how Clause 4 defines each variation, including the exact operating pressure ranges in pascals and torr for the electron beam welding variations.",
+    "status": "PASS",
+    "target_division": "Normative Tables",
+    "intent": "decode_process_designations",
+    "printed_page": 70,
+    "pdf_index": 82,
+    "evidence_locator": "table_a1:process_letter_designations",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:pdf:82:table:Table_A",
+      "obs:clause4:p35:laser_beam_cutting",
+      "obs:clause4:p35:laser_beam_air_cutting",
+      "obs:clause4:p35:laser_beam_evaporative_cutting",
+      "obs:clause4:p36:laser_beam_inert_gas_cutting",
+      "obs:clause4:p36:laser_beam_oxygen_cutting",
+      "obs:pdf:81:table:Table_A",
+      "obs:clause4:p23:electron_beam_welding",
+      "obs:clause4:p31:high_vacuum_electron_beam_welding",
+      "obs:clause4:p38:medium_vacuum_electron_beam_welding",
+      "obs:clause4:p40:nonvacuum_electron_beam_welding"
+    ],
+    "elements_present": [
+      "LBC",
+      "laser beam cutting",
+      "A thermal cutting process severing metal",
+      "laser beam air cutting, laser beam evaporative cutting, laser beam inert gas cutting, and laser beam  oxygen cutting",
+      "LBC-A",
+      "laser beam air cutting",
+      "A laser beam cutting process variation m",
+      "LBC-EV",
+      "laser beam evaporative cutting",
+      "A laser beam cutting process variation v",
+      "LBC-IG",
+      "laser beam inert gas cutting",
+      "LBC-O",
+      "laser beam oxygen cutting",
+      "A laser beam cutting process variation u",
+      "EBW",
+      "electron beam welding",
+      "A welding process producing coalescence ",
+      "high vacuum electron beam welding, medium vacuum electron beam welding,  and nonvacuum electron beam welding",
+      "EBW-HV",
+      "high vacuum electron beam welding",
+      "An electron beam welding process variati",
+      "EBW-MV",
+      "medium vacuum electron beam welding",
+      "EBW-NV",
+      "nonvacuum electron beam welding",
+      "high vacuum",
+      "medium vacuum",
+      "nonvacuum",
+      "atmospheric",
+      "torr",
+      "Pa",
+      "10^-4",
+      "10^-1"
+    ],
+    "layers": {
+      "arm_a_text": "In AWS A3.0M/A3.0:2020:",
+      "arm_b_text": "In AWS A3.0M/A3.0:2020:",
+      "arm_c_text": "In AWS A3.0M/A3.0:2020:\n• LBC: laser beam cutting (Table A1/A2/A3/A5, p. 70; Clause 4, p. 35) — Defined as: \"A thermal cutting process severing metal by locally melting or vaporizing it with the heat from a laser beam. The process is used with or without assist gas to aid the removal of molten and vaporized material. See also laser beam air cutting, laser beam evaporative cutting, laser beam inert gas cutting, and laser beam oxygen cutting.\"\n• LBC-A: laser beam air cutting (Table A1/A2/A3/A5, p. 70; Clause 4, p. 35) — Defined as: \"A laser beam cutting process variation melting the workpiece and using an air jet to remove molten and vaporized material.\"\n• LBC-EV: laser beam evaporative cutting (Table A1/A2/A3/A5, p. 70; Clause 4, p. 35) — Defined as: \"A laser beam cutting process variation vaporizing the workpiece, with or without an assist gas, typically inert gas, to aid the removal of vaporized material.\"\n• LBC-IG: laser beam inert gas cutting (Table A1/A2/A3/A5, p. 70; Clause 4, p. 36) — Defined as: \"A laser beam cutting process variation melting the workpiece and using an inert assist gas to remove molten and vaporized material.\"\n• LBC-O: laser beam oxygen cutting (Table A1/A2/A3/A5, p. 70; Clause 4, p. 36) — Defined as: \"A laser beam cutting process variation using heat from the chemical reaction between oxygen and the base metal at elevated temperatures. The necessary temperature is maintained with a laser beam.\"\n• EBW: electron beam welding (Table A1/A2/A3/A5, p. 69; Clause 4, p. 23) — Defined as: \"A welding process producing coalescence with a concentrated beam, composed prima- rily of high-velocity electrons, impinging on the joint. The process is used without shielding gas and without the application of pressure. See also high vacuum electron beam welding, medium vacuum electron beam welding, and nonvacuum electron beam welding.\"\n• EBW-HV: high vacuum electron beam welding (Table A1/A2/A3/A5, p. 69; Clause 4, p. 31) — Defined as: \"An electron beam welding process variation in which welding is accomplished at a pressure of 10–4 to 10–1 pascals [approximately 10–6 to 10–3 torr].\"\n• EBW-MV: medium vacuum electron beam welding (Table A1/A2/A3/A5, p. 69; Clause 4, p. 38) — Defined as: \"An electron beam welding process variation in which welding is accomplished at a pressure of 10–1 pascal to 3 × 103 pascal [approximately 10–3 torr to 25 torr].\"\n• EBW-NV: nonvacuum electron beam welding (Table A1/A2/A3/A5, p. 69; Clause 4, p. 40) — Defined as: \"An electron beam welding process variation in which welding is accomplished at atmospheric pressure.\"\n\nPhysical operating pressure ranges distinguishing EBW process variations:\n1. EBW-HV (High vacuum electron beam welding, Clause 4 p. 31): Operates at high vacuum pressures, specifically: \"An electron beam welding process variation in which welding is accomplished at a pressure of 10–4 to 10–1 pascals [approximately 10–6 to 10–3 torr].\" (10^-4 to 10^-1 Pa [10^-6 to 10^-3 Torr])\n2. EBW-MV (Medium vacuum electron beam welding, Clause 4 p. 38): Operates at medium vacuum pressures, specifically: \"An electron beam welding process variation in which welding is accomplished at a pressure of 10–1 pascal to 3 × 103 pascal [approximately 10–3 torr to 25 torr].\" (0.1 to 100 Pa [10^-3 to 1 Torr])\n3. EBW-NV (Nonvacuum electron beam welding, Clause 4 p. 40): Operates at atmospheric pressure, specifically: \"An electron beam welding process variation in which welding is accomplished at atmospheric pressure.\""
+    }
+  },
+  {
+    "id": "G63-BLIND18",
+    "category": "safety_exceptions_and_incorrect_terms",
+    "slice_name": "Slice 18 — Personal Safety Exception & Nonstandard/Incorrect Terms",
+    "question": "According to the Foreword and Annex C, under what specific exception does AWS A3.0 classify a term as both \"nonstandard and incorrect\"? Identify the electrical circuit terms in Clause 4 that carry this \"nonstandard and incorrect\" designation, and provide the definitions of the standard terms that must be used instead (including the safety distinction with ground connection in Figure B34).",
+    "status": "PASS",
+    "target_division": "Annex C / Clause 4",
+    "intent": "safety_incorrect_terms",
+    "printed_page": 140,
+    "pdf_index": 152,
+    "evidence_locator": "figure_b34:diagram_details",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b34_p140_crop_300.png",
+    "normative_provenance": [
+      "obs:pdf:175:clause:C2.3",
+      "obs:pdf:152:figure:Figure B34",
+      "obs:clause4:p29:ground_clamp",
+      "obs:clause4:p30:ground_lead",
+      "obs:clause4:p65:welding_ground",
+      "obs:clause4:p66:workpiece_connection",
+      "obs:clause4:p30:ground_connection"
+    ],
+    "elements_present": [
+      "Annex C",
+      "C2.3",
+      "personal safety",
+      "nonstandard and incorrect",
+      "ground clamp",
+      "ground lead",
+      "welding ground",
+      "silver soldering",
+      "workpiece connection",
+      "workpiece connector",
+      "workpiece lead",
+      "electrode lead",
+      "ground connection",
+      "Figure B34",
+      "DCEN",
+      "DCEP",
+      "earth"
+    ],
+    "layers": {
+      "arm_a_text": "Per Annex C Clause C2.3 (printed p.",
+      "arm_b_text": "Per Annex C Clause C2.3 (printed p.",
+      "arm_c_text": "Per Annex C Clause C2.3 (printed p. 163, PDF index 175) and the Foreword of AWS A3.0M/A3.0:2020: Terms are categorized as either standard or nonstandard. No other designation, such as preferred or nonpreferred, acceptable or nonacceptable, correct or incorrect is used, EXCEPT that when the misuse of a term may endanger personal safety, the term is identified as both 'nonstandard and incorrect' (Example: ground lead).\n\nElectrical Circuit Terms Designated as 'Nonstandard and Incorrect' (or 'Incorrect') in Clause 4:\n• ground clamp (Clause 4, p. 29): \"A nonstandard and incorrect term for workpiece connection.\" — Standard term: workpiece connection\n• ground lead (Clause 4, p. 30): \"A nonstandard and incorrect term for workpiece lead.\" — Standard term: workpiece lead\n• welding ground (Clause 4, p. 65): \"A nonstandard and incorrect term for workpiece connection.\" — Standard term: workpiece connection\n• silver soldering (Clause 4, p. 52): \"An incorrect term for brazing with a silver-containing brazing filler metal.\" — Standard term: brazing with a silver filler metal\n\nStandard Terminology and Safety Distinction (Figure B34, printed p. 140, PDF index 152):\nIn Figure B34 (Welding Current Polarity), AWS A3.0 emphasizes that 'ground connection' connects the welding machine frame to earth potential solely for personnel safety against electric shock. In contrast, welding current returns through the 'workpiece lead' attached via the 'workpiece connection' (or 'workpiece connector'). Referring to the workpiece lead or connection as a 'ground lead' or 'ground clamp' is hazardous because it obscures this vital life-safety electrical distinction.\n\nStandard Terms to be Used Instead:\n• workpiece connection (Clause 4, p. 67): \"A nonstandard term when used for workpiece connector.\"\n• workpiece connector (Clause 4, p. 67): \"A device used to provide an electrical connection between the workpiece and the workpiece lead. See Figure B34.\"\n• workpiece lead (Clause 4, p. 67): \"A secondary circuit conductor transmitting energy from the power source to the workpiece connector. See Figure B34.\"\n• electrode lead (Clause 4, p. 22): \"A secondary circuit conductor transmitting energy from the power source to the electrode holder, gun, or torch. See Figures B34 and B36.\"\n• ground connection (Clause 4, p. 30): \"An electrical connection of the welding machine frame to the earth for safety. See Figure B34. See also workpiece connection and workpiece lead. ground lead. A nonstandard and incorrect term for workpiece lead.\""
+    }
+  },
+  {
+    "id": "G63-BLIND19",
+    "category": "annex_c_and_d_normative_revisions",
+    "slice_name": "Slice 19 — Edition Revision Decisions & Normative Rationale",
+    "question": "Explain two major terminology revisions documented in Annex C (Clauses C1.5.6 and C1.5.7) and Annex D of AWS A3.0:2020: (1) Why was parallel joint introduced to replace edge joint among the five basic joint types, and how are both terms defined in Clause 4? (2) How did the 13th edition change the status of nondestructive evaluation, nondestructive inspection (NDI), and nondestructive testing (NDT) relative to nondestructive examination (NDE), and why was the definition of nondestructive examination (NDE) itself modified?",
+    "status": "PASS",
+    "target_division": "Annex C / Annex D",
+    "intent": "annex_c_and_d_revisions",
+    "printed_page": 159,
+    "pdf_index": 171,
+    "evidence_locator": "annex_c:decision:C1.5.6",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:pdf:173:clause:C1.5.6",
+      "obs:pdf:174:clause:C1.5.7",
+      "obs:pdf:177:table:Table D1",
+      "obs:pdf:179:table:Table D2",
+      "obs:pdf:182:table:Table D5"
+    ],
+    "elements_present": [
+      "Annex C",
+      "C1.5.6",
+      "C1.5.7",
+      "Annex D",
+      "Table D1",
+      "Table D2",
+      "Table D5",
+      "parallel joint",
+      "edge joint",
+      "joint type",
+      "butt, corner, lap, parallel, and T-joints",
+      "nondestructive examination",
+      "NDE",
+      "nondestructive inspection (NDI)",
+      "nondestructive testing (NDT)",
+      "nondestructive evaluation",
+      "determining acceptability of a material or a component in accordance with established criteria without impairing its future usefulness"
+    ],
+    "layers": {
+      "arm_a_text": "In AWS A3.0M/A3.0:2020, two major terminology revisions are documented in Annex C (Clauses C1.5.6 and C1.5.7) and Annex D:",
+      "arm_b_text": "In AWS A3.0M/A3.0:2020, two major terminology revisions are documented in Annex C (Clauses C1.5.6 and C1.5.7) and Annex D:",
+      "arm_c_text": "In AWS A3.0M/A3.0:2020, two major terminology revisions are documented in Annex C (Clauses C1.5.6 and C1.5.7) and Annex D:\n\n1. Introduction of 'parallel joint' replacing 'edge joint' (Clause C1.5.7, printed p. 162):\n   • Rationale: Historically, five basic joint types were recognized (butt, corner, edge, lap, T-joint). The names of four described member orientation, but 'edge joint' identified weld location rather than member orientation and conflicted with 'edge weld'. To eliminate this irregularity, 'parallel joint' was introduced as a replacement among the five basic joint types: butt, corner, lap, parallel, and T-joints. Edge joint was retained as a standard cross-reference ('See parallel joint').\n   • Annex D Classification: 'parallel joint' is added in Table D1 (New Terms, p. 165), while 'joint type' and 'edge joint' are listed in Table D2 (Substantially Revised, p. 169).\n\n2. Elevation of NDE Alternatives & Revised Definition of NDE (Clause C1.5.6, printed pp. 161–162):\n   • Rationale: In the 2001 edition, nondestructive examination (NDE) was chosen as the standard term, and evaluation, inspection, and testing were listed as nonstandard. In the 13th edition (2020), because all four terms are widely used across standards bodies (ASME, ASNT, ASTM) and industry, the committee recognized evaluation, inspection (NDI), and testing (NDT) as valid standard alternatives directing to NDE ('See nondestructive examination').\n   • Definition Revision: The definition of nondestructive examination (NDE) itself was revised because performing NDE cannot guarantee 'suitability for its intended purpose'; it was changed to: 'The process of determining acceptability of a material or a component in accordance with established criteria without impairing its future usefulness.'\n   • Annex D Classification: Table D5 (Terms Revised from Nonstandard to Standard, p. 170) records nondestructive evaluation, nondestructive inspection (NDI), and nondestructive testing (NDT). Table D2 lists the revised definition of nondestructive examination (NDE).\n\nVerbatim Clause 4 Definitions:\n• joint (Clause 4, p. 34): \"The junction of workpiece(s) before and after joining. See Figures B1 and B2.\"\n• joint type (Clause 4, p. 34): \"Classification of a joint based upon the relative orientation of the workpieces being joined. See Figures B1 and B2. See butt joint, corner joint, parallel joint, flanged butt joint, flanged corner joint, flanged parallel joint, flanged lap joint, flanged T-joint, lap joint, and T-joint.\"\n• parallel joint (Clause 4, p. 42): \"A joint type formed by butting, parallel surfaces of one or more workpieces with flush ends. See Figures B1(E) and B2(E). See also skewed joint.\"\n• edge joint (Clause 4, p. 21): \"See parallel joint.\"\n• nondestructive examination (Clause 4, p. 40): \"(NDE). The process of determining acceptability of a material or a component in accord- ance with established criteria without impairing its future usefulness.\"\n• nondestructive evaluation (Clause 4, p. 40): \"See nondestructive examination.\"\n• nondestructive inspection (Clause 4, p. 40): \"(NDI). See nondestructive examination.\"\n• nondestructive testing (Clause 4, p. 40): \"(NDT). See nondestructive examination.\""
+    }
+  },
+  {
+    "id": "G63-BLIND20",
+    "category": "waveform_cycle_interval_analysis",
+    "slice_name": "Slice 20 — Dual Waveform Comparison & 11 Cycle Interval Definitions",
+    "question": "Compare the resistance spot welding waveforms in Figure B49 (Pulsation Welding Waveform) and Figure B50 (Single-Pulse Resistance Spot Welding Waveform): how does Clause 4 distinguish weld time, resistance welding from weld interval, resistance welding, and cool time, resistance welding from quench time, resistance welding? Additionally, define the sequential cycle intervals shown across Figures B49 and B50: squeeze time, preweld interval, preheat time, upslope time, pulse time, downslope time, temper time, hold time, postweld interval, forge-delay time, and off time.",
+    "status": "PASS",
+    "target_division": "Figure B49 / Figure B50",
+    "intent": "waveform_comparison_and_intervals",
+    "printed_page": 153,
+    "pdf_index": 165,
+    "evidence_locator": "figure_b49:interval:upslope",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b49_300dpi.png",
+    "normative_provenance": [
+      "obs:pdf:165:figure:Figure B49",
+      "obs:pdf:165:figure:Figure B50"
+    ],
+    "elements_present": [
+      "Figure B49",
+      "Figure B50",
+      "153",
+      "Pulsation Welding",
+      "Single-Pulse",
+      "weld time",
+      "weld interval",
+      "cool time",
+      "quench time",
+      "squeeze time",
+      "preweld interval",
+      "preheat time",
+      "upslope time",
+      "pulse time",
+      "downslope time",
+      "temper time",
+      "hold time",
+      "postweld interval",
+      "forge-delay time",
+      "off time"
+    ],
+    "layers": {
+      "arm_a_text": "In AWS A3.0M/A3.0:2020, Figure B49 (Example of a Pulsation Welding Waveform for Resistance Spot Welding) and Figure B50 (Example of a Single-Pulse Resistance Spot Welding Waveform) share printed p.",
+      "arm_b_text": "In AWS A3.0M/A3.0:2020, Figure B49 (Example of a Pulsation Welding Waveform for Resistance Spot Welding) and Figure B50 (Example of a Single-Pulse Resistance Spot Welding Waveform) share printed p.",
+      "arm_c_text": "In AWS A3.0M/A3.0:2020, Figure B49 (Example of a Pulsation Welding Waveform for Resistance Spot Welding) and Figure B50 (Example of a Single-Pulse Resistance Spot Welding Waveform) share printed p. 153 (PDF index 165).\n\nKey Distinctions in Clause 4:\n1. weld time vs. weld interval:\n   • 'weld time, resistance welding': The duration for which welding current is applied to the workpiece in making a weld without pulsation (single-pulse), or during each heat time in pulsation welding.\n   • 'weld interval, resistance welding': The total elapsed time of the welding current including heat times and cool times in multiple-impulse or pulsation resistance welding.\n2. cool time vs. quench time:\n   • 'cool time, resistance welding': The duration between successive heat times in multiple-impulse or pulsation resistance welding.\n   • 'quench time, resistance welding': The duration from the end of the weld interval to the beginning of the temper time.\n\nDefinitions of Sequential Cycle Intervals across Figures B49 and B50:\n• squeeze time (Clause 4, p. 55): \"The interval between initiation of the welding cycle and first application of current. See Figures B49 and B50.\"\n• preweld interval (Clause 4, p. 45): \"The elapsed time between the initiation of the squeeze time and the beginning of the weld time or weld interval time. See Figure B50.\"\n• preheat time (Clause 4, p. 45): \"The duration of preheat current flow. See Figure B49.\"\n• upslope time (Clause 4, p. 61): \"The interval during which the welding current or power is continuously increased. See Figures B49 and B53.\"\n• weld time (Clause 4, p. 64): \"resistance welding. The duration of time when welding current passes through workpieces in a single pulse. See Figures B49 and B50. See also weld interval.\"\n• weld interval (Clause 4, p. 63): \"The sum of heat and cool times to produce a pulsation weld. See Figure B49. See also weld time.\"\n• heat time (Clause 4, p. 30): \"See weld time.\"\n• cool time (Clause 4, p. 17): \"Any interval between squeeze time and hold time when no resistance welding current is being conducted. See Figure B49.\"\n• pulse time (Clause 4, p. 46): \"The duration of a pulse. See Figure B49 and B50.\"\n• downslope time (Clause 4, p. 21): \"The interval during which the welding current or power is continuously decreased. See Figures B49 and B53.\"\n• quench time (Clause 4, p. 47): \"The duration from the end of the weld interval or downslope time to the beginning of the temper time, during which no current flows through the workpieces and the weld is rapidly cooled by the electrodes. See Figure B49.\"\n• temper time (Clause 4, p. 58): \"The time following quench time during which a current is passed through the weld for heat treating. See Figure B49.\"\n• hold time (Clause 4, p. 31): \"The duration of force application after the last heat function has ended. See Figures B49 and B51.\"\n• postweld interval (Clause 4, p. 44): \"The duration from the end of the weld interval through the hold time. See Figure B49.\"\n• forge-delay time (Clause 4, p. 27): \"The duration between a preselected point in the welding cycle and the initiation of the forging force. See Figure B49.\"\n• off time (Clause 4, p. 40): \"The interval between welding cycles when operating in a repeat mode. See Figure B50.\""
+    }
+  },
+  {
+    "id": "G66-DIAG01",
+    "category": "abstention_control",
+    "slice_name": "Slice 21 — Out-of-Scope Abstention Control",
+    "question": "What is the minimum preheat temperature in degrees Fahrenheit for 2-inch ASTM A514 plate in AWS D1.1 Table 5.8?",
+    "status": "REFUSAL_OUT_OF_SCOPE",
+    "target_division": "Clause 4",
+    "intent": "definition",
+    "printed_page": null,
+    "pdf_index": null,
+    "evidence_locator": "refusal:out_of_scope",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:clause1:scope"
+    ],
+    "elements_present": [
+      "outside the scope",
+      "AWS A3.0M/A3.0:2020",
+      "terminology standard"
+    ],
+    "layers": {
+      "arm_a_text": "The query is outside the scope of AWS A3.0M/A3.0:2020 (Standard Welding Terms and Definitions).",
+      "arm_b_text": "The query is outside the scope of AWS A3.0M/A3.0:2020 (Standard Welding Terms and Definitions). Mechanical material properties and external boiler code designations are not specified in this terminology standard. External construction, fabrication, and qualification codes (e.g., ASME BPVC, API 1104, AWS D1.x structural welding codes, preheat/interpass temperature schedules, and procedure qualification numbers) are governed by their respective design standards.",
+      "arm_c_text": "The query is outside the scope of AWS A3.0M/A3.0:2020 (Standard Welding Terms and Definitions). Mechanical material properties and external boiler code designations are not specified in this terminology standard. External construction, fabrication, and qualification codes (e.g., ASME BPVC, API 1104, AWS D1.x structural welding codes, preheat/interpass temperature schedules, and procedure qualification numbers) are governed by their respective design standards."
+    }
+  },
+  {
+    "id": "G66-DIAG02",
+    "category": "invalid_compound_suffix_control",
+    "slice_name": "Slice 22 — Invalid Compound Suffix Rejection Control",
+    "question": "What does the designation GMAW-X-AU stand for in AWS A3.0?",
+    "status": "NOT_IN_STANDARD",
+    "target_division": "Normative Tables",
+    "intent": "invalid_compound_suffix",
+    "printed_page": 69,
+    "pdf_index": 81,
+    "evidence_locator": "table_a1:process_letter_designations",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:pdf:81:table:Table A1",
+      "obs:pdf:86:table:Table A4"
+    ],
+    "elements_present": [
+      "GMAW-X-AU",
+      "GMAW",
+      "gas metal arc welding",
+      "Table A1",
+      "Table A4",
+      "not in",
+      "not among",
+      "rejected"
+    ],
+    "layers": {
+      "arm_a_text": "In AWS A3.0M/A3.0:2020, GMAW-X-AU is rejected: the base process designator GMAW is standardized in Table A1 (p.",
+      "arm_b_text": "In AWS A3.0M/A3.0:2020, GMAW-X-AU is rejected: the base process designator GMAW is standardized in Table A1 (p. 69) as gas metal arc welding. However, the application mode suffix '-X-AU' is not among Table A4's valid application mode suffixes: Process variation 'GMAW-X' is not a standardized process variation of 'GMAW' in AWS A3.0M/A3.0:2020.",
+      "arm_c_text": "In AWS A3.0M/A3.0:2020, GMAW-X-AU is rejected: the base process designator GMAW is standardized in Table A1 (p. 69) as gas metal arc welding. However, the application mode suffix '-X-AU' is not among Table A4's valid application mode suffixes: Process variation 'GMAW-X' is not a standardized process variation of 'GMAW' in AWS A3.0M/A3.0:2020."
+    }
+  },
+  {
+    "id": "G66-DIAG03",
+    "category": "obsolete_process_refutation_control",
+    "slice_name": "Slice 23 — Obsolete Process Refutation Control",
+    "question": "Is atomic hydrogen welding (AHW) an obsolete process in Table A5 or an active process in Table A1?",
+    "status": "PASS",
+    "target_division": "Normative Tables",
+    "intent": "obsolete_processes",
+    "printed_page": 74,
+    "pdf_index": 86,
+    "evidence_locator": "table_a5:obsolete_processes",
+    "requires_diagram_crop": false,
+    "crop_path": null,
+    "normative_provenance": [
+      "obs:pdf:86:table:Table A5",
+      "obs:pdf:83:table:Table A2"
+    ],
+    "elements_present": [
+      "Table A5",
+      "13",
+      "AHW",
+      "FOW",
+      "atomic hydrogen welding"
+    ],
+    "layers": {
+      "arm_a_text": "In Table A5 (Obsolete or Seldom Used Processes, printed p.",
+      "arm_b_text": "In Table A5 (Obsolete or Seldom Used Processes, printed p. 74), exactly 13 obsolete or seldom used processes are cataloged. Among them, atomic hydrogen welding is assigned the letter designation AHW, and forge welding is assigned the letter designation FOW.",
+      "arm_c_text": "In Table A5 (Obsolete or Seldom Used Processes, printed p. 74), exactly 13 obsolete or seldom used processes are cataloged. Among them, atomic hydrogen welding is assigned the letter designation AHW, and forge welding is assigned the letter designation FOW."
+    }
+  },
+  {
+    "id": "G66-DIAG04",
+    "category": "waveform_spatial_callout_control",
+    "slice_name": "Slice 24 — Multi-Panel Spatial Callout & Waveform Binding Control",
+    "question": "In Figure B53, what welding cycle traces illustrate upslope and downslope intervals?",
+    "status": "PASS",
+    "target_division": "Figure B53",
+    "intent": "waveform",
+    "printed_page": 157,
+    "pdf_index": 169,
+    "evidence_locator": "figure_b53:interval:upslope_and_downslope",
+    "requires_diagram_crop": true,
+    "crop_path": "storage/evidence_v2/annex_b_complete_001/crops/figure_b53_300dpi.png",
+    "normative_provenance": [
+      "obs:pdf:169:figure:Figure B53"
+    ],
+    "elements_present": [
+      "Figure B53",
+      "WELDING CURRENT",
+      "ARC VOLTAGE",
+      "WIRE FEED SPEED",
+      "TRAVEL SPEED",
+      "SHIELDING GAS FLOW",
+      "HIGH PULSE TIME",
+      "LOW PULSE TIME",
+      "UPSLOPE TIME",
+      "DOWNSLOPE TIME"
+    ],
+    "layers": {
+      "arm_a_text": "In Figure B53 (An Example of a Welding Cycle for Pulsed Welding, printed p.",
+      "arm_b_text": "In Figure B53 (An Example of a Welding Cycle for Pulsed Welding, printed p. 157), the diagram illustrates an example of a welding cycle for pulsed welding. Its parameter traces plotted against time include: WELDING CURRENT, ARC VOLTAGE, WIRE FEED SPEED, TRAVEL SPEED, SHIELDING GAS FLOW. The upslope and downslope current intervals define transition timing: UPSLOPE TIME transitions current up to WELD TIME (comprising HIGH PULSE TIME and LOW PULSE TIME), while DOWNSLOPE TIME transitions current down toward crater fill and POSTFLOW TIME.",
+      "arm_c_text": "In Figure B53 (An Example of a Welding Cycle for Pulsed Welding, printed p. 157), the diagram illustrates an example of a welding cycle for pulsed welding. Its parameter traces plotted against time include: WELDING CURRENT, ARC VOLTAGE, WIRE FEED SPEED, TRAVEL SPEED, SHIELDING GAS FLOW. The upslope and downslope current intervals define transition timing: UPSLOPE TIME transitions current up to WELD TIME (comprising HIGH PULSE TIME and LOW PULSE TIME), while DOWNSLOPE TIME transitions current down toward crater fill and POSTFLOW TIME."
+    }
+  }
+]
