@@ -1,0 +1,759 @@
+{
+  "schema_version": "replay_coverage_manifest_v1.0",
+  "gate": "Gate 6.6",
+  "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "contract_sha256": "30e1913b1cb0b87fa6ea87aa2a84ecf041fa17291a836dc47ba7c33d0ef45758",
+  "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE",
+  "genuine_model_replays_count": 14,
+  "quarantined_synthetic_fixtures_count": 6,
+  "genuine_model_replays": [
+    {
+      "replay_key": "33f775db13a0587d65dd170de053553322749cbf7b4522305cf8602daabc57ef",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/33f775db13a0587d65dd170de053553322749cbf7b4522305cf8602daabc57ef.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "3d6a2cbb61def68a41a52cdec81712a85cd65f7ed52c2e6505bc280821dacf9a",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/3d6a2cbb61def68a41a52cdec81712a85cd65f7ed52c2e6505bc280821dacf9a.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "6af589ad1ddedbf0af24de84ad5b0acdae77e506524354a9f4a7eab1edb63c5a",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/6af589ad1ddedbf0af24de84ad5b0acdae77e506524354a9f4a7eab1edb63c5a.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "7e9982c36d0fcfa591123da74ceb0e7c7da002981d4379693a07eb61d3c40d29",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/7e9982c36d0fcfa591123da74ceb0e7c7da002981d4379693a07eb61d3c40d29.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "8f874e9651d4a5986b59aacf9ffd9a8faea49945156d639226c94415776ea065",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/8f874e9651d4a5986b59aacf9ffd9a8faea49945156d639226c94415776ea065.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "8fdbb05270c87bfc19e04a51c0a71b193fbc3fe68d3bcfb443887f49ce2e2ad8",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/8fdbb05270c87bfc19e04a51c0a71b193fbc3fe68d3bcfb443887f49ce2e2ad8.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "a255faf2cc465a328ac6802095f4b3f945048b1304fc37b1e37c34357bf88dce",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/a255faf2cc465a328ac6802095f4b3f945048b1304fc37b1e37c34357bf88dce.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "a93c3e92000bc19bc6a8f7672c57767205dc0241047f7e2a6f1d00421a71ed81",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/a93c3e92000bc19bc6a8f7672c57767205dc0241047f7e2a6f1d00421a71ed81.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "afca5b807cf1cf10dd4fca5ed3f174f00a84208f13c2134d93cb9bfcc65a06ce",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/afca5b807cf1cf10dd4fca5ed3f174f00a84208f13c2134d93cb9bfcc65a06ce.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "b1548f09c2320a74d640678cd729af098402a7685f4d160f66b0781ccd6d80a1",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/b1548f09c2320a74d640678cd729af098402a7685f4d160f66b0781ccd6d80a1.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "b84e96a090b80d799a7d28127ec9304edd116bcec6976f7f7bf69ae0f4e590ea",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/b84e96a090b80d799a7d28127ec9304edd116bcec6976f7f7bf69ae0f4e590ea.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    },
+    {
+      "replay_key": "f02ce6be7d824f18618917bed89d5ef0cc89f93a70afa8ea3d3ec026321870cf",
+      "file": "storage/model_replays/deepseek_v4_1_flash_1017/f02ce6be7d824f18618917bed89d5ef0cc89f93a70afa8ea3d3ec026321870cf.json",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "epistemic_tag": "UNVERIFIED_MODEL_TRACE_NOT_EVIDENCE"
+    }
+  ],
+  "quarantined_synthetic_fixtures": [
+    {
+      "replay_key": "07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec",
+      "file": "storage/model_replays/deterministic_planner_fixtures/07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec.json",
+      "model_id": "DeterministicQuestionPlanner",
+      "epistemic_tag": "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT"
+    },
+    {
+      "replay_key": "1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c",
+      "file": "storage/model_replays/deterministic_planner_fixtures/1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c.json",
+      "model_id": "DeterministicQuestionPlanner",
+      "epistemic_tag": "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT"
+    },
+    {
+      "replay_key": "73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182",
+      "file": "storage/model_replays/deterministic_planner_fixtures/73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182.json",
+      "model_id": "DeterministicQuestionPlanner",
+      "epistemic_tag": "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT"
+    },
+    {
+      "replay_key": "78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f",
+      "file": "storage/model_replays/deterministic_planner_fixtures/78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f.json",
+      "model_id": "DeterministicQuestionPlanner",
+      "epistemic_tag": "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT"
+    },
+    {
+      "replay_key": "c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033",
+      "file": "storage/model_replays/deterministic_planner_fixtures/c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033.json",
+      "model_id": "DeterministicQuestionPlanner",
+      "epistemic_tag": "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT"
+    },
+    {
+      "replay_key": "d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7",
+      "file": "storage/model_replays/deterministic_planner_fixtures/d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7.json",
+      "model_id": "DeterministicQuestionPlanner",
+      "epistemic_tag": "SYNTHETIC_PLANNER_FIXTURE_NOT_MODEL_OUTPUT"
+    }
+  ],
+  "benchmarks": {
+    "phase5_5_nlq_001": {
+      "questions_file": "storage/evidence_v2/phase5_5_nlq_001/nlq_questions.json",
+      "total_queries": 15,
+      "genuine_model_replays": 3,
+      "quarantined_synthetic_fixtures": 0,
+      "deterministic_planner_fallbacks": 12,
+      "queries": [
+        {
+          "id": "G55-NLQ01",
+          "replay_key": "c166190d03563820859a983477c17a26940ea1b0745ad736c2bc465d54e1cb59",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G55-NLQ02",
+          "replay_key": "e70eef84ac33436fb27b9c9609fca8865fca10014fe7c5480a3a4c8d75687bea",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G55-NLQ03",
+          "replay_key": "bd022a6be543fadc7c9cef78b8a48c68ba24d6bc7be2d5ab919279bdf1c98310",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G55-NLQ04",
+          "replay_key": "6af589ad1ddedbf0af24de84ad5b0acdae77e506524354a9f4a7eab1edb63c5a",
+          "source_class": "genuine_model_replay"
+        },
+        {
+          "id": "G55-NLQ05",
+          "replay_key": "acf76999075d04034df052d669b42dfbc7c18d3d8ba5b5817a23a60e322fc01e",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G55-NLQ06",
+          "replay_key": "8006b1f1aeb8317bc6ca683ef0c35fc3ef4952d581ac1a82641a48d6c9abfd15",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G55-NLQ07",
+          "replay_key": "f8c29ca9a4d7ef2d116abe5ca888cbb2ac06f282f5124b0ff9910d109b39ab5a",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G55-NLQ08",
+          "replay_key": "68c0b3d25ae20680c1fb5d280e765ca835f56a6840b4603c500b6bd8287b6f53",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G55-NLQ09",
+          "replay_key": "8fdbb05270c87bfc19e04a51c0a71b193fbc3fe68d3bcfb443887f49ce2e2ad8",
+          "source_class": "genuine_model_replay"
+        },
+        {
+          "id": "G55-NLQ10",
+          "replay_key": "aae98ec950ac62107fc924be6edb4da389109a0cbb012297aabe9edf9cd35cbe",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G55-NLQ11",
+          "replay_key": "1d910e3fb119b8888799f11b3f35912cf03f1acc21b3ed4366e9aba323b04074",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G55-NLQ12",
+          "replay_key": "dc6056b78c9dec2178c90d10e2fe622d23c473e87221f233fad0be582b388246",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G55-NLQ13",
+          "replay_key": "ccb2efa1e8c49df81f03eab9f5954c62621b651fe37da04873b24ad4eb20b93e",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G55-NLQ14",
+          "replay_key": "f02ce6be7d824f18618917bed89d5ef0cc89f93a70afa8ea3d3ec026321870cf",
+          "source_class": "genuine_model_replay"
+        },
+        {
+          "id": "G55-NLQ15",
+          "replay_key": "b1a4b0dcaef804310a2a3cad1b463bed8a461fbfb98d83577484a6621e12722b",
+          "source_class": "deterministic_planner_fallback"
+        }
+      ]
+    },
+    "phase6_ner_routing_001": {
+      "questions_file": "storage/evidence_v2/phase6_ner_routing_001/ner_routing_questions.json",
+      "total_queries": 20,
+      "genuine_model_replays": 1,
+      "quarantined_synthetic_fixtures": 0,
+      "deterministic_planner_fallbacks": 19,
+      "queries": [
+        {
+          "id": "G60-NER01",
+          "replay_key": "6dff6c404f1728fc631066935b89d7ac00613993771c305b3303a1c7e098d475",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER02",
+          "replay_key": "d84c58bf5c3c869550057e001c3fbc2128c5d87176f4e4b682ca7c1b1f0dcaff",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER03",
+          "replay_key": "9ae95d28c053e6455cca2ecbd68f6f3cdfae6a666e79ec8b71489af05b8cef73",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER04",
+          "replay_key": "1b34676a4abf7ea98725bb3bce5873a20b7cf7b0bf0e5f3617d0692292f28cde",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER05",
+          "replay_key": "79ec11bf20130912d251afa93b67d197cc7a0dd78741b1ad80b990e702b63f78",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER06",
+          "replay_key": "528ec92d41b32aa938862e4b07df1b9cb70aa348adc688160b0223cbdb014f82",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER07",
+          "replay_key": "d12557839803141d85d8e96078dac941670c18976308221494f8eb08fd219754",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER08",
+          "replay_key": "fff7d6f2e048884fe0382485a357aec52692d4e461e6013287f1c3e944ea5184",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER09",
+          "replay_key": "790620857d19d466c8926c564137801cddcb6a82beb6aed7a70459c21a1cc98e",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER10",
+          "replay_key": "13b1f4d7db3069381b796f65dd06dadb9d7011e70366a4a8b2308540cf422278",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER11",
+          "replay_key": "60ac5fb2928b78d491e20f4c6223cd65c5e16ec35cbd0be11a54f47d2c015ea5",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER12",
+          "replay_key": "6a85ac41596db0b99fd37c9537aed3e8cf59568db99f07f993423b2aaabe3dc6",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER13",
+          "replay_key": "4e34e54860c923272ed84f8a7d083fff90c65b7901d9095626d968f6b5e04fed",
+          "source_class": "genuine_model_replay"
+        },
+        {
+          "id": "G60-NER14",
+          "replay_key": "8a49668d99d9e389dba237872383275f028ee1faecc86cf9f9ab1cb1ba4ac46a",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER15",
+          "replay_key": "6fad5001b56dcc6d3bb29f256e4599ca1be92bcd0b2c1fa170f506968434da2a",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER16",
+          "replay_key": "5e6bc3c472884ad43a37b554e98393833ba2d922bfd6581c02ae1c8fc39865ab",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER17",
+          "replay_key": "835e5a40b95c353ef8da2954cd8d91cb25ec38492cc63d6c14808b7fe9b633ac",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER18",
+          "replay_key": "c6ebf5bbc68d18fb9700425b7dfbbb4586915cc60533b936be978cfd6722cfa9",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER19",
+          "replay_key": "2b2acfc622bf5cdec9af8af5025d1fe8265813dd65ee0df7c69080ef6780d49c",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G60-NER20",
+          "replay_key": "1431b0aadcd7048ed4ce5ae4f13eed210875225755f2766c34efcfcfc7ede665",
+          "source_class": "deterministic_planner_fallback"
+        }
+      ]
+    },
+    "phase6_1_semantic_graph_001": {
+      "questions_file": "storage/evidence_v2/phase6_1_semantic_graph_001/ner_routing_questions.json",
+      "total_queries": 15,
+      "genuine_model_replays": 3,
+      "quarantined_synthetic_fixtures": 0,
+      "deterministic_planner_fallbacks": 12,
+      "queries": [
+        {
+          "id": "G61-SEM01",
+          "replay_key": "7b1238799a281c4757b7d588936567e51eb7baf1e33a58d7d6c6c43641d856f0",
+          "source_class": "genuine_model_replay"
+        },
+        {
+          "id": "G61-SEM02",
+          "replay_key": "de4f057e433e314d50c2aa1d91c7e1fa7fb944ff442c57dd941287b13d05659a",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G61-SEM03",
+          "replay_key": "e0737abedb2478ccd80d6d732bfaca5c0fba78b55d7d0970209b983c29ace4f0",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G61-SEM04",
+          "replay_key": "535a0c778a1dbbef5edf5ea675f9a80638c6c8affe03a5f51125b63c35438324",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G61-SEM05",
+          "replay_key": "884e1b10361fa6d854826ccfd94e0a9da393554c8fed68d9c0c3e7ed88a61ea4",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G61-SEM06",
+          "replay_key": "7fe785b820ffb00d49aa7a0e47008ef910fb435fec36ffc7fe2bc74757b683d8",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G61-SEM07",
+          "replay_key": "35e0237010c539a755c4f0502dd7f93b168be3e3809447d69c7f5c2d40de4c9f",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G61-SEM08",
+          "replay_key": "069315c30840f6824b7205c68a944e03705ce6672501dcb7ba50aa885b0e495b",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G61-SEM09",
+          "replay_key": "07e1b9413f44587bbaebb3efdc2252236bf93a2bfe12378227c6dc82b0e624e7",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G61-SEM10",
+          "replay_key": "dbcd85c9e6d4ee1758bd2547017f691f76a796b2cf20ea0b8667d43fc55fb7b0",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G61-SEM11",
+          "replay_key": "dcd5b4a1dbc3808d8ea554287e30d7ae163f23ed5644fd5fde6388f040b45eba",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G61-SEM12",
+          "replay_key": "82c1b0b200ba3844b0202a244807ec4c68c8182f260886b79b5bfb1b32f5c0ee",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G61-SEM13",
+          "replay_key": "a93c3e92000bc19bc6a8f7672c57767205dc0241047f7e2a6f1d00421a71ed81",
+          "source_class": "genuine_model_replay"
+        },
+        {
+          "id": "G61-SEM14",
+          "replay_key": "b1548f09c2320a74d640678cd729af098402a7685f4d160f66b0781ccd6d80a1",
+          "source_class": "genuine_model_replay"
+        },
+        {
+          "id": "G61-SEM15",
+          "replay_key": "7226229d3d2af1334248e779c96305d59d53f37bd4fbbce4198b60fa29f782c4",
+          "source_class": "deterministic_planner_fallback"
+        }
+      ]
+    },
+    "phase6_2_generalization_holdout_001": {
+      "questions_file": "storage/evidence_v2/phase6_2_generalization_holdout_001/questions.json",
+      "total_queries": 20,
+      "genuine_model_replays": 2,
+      "quarantined_synthetic_fixtures": 0,
+      "deterministic_planner_fallbacks": 18,
+      "queries": [
+        {
+          "id": "G62-GEN01",
+          "replay_key": "034abb121b34c3e8706b76b9feae86d707a50287652c9e5e3142576e7f6f8986",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN02",
+          "replay_key": "6428eb189812ba90c32d9175fa5d5c4880fc6a997dfd3632b17a3acee83c8ba6",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN03",
+          "replay_key": "e6a3cf7e4aa3bf7086efe36a9e9e300de1955dd3dcb2aa93ff545bb2f086363a",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN04",
+          "replay_key": "ad11f1e13e76aeacb9d1206ace9f6b159ba2a71c11911f3f5e3748d32a119030",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN05",
+          "replay_key": "0f44d8dfc2f189a0ce9559a963ba92541911ce3f8664157fc190cf715287ea2c",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN06",
+          "replay_key": "b202e8f5b4e12a20c2f181bdc37414e4a3fd3887968988c15755956cda592ee6",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN07",
+          "replay_key": "ab7708ad363b1fb3944357631a58d85305c2d174daa32e0b61f99ae794770935",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN08",
+          "replay_key": "23597866dd026bba0be46086647a57f5697ea1db47b081f89337272b25052ed4",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN09",
+          "replay_key": "8d33a4ff590b02defd1e49af8c7478110e6c45b989ecc6cb8b3e9c6d1f7f9e86",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN10",
+          "replay_key": "7030b93a778a7e5c4c27c379b4f0bd3b459f6dfc291c1fb1ce34fea283120400",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN11",
+          "replay_key": "074338c09e0c8e0172362a424e6bd78afce38537aa65f3e01bc8f388d5ec7817",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN12",
+          "replay_key": "c22d254800ce003b92221483f8644c720ed087bc0788e2c8dcbd86005ea9f32d",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN13",
+          "replay_key": "2bfa0862ab78a123d8bc62f53d09597b982698a4f90b9419538d865be227a1eb",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN14",
+          "replay_key": "717771e9e52b452cd1a24b4df0f069f1099766d3857d284960a11c1cb8c15a11",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN15",
+          "replay_key": "57e476e497d7317f06084f6b62c84c69739c70f9e9479376ca04d9c9505b895f",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN16",
+          "replay_key": "f345032b73455dee88eca0516fe0f482ac15b5bd38021c4d46645179501abb45",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN17",
+          "replay_key": "7e9982c36d0fcfa591123da74ceb0e7c7da002981d4379693a07eb61d3c40d29",
+          "source_class": "genuine_model_replay"
+        },
+        {
+          "id": "G62-GEN18",
+          "replay_key": "3d6a2cbb61def68a41a52cdec81712a85cd65f7ed52c2e6505bc280821dacf9a",
+          "source_class": "genuine_model_replay"
+        },
+        {
+          "id": "G62-GEN19",
+          "replay_key": "7158ff8e374332f6116010a5d7d8985660e86cc2640d6e11d8e83a7af378eb9b",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G62-GEN20",
+          "replay_key": "ef7eb9754614950a533502fe33f325e06bef933481f89fd387cdcc1b6ca76d4b",
+          "source_class": "deterministic_planner_fallback"
+        }
+      ]
+    },
+    "phase6_3_blind_hardening_001": {
+      "questions_file": "storage/evidence_v2/phase6_3_blind_hardening_001/questions.json",
+      "total_queries": 20,
+      "genuine_model_replays": 0,
+      "quarantined_synthetic_fixtures": 6,
+      "deterministic_planner_fallbacks": 14,
+      "queries": [
+        {
+          "id": "G63-BLIND01",
+          "replay_key": "e71aad5a00f71663aab1792033401d10c975c0e55123cfd6e26d7b43b0f3f637",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND02",
+          "replay_key": "a3f89086a23b04387b993304490261fa7b1bed1b2b4c14c0e5d08c638c572660",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND03",
+          "replay_key": "fb1e4442d3f33be20b7510e790eefee979fabda2ac007dd1f908c4e6f39c26a0",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND04",
+          "replay_key": "1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c",
+          "source_class": "quarantined_synthetic_fixture"
+        },
+        {
+          "id": "G63-BLIND05",
+          "replay_key": "1747e27f925c211703b9c2491740d57a0e1e350d672f522179291019f6607e92",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND06",
+          "replay_key": "447d079d685490910b7312fbf9391defe8e33d1bdd3505d1a6e5927e18d7a4b7",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND07",
+          "replay_key": "a4f48011c19a508872adac9835651faebb8d3d532918bc2760dbc154835a4ffb",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND08",
+          "replay_key": "c39aeff8c4731c81174c2d28586fb86f0b60152df9881297af288111c4560bcc",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND09",
+          "replay_key": "73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182",
+          "source_class": "quarantined_synthetic_fixture"
+        },
+        {
+          "id": "G63-BLIND10",
+          "replay_key": "f1999cef5e6a5f735c9d888aef8833c06195a55cb99ec8ec2bcdfc8583c65e6e",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND11",
+          "replay_key": "04a8fc7977c7857c5782c344f706157a4a6af1c7da6c797be05bf45f2432f2f2",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND12",
+          "replay_key": "0230215982ad5a43b38ba94fd847917bd838974979b13b2d84a4c57ab33a87a7",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND13",
+          "replay_key": "66ea6fa39a48646e2c2d50e3489f96661ba6362d074d3fe27c48b9fde17edc72",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND14",
+          "replay_key": "07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec",
+          "source_class": "quarantined_synthetic_fixture"
+        },
+        {
+          "id": "G63-BLIND15",
+          "replay_key": "223ce72e52132204c97f4e3a3239451f44fee43141fe34a8ec4e8790e5385cd2",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND16",
+          "replay_key": "c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033",
+          "source_class": "quarantined_synthetic_fixture"
+        },
+        {
+          "id": "G63-BLIND17",
+          "replay_key": "00d9580cb1891a1d1f7367bb3db78db82eed4504333ef8231790b5db74a1fc31",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND18",
+          "replay_key": "78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f",
+          "source_class": "quarantined_synthetic_fixture"
+        },
+        {
+          "id": "G63-BLIND19",
+          "replay_key": "fe0a6cfb7547504ff7f30c897b748302aff4d69ebd8e2a6e325603bb359bf49b",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND20",
+          "replay_key": "d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7",
+          "source_class": "quarantined_synthetic_fixture"
+        }
+      ]
+    },
+    "phase6_6_reader_qualification_001": {
+      "questions_file": "storage/evidence_v2/phase6_6_reader_qualification_001/questions.json",
+      "total_queries": 24,
+      "genuine_model_replays": 0,
+      "quarantined_synthetic_fixtures": 6,
+      "deterministic_planner_fallbacks": 18,
+      "queries": [
+        {
+          "id": "G63-BLIND01",
+          "replay_key": "e71aad5a00f71663aab1792033401d10c975c0e55123cfd6e26d7b43b0f3f637",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND02",
+          "replay_key": "a3f89086a23b04387b993304490261fa7b1bed1b2b4c14c0e5d08c638c572660",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND03",
+          "replay_key": "fb1e4442d3f33be20b7510e790eefee979fabda2ac007dd1f908c4e6f39c26a0",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND04",
+          "replay_key": "1a0d448e9483f699ecb6fba379971dd65059b4aba5344f1e8708b2d7bca8845c",
+          "source_class": "quarantined_synthetic_fixture"
+        },
+        {
+          "id": "G63-BLIND05",
+          "replay_key": "1747e27f925c211703b9c2491740d57a0e1e350d672f522179291019f6607e92",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND06",
+          "replay_key": "447d079d685490910b7312fbf9391defe8e33d1bdd3505d1a6e5927e18d7a4b7",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND07",
+          "replay_key": "a4f48011c19a508872adac9835651faebb8d3d532918bc2760dbc154835a4ffb",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND08",
+          "replay_key": "c39aeff8c4731c81174c2d28586fb86f0b60152df9881297af288111c4560bcc",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND09",
+          "replay_key": "73ccb5c640979dc600a4e9d349178667a048ee9ece3b3fc36513a042e3427182",
+          "source_class": "quarantined_synthetic_fixture"
+        },
+        {
+          "id": "G63-BLIND10",
+          "replay_key": "f1999cef5e6a5f735c9d888aef8833c06195a55cb99ec8ec2bcdfc8583c65e6e",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND11",
+          "replay_key": "04a8fc7977c7857c5782c344f706157a4a6af1c7da6c797be05bf45f2432f2f2",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND12",
+          "replay_key": "0230215982ad5a43b38ba94fd847917bd838974979b13b2d84a4c57ab33a87a7",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND13",
+          "replay_key": "66ea6fa39a48646e2c2d50e3489f96661ba6362d074d3fe27c48b9fde17edc72",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND14",
+          "replay_key": "07d3e65cc2f0f4bab38963fdcb9c7c704615a5c046f019365a3ec3b24ad669ec",
+          "source_class": "quarantined_synthetic_fixture"
+        },
+        {
+          "id": "G63-BLIND15",
+          "replay_key": "223ce72e52132204c97f4e3a3239451f44fee43141fe34a8ec4e8790e5385cd2",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND16",
+          "replay_key": "c2b781b11a1f795ae75679362554299d5c2ab8f3bb74ca82e69e90adf6623033",
+          "source_class": "quarantined_synthetic_fixture"
+        },
+        {
+          "id": "G63-BLIND17",
+          "replay_key": "00d9580cb1891a1d1f7367bb3db78db82eed4504333ef8231790b5db74a1fc31",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND18",
+          "replay_key": "78072b41bac7406dd5fa8749643b9320e380548bd065f4af56dd2571940d021f",
+          "source_class": "quarantined_synthetic_fixture"
+        },
+        {
+          "id": "G63-BLIND19",
+          "replay_key": "fe0a6cfb7547504ff7f30c897b748302aff4d69ebd8e2a6e325603bb359bf49b",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G63-BLIND20",
+          "replay_key": "d6401cf2f24c1f017d7e363ea8de410ccd672178512b655bdc6b0c102e47b8a7",
+          "source_class": "quarantined_synthetic_fixture"
+        },
+        {
+          "id": "G66-DIAG01",
+          "replay_key": "b9bd04f12e8332eabc58cf84dfbf4dc41a9b4fc64338ace3ed24cc6736738511",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G66-DIAG02",
+          "replay_key": "2139e142eaa315db12f40449552ec1cff005f3a1b0c0d295ca72b3ff3bf35e8d",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G66-DIAG03",
+          "replay_key": "9525dd4c2bbc9c2b9e501e7f6fc21ae832f76a35cfdd1645db49fafd2e37367f",
+          "source_class": "deterministic_planner_fallback"
+        },
+        {
+          "id": "G66-DIAG04",
+          "replay_key": "3a16d908d3663ab9372eb62efc7896fc5bb78070974b51aae77857d713530ab0",
+          "source_class": "deterministic_planner_fallback"
+        }
+      ]
+    }
+  }
+}

@@ -41,16 +41,24 @@ FILES = [
     "storage/evidence_v2/phase6_3_blind_hardening_001/questions.json",
     "storage/evidence_v2/phase6_3_blind_hardening_001/rubric.json",
     "storage/evidence_v2/phase6_3_blind_hardening_001/results.json",
+    "storage/evidence_v2/phase6_6_reader_qualification_001/questions.json",
+    "storage/evidence_v2/phase6_6_reader_qualification_001/rubric.json",
+    "storage/evidence_v2/phase6_6_reader_qualification_001/gold_packets.json",
+    "storage/evidence_v2/phase6_6_reader_qualification_001/results.json",
+    "storage/manifests/replay_coverage_manifest.json",
     "src/evidence_whole_standard_preflight.py",
     "src/deepseek_v41_adapter.py",
     "src/semantic_nlq_expander.py",
     "src/welding_ner.py",
     "src/evidence_phase4_bakeoff.py",
+    "src/reader_qualification.py",
     "src/evidence_whole_standard_cli.py",
+    "scripts/audit_replay_coverage.py",
     "eval/run_phase6_ner_routing.py",
     "eval/run_phase6_1_semantic_graph.py",
     "eval/run_phase6_2_generalization_holdout.py",
     "eval/run_phase6_3_blind_hardening.py",
+    "eval/run_phase6_6_reader_qualification.py",
     "tests/test_gate_6_0_ner_routing_skills.py",
     "tests/test_gate_6_1_semantic_graph.py",
     "tests/test_gate_6_2_store_driven_composition.py",
@@ -59,6 +67,7 @@ FILES = [
     "tests/test_gate_6_3_blind_hardening.py",
     "tests/test_gate_6_4_comprehensive_enhancements.py",
     "tests/test_gate_6_5_provenance_and_shared_path.py",
+    "tests/test_gate_6_6_reader_qualification.py",
     "GATE_6_0_CHECKOUT_CARD.md",
     "GATE_6_1_CHECKOUT_CARD.md",
     "GATE_6_2_CHECKOUT_CARD.md",
@@ -69,6 +78,7 @@ FILES = [
     "GATE_6_4_CHECKOUT_CARD.md",
     "GATE_6_4_1_CHECKOUT_CARD.md",
     "GATE_6_5_CHECKOUT_CARD.md",
+    "GATE_6_6_CHECKOUT_CARD.md",
     "docs/AWS_A30_ARCHITECTURE_RECOMMENDATIONS.md",
     "docs/FULL_PROMPT.md",
 ]
@@ -89,7 +99,7 @@ def main():
     preflight_res = run_whole_standard_preflight(ROOT)
     deepseek_res = run_deepseek_replay_preflight(ROOT)
 
-    from tests.test_gate_6_4_comprehensive_enhancements import ALL_51_LOCKED_HASHES
+    from tests.test_gate_6_6_reader_qualification import ALL_54_LOCKED_HASHES
 
     replay_cassettes_count = len(list((ROOT / "storage/model_replays/deepseek_v4_1_flash_1017").glob("*.json")))
 
@@ -105,9 +115,9 @@ Clean Working Tree: `{is_clean}`
 - DeepSeek Preflight Smoke Queries Replayed: `{deepseek_res.get('replayed_queries_count', 0)}`
 - DeepSeek Replay Cassettes Verified on Disk: `{replay_cassettes_count}`
 
-## Cryptographic Locks (All 51 Artifacts)
+## Cryptographic Locks (All 54 Artifacts)
 """
-    for rel_path, expected_hash in ALL_51_LOCKED_HASHES.items():
+    for rel_path, expected_hash in ALL_54_LOCKED_HASHES.items():
         p = ROOT / rel_path
         actual_hash = hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else "MISSING"
         match_str = "MATCH" if actual_hash == expected_hash else "MISMATCH"

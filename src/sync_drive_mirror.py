@@ -188,8 +188,8 @@ def collect_reviewable_files(base_dir: Path) -> List[Path]:
                     or p.name in (
                         "graph.json", "questions.json", "nlq_questions.json",
                         "ner_routing_questions.json", "adversarial_questions.json",
-                        "rubric.json", "results.json", "ingest_receipt.json",
-                        "tables_graph.json", "answers.json"
+                        "rubric.json", "results.json", "gold_packets.json",
+                        "ingest_receipt.json", "tables_graph.json", "answers.json"
                     )
                     or p.name.endswith("_receipt.json")
                     or p.name.endswith("_store.json")

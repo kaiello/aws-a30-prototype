@@ -345,7 +345,18 @@ Following the forensic architecture assessment (`AWS_A30_ARCHITECTURE_RECOMMENDA
 
 ---
 
-## 14. Subsequent Roadmap Staging: Gates 6.6 & 6.7
+## 14. Gate 6.6: Phase 4 Reader Qualification with Gold Evidence, Retrieval-vs-Reader Diagnostic Separation & Replay Coverage Ledger
 
-- **Gate 6.6 (Phase 4 — Reader Qualification with Gold Evidence & DeepSeek Cassette Capture):** Supply verified gold source crops/pages directly to candidate multimodal readers (Bakeoff #16), separating extraction/interpretation/binding failure classes, and capture genuine `DeepSeek-V4.1` cassettes for any remaining unrecorded queries in a separate isolated worktree.
+### Deliverables Checklist
+
+- [x] **Deliverable G66-1 (Authoritative Gold-Evidence Packet Builder & 3-Arm Reader Qualification — Bakeoff #16):** Built `src/reader_qualification.py` (`build_gold_evidence_packet`, `prepare_reader_evidence_arm`, `compose_from_gold_arm`) evaluating 3 controlled gold-evidence budgets (`Arm A: 8.33%`, `Arm B: 62.50%`, `Arm C: 100.00%`) against live retrieved whole-standard execution (`100.00%`, `0.0%` retrieval-vs-reader delta).
+- [x] **Deliverable G66-2 (Deterministic 5-Class Failure Taxonomy & Diagnostic Calibration):** Implemented `classify_diagnostic_outcome` separating `PASS_SUPPORTED`, `EXTRACTION_FAILURE`, `RETRIEVAL_FAILURE`, `READER_INTERPRETATION_FAILURE`, `EVIDENCE_BINDING_OR_PROVENANCE_FAILURE`, and `ABSTENTION_FAILURE`.
+- [x] **Deliverable G66-3 (24-Query Reader Qualification Benchmark & Non-Mutating Evaluator):** Established `storage/evidence_v2/phase6_6_reader_qualification_001/{questions.json, rubric.json, gold_packets.json, results.json}` and `eval/run_phase6_6_reader_qualification.py` (`write_results: bool = False` by default), scoring **24 / 24 (100.0%)** on Gold Arm C and Retrieved tracks.
+- [x] **Deliverable G66-4 (Honest Replay Coverage Audit Ledger & CLI/Query Integration):** Added `audit_replay_coverage` to `src/deepseek_v41_adapter.py`, `scripts/audit_replay_coverage.py`, `storage/manifests/replay_coverage_manifest.json` (`14` genuine `DeepSeek-V4.1` replays vs `6` quarantined fixtures), `--qualify-reader` / `--replay-audit` in `src/evidence_whole_standard_cli.py`, and `diagnostic_track` in `src/query.py`.
+- [x] **Deliverable G66-5 (54/54 Cryptographic Hash Locks & Verification Suite):** Added Artifacts #52–#54 (`ALL_54_LOCKED_HASHES`) and verified 6/6 tests in `tests/test_gate_6_6_reader_qualification.py` under 100% offline socket isolation.
+
+---
+
+## 15. Subsequent Roadmap Staging: Gate 6.7
+
 - **Gate 6.7 (Phase 5 — Bounded ColQwen2.5 / ColPali Visual Retrieval Comparison):** Compare the repaired deterministic baseline against a pinned ColQwen2.5/ColPali visual page retriever on demonstrated retrieval misses (Bakeoff #8), reporting case-by-case rescues vs. harms under a fixed reader and evidence budget.
