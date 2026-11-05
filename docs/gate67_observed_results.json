@@ -1,0 +1,334 @@
+{
+  "gate": "6.7",
+  "status": "NOT_QUALIFIED",
+  "split": "development_exposed",
+  "cases": [
+    {
+      "id": "G67-DEV-01",
+      "question": "In Clause 4, can stress still be residual stress when a joint member has no external forces or thermal gradients? State the defining conditions.",
+      "app_status": "PASS",
+      "app_answer_outcome": "supported",
+      "gold_evidence_ids": [
+        "aws2020:pdf:60:full"
+      ],
+      "retrieved_evidence_ids": [
+        "aws2020:pdf:60:full"
+      ],
+      "missing_gold_page_ids": [],
+      "omitted_app_pages": [],
+      "reader_tracks": {
+        "gold": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "claim_not_in_answer"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "4e1f01430df709c5f6ad6da0869bac84f96cd8d11eb2f9cf2cc829face58ed5f"
+        },
+        "retrieved": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "claim_not_in_answer"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "4e1f01430df709c5f6ad6da0869bac84f96cd8d11eb2f9cf2cc829face58ed5f"
+        }
+      }
+    },
+    {
+      "id": "G67-DEV-02",
+      "question": "For submerged arc welding, what does an active flux affect in the resulting weld metal, and what operating quantity conditions that effect?",
+      "app_status": "PASS",
+      "app_answer_outcome": "supported",
+      "gold_evidence_ids": [
+        "aws2020:pdf:18:full"
+      ],
+      "retrieved_evidence_ids": [
+        "aws2020:pdf:68:full"
+      ],
+      "missing_gold_page_ids": [
+        "aws2020:pdf:18:full"
+      ],
+      "omitted_app_pages": [],
+      "reader_tracks": {
+        "gold": {
+          "outcome": "PENDING_REVIEW",
+          "issues": [],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "6682dc6ad5daf268732690d80248431c75e49952f7d5c5d80b0d5117579a4fb8"
+        },
+        "retrieved": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "required_evidence_missing:aws2020:pdf:18:full",
+            "unknown_claim_citation",
+            "unknown_claim_citation"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "b49300bc2dacda5fca53076dab29408d3f4947d26f7a2455f8d60acdc46fa4ef"
+        }
+      }
+    },
+    {
+      "id": "G67-DEV-03",
+      "question": "How does Clause 4 distinguish fillet weld size for equal-leg and unequal-leg fillet welds? Preserve the geometric difference.",
+      "app_status": "PASS",
+      "app_answer_outcome": "supported",
+      "gold_evidence_ids": [
+        "aws2020:pdf:37:full"
+      ],
+      "retrieved_evidence_ids": [
+        "aws2020:pdf:36:full"
+      ],
+      "missing_gold_page_ids": [
+        "aws2020:pdf:37:full"
+      ],
+      "omitted_app_pages": [],
+      "reader_tracks": {
+        "gold": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "claim_not_in_answer",
+            "unknown_claim_citation",
+            "claim_not_in_answer",
+            "unknown_claim_citation"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "d5888add97d5b603c4578b65ab39063df52525a8d3434777bb0f9fbe6b70e31e"
+        },
+        "retrieved": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "required_evidence_missing:aws2020:pdf:37:full",
+            "status_mismatch"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "14cfcddbc4aedf4d22f7df660527e4fcc817c49bcba7a6a398b05cd865571e8e"
+        }
+      }
+    },
+    {
+      "id": "G67-DEV-04",
+      "question": "Using Table A1 and Table A4 together, construct the designation for robotic coextrusion welding. Explain the base designation and application-mode suffix.",
+      "app_status": "PASS",
+      "app_answer_outcome": "supported",
+      "gold_evidence_ids": [
+        "aws2020:pdf:82:full",
+        "aws2020:pdf:86:full"
+      ],
+      "retrieved_evidence_ids": [
+        "aws2020:pdf:81:full",
+        "aws2020:pdf:86:full"
+      ],
+      "missing_gold_page_ids": [
+        "aws2020:pdf:82:full"
+      ],
+      "omitted_app_pages": [],
+      "reader_tracks": {
+        "gold": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "unknown_claim_citation"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "2eaed769374397a25dcc8d3b5dbb28e7bc2b82ba8760817dcc2544c876b565ed"
+        },
+        "retrieved": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "required_evidence_missing:aws2020:pdf:82:full",
+            "claim_not_in_answer",
+            "claim_not_in_answer"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "8a6943c46a589c25a1d30ac0213f496475523c20455636c32ead493621b1d7ad"
+        }
+      }
+    },
+    {
+      "id": "G67-DEV-05",
+      "question": "In Figure A3, which joining methods branch from Materials Joining, which classification chart is linked to Brazing and Soldering, and what does footnote a clarify about Welding?",
+      "app_status": "PASS",
+      "app_answer_outcome": "supported",
+      "gold_evidence_ids": [
+        "aws2020:pdf:88:full"
+      ],
+      "retrieved_evidence_ids": [
+        "aws2020:pdf:88:full"
+      ],
+      "missing_gold_page_ids": [],
+      "omitted_app_pages": [],
+      "reader_tracks": {
+        "gold": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "claim_not_in_answer",
+            "missing_or_invalid_claim_citations"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "474abe6e49673e7c322b08bc1d9dbe5307e0e73085c1a7185afe3561ca95862e"
+        },
+        "retrieved": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "claim_not_in_answer",
+            "missing_or_invalid_claim_citations"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "474abe6e49673e7c322b08bc1d9dbe5307e0e73085c1a7185afe3561ca95862e"
+        }
+      }
+    },
+    {
+      "id": "G67-DEV-06",
+      "question": "In Figure B46, identify numbered callouts 5, 6, and 8. Distinguish the tool feature from the hole left in the workpiece.",
+      "app_status": "PASS",
+      "app_answer_outcome": "supported",
+      "gold_evidence_ids": [
+        "aws2020:pdf:162:full"
+      ],
+      "retrieved_evidence_ids": [
+        "aws2020:pdf:162:full",
+        "aws2020:pdf:19:full"
+      ],
+      "missing_gold_page_ids": [],
+      "omitted_app_pages": [
+        60
+      ],
+      "reader_tracks": {
+        "gold": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "missing_or_invalid_claim_citations"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "0588f848395c0767be7e4fe626b352e60e6b8ff32c3c7a2860b1ad6199558e37"
+        },
+        "retrieved": {
+          "outcome": "PENDING_REVIEW",
+          "issues": [],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "d1cc96d3418fa87b9632c50f0ba03d5619d5f6fc92d0c3413a8f71be8929273f"
+        }
+      }
+    },
+    {
+      "id": "G67-DEV-07",
+      "question": "Reading only Figure B54, compare start current, welding current, and crater-fill current. Does the figure provide numerical amperage settings?",
+      "app_status": "REFUSAL_OUT_OF_SCOPE",
+      "app_answer_outcome": "refusal",
+      "gold_evidence_ids": [
+        "aws2020:pdf:169:full"
+      ],
+      "retrieved_evidence_ids": [],
+      "missing_gold_page_ids": [
+        "aws2020:pdf:169:full"
+      ],
+      "omitted_app_pages": [],
+      "reader_tracks": {
+        "gold": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "status_mismatch",
+            "unknown_claim_citation"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "4af55a57793aee315d6e1f8564421c34ea17b093876239845ab4267721a701f6"
+        },
+        "retrieved": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "required_evidence_missing:aws2020:pdf:169:full",
+            "status_mismatch",
+            "claim_not_in_answer",
+            "unknown_claim_citation"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "7db16369fa83c7b563b7496a84dbc055defa5e95ef0c242c1097f98759916f6a"
+        }
+      }
+    },
+    {
+      "id": "G67-DEV-08",
+      "question": "Using only Table A4, give the recommended welding current in amperes for robotic application mode.",
+      "app_status": "PASS",
+      "app_answer_outcome": "supported",
+      "gold_evidence_ids": [
+        "aws2020:pdf:86:full"
+      ],
+      "retrieved_evidence_ids": [
+        "aws2020:pdf:86:full"
+      ],
+      "missing_gold_page_ids": [],
+      "omitted_app_pages": [],
+      "reader_tracks": {
+        "gold": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "status_mismatch"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "f71ee7a486130c8dd1292a9cdf4d362b6a195be72b9224b25a67358f8ef9ce04"
+        },
+        "retrieved": {
+          "outcome": "FAIL_STRUCTURAL",
+          "issues": [
+            "status_mismatch"
+          ],
+          "inference_attempted": true,
+          "inference_completed": true,
+          "response_sha256": "f71ee7a486130c8dd1292a9cdf4d362b6a195be72b9224b25a67358f8ef9ce04"
+        }
+      }
+    }
+  ],
+  "source_review": {
+    "gold_selection": "agent_direct_source_checked",
+    "human_adjudicated": 0,
+    "retrieved_selection": "source_bytes_verified_semantics_unreviewed"
+  },
+  "reader": {
+    "model": "qwen2.5vl:3b",
+    "model_digest": "fb90415cde1ef08aa669ae74b082d49b158729b6db1ab183c941417d507e71a1",
+    "config_sha256": "ebbebc728f22aeecf8f919656113c44459801e3a6cff2678b5226744a31134a2",
+    "execution_mode": "local_ollama_reader",
+    "reader_accuracy": null,
+    "retrieval_vs_reader_quality_delta": null
+  },
+  "reader_calls": {
+    "attempted": 16,
+    "completed": 16,
+    "retries": 0
+  },
+  "outcomes": {
+    "FAIL_STRUCTURAL": 14,
+    "PENDING_REVIEW": 2
+  },
+  "human_reviewed_answers": 0,
+  "heldout_cases": 0,
+  "automated_checks": {
+    "gate67_focused": "96 passed",
+    "whole_standard_preflight": "CLEAR_WHOLE_STANDARD_CONTRACT",
+    "replay_preflight": "CLEAR_DEEPSEEK_REPLAY_PREFLIGHT"
+  },
+  "receipt_hashes": {
+    "preparation_manifest": "5acab673ea855407c0bd895c4aaf3561cd348a608bcfc2e2fc71d8db817e6a9a",
+    "reader_summary": "82f9f1c0988588bb6c9dd2a57ba3ca34957623444a6d08aa5fe539a826277adb"
+  },
+  "interpretation": "Structural failures are not semantic accuracy measurements. Page coverage misses may reflect source selection or citation metadata. No quality delta or retrieval-model decision is justified before independent human review."
+}

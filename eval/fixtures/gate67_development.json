@@ -1,0 +1,474 @@
+{
+  "schema_version": "gate67-development-1",
+  "split": "development_exposed",
+  "source": {
+    "path": "data/AWS_A3.0_2020.pdf",
+    "sha256": "205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d",
+    "page_count": 190
+  },
+  "source_adjudication": {
+    "agent_checked": true,
+    "human_checked": false,
+    "method": "PyMuPDF direct PDF text extraction and rendered-page visual inspection",
+    "reviewer": "source_pilot agent",
+    "checked_utc": "2026-11-05",
+    "independence": "Selected from source pages without invoking any application answer or packet builder"
+  },
+  "cases": [
+    {
+      "id": "G67-DEV-01",
+      "question": "In Clause 4, can stress still be residual stress when a joint member has no external forces or thermal gradients? State the defining conditions.",
+      "category": "glossary_qualifier",
+      "expected_status": "ANSWERED",
+      "evidence": [
+        {
+          "evidence_id": "aws2020:pdf:60:full",
+          "pdf_index": 60,
+          "viewer_page": 61,
+          "printed_page": 48,
+          "locator": "Clause 4: residual stress",
+          "crop": null,
+          "requires_visual": false,
+          "page_text_sha256": "240c764afab7d34b52ae1c1a7d30b0bdeaa12b2bd66541ae18c074742f5267d3",
+          "source_adjudication": {
+            "agent_checked": true,
+            "human_checked": false,
+            "method": "PyMuPDF direct PDF text extraction and rendered-page visual inspection",
+            "reviewer": "source_pilot agent",
+            "checked_utc": "2026-11-05",
+            "independence": "Selected from source pages without invoking any application answer or packet builder"
+          },
+          "inspected_region": [
+            0.15,
+            0.1,
+            0.177,
+            0.9
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "claim_id": "residual-condition",
+          "description": "Residual stress can remain in a joint member or material despite absence of external forces and thermal gradients.",
+          "evidence_ids": [
+            "aws2020:pdf:60:full"
+          ],
+          "qualifiers": [
+            "No external forces",
+            "No thermal gradients"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G67-DEV-02",
+      "question": "For submerged arc welding, what does an active flux affect in the resulting weld metal, and what operating quantity conditions that effect?",
+      "category": "glossary_qualifier",
+      "expected_status": "ANSWERED",
+      "evidence": [
+        {
+          "evidence_id": "aws2020:pdf:18:full",
+          "pdf_index": 18,
+          "viewer_page": 19,
+          "printed_page": 6,
+          "locator": "Clause 4: active flux, submerged arc welding",
+          "crop": null,
+          "requires_visual": false,
+          "page_text_sha256": "21e100290c53ba6491e2e53e3eeb592a073982eed5cbcbb6b79c7034802c9c73",
+          "source_adjudication": {
+            "agent_checked": true,
+            "human_checked": false,
+            "method": "PyMuPDF direct PDF text extraction and rendered-page visual inspection",
+            "reviewer": "source_pilot agent",
+            "checked_utc": "2026-11-05",
+            "independence": "Selected from source pages without invoking any application answer or packet builder"
+          },
+          "inspected_region": [
+            0.838,
+            0.1,
+            0.875,
+            0.9
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "claim_id": "flux-elements",
+          "description": "The relative manganese and silicon amounts in the resulting weld metal are affected.",
+          "evidence_ids": [
+            "aws2020:pdf:18:full"
+          ],
+          "qualifiers": []
+        },
+        {
+          "claim_id": "flux-dependency",
+          "description": "The effect depends on arc voltage.",
+          "evidence_ids": [
+            "aws2020:pdf:18:full"
+          ],
+          "qualifiers": [
+            "submerged arc welding context"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G67-DEV-03",
+      "question": "How does Clause 4 distinguish fillet weld size for equal-leg and unequal-leg fillet welds? Preserve the geometric difference.",
+      "category": "glossary_qualifier",
+      "expected_status": "ANSWERED",
+      "evidence": [
+        {
+          "evidence_id": "aws2020:pdf:37:full",
+          "pdf_index": 37,
+          "viewer_page": 38,
+          "printed_page": 25,
+          "locator": "Clause 4: fillet weld size",
+          "crop": null,
+          "requires_visual": false,
+          "page_text_sha256": "0c2673364901dfa1b6d864814a21b5a3b71e6a5b801a3c1baab715e60cf5b9d1",
+          "source_adjudication": {
+            "agent_checked": true,
+            "human_checked": false,
+            "method": "PyMuPDF direct PDF text extraction and rendered-page visual inspection",
+            "reviewer": "source_pilot agent",
+            "checked_utc": "2026-11-05",
+            "independence": "Selected from source pages without invoking any application answer or packet builder"
+          },
+          "inspected_region": [
+            0.12,
+            0.1,
+            0.175,
+            0.9
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "claim_id": "equal-leg-size",
+          "description": "Equal-leg size uses the legs of the largest inscribed isosceles right triangle.",
+          "evidence_ids": [
+            "aws2020:pdf:37:full"
+          ],
+          "qualifiers": [
+            "largest inscribed triangle",
+            "isosceles"
+          ]
+        },
+        {
+          "claim_id": "unequal-leg-size",
+          "description": "Unequal-leg size uses the legs of the largest inscribed right triangle without requiring isosceles geometry.",
+          "evidence_ids": [
+            "aws2020:pdf:37:full"
+          ],
+          "qualifiers": [
+            "largest inscribed triangle",
+            "within the weld cross section"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G67-DEV-04",
+      "question": "Using Table A1 and Table A4 together, construct the designation for robotic coextrusion welding. Explain the base designation and application-mode suffix.",
+      "category": "table_multihop",
+      "expected_status": "ANSWERED",
+      "evidence": [
+        {
+          "evidence_id": "aws2020:pdf:82:full",
+          "pdf_index": 82,
+          "viewer_page": 83,
+          "printed_page": 70,
+          "locator": "Table A1 continued: solid-state welding / coextrusion welding",
+          "crop": null,
+          "requires_visual": false,
+          "page_text_sha256": "81aa0ccb71fa47b516ed1e2114477f2e95053ebe9658c9762e13f68da8ce6d8c",
+          "source_adjudication": {
+            "agent_checked": true,
+            "human_checked": false,
+            "method": "PyMuPDF direct PDF text extraction and rendered-page visual inspection",
+            "reviewer": "source_pilot agent",
+            "checked_utc": "2026-11-05",
+            "independence": "Selected from source pages without invoking any application answer or packet builder"
+          },
+          "inspected_region": [
+            0.505,
+            0.1,
+            0.557,
+            0.49
+          ]
+        },
+        {
+          "evidence_id": "aws2020:pdf:86:full",
+          "pdf_index": 86,
+          "viewer_page": 87,
+          "printed_page": 74,
+          "locator": "Table A4: application modes and designation-format note",
+          "crop": null,
+          "requires_visual": false,
+          "page_text_sha256": "3869b1a054a009cf74253e2d835440f8dd19b3d732c43e2b68d12a7c4d9530cd",
+          "source_adjudication": {
+            "agent_checked": true,
+            "human_checked": false,
+            "method": "PyMuPDF direct PDF text extraction and rendered-page visual inspection",
+            "reviewer": "source_pilot agent",
+            "checked_utc": "2026-11-05",
+            "independence": "Selected from source pages without invoking any application answer or packet builder"
+          },
+          "inspected_region": [
+            0.08,
+            0.1,
+            0.225,
+            0.9
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "claim_id": "coextrusion-base",
+          "description": "Table A1 assigns CEW to coextrusion welding.",
+          "evidence_ids": [
+            "aws2020:pdf:82:full"
+          ],
+          "qualifiers": []
+        },
+        {
+          "claim_id": "robotic-suffix",
+          "description": "Table A4 assigns -RO to robotic application mode and appends it to the process designation.",
+          "evidence_ids": [
+            "aws2020:pdf:86:full"
+          ],
+          "qualifiers": []
+        },
+        {
+          "claim_id": "combined-designation",
+          "description": "Combining the process designation and robotic suffix gives CEW-RO.",
+          "evidence_ids": [
+            "aws2020:pdf:82:full",
+            "aws2020:pdf:86:full"
+          ],
+          "qualifiers": [
+            "derived by the Table A4 format, not a quoted combined row"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G67-DEV-05",
+      "question": "In Figure A3, which joining methods branch from Materials Joining, which classification chart is linked to Brazing and Soldering, and what does footnote a clarify about Welding?",
+      "category": "figure_structure_footnote",
+      "expected_status": "ANSWERED",
+      "evidence": [
+        {
+          "evidence_id": "aws2020:pdf:88:full",
+          "pdf_index": 88,
+          "viewer_page": 89,
+          "printed_page": 76,
+          "locator": "Figure A3: Joining Method Chart and footnote a",
+          "crop": null,
+          "requires_visual": true,
+          "page_text_sha256": "a1b7200f4136a8ab46e92b104893dca169ff9d2241bcc3d5a3530ed0121e0fa9",
+          "source_adjudication": {
+            "agent_checked": true,
+            "human_checked": false,
+            "method": "PyMuPDF direct PDF text extraction and rendered-page visual inspection",
+            "reviewer": "source_pilot agent",
+            "checked_utc": "2026-11-05",
+            "independence": "Selected from source pages without invoking any application answer or packet builder"
+          },
+          "inspected_region": [
+            0.525,
+            0.26,
+            0.847,
+            0.755
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "claim_id": "joining-methods",
+          "description": "Materials Joining branches to mechanical fastening, welding, and adhesive bonding.",
+          "evidence_ids": [
+            "aws2020:pdf:88:full"
+          ],
+          "qualifiers": []
+        },
+        {
+          "claim_id": "brazing-chart",
+          "description": "Brazing and soldering points to Figure A6.",
+          "evidence_ids": [
+            "aws2020:pdf:88:full"
+          ],
+          "qualifiers": []
+        },
+        {
+          "claim_id": "welding-footnote",
+          "description": "Footnote a uses Welding for the group of process categories.",
+          "evidence_ids": [
+            "aws2020:pdf:88:full"
+          ],
+          "qualifiers": [
+            "footnote qualification"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G67-DEV-06",
+      "question": "In Figure B46, identify numbered callouts 5, 6, and 8. Distinguish the tool feature from the hole left in the workpiece.",
+      "category": "figure_callouts",
+      "expected_status": "ANSWERED",
+      "evidence": [
+        {
+          "evidence_id": "aws2020:pdf:162:full",
+          "pdf_index": 162,
+          "viewer_page": 163,
+          "printed_page": 150,
+          "locator": "Figure B46: schematic and numbered key",
+          "crop": null,
+          "requires_visual": true,
+          "page_text_sha256": "40f7c2887a149ccc8b8f10a6c5d5b7112fce829e8eca7d6c9815440f80c126b3",
+          "source_adjudication": {
+            "agent_checked": true,
+            "human_checked": false,
+            "method": "PyMuPDF direct PDF text extraction and rendered-page visual inspection",
+            "reviewer": "source_pilot agent",
+            "checked_utc": "2026-11-05",
+            "independence": "Selected from source pages without invoking any application answer or packet builder"
+          },
+          "inspected_region": [
+            0.08,
+            0.1,
+            0.6,
+            0.9
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "claim_id": "key5",
+          "description": "Callout 5 is the tool shoulder.",
+          "evidence_ids": [
+            "aws2020:pdf:162:full"
+          ],
+          "qualifiers": []
+        },
+        {
+          "claim_id": "key6",
+          "description": "Callout 6 is the probe.",
+          "evidence_ids": [
+            "aws2020:pdf:162:full"
+          ],
+          "qualifiers": []
+        },
+        {
+          "claim_id": "key8",
+          "description": "Callout 8 is the exit hole in the workpiece.",
+          "evidence_ids": [
+            "aws2020:pdf:162:full"
+          ],
+          "qualifiers": []
+        }
+      ]
+    },
+    {
+      "id": "G67-DEV-07",
+      "question": "Reading only Figure B54, compare start current, welding current, and crater-fill current. Does the figure provide numerical amperage settings?",
+      "category": "figure_qualitative_limit",
+      "expected_status": "ANSWERED",
+      "evidence": [
+        {
+          "evidence_id": "aws2020:pdf:169:full",
+          "pdf_index": 169,
+          "viewer_page": 170,
+          "printed_page": 157,
+          "locator": "Figure B54: Typical GMAW, FCAW, and SAW Welding Cycle",
+          "crop": null,
+          "requires_visual": true,
+          "page_text_sha256": "b172c91c94a239be44c52ce354972a16bc8d5195627a77ec0c2e05a45afe215b",
+          "source_adjudication": {
+            "agent_checked": true,
+            "human_checked": false,
+            "method": "PyMuPDF direct PDF text extraction and rendered-page visual inspection",
+            "reviewer": "source_pilot agent",
+            "checked_utc": "2026-11-05",
+            "independence": "Selected from source pages without invoking any application answer or packet builder"
+          },
+          "inspected_region": [
+            0.57,
+            0.1,
+            0.91,
+            0.9
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "claim_id": "current-stages",
+          "description": "The depicted welding-current plateau is higher than the start-current and crater-fill-current plateaus.",
+          "evidence_ids": [
+            "aws2020:pdf:169:full"
+          ],
+          "qualifiers": [
+            "qualitative relationship in this example"
+          ]
+        },
+        {
+          "claim_id": "no-amperage",
+          "description": "Figure B54 labels current stages without giving numerical amperage settings.",
+          "evidence_ids": [
+            "aws2020:pdf:169:full"
+          ],
+          "qualifiers": [
+            "scope is this figure, not a universal process limit"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G67-DEV-08",
+      "question": "Using only Table A4, give the recommended welding current in amperes for robotic application mode.",
+      "category": "bounded_abstention",
+      "expected_status": "ABSTAIN",
+      "evidence": [
+        {
+          "evidence_id": "aws2020:pdf:86:full",
+          "pdf_index": 86,
+          "viewer_page": 87,
+          "printed_page": 74,
+          "locator": "Table A4: application modes and designation-format note",
+          "crop": null,
+          "requires_visual": false,
+          "page_text_sha256": "3869b1a054a009cf74253e2d835440f8dd19b3d732c43e2b68d12a7c4d9530cd",
+          "source_adjudication": {
+            "agent_checked": true,
+            "human_checked": false,
+            "method": "PyMuPDF direct PDF text extraction and rendered-page visual inspection",
+            "reviewer": "source_pilot agent",
+            "checked_utc": "2026-11-05",
+            "independence": "Selected from source pages without invoking any application answer or packet builder"
+          },
+          "inspected_region": [
+            0.08,
+            0.1,
+            0.225,
+            0.9
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "claim_id": "amperage-unavailable",
+          "description": "Table A4 supplies application-mode suffixes and their format, so it does not support a recommended current in amperes.",
+          "evidence_ids": [
+            "aws2020:pdf:86:full"
+          ],
+          "qualifiers": [
+            "abstain from inventing a current",
+            "scope is Table A4"
+          ]
+        }
+      ]
+    }
+  ]
+}
