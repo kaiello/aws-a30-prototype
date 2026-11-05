@@ -1,4 +1,7 @@
 # Gate 6 Full Production Audit Bundle
+
+> **Historical snapshot, annotated during Gate 6.7:** The generated contents below retain their original recorded commit, test and artifact reports. Embedded Gate 6.6 reader-qualification and zero-delta claims are superseded by the [corrected Gate 6.6 checkout](GATE_6_6_CHECKOUT_CARD.md) and [Gate 6.7 independent diagnostic](GATE_6_7_INDEPENDENT_EVALUATION_CARD.md). The old gold inputs were generated answers, so their scores do not independently measure a reader or retrieval. This annotation does not rerun the bundle or alter historical receipts.
+
 Generated at: 2026-11-04T15:27:02.223923+00:00
 Branch: `main`
 Commit: `d7a6dce46088ea957e4e655bf8fdfd089d822598`

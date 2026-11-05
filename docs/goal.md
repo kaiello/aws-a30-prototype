@@ -1,5 +1,7 @@
 # AWS A3.0M/A3.0:2020 Multimodal RAG — End Goal & Production System Architecture (`goal.md`)
 
+> **Current evaluation status (Gate 6.7):** Gate 6.6 is a diagnostic prototype. Its answer-derived gold packets and copy composer do not independently qualify a reader or establish retrieval accuracy. The next milestone is [Gate 6.7: Independent Reader and Retrieval Diagnostic](../GATE_6_7_INDEPENDENT_EVALUATION_CARD.md). ColPali/ColQwen work is deferred until independent evidence demonstrates a retrieval deficit. Historical counts below describe their recorded runs, not independent source adjudication.
+
 **Target Standard:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions Including Terms for Adhesive Bonding, Brazing, Soldering, Thermal Cutting, and Thermal Spraying*, 13th Edition, 190 PDF pages)  
 **Source PDF SHA-256:** `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d`  
 **Coordinate Formula:** $\text{printed\_page} = \text{pdf\_index} - 12 = \text{viewer\_page} - 13$ (for main text & annexes starting at Clause 1, printed p. 1 = PDF index 13)  
@@ -437,18 +439,23 @@ Following the forensic architecture assessment (`AWS_A30_ARCHITECTURE_RECOMMENDA
 
 ---
 
-## 14. Gate 6.6: Phase 4 Reader Qualification with Gold Evidence, Retrieval-vs-Reader Diagnostic Separation & Replay Coverage Ledger
+## 14. Gate 6.6: Diagnostic Prototype and Replay Coverage Ledger
 
-### Deliverables Checklist
+### Corrected interpretation
 
-- [x] **Deliverable G66-1 (Authoritative Gold-Evidence Packet Builder & 3-Arm Reader Qualification — Bakeoff #16):** Built `src/reader_qualification.py` (`build_gold_evidence_packet`, `prepare_reader_evidence_arm`, `compose_from_gold_arm`) evaluating 3 controlled gold-evidence budgets (`Arm A: 8.33%`, `Arm B: 62.50%`, `Arm C: 100.00%`) against live retrieved whole-standard execution (`100.00%`, `0.0%` retrieval-vs-reader delta).
-- [x] **Deliverable G66-2 (Deterministic 5-Class Failure Taxonomy & Diagnostic Calibration):** Implemented `classify_diagnostic_outcome` separating `PASS_SUPPORTED`, `EXTRACTION_FAILURE`, `RETRIEVAL_FAILURE`, `READER_INTERPRETATION_FAILURE`, `EVIDENCE_BINDING_OR_PROVENANCE_FAILURE`, and `ABSTENTION_FAILURE`.
-- [x] **Deliverable G66-3 (24-Query Reader Qualification Benchmark & Non-Mutating Evaluator):** Established `storage/evidence_v2/phase6_6_reader_qualification_001/{questions.json, rubric.json, gold_packets.json, results.json}` and `eval/run_phase6_6_reader_qualification.py` (`write_results: bool = False` by default), scoring **24 / 24 (100.0%)** on Gold Arm C and Retrieved tracks.
-- [x] **Deliverable G66-4 (Honest Replay Coverage Audit Ledger & CLI/Query Integration):** Added `audit_replay_coverage` to `src/deepseek_v41_adapter.py`, `scripts/audit_replay_coverage.py`, `storage/manifests/replay_coverage_manifest.json` (`14` genuine `DeepSeek-V4.1` replays vs `6` quarantined fixtures), `--qualify-reader` / `--replay-audit` in `src/evidence_whole_standard_cli.py`, and `diagnostic_track` in `src/query.py`.
-- [x] **Deliverable G66-5 (54/54 Cryptographic Hash Locks & Verification Suite):** Added Artifacts #52–#54 (`ALL_54_LOCKED_HASHES`) and verified 6/6 tests in `tests/test_gate_6_6_reader_qualification.py` under 100% offline socket isolation.
+Gate 6.6 retains useful diagnostic interfaces, replay quarantine accounting and immutable regression artifacts. It does **not** complete independent reader qualification. `build_gold_evidence_packet` obtains the completed answer from `answer_whole_standard_question`; arms A/B truncate that answer, and `compose_from_gold_arm` copies the supplied answer text. The retrieved track uses the same deterministic engine. No fresh DeepSeek or other candidate-reader invocation is demonstrated by this evaluator.
+
+- **Recorded harness scores:** Arm A **2/24**, Arm B **15/24**, Arm C **24/24**, deterministic retrieved track **24/24**. The numeric zero delta is circular and cannot establish retrieval-versus-reader performance. These 24 development/regression cases include 20 previously exposed Gate 6.3 cases.
+- **Scoring limitation:** The legacy keyword and metadata checks can accept negated required facts with an unrelated citation. `PASS_SUPPORTED` is a historical scorer label, not independent claim-level support.
+- **Preserved work:** Diagnostic taxonomy scaffolding, CLI/application diagnostic tracks, genuine-versus-synthetic replay accounting, and the historical 54-artifact lock ledger remain available. These evaluation defects do not establish a failure in replay quarantine or store integrity.
+- **Reporting correction:** The Gate 6.6 checkout matrix now agrees with stored case records: `G63-BLIND13` passes recorded arms A/B, and `G63-BLIND15` passes recorded arm B. Historical JSON receipts are unchanged.
 
 ---
 
-## 15. Subsequent Roadmap Staging: Gate 6.7
+## 15. Gate 6.7: Independent Reader and Retrieval Diagnostic
 
-- **Gate 6.7 (Phase 5 — Bounded ColQwen2.5 / ColPali Visual Retrieval Comparison):** Compare the repaired deterministic baseline against a pinned ColQwen2.5/ColPali visual page retriever on demonstrated retrieval misses (Bakeoff #8), reporting case-by-case rescues vs. harms under a fixed reader and evidence budget.
+Implement the bounded repair described in [the Gate 6.7 card](../GATE_6_7_INDEPENDENT_EVALUATION_CARD.md): source-native evidence selected independently of generated answers; explicit evidence IDs and source hashes; separate expectations; captured configurable reader inputs/outputs; and gold-versus-retrieved comparisons through the actual application route where available. Add adversarial checks for negation, unrelated/wrong citations, missing evidence, qualifiers and abstention.
+
+Report development case results, source-check status, reader execution mode and adjudication separately. A fresh reviewer-controlled held-out set and human adjudication remain requirements for qualification; development fixtures created or inspected during implementation are not an unseen benchmark. Missing credentials, model access or adjudication must appear as explicit blockers rather than synthetic successes.
+
+Defer the former Gate 6.7 ColQwen2.5/ColPali comparison until the reader succeeds with independently verified gold evidence and the paired retrieval track demonstrates relevant evidence misses. Keep the reader and evidence budget fixed in any subsequent comparison.
