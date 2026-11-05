@@ -77,7 +77,7 @@ Defer ColPali/ColQwen page-image retrieval until reviewed evidence demonstrates 
 
 Ken's ongoing task is domain review of all 16 outputs, including structural failures; engineering owns protocol/admission/index/route repairs. Owner decisions still needed: whether source-grounded but unreviewed interpretations may be user-visible, acceptable latency/cost limits, local-only versus a separately approved external route, and held-out custodian/critical-error criteria. No proposed architecture is implemented by this document. The human-review packet and raw private receipts remain separate from repository publication.
 
-The future-system diagram is an explanatory deliverable for this recommendation, not proof of implementation. Its legend must distinguish existing components, proposed connections/repairs, and evidence/candidate/reviewed authority.
+The [future-system architecture diagram](diagrams/aws-a30-future-architecture.png) is an explanatory deliverable, not proof of implementation. It distinguishes existing components, proposed connections/repairs, and evidence/candidate/reviewed authority. Open the [vector PDF](diagrams/aws-a30-future-architecture.pdf) or [SVG](diagrams/aws-a30-future-architecture.svg) for zoom; the [editable DOT source and rendering notes](diagrams/README.md) are committed alongside it. The reader remains unqualified and human review pending.
 
 ---
 
