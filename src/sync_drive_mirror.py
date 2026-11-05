@@ -11,13 +11,15 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
+import hashlib
+import json
 import os
 from pathlib import Path
 import re
 import shutil
 import subprocess
 import sys
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 
 DEFAULT_TARGET = Path(r"G:\My Drive\git_projects\aws-a30-prototype")
@@ -284,12 +286,114 @@ def sync_mirror(
     return receipt
 
 
+
+def sync_selected_files(source: Path, target: Path, manifest: Path) -> Dict[str, Any]:
+    """Apply an explicit reviewed selection after validating every source and target.
+
+    No pruning, canonical-repository copy, or git-summary generation occurs here.
+    Pre-existing conflicts abort before writes; this is not a filesystem transaction
+    against concurrent destination edits or interruptions during the copy phase.
+    """
+    source = Path(source).resolve(strict=True)
+    target = Path(target).resolve()
+    if not source.is_dir() or (target.exists() and not target.is_dir()):
+        raise ValueError("UNSAFE_PATH: source and target must be directories")
+    data = json.loads(Path(manifest).read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or set(data) != {"files"}:
+        raise ValueError("INVALID_MANIFEST: expected a files object")
+    entries = data["files"]
+    if not isinstance(entries, list) or not entries:
+        raise ValueError("INVALID_MANIFEST: files must be a nonempty list")
+    digest_pattern = re.compile(r"[0-9a-f]{64}")
+    prepared = []
+    seen_source, seen_target = set(), set()
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {
+            "path", "source_sha256", "expected_target_sha256"
+        }:
+            raise ValueError("INVALID_MANIFEST: unexpected file fields")
+        relative = entry["path"]
+        if not isinstance(relative, str) or not relative or any(c in relative for c in "\\:\x00"):
+            raise ValueError("UNSAFE_PATH: require a relative forward-slash path")
+        parts = relative.split("/")
+        if any(not part or part in {".", ".."} or part.rstrip(" .") != part for part in parts):
+            raise ValueError("UNSAFE_PATH: noncanonical relative path")
+        rel = Path(relative)
+        allowed = (len(parts) == 1 and rel.suffix.lower() == ".md") or (
+            parts[0] in {"src", "tests", "docs", "eval"}
+            and rel.suffix.lower() in {".py", ".md", ".json"}
+        )
+        sensitive = any(part.startswith(".") or re.search(
+            r"credential|secret|(?:^|[_.-])(?:token|password|api_key)(?:[_.-]|$)", part, re.I
+        ) for part in parts)
+        if not allowed or sensitive:
+            raise ValueError(f"UNSAFE_PATH: excluded project path {relative}")
+        expected_source = entry["source_sha256"]
+        expected_target = entry["expected_target_sha256"]
+        if not isinstance(expected_source, str) or not digest_pattern.fullmatch(expected_source):
+            raise ValueError("INVALID_MANIFEST: invalid source hash")
+        if expected_target is not None and (
+            not isinstance(expected_target, str) or not digest_pattern.fullmatch(expected_target)
+        ):
+            raise ValueError("INVALID_MANIFEST: invalid target hash")
+        src, dst = (source / rel).resolve(), (target / rel).resolve()
+        if (not src.is_relative_to(source) or not dst.is_relative_to(target)
+                or src != source / rel or dst != target / rel):
+            raise ValueError(f"UNSAFE_PATH: symlink or traversal alias {relative}")
+        if any(parent.exists() and not parent.is_dir() for parent in dst.parents):
+            raise ValueError(f"UNSAFE_PATH: target parent is not a directory {relative}")
+        src_key, dst_key = str(src).casefold(), str(dst).casefold()
+        if src_key in seen_source or dst_key in seen_target:
+            raise ValueError("UNSAFE_PATH: duplicate or aliased selection")
+        seen_source.add(src_key)
+        seen_target.add(dst_key)
+        if not src.is_file() or (dst.exists() and not dst.is_file()):
+            raise ValueError(f"UNSAFE_PATH: expected regular file {relative}")
+        payload = src.read_bytes()
+        if hashlib.sha256(payload).hexdigest() != expected_source:
+            raise ValueError(f"SOURCE_HASH_MISMATCH: {relative}")
+        try:
+            payload.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise ValueError(f"UNSAFE_PATH: binary content {relative}") from exc
+        if b"\x00" in payload:
+            raise ValueError(f"UNSAFE_PATH: binary content {relative}")
+        actual_target = hashlib.sha256(dst.read_bytes()).hexdigest() if dst.exists() else None
+        if actual_target not in {expected_target, expected_source}:
+            raise ValueError(f"TARGET_CONFLICT: {relative}")
+        prepared.append((relative, dst, payload, expected_source, actual_target))
+    files = []
+    for relative, dst, payload, digest, previous_digest in prepared:
+        action = "unchanged" if previous_digest == digest else "copied"
+        if action == "copied":
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            dst.write_bytes(payload)
+        target_digest = hashlib.sha256(dst.read_bytes()).hexdigest()
+        if target_digest != digest:
+            raise ValueError(f"TARGET_VERIFICATION_FAILED: {relative}")
+        files.append({"path": relative, "source_sha256": digest,
+                      "target_sha256": target_digest, "action": action})
+    return {"status": "PASS", "mode": "selected", "source_directory": str(source),
+            "target_directory": str(target), "files_synced": len(files),
+            "files_pruned": 0, "files": files}
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Synchronize reviewed codebase and gate verification artifacts to Google Drive mirror")
     parser.add_argument("--source", type=Path, default=None, help="Source repository root (default: auto-detected)")
-    parser.add_argument("--target", type=Path, default=DEFAULT_TARGET, help=f"Target mirror directory (default: {DEFAULT_TARGET})")
+    parser.add_argument("--target", type=Path, default=None, help=f"Target mirror directory (default: {DEFAULT_TARGET})")
+    parser.add_argument("--selection-manifest", type=Path, help="Reviewed paths and source/expected-target SHA-256 hashes; no pruning")
     parser.add_argument("--worktree", type=Path, default=None, help="Active git worktree if different from source")
     args = parser.parse_args(argv)
+
+    if args.selection_manifest is not None:
+        if args.source is None or args.target is None:
+            parser.error("--selection-manifest requires explicit --source and --target")
+        receipt = sync_selected_files(args.source, args.target, args.selection_manifest)
+        print(json.dumps(receipt, indent=2))
+        return 0
+    if args.target is None:
+        args.target = DEFAULT_TARGET
 
     current_root = Path(__file__).resolve().parents[1]
     source_dir = args.source
