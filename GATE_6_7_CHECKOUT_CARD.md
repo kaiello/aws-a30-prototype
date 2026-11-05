@@ -2,10 +2,10 @@
 
 **Disposition:** bounded implementation and local pilot complete; **reader NOT QUALIFIED**.
 
-**Base:** `27ab96ed6b8809b1990d4d32abfd38ea586cf54f` (Gate 6.6).  
-**Tested implementation commit:** `f870c1c93f90aad2dfb7a35b6295c121d848e5b2`.  
-**Branch:** `feat/gate-6-7-independent-evaluation`. No merge, deployment or release tag.  
-**Plan:** [Gate 6.7 card](GATE_6_7_INDEPENDENT_EVALUATION_CARD.md).  
+**Base:** `27ab96ed6b8809b1990d4d32abfd38ea586cf54f` (Gate 6.6).
+**Tested implementation commit:** `f870c1c93f90aad2dfb7a35b6295c121d848e5b2`.
+**Branch:** `feat/gate-6-7-independent-evaluation`. No merge, deployment or release tag.
+**Plan:** [Gate 6.7 card](GATE_6_7_INDEPENDENT_EVALUATION_CARD.md).
 **Case-level evidence:** [safe results report](docs/gate67_observed_results.json).
 
 ## What changed
