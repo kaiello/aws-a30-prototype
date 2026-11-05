@@ -1,5 +1,7 @@
 # AWS A3.0M/A3.0:2020 Multimodal RAG — End Goal & Production System Architecture (`goal.md`)
 
+> **Current status, November 5, 2026:** retain the evidence-first foundation and evaluate hybrid page discovery plus conditional page-and-region VLM reading after admission/reporting repairs. Gate 6.6 does not independently qualify a reader; Gate 6.7 remains an unqualified feature-branch development pilot. Section 16 records the current findings and next decisions. Historical release/test/score claims below retain their original dated scope.
+
 **Target Standard:** `AWS A3.0M/A3.0:2020` (*Standard Welding Terms and Definitions Including Terms for Adhesive Bonding, Brazing, Soldering, Thermal Cutting, and Thermal Spraying*, 13th Edition, 190 PDF pages)  
 **Source PDF SHA-256:** `205fa58eefe084c64b7c7e4520fcb50e067116d6d71a6becf4671fb541858e2d`  
 **Coordinate Formula:** $\text{printed\_page} = \text{pdf\_index} - 12 = \text{viewer\_page} - 13$ (for main text & annexes starting at Clause 1, printed p. 1 = PDF index 13)  
@@ -439,6 +441,9 @@ Following the forensic architecture assessment (`AWS_A30_ARCHITECTURE_RECOMMENDA
 
 ## 14. Gate 6.6: Phase 4 Reader Qualification with Gold Evidence, Retrieval-vs-Reader Diagnostic Separation & Replay Coverage Ledger
 
+> **Historical harness record:** the November 5 assessment in Section 16 supersedes reader-qualification and zero-delta interpretations here. Existing receipts are retained.
+
+
 ### Deliverables Checklist
 
 - [x] **Deliverable G66-1 (Authoritative Gold-Evidence Packet Builder & 3-Arm Reader Qualification — Bakeoff #16):** Built `src/reader_qualification.py` (`build_gold_evidence_packet`, `prepare_reader_evidence_arm`, `compose_from_gold_arm`) evaluating 3 controlled gold-evidence budgets (`Arm A: 8.33%`, `Arm B: 62.50%`, `Arm C: 100.00%`) against live retrieved whole-standard execution (`100.00%`, `0.0%` retrieval-vs-reader delta).
@@ -451,4 +456,41 @@ Following the forensic architecture assessment (`AWS_A30_ARCHITECTURE_RECOMMENDA
 
 ## 15. Subsequent Roadmap Staging: Gate 6.7
 
+> **Superseded staging:** Gate 6.7 now repairs independent source-evidence evaluation. Section 16 defers page-image retrieval until independently adjudicated evidence demonstrates that deficit.
+
 - **Gate 6.7 (Phase 5 — Bounded ColQwen2.5 / ColPali Visual Retrieval Comparison):** Compare the repaired deterministic baseline against a pinned ColQwen2.5/ColPali visual page retriever on demonstrated retrieval misses (Bakeoff #8), reporting case-by-case rescues vs. harms under a fixed reader and evidence budget.
+
+
+---
+
+## 16. November 5 architecture review: evidence-first hybrid continuation
+
+### Preserve the end goal; change the next engineering step
+
+The source-grounded reference system, explicit abstention, edition isolation, immutable provenance and separate evidence/knowledge layers remain the goals. Record the recommended direction as **retain the evidence-first foundation; repair admission and reporting; compare hybrid page discovery plus conditional page-and-region VLM reading**. This is a recommended future design, not completed functionality or an authorization to implement it.
+
+The comprehensive review inspected `feat/gate-6-7-independent-evaluation` at `9475df7bc75ada23e8ddb8d401bd578bfb25eebb`, clean before/after. Main was `27ab96ed6b8809b1990d4d32abfd38ea586cf54f`. This documentation-only merge preserves the existing user goals/history and does not merge the feature branch's evaluation code. See the [current architecture assessment](https://github.com/kaiello/aws-a30-prototype/blob/main/docs/AWS_A30_ARCHITECTURE_RECOMMENDATIONS.md#current-assessment-november-5-2026) for precise source locations, evidence limits and the comparison plan.
+
+### Corrected current capability and evaluation status
+
+- Existing application paths are separate: V1/default text hybrid+LightRAG; explicit whole-standard deterministic stores/composers; explicit bounded V2 local image reader. No general whole-standard conditional VLM fallback exists, and the browser does not expose the new route/reader selectors.
+- Source identity, native extraction, A1/A2 safeguards and replay quarantine are worth preserving. Later adapters can promote specification-supplied relationships/labels without sufficient independent verification. Fix admission authority; a new OCR/VLM model alone cannot do this.
+- Whole-standard PASS currently becomes reviewed/validated support on locator presence (`src/query.py:291-313`). Repair that semantic-authority boundary before broader exposure. Some continuation lineage, manual annotations and provenance defaults also need repair.
+- Existing hybrid retrieval is unavailable here because its contextual dense store is missing; that blocks 266 available FTS rows. Repair corpus coverage and embedding compatibility before rebuilding or evaluating dense retrieval.
+- Gate 6.6's answer-derived gold/copy composer does not independently qualify a reader. Historical perfect scores and zero delta below are harness results, not semantic acceptance. The earlier replay-quarantine/integrity work remains useful.
+- Gate 6.7's feature-branch pilot used genuine source-only inputs and 16 local `qwen2.5vl:3b` calls on eight **exposed development cases**: 14 structural failures, two pending reviews, zero independently adjudicated answers and zero held-out cases. Four app-selected packets miss an agent-selected gold page. Do not equate structural failure with semantically wrong content or publish an accuracy/delta yet. See [pilot evidence](https://github.com/kaiello/aws-a30-prototype/blob/9475df7bc75ada23e8ddb8d401bd578bfb25eebb/docs/gate67_observed_results.json).
+- The November 5 read-only review reran 96 focused Gate 6.7 checks successfully (7.23 seconds). No new model calls, downloads, index rebuild, browser end-to-end test or complete regression occurred. Previous full-suite execution remains incomplete; the older 1,514-pass figure is a dated historical result.
+
+### Proposed delivery route and acceptance work
+
+1. Bind edition/scope and decompose the question into subquestions. Use a verified deterministic fast path where applicable; check sufficient evidence for **each part**, including qualifiers.
+2. Discover missing pages through exact IDs/metadata, BM25 and compatible dense text retrieval. Assemble continuations, tables, legends and notes as evidence groups rather than assuming one page is complete.
+3. Build a shared native-source packet with evidence IDs, PDF hash, all three page identities, text spans, overview image and relevant regions. Reader input must exclude expected answers and application-generated prose.
+4. Use a pinned, bounded VLM only for unresolved visual labels/relationships or diagram interpretation. Do not trigger solely on no answer: unsupported deterministic PASS can otherwise suppress fallback. Start locally with two source pages, one inference attempt, no automatic retries; disclose any changed budget.
+5. Link every material answer claim to support; retain qualifiers and per-part outcomes. Deliver supported parts and abstain on unresolved parts. Do not infer procedure parameters or numeric values from qualitative unscaled figures.
+6. Quarantine new visual/model interpretations as candidates. Separate human/source review and admission can create reviewed knowledge; hashes, schemas and citations alone cannot do so.
+7. Complete the existing human review, then compare retrieval without generation; qualify the reader with fixed gold text/images; compare baseline, hybrid, conditional VLM and their combination under fixed budgets. Freeze before an independent custodian creates 16-24 private held-out screening questions. Report rescues/harms, supported-claim precision/completeness, citation relevance, packet-conditional abstention, latency/memory/cost and all execution modes.
+
+**Deferred:** wholesale OCR conversion, framework/database migration and ColPali/ColQwen page-image retrieval until a measured failure warrants them. Better image retrieval cannot fix a reader that fails with correct evidence. A small pilot cannot establish production reliability.
+
+**Owner decisions pending:** finish the ongoing review of all 16 answers; choose user visibility of unreviewed visual interpretations, latency/cost limits and local-only policy; nominate a held-out custodian and agree critical-error criteria. The 14 structural failures are engineering diagnostics, not requests for Ken to debug code. The private review packet and raw outputs remain unchanged by this documentation update.
