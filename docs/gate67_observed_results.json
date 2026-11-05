@@ -324,7 +324,16 @@
   "automated_checks": {
     "gate67_focused": "96 passed",
     "whole_standard_preflight": "CLEAR_WHOLE_STANDARD_CONTRACT",
-    "replay_preflight": "CLEAR_DEEPSEEK_REPLAY_PREFLIGHT"
+    "replay_preflight": "CLEAR_DEEPSEEK_REPLAY_PREFLIGHT",
+    "full_regression": {
+      "status": "STOPPED_INCOMPLETE",
+      "collected_tests": 1630,
+      "stopped_at": "tests/test_gate_6_4_comprehensive_enhancements.py::test_gate_6_4_replay_and_deterministic_20_20 (call)",
+      "cpu_seconds": 1443.90625,
+      "reason": "Optional full legacy regression exceeded the bounded closeout window; targeted Gate6.7 and compatibility checks completed.",
+      "git_context_failures_resolved_by_retest": 3
+    },
+    "existing_git_checks_retest": "3 passed after attaching Git context"
   },
   "receipt_hashes": {
     "preparation_manifest": "5acab673ea855407c0bd895c4aaf3561cd348a608bcfc2e2fc71d8db817e6a9a",
