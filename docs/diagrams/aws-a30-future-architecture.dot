@@ -1,0 +1,49 @@
+digraph AWSFuture {
+ graph [layout=neato, overlap=true, splines=polyline, bgcolor="white", pad="0.3", outputorder=edgesfirst];
+ node [shape=box, style="rounded,filled", fillcolor="#FFF3D6", color="#AE6B00", fontcolor="#202D3A", fontname="Arial", fontsize=20, margin="0.20,0.14", penwidth=1.8, pin=true];
+ edge [style=dashed, color="#667789", fontcolor="#43576A", fontname="Arial", fontsize=16, penwidth=1.8, arrowsize=0.85];
+ title [shape=plain, style="", pos="1080,1360!", label="AWS A3.0 | Recommended future architecture\nEvidence-first core + hybrid page discovery + conditional visual reading", fontsize=31];
+ scope [pos="650,1190!", label="Question, edition and scope\nExplicit subquestions\nTrack every requested part"];
+ fast [pos="1060,1190!", label="Deterministic fast path\nBounded structured lookups\nUse supported / reviewed facts", fillcolor="#E5F1FC", color="#3076AD"];
+ enough [pos="1470,1190!", shape=diamond, label="Evidence sufficient\nfor this part?", width=3.1, height=1.35];
+ scope -> fast;
+ fast -> enough;
+
+ subgraph cluster_evidence {
+  label="SOURCE / EVIDENCE | Preserved identity is not semantic validation"; fontname="Arial"; fontsize=20; color="#9AAFC0"; style="rounded";
+  pdf [pos="240,905!", label="Authorized source PDF\nImmutable hash + edition\nPDF / viewer / printed page IDs", fillcolor="#EEF1F4", color="#7F93A3"];
+  extract [pos="650,905!", label="Native text, tables and crops\nSelective OCR when needed\nExisting lineage / admission needs repair", fillcolor="#E5F1FC", color="#3076AD"];
+  packet [pos="1060,905!", label="Canonical source-only packet\nPage overview + targeted regions\nIDs, spans, notes, source hashes\nNo generated answer as evidence"];
+  pdf -> extract [style=solid, color="#3076AD", label=""];
+  extract -> packet;
+ }
+ discover [pos="1470,905!", label="Hybrid page discovery\nExact IDs + BM25 + dense text\nCompatible, versioned index"];
+ enough -> discover [label="missing evidence", lp="1575,1050!"];
+ discover -> packet;
+
+ visual [pos="1060,590!", shape=diamond, label="Visual interpretation\nstill unresolved?", width=3.1, height=1.35];
+ native [pos="1470,700!", label="Native / deterministic composition\nSource-linked claims + qualifiers"];
+ vlm [pos="1470,480!", label="Pinned local VLM reader\nPage + regions + native text\nOne attempt; bounded budget", fillcolor="#E5F1FC", color="#3076AD"];
+ checks [pos="1920,590!", label="Claim checks + response\nCheck each part and material claim\nCitation relevance + qualifiers\nSupported parts / limitations\nPartial answer or abstention\nNo automatic review label"];
+ packet -> visual [label="source-bound packet", lp="1188,770!"];
+ visual -> native [label="text sufficient", lp="1265,722!"];
+ visual -> vlm [label="visual need", lp="1265,470!"];
+ native -> checks [label="claims", lp="1695,730!"];
+ vlm -> checks [label="candidate claims", lp="1695,460!"];
+ enough -> checks [pos="e,2090,640 1610,1190 1780,1190 2145,1190 2145,1190 2145,1190 2145,930 2145,640 2145,640 2120,640 2090,640", label="sufficient evidence\n(proposed)", lp="1960,1240!"];
+ discover -> checks [pos="e,2090,620 1610,905 1750,905 2115,905 2115,905 2115,905 2115,800 2115,620 2115,620 2110,620 2090,620", label="insufficient / budget exhausted", lp="1860,946!"];
+
+ subgraph cluster_review {
+  label="CANDIDATE / REVIEW | No automatic promotion"; fontname="Arial"; fontsize=20; color="#9C75B5"; style="rounded";
+  candidate [pos="1060,210!", label="Quarantined interpretations\nSource-linked; unreviewed\nSchema and hashes do not admit", fillcolor="#F3EAF9", color="#9162A9"];
+  review [pos="1470,210!", label="Named independent review\nSource support + domain judgment\nSeparate admission decision"];
+  knowledge [pos="1920,210!", label="Reviewed knowledge\nVersioned decisions + provenance\nFeeds deterministic fast path", fillcolor="#E5F1FC", color="#438064", penwidth=3];
+  candidate -> review;
+  review -> knowledge;
+ }
+ vlm -> candidate [label="retain candidate observations", lp="1230,340!"];
+ note [shape=plain, pos="440,385!", label="CONNECTIONS SHOWN ARE PROPOSED\nExisting routes are disconnected today.\nAdmission and orchestration need repair.\n\nStart: max 2 source pages, 1 local call.\nMissing support never becomes a guessed\nprocedure setting or numeric value.", fontsize=20, fontcolor="#43576A"];
+ evidence_label [shape=plain, style="", pos="650,1010!", label="SOURCE / EVIDENCE BOUNDARY | Identity is not semantic validation", fontsize=19, fontcolor="#667789"];
+ review_label [shape=plain, style="", pos="1470,315!", label="CANDIDATE / REVIEW BOUNDARY | No automatic promotion", fontsize=19, fontcolor="#9162A9"];
+ legend [shape=plain, pos="1110,0!", label=<<TABLE BORDER="0" CELLBORDER="0" CELLPADDING="8"><TR><TD BGCOLOR="#E5F1FC">BLUE: existing reusable component</TD><TD BGCOLOR="#FFF3D6">AMBER: proposed integration / repair</TD><TD BGCOLOR="#EEF1F4">GRAY: immutable evidence</TD></TR><TR><TD BGCOLOR="#F3EAF9">PURPLE: candidate authority</TD><TD COLSPAN="2">GREEN outline: reviewed authority only; not all existing records qualify</TD></TR><TR><TD COLSPAN="3">All dashed connections are PROPOSED. Solid blue connection is existing native extraction.</TD></TR><TR><TD COLSPAN="3">RECOMMENDATION ONLY | Gate 6.7 reader unqualified; human review pending | 5 November 2026</TD></TR><TR><TD COLSPAN="3">ColPali / ColQwen deferred until reviewed page-selection misses justify a separate experiment.</TD></TR></TABLE>>, fontsize=18];
+}

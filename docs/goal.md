@@ -494,3 +494,5 @@ The comprehensive review inspected `feat/gate-6-7-independent-evaluation` at `94
 **Deferred:** wholesale OCR conversion, framework/database migration and ColPali/ColQwen page-image retrieval until a measured failure warrants them. Better image retrieval cannot fix a reader that fails with correct evidence. A small pilot cannot establish production reliability.
 
 **Owner decisions pending:** finish the ongoing review of all 16 answers; choose user visibility of unreviewed visual interpretations, latency/cost limits and local-only policy; nominate a held-out custodian and agree critical-error criteria. The 14 structural failures are engineering diagnostics, not requests for Ken to debug code. The private review packet and raw outputs remain unchanged by this documentation update.
+
+The [recommended future-system diagram](https://github.com/kaiello/aws-a30-prototype/blob/main/docs/diagrams/aws-a30-future-architecture.svg) illustrates this proposed route and authority boundaries; native PNG/PDF and editable DOT are in `docs/diagrams/`. It does not certify implementation or complete human review.
